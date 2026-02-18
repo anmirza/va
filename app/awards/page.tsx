@@ -5,7 +5,7 @@ import Link from 'next/link'
 import { Header } from '@/components/header'
 import { Footer } from '@/components/footer'
 import { Badge } from '@/components/ui/badge'
-import { awards } from '@/lib/mock-data'
+import { awards, awardOrganizations } from '@/lib/mock-data'
 import { Trophy, Award } from 'lucide-react'
 
 const FESTIVALS = ['All', ...new Set(awards.map(a => a.festival))].sort()
@@ -27,10 +27,11 @@ export default function AwardsPage() {
     return acc
   }, {} as Record<number, typeof awards>)
 
-  const levelColors = {
-    gold: 'bg-gold text-black',
-    silver: 'bg-silver text-black',
-    bronze: 'bg-bronze text-white',
+  const levelColors: Record<string, string> = {
+    gold: 'bg-yellow-400 text-black',
+    silver: 'bg-slate-300 text-black',
+    bronze: 'bg-amber-700 text-white',
+    grand_prix: 'bg-[#f5d742] text-[#1a1a1a]',
   }
 
   return (
@@ -49,6 +50,24 @@ export default function AwardsPage() {
             <p className="text-muted-foreground">Celebrating excellence in advertising</p>
           </div>
         </section>
+
+        {/* Award Shows */}
+        <div className="px-4 sm:px-6 lg:px-8 py-10 border-b border-[#e5e5e1]">
+          <div className="max-w-5xl mx-auto">
+            <h2 className="text-xl font-bold text-[#1a1a1a] mb-5">Award Shows</h2>
+            <div className="flex flex-wrap gap-3">
+              {awardOrganizations.map(org => (
+                <Link key={org.id} href={`/awards/${org.id}`} className="group bg-white rounded-xl p-4 shadow-sm hover:shadow-md transition-shadow flex items-center gap-3 min-w-[180px]">
+                  <Trophy className="w-5 h-5 text-[#f5d742] shrink-0" />
+                  <div>
+                    <p className="text-sm font-medium text-[#1a1a1a] group-hover:text-[#4fc487] transition-colors">{org.name}</p>
+                    <p className="text-xs text-[#666]">{org.country} · {org.frequency}</p>
+                  </div>
+                </Link>
+              ))}
+            </div>
+          </div>
+        </div>
 
         <div className="px-4 sm:px-6 lg:px-8 py-12">
           <div className="max-w-5xl mx-auto w-full">
@@ -88,9 +107,10 @@ export default function AwardsPage() {
                               <div className="flex items-start justify-between mb-3">
                                 <div className="flex gap-4 flex-1">
                                   <Trophy className={`w-6 h-6 flex-shrink-0 mt-1 ${
-                                    award.level === 'gold' ? 'text-gold' :
-                                    award.level === 'silver' ? 'text-silver' :
-                                    'text-bronze'
+                                    award.level === 'gold' ? 'text-yellow-500' :
+                                    award.level === 'silver' ? 'text-slate-400' :
+                                    award.level === 'grand_prix' ? 'text-[#f5d742]' :
+                                    'text-amber-700'
                                   }`} />
                                   <div className="flex-1">
                                     <h3 className="font-serif font-bold text-lg group-hover:text-accent transition-colors mb-1">

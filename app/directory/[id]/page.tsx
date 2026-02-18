@@ -274,9 +274,10 @@ export default function CompanyProfilePage() {
                                 <p className="text-sm text-muted-foreground">{award.festival}</p>
                               </div>
                               <Badge className={`${
-                                award.level === 'gold' ? 'bg-gold text-black' :
-                                award.level === 'silver' ? 'bg-silver text-black' :
-                                'bg-bronze text-white'
+                                award.level === 'gold' ? 'bg-yellow-400 text-black' :
+                                award.level === 'silver' ? 'bg-slate-300 text-black' :
+                                award.level === 'grand_prix' ? 'bg-[#f5d742] text-black' :
+                                'bg-amber-700 text-white'
                               }`}>
                                 {award.level.charAt(0).toUpperCase() + award.level.slice(1)}
                               </Badge>

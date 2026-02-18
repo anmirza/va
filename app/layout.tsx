@@ -1,6 +1,8 @@
 import type { Metadata } from 'next'
 import { DM_Serif_Display, DM_Sans, IBM_Plex_Mono } from 'next/font/google'
 import { Analytics } from '@vercel/analytics/next'
+import { AuthProvider } from '@/lib/auth-context'
+import { FollowProvider } from '@/lib/follow-context'
 import './globals.css'
 
 const dmSerif = DM_Serif_Display({ weight: ['400'], subsets: ['latin'], variable: '--font-dm-serif' })
@@ -38,7 +40,11 @@ export default function RootLayout({
   return (
     <html lang="en" className={`${dmSerif.variable} ${dmSans.variable} ${ibmPlexMono.variable}`}>
       <body className="font-sans antialiased bg-background text-foreground">
-        {children}
+        <AuthProvider>
+          <FollowProvider>
+            {children}
+          </FollowProvider>
+        </AuthProvider>
         <Analytics />
       </body>
     </html>

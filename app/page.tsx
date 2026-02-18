@@ -24,7 +24,7 @@ export default function Home() {
                 REQUISTI
               </h1>
               <p className="text-white text-base sm:text-lg max-w-md">
-                Requisti est la 1ère plateforme des pros du marketing et de la communication
+                The global platform connecting brands with the world's best advertising agencies and creative talent.
               </p>
             </div>
           </div>
@@ -51,13 +51,13 @@ export default function Home() {
         {/* Search Block - White overlay (Scanbook style) */}
         <section className="relative -mt-20 lg:-mt-24 z-20 px-4 sm:px-6 lg:px-8 max-w-5xl mx-auto">
           <div className="bg-white rounded-xl shadow-lg p-6 sm:p-8">
-            <p className="text-sm text-[#666] mb-2">{companies.length}+ agences recensées</p>
-            <h2 className="text-2xl sm:text-3xl font-bold text-[#1a1a1a] mb-6">Trouver une entreprise</h2>
+            <p className="text-sm text-[#666] mb-2">{companies.length}+ agencies listed worldwide</p>
+            <h2 className="text-2xl sm:text-3xl font-bold text-[#1a1a1a] mb-6">Find an Agency</h2>
             <div className="flex flex-col sm:flex-row gap-3">
               <div className="flex-1 relative">
                 <Search className="absolute left-4 top-1/2 -translate-y-1/2 w-5 h-5 text-[#666]" />
                 <Input
-                  placeholder="Rechercher une agence, une personne..."
+                  placeholder="Search agencies, people, campaigns..."
                   className="pl-12 h-12 bg-[#2e3843] border-0 text-white placeholder:text-gray-400 rounded-lg"
                 />
               </div>
@@ -68,11 +68,11 @@ export default function Home() {
           </div>
         </section>
 
-        {/* Les entreprises du moment */}
+        {/* Featured Agencies */}
         <section className="px-4 sm:px-6 lg:px-8 py-16 lg:py-24 max-w-7xl mx-auto">
           <h2 className="text-2xl sm:text-3xl font-bold text-[#1a1a1a] mb-8">
             <span className="relative inline-block">
-              Les entreprises du moment
+              Featured Agencies
               <span
                 className="absolute bottom-1 left-0 right-0 h-3 -z-10 opacity-60"
                 style={{ backgroundColor: '#98F5CC' }}
@@ -86,9 +86,9 @@ export default function Home() {
           </div>
         </section>
 
-        {/* Les dernières réalisations */}
+        {/* Latest Creative Work */}
         <section className="px-4 sm:px-6 lg:px-8 py-16 lg:py-24 max-w-7xl mx-auto">
-          <h2 className="text-2xl sm:text-3xl font-bold text-[#7b68a8] mb-8">Les dernières réalisations</h2>
+          <h2 className="text-2xl sm:text-3xl font-bold text-[#2e3843] mb-8">Latest Creative Work</h2>
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
             {campaigns.slice(0, 4).map((campaign) => (
               <CampaignCard key={campaign.id} campaign={campaign} />
@@ -96,17 +96,17 @@ export default function Home() {
           </div>
         </section>
 
-        {/* Retrouvez les dernières actualités */}
+        {/* Latest News */}
         <section className="px-4 sm:px-6 lg:px-8 py-16 lg:py-24 max-w-7xl mx-auto">
           <div className="flex flex-col lg:flex-row gap-12 lg:gap-16">
             <h2 className="text-2xl sm:text-3xl lg:text-4xl font-bold text-[#4fc487] leading-tight shrink-0 lg:max-w-xs">
-              Retrouvez les
+              Latest
               <br />
-              dernières
+              Industry
               <br />
-              actualités
+              News
               <br />
-              Requisti
+              &amp; Updates
             </h2>
             <div className="flex-1 space-y-6">
               {news.slice(0, 3).map((article) => (
@@ -114,13 +114,13 @@ export default function Home() {
                   key={article.id}
                   className="flex flex-col sm:flex-row gap-4 bg-white rounded-xl shadow-sm p-6 hover:shadow-md transition-shadow"
                 >
-                  <div className="w-24 h-24 shrink-0 flex items-center justify-center rounded-lg bg-[#2e3843] text-[#4fc487]">
-                    <span className="text-2xl font-bold">R</span>
+                  <div className="w-24 h-24 shrink-0 overflow-hidden rounded-lg">
+                    <img src={article.thumbnail} alt="" className="w-full h-full object-cover" />
                   </div>
                   <div className="flex-1 min-w-0">
-                    <p className="text-sm text-[#666] mb-1">requisti</p>
-                    <h3 className="font-bold text-[#1a1a1a] mb-2 line-clamp-2">{article.title}</h3>
-                    <p className="text-sm text-[#666]">{article.date}</p>
+                    <span className="text-xs font-medium text-[#4fc487] uppercase tracking-wide">{article.category}</span>
+                    <h3 className="font-bold text-[#1a1a1a] mb-2 mt-1 line-clamp-2">{article.title}</h3>
+                    <p className="text-sm text-[#666]">{new Date(article.date).toLocaleDateString('en-GB', { day: 'numeric', month: 'short', year: 'numeric' })}</p>
                   </div>
                 </article>
               ))}
@@ -128,35 +128,33 @@ export default function Home() {
           </div>
         </section>
 
-        {/* Types de projets - Tag cloud */}
+        {/* Project Types - Tag cloud */}
         <section className="px-4 sm:px-6 lg:px-8 py-16 lg:py-24 max-w-7xl mx-auto">
-          <h2 className="text-2xl sm:text-3xl font-bold text-[#4fc487] mb-8">Types de projets</h2>
+          <h2 className="text-2xl sm:text-3xl font-bold text-[#4fc487] mb-8">Browse by Discipline</h2>
           <div className="flex flex-wrap gap-2">
             {[
-              'Brand content',
-              'Publicité / communication / 360',
-              'Stratégie de communication',
-              'Social media',
-              'Digitale',
-              'Relations Publics',
+              'Brand Content',
+              'Advertising / 360',
+              'Brand Strategy',
+              'Social Media',
+              'Digital',
+              'Public Relations',
               'Branding',
               'Design',
-              'Média',
-              'Affichage',
+              'Media',
+              'Out of Home',
               'Radio',
-              'Cinéma',
-              'Presse',
-              'Activation',
-              'Webmarketing',
-              'E-mailing',
-              'Tracking',
-              'Digital',
-              'Référencement / SEO',
-              'Search marketing',
-              'Programmatique / Publicité en ligne',
-              'UX',
-              'E-commerce',
-              'Marketing mobile',
+              'Film & Cinema',
+              'Print',
+              'Experiential',
+              'Performance Marketing',
+              'Email Marketing',
+              'Analytics & Data',
+              'SEO / Search',
+              'Programmatic',
+              'UX / Product',
+              'E-Commerce',
+              'Mobile Marketing',
             ].map((tag) => (
               <Badge
                 key={tag}
@@ -171,13 +169,18 @@ export default function Home() {
 
         {/* Get Listed CTA */}
         <section className="px-4 sm:px-6 lg:px-8 py-16 lg:py-24 max-w-3xl mx-auto text-center">
-          <h2 className="text-3xl sm:text-4xl font-bold mb-4">Faites partie du réseau</h2>
+          <h2 className="text-3xl sm:text-4xl font-bold mb-4">Join the Network</h2>
           <p className="text-lg text-[#666] mb-8">
-            Rejoignez des milliers d&apos;agences et professionnels sur REQUISTI. Présentez votre travail et développez votre réseau.
+            Join thousands of agencies and creative professionals on REQUISTI. Showcase your work and grow your business.
           </p>
-          <Button className="bg-[#4fc487] hover:bg-[#45b078] text-white">
-            Postuler
-          </Button>
+          <div className="flex flex-col sm:flex-row gap-3 justify-center">
+            <Button className="bg-[#4fc487] hover:bg-[#45b078] text-white px-8">
+              Get Listed
+            </Button>
+            <Button variant="outline" className="border-[#2e3843] text-[#2e3843] hover:bg-[#2e3843] hover:text-white px-8">
+              Browse Agencies
+            </Button>
+          </div>
         </section>
       </main>
       <Footer />
