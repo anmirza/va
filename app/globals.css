@@ -4,26 +4,27 @@
 @custom-variant dark (&:is(.dark *));
 
 :root {
-  /* REQUISTI Color Palette - VT Scan Aesthetic */
-  --background: #f7f7f5;
-  --foreground: #0f0f0f;
+  /* REQUISTI - Scanbook/La Réclame inspired palette */
+  --background: #eef0f3;
+  --foreground: #1a1a1a;
   --card: #ffffff;
-  --card-foreground: #0f0f0f;
+  --card-foreground: #1a1a1a;
   --popover: #ffffff;
-  --popover-foreground: #0f0f0f;
-  --primary: #0f0f0f;
-  --primary-foreground: #f7f7f5;
-  --secondary: #e2e2de;
-  --secondary-foreground: #0f0f0f;
-  --muted: #d1d1cc;
+  --popover-foreground: #1a1a1a;
+  --primary: #2e3843;
+  --primary-foreground: #ffffff;
+  --secondary: #d8dce2;
+  --secondary-foreground: #1a1a1a;
+  --muted: #d8dce2;
   --muted-foreground: #666666;
-  --accent: #2563eb;
+  --accent: #4fc487;
   --accent-foreground: #ffffff;
   --destructive: #ef4444;
   --destructive-foreground: #ffffff;
   --border: #e5e5e1;
   --input: #f5f5f3;
-  --ring: #2563eb;
+  --ring: #4fc487;
+  --accent-yellow: #f5d742;
   --gold: #d4a574;
   --silver: #c0c0c0;
   --bronze: #cd7f32;

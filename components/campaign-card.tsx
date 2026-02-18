@@ -2,7 +2,6 @@
 
 import Link from 'next/link'
 import { Campaign } from '@/lib/mock-data'
-import { Badge } from '@/components/ui/badge'
 
 interface CampaignCardProps {
   campaign: Campaign
@@ -11,32 +10,19 @@ interface CampaignCardProps {
 export function CampaignCard({ campaign }: CampaignCardProps) {
   return (
     <Link href={`/campaigns/${campaign.id}`}>
-      <div className="group overflow-hidden rounded-lg bg-card cursor-pointer transition-all duration-300">
-        {/* Image Container */}
-        <div className="relative aspect-video overflow-hidden bg-muted">
-          <img
-            src={campaign.thumbnail}
-            alt={campaign.title}
-            className="w-full h-full object-cover transition-transform duration-300 group-hover:scale-105"
-          />
-        </div>
-
-        {/* Content */}
-        <div className="p-4">
-          <div className="flex gap-2 mb-2">
-            {campaign.format.slice(0, 2).map((fmt, i) => (
-              <Badge key={i} variant="outline" className="text-xs">
-                {fmt}
-              </Badge>
-            ))}
-          </div>
-          <h3 className="font-serif font-bold mb-2 line-clamp-2 group-hover:text-accent transition-colors">
-            {campaign.title}
+      <div className="group relative overflow-hidden rounded-xl bg-[#1a1a1a] aspect-[4/5] cursor-pointer">
+        <img
+          src={campaign.thumbnail}
+          alt={campaign.title}
+          className="absolute inset-0 w-full h-full object-cover transition-transform duration-300 group-hover:scale-105"
+        />
+        <div className="absolute inset-0 bg-gradient-to-t from-black/90 via-black/40 to-transparent" />
+        <div className="absolute bottom-0 left-0 right-0 p-4 sm:p-6">
+          <p className="text-white/90 text-xs mb-2">{campaign.format.join(' / ')}</p>
+          <h3 className="text-white font-bold text-base sm:text-lg mb-2 line-clamp-2 group-hover:text-[#98F5CC] transition-colors">
+            {campaign.title} - {campaign.brand}
           </h3>
-          <div className="flex justify-between items-center text-sm text-muted-foreground">
-            <span>{campaign.agency}</span>
-            <span className="font-mono">{campaign.year}</span>
-          </div>
+          <p className="text-[#98F5CC] text-sm">{campaign.agency}</p>
         </div>
       </div>
     </Link>
