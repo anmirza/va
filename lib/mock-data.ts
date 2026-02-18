@@ -2040,6 +2040,177 @@ export function searchCompanies(query: string, filters?: { city?: string; servic
   return results
 }
 
+// ============================================================
+// ACADEMIC INSTITUTIONS
+// ============================================================
+
+export interface AcademicInstitution {
+  id: string
+  name: string
+  type: 'Ad School' | 'University' | 'Online Course' | 'Workshop'
+  city: string
+  country: string
+  logo: string
+  coverImage: string
+  description: string
+  about: string
+  programs: string[]
+  website: string
+  founded: number
+  notableAlumni?: string[]
+}
+
+export const academicInstitutions: AcademicInstitution[] = [
+  {
+    id: 'ac-01',
+    name: 'Miami Ad School',
+    type: 'Ad School',
+    city: 'Miami',
+    country: 'USA',
+    logo: 'https://via.placeholder.com/200x80?text=Miami+Ad+School',
+    coverImage: 'https://images.unsplash.com/photo-1523050854058-8df90110c9f1?w=800&q=80',
+    description: 'One of the world\'s most respected creative schools, with campuses across the globe.',
+    about: 'Miami Ad School is an international network of portfolio schools dedicated to producing the next generation of advertising creatives. Known for its "boot camps" and real-world briefs from major agencies.',
+    programs: ['Art Direction', 'Copywriting', 'Creative Technology', 'Strategic Planning', 'Design'],
+    website: 'miamiadschool.com',
+    founded: 1993,
+    notableAlumni: ['Award-winning creatives at Wieden+Kennedy, BBDO, DDB'],
+  },
+  {
+    id: 'ac-02',
+    name: 'VCU Brandcenter',
+    type: 'University',
+    city: 'Richmond',
+    country: 'USA',
+    logo: 'https://via.placeholder.com/200x80?text=VCU+Brandcenter',
+    coverImage: 'https://images.unsplash.com/photo-1541339907198-e08756dedf3f?w=800&q=80',
+    description: 'Graduate school dedicated to advertising and brand communications.',
+    about: 'The VCU Brandcenter is consistently ranked among the top graduate programs in advertising. Located in Richmond, Virginia, it trains future creative directors, strategists, and brand managers.',
+    programs: ['Creative Brand Management', 'Art Direction', 'Copywriting', 'Experience Design', 'Strategy'],
+    website: 'brandcenter.vcu.edu',
+    founded: 1996,
+    notableAlumni: ['Top creative leaders at Ogilvy, R/GA, Droga5'],
+  },
+  {
+    id: 'ac-03',
+    name: 'School of Visual Arts (SVA)',
+    type: 'University',
+    city: 'New York',
+    country: 'USA',
+    logo: 'https://via.placeholder.com/200x80?text=SVA',
+    coverImage: 'https://images.unsplash.com/photo-1555854877-bab0e564b8d5?w=800&q=80',
+    description: 'New York\'s leading arts and design school with a world-class advertising programme.',
+    about: 'The School of Visual Arts in New York City offers undergraduate and graduate programmes in advertising, graphic design, and digital media. Faculty includes some of New York\'s most accomplished working professionals.',
+    programs: ['Advertising', 'Graphic Design', 'Branding', 'Digital Photography', 'Motion Graphics'],
+    website: 'sva.edu',
+    founded: 1947,
+    notableAlumni: ['Designers and creatives at top NYC agencies'],
+  },
+  {
+    id: 'ac-04',
+    name: 'D&AD New Blood Academy',
+    type: 'Workshop',
+    city: 'London',
+    country: 'UK',
+    logo: 'https://via.placeholder.com/200x80?text=D%26AD+New+Blood',
+    coverImage: 'https://images.unsplash.com/photo-1524178232363-1fb2b075b655?w=800&q=80',
+    description: 'Intensive workshops connecting emerging talent with industry professionals.',
+    about: 'D&AD New Blood is a series of intensive workshops and competitions that bridge the gap between creative education and the professional world. Run by D&AD in partnership with top agencies.',
+    programs: ['Creative Workshops', 'Industry Mentorship', 'Brief Competitions', 'Networking Events'],
+    website: 'dandad.org/new-blood',
+    founded: 2001,
+  },
+  {
+    id: 'ac-05',
+    name: 'Cannes Lions School of Creativity',
+    type: 'Workshop',
+    city: 'Cannes',
+    country: 'France',
+    logo: 'https://via.placeholder.com/200x80?text=Lions+School',
+    coverImage: 'https://images.unsplash.com/photo-1543269865-cbf427effbad?w=800&q=80',
+    description: 'World-class creative education programme run alongside the Cannes Lions festival.',
+    about: 'The Cannes Lions School of Creativity runs the Young Lions Competitions and Cannes School programmes during the Cannes Lions International Festival of Creativity, providing emerging talent with world-class education and networking.',
+    programs: ['Young Lions Competition', 'Creative Bootcamp', 'Strategy Masterclass', 'Emerging Voices'],
+    website: 'canneslions.com/learn',
+    founded: 2010,
+  },
+  {
+    id: 'ac-06',
+    name: 'Hyper Island',
+    type: 'Ad School',
+    city: 'Stockholm',
+    country: 'Sweden',
+    logo: 'https://via.placeholder.com/200x80?text=Hyper+Island',
+    coverImage: 'https://images.unsplash.com/photo-1522202176988-66273c2fd55f?w=800&q=80',
+    description: 'A world-renowned digital and creative business school.',
+    about: 'Hyper Island is a forward-thinking school and knowledge company that combines technology, digital media, and leadership. Known for its hands-on, project-based learning methodology and strong industry connections.',
+    programs: ['Digital Experience Design', 'Business Transformation', 'Digital Marketing', 'Motion Design', 'Data Strategy'],
+    website: 'hyperisland.com',
+    founded: 1996,
+    notableAlumni: ['Creative and digital leaders at Spotify, IKEA, and major agency networks'],
+  },
+  {
+    id: 'ac-07',
+    name: 'ESCP Business School',
+    type: 'University',
+    city: 'Paris',
+    country: 'France',
+    logo: 'https://via.placeholder.com/200x80?text=ESCP',
+    coverImage: 'https://images.unsplash.com/photo-1486325212027-8081e485255e?w=800&q=80',
+    description: 'Europe\'s oldest business school with a renowned marketing and communications programme.',
+    about: 'ESCP Business School, founded in 1819, is Europe\'s oldest business school. Its marketing and communications programme is highly regarded, training students across six European campuses.',
+    programs: ['Master in Marketing & Creativity', 'Brand Management', 'Digital Marketing', 'Luxury Brand Management'],
+    website: 'escp.eu',
+    founded: 1819,
+  },
+  {
+    id: 'ac-08',
+    name: 'The One Club for Creativity',
+    type: 'Online Course',
+    city: 'New York',
+    country: 'USA',
+    logo: 'https://via.placeholder.com/200x80?text=One+Club',
+    coverImage: 'https://images.unsplash.com/photo-1609921212029-bb5a28e60960?w=800&q=80',
+    description: 'Online and in-person education programmes from the organisation behind The One Show.',
+    about: 'The One Club for Creativity provides education programmes, mentorship, and resources for advertising and design professionals worldwide. Includes the prestigious One Show awards programme.',
+    programs: ['Creative Masterclasses', 'Portfolio Reviews', 'Diversity & Inclusion Programmes', 'ADC Young Guns'],
+    website: 'oneclub.org',
+    founded: 1975,
+  },
+  {
+    id: 'ac-09',
+    name: 'Berlin School of Creative Leadership',
+    type: 'University',
+    city: 'Berlin',
+    country: 'Germany',
+    logo: 'https://via.placeholder.com/200x80?text=Berlin+School',
+    coverImage: 'https://images.unsplash.com/photo-1490750967868-88df5691cc57?w=800&q=80',
+    description: 'Executive MBA programme designed specifically for creative industry leaders.',
+    about: 'The Berlin School of Creative Leadership offers an Executive MBA programme for creative professionals looking to step into leadership roles. Taught by world-class faculty from advertising, design, and business.',
+    programs: ['Executive MBA', 'Creative Leadership', 'Brand Strategy', 'Innovation Management'],
+    website: 'berlin-school.com',
+    founded: 2006,
+  },
+  {
+    id: 'ac-10',
+    name: 'Google Digital Garage',
+    type: 'Online Course',
+    city: 'London',
+    country: 'UK',
+    logo: 'https://via.placeholder.com/200x80?text=Google+Garage',
+    coverImage: 'https://images.unsplash.com/photo-1526374965328-7f61d4dc18c5?w=800&q=80',
+    description: 'Free online courses covering digital marketing, data, and career development.',
+    about: 'Google Digital Garage offers free online courses in digital marketing, data and tech, and career development. Accredited by industry bodies and the Interactive Advertising Bureau Europe.',
+    programs: ['Fundamentals of Digital Marketing', 'Google Ads', 'Data Analytics', 'Career Development', 'AI for Marketers'],
+    website: 'learndigital.withgoogle.com',
+    founded: 2015,
+  },
+]
+
+export function getAcademicById(id: string): AcademicInstitution | undefined {
+  return academicInstitutions.find(a => a.id === id)
+}
+
 export function globalSearch(query: string) {
   const q = query.toLowerCase()
   return {

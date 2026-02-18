@@ -1,12 +1,13 @@
 'use client'
 
-import { useState, useMemo } from 'react'
+import { useState, useMemo, Suspense } from 'react'
 import Link from 'next/link'
+import { useSearchParams } from 'next/navigation'
 import { Header } from '@/components/header'
 import { Footer } from '@/components/footer'
 import { campaigns } from '@/lib/mock-data'
 import { useFollow } from '@/lib/follow-context'
-import { Search, Filter, Bookmark, BookmarkCheck, Award, Eye } from 'lucide-react'
+import { Search, Filter, Bookmark, BookmarkCheck, Award, Eye, X } from 'lucide-react'
 import { Input } from '@/components/ui/input'
 import { Button } from '@/components/ui/button'
 
@@ -14,12 +15,25 @@ const MEDIA_TYPES = ['All', 'TV / Digital', 'Print / OOH', 'Digital / Video', 'M
 const SECTORS = ['All', 'Sports', 'Beverages', 'FMCG', 'Technology', 'Retail', 'Automotive', 'Finance', 'Food', 'Entertainment', 'Travel & Tourism', 'Public Service', 'Healthcare']
 const COUNTRIES = ['All', 'USA', 'UK', 'France', 'Germany', 'Sweden', 'Spain', 'Australia', 'Brazil']
 
-export default function CreativeLibraryPage() {
-  const [query, setQuery] = useState('')
-  const [mediaType, setMediaType] = useState('All')
-  const [sector, setSector] = useState('All')
+function CreativeLibraryContent() {
+  const params = useSearchParams()
+  const [query, setQuery] = useState(params.get('q') || '')
+  const [mediaType, setMediaType] = useState(() => {
+    const fmt = params.get('format')
+    if (!fmt) return 'All'
+    if (fmt === 'tv') return 'TV'
+    if (fmt === 'online-video') return 'Digital / Video'
+    if (fmt === 'print') return 'Print / OOH'
+    if (fmt === 'social') return 'Mobile / Digital'
+    return 'All'
+  })
+  const [sector, setSector] = useState(() => {
+    const s = params.get('sector')
+    if (!s) return 'All'
+    return SECTORS.find(sec => sec.toLowerCase().replace(/[\s&/]+/g, '-') === s) || 'All'
+  })
   const [country, setCountry] = useState('All')
-  const [awardOnly, setAwardOnly] = useState(false)
+  const [awardOnly, setAwardOnly] = useState(params.get('sort') === 'awarded')
   const { isSavedCampaign, toggleCampaign } = useFollow()
 
   const adOfTheDay = campaigns.find(c => c.awardWins && c.awardWins > 20)
@@ -35,15 +49,22 @@ export default function CreativeLibraryPage() {
     })
   }, [query, mediaType, sector, country, awardOnly])
 
+  const formatParam = params.get('format')
+  const sectorParam = params.get('sector')
+
   return (
     <div className="min-h-screen bg-[#eef0f3] flex flex-col">
       <Header />
       <main className="flex-1">
-        {/* Hero */}
         <div className="bg-[#2e3843] px-4 sm:px-6 lg:px-8 py-16">
           <div className="max-w-5xl mx-auto text-center">
+            <div className="flex items-center gap-2 mb-4 text-sm justify-start">
+              <Link href="/" className="text-white/60 hover:text-white">Home</Link>
+              <span className="text-white/40">/</span>
+              <span className="text-white font-medium">Creative Library</span>
+            </div>
             <h1 className="text-4xl sm:text-5xl font-bold text-white mb-3">Creative Library</h1>
-            <p className="text-white/70 text-lg mb-8">240,000+ ad campaigns & case studies from around the world</p>
+            <p className="text-white/70 text-lg mb-8">Ad campaigns &amp; case studies from around the world</p>
             <div className="flex gap-3 max-w-2xl mx-auto">
               <div className="flex-1 relative">
                 <Search className="absolute left-4 top-1/2 -translate-y-1/2 w-5 h-5 text-[#666]" />
@@ -58,11 +79,34 @@ export default function CreativeLibraryPage() {
                 Search
               </Button>
             </div>
+
+            {/* Active filter pills */}
+            {(formatParam || sectorParam || awardOnly) && (
+              <div className="flex flex-wrap gap-2 mt-4 justify-center">
+                {formatParam && (
+                  <span className="inline-flex items-center gap-1.5 px-3 py-1 bg-[#f5d742] text-[#1a1a1a] text-xs font-semibold rounded-full">
+                    {formatParam.replace(/-/g, ' ').replace(/\b\w/g, l => l.toUpperCase())}
+                  </span>
+                )}
+                {sectorParam && (
+                  <span className="inline-flex items-center gap-1.5 px-3 py-1 bg-white/20 text-white text-xs font-semibold rounded-full">
+                    {sectorParam.replace(/-/g, ' ').replace(/\b\w/g, l => l.toUpperCase())}
+                  </span>
+                )}
+                {awardOnly && (
+                  <button
+                    onClick={() => setAwardOnly(false)}
+                    className="inline-flex items-center gap-1.5 px-3 py-1 bg-[#f5d742]/30 text-[#f5d742] text-xs font-semibold rounded-full hover:bg-[#f5d742]/50 transition-colors"
+                  >
+                    Award Winners <X className="w-3 h-3" />
+                  </button>
+                )}
+              </div>
+            )}
           </div>
         </div>
 
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-10">
-          {/* Ad of the Day */}
           {adOfTheDay && (
             <div className="mb-10">
               <h2 className="text-xl font-bold text-[#1a1a1a] mb-4">
@@ -90,7 +134,6 @@ export default function CreativeLibraryPage() {
             </div>
           )}
 
-          {/* Filters */}
           <div className="flex flex-wrap gap-3 mb-6">
             <div className="flex items-center gap-2 bg-white rounded-lg px-3 py-2 shadow-sm">
               <Filter className="w-4 h-4 text-[#666]" />
@@ -117,7 +160,6 @@ export default function CreativeLibraryPage() {
             <span className="ml-auto text-sm text-[#666] self-center">{filtered.length} campaigns</span>
           </div>
 
-          {/* Grid */}
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
             {filtered.map(campaign => {
               const saved = isSavedCampaign(campaign.id)
@@ -170,5 +212,13 @@ export default function CreativeLibraryPage() {
       </main>
       <Footer />
     </div>
+  )
+}
+
+export default function CreativeLibraryPage() {
+  return (
+    <Suspense fallback={<div className="min-h-screen flex items-center justify-center">Loading...</div>}>
+      <CreativeLibraryContent />
+    </Suspense>
   )
 }

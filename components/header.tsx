@@ -10,6 +10,7 @@ const directoryItems = [
   { label: 'Agencies', href: '/directory' },
   { label: 'Production Companies', href: '/production' },
   { label: 'Search Consultants', href: '/consultants' },
+  { label: 'Academic & Education', href: '/academic' },
 ]
 
 const navItems = [
