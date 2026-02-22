@@ -1,20 +1,19 @@
 'use client'
 
-import { useState, useEffect } from 'react'
+import React, { useState, useEffect } from 'react'
 import Link from 'next/link'
 import { useAuth } from '@/lib/auth-context'
 import { AuthGuard } from '@/components/auth-guard'
 import { Header } from '@/components/header'
-import { campaigns } from '@/lib/mock-data'
 import {
-  Building2, Edit, Plus, BarChart3, Film, Eye, Award, TrendingUp,
+  Film, Edit, Plus, BarChart3, Eye, TrendingUp,
   MapPin, Globe, Phone, Mail, Linkedin, Twitter, Instagram,
-  Users, Briefcase, CheckSquare, Save, X, ChevronRight,
+  Users, CheckSquare, Save, X, ChevronRight, Award, Camera,
 } from 'lucide-react'
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
 
-interface AgencyProfile {
+interface ProductionProfile {
   businessName: string
   dunsNumber: string
   vatNumber: string
@@ -24,7 +23,6 @@ interface AgencyProfile {
   employees: string
   companyLevel: string
   parentCompany: string
-  category: string
   currency: string
   tradeOrganizations: string
   countryCoverage: string
@@ -39,17 +37,25 @@ interface AgencyProfile {
   linkedin: string
   instagram: string
   tiktok: string
-  pinterest: string
-  reddit: string
+  financials: Record<string, string>
+  clients: { name: string; industry: string; activities: string; year: string; turnover: string; incidence: string; exclusivity: boolean }[]
   competencies: Record<string, boolean>
   capabilityAllocation: Record<string, string>
-  marketPositioning: string
   selectedSectors: Record<string, boolean>
+  hasInHousePost: boolean | null
+  postServices: string
+  permanentEmployees: string
+  freelancers: string
+  directors: { name: string; exclusivity: boolean; priority: boolean; occasional: boolean }[]
+  awards: { festival: string; distinction: string; category: string; year: string; ad: string; brand: string }[]
+  csr: Record<string, boolean | null>
   about: string
   philosophy: string
+  specificServices: string
   aiCurrentTools: string
   aiFuture: string
-  specificServices: string
+  strategicOrientation: string
+  governance: { quality: string; clientData: string; globalLocal: string; additional: string }
   submittedAt: string
 }
 
@@ -75,25 +81,23 @@ function SectionCard({ title, icon: Icon, children }: { title: string; icon: Rea
   )
 }
 
-function AgencyDashContent() {
+function ProductionDashContent() {
   const { user } = useAuth()
-  const [activeTab, setActiveTab] = useState<'overview' | 'edit' | 'work' | 'analytics'>('overview')
-  const [profile, setProfile] = useState<AgencyProfile | null>(null)
-  const [editDraft, setEditDraft] = useState<Partial<AgencyProfile>>({})
+  const [activeTab, setActiveTab] = useState<'overview' | 'edit' | 'directors' | 'analytics'>('overview')
+  const [profile, setProfile] = useState<ProductionProfile | null>(null)
+  const [editDraft, setEditDraft] = useState<Partial<ProductionProfile>>({})
   const [saved, setSaved] = useState(false)
 
   useEffect(() => {
     try {
-      const raw = localStorage.getItem('va_agency_profile')
+      const raw = localStorage.getItem('va_production_profile')
       if (raw) {
-        const p = JSON.parse(raw) as AgencyProfile
+        const p = JSON.parse(raw) as ProductionProfile
         setProfile(p)
         setEditDraft(p)
       }
     } catch { /* ignore */ }
   }, [])
-
-  const agencyCampaigns = campaigns.slice(0, 4)
 
   const activeCompetencies = profile
     ? Object.entries(profile.competencies || {}).filter(([, v]) => v).map(([k]) => k)
@@ -101,23 +105,25 @@ function AgencyDashContent() {
   const activeSectors = profile
     ? Object.entries(profile.selectedSectors || {}).filter(([, v]) => v).map(([k]) => k)
     : []
-
+  const notableAwards = profile?.awards?.filter(a => a.distinction) ?? []
+  const notableClients = profile?.clients?.filter(c => c.name) ?? []
+  const notableDirectors = profile?.directors?.filter(d => d.name) ?? []
   const primaryContact = profile?.contacts?.find(c => c.email) ?? profile?.contacts?.[0]
 
   const handleSave = () => {
     if (!editDraft) return
-    const updated = { ...profile, ...editDraft } as AgencyProfile
+    const updated = { ...profile, ...editDraft } as ProductionProfile
     setProfile(updated)
-    localStorage.setItem('va_agency_profile', JSON.stringify(updated))
+    localStorage.setItem('va_production_profile', JSON.stringify(updated))
     setSaved(true)
     setTimeout(() => setSaved(false), 2000)
     setActiveTab('overview')
   }
 
   const TABS = [
-    { id: 'overview', label: 'Overview', icon: Building2 },
+    { id: 'overview', label: 'Overview', icon: Film },
     { id: 'edit', label: 'Edit Profile', icon: Edit },
-    { id: 'work', label: 'Work', icon: Film },
+    { id: 'directors', label: 'Directors', icon: Camera },
     { id: 'analytics', label: 'Analytics', icon: BarChart3 },
   ] as const
 
@@ -130,21 +136,19 @@ function AgencyDashContent() {
           <div className="max-w-6xl mx-auto flex items-center justify-between gap-4">
             <div>
               <Link href="/dashboard" className="text-sm text-white/60 hover:text-white mb-2 block">← Dashboard</Link>
-              <h1 className="text-2xl font-bold text-white">{profile?.businessName || user?.name || 'My Agency'}</h1>
+              <h1 className="text-2xl font-bold text-white">{profile?.businessName || user?.name || 'My Production House'}</h1>
               {(profile?.city || profile?.country) && (
                 <p className="text-[#98F5CC] text-sm flex items-center gap-1.5 mt-1">
                   <MapPin className="w-3.5 h-3.5" />
-                  {[profile.city, profile.country].filter(Boolean).join(', ')}
+                  {[profile?.city, profile?.country].filter(Boolean).join(', ')}
                 </p>
               )}
             </div>
-            <div className="flex items-center gap-3">
-              {profile && (
-                <div className="hidden sm:flex items-center gap-1.5 bg-[#4fc487]/20 text-[#4fc487] text-xs font-medium px-3 py-1.5 rounded-full">
-                  <CheckSquare className="w-3.5 h-3.5" /> Profile complete
-                </div>
-              )}
-            </div>
+            {profile && (
+              <div className="hidden sm:flex items-center gap-1.5 bg-[#4fc487]/20 text-[#4fc487] text-xs font-medium px-3 py-1.5 rounded-full">
+                <CheckSquare className="w-3.5 h-3.5" /> Profile complete
+              </div>
+            )}
           </div>
         </div>
 
@@ -165,27 +169,26 @@ function AgencyDashContent() {
             })}
           </div>
 
-          {/* ── Overview Tab ── */}
+          {/* ── Overview ── */}
           {activeTab === 'overview' && (
             <div className="space-y-6">
               {!profile && (
                 <div className="bg-white rounded-xl p-10 shadow-sm text-center">
-                  <Building2 className="w-12 h-12 text-[#d8dce2] mx-auto mb-4" />
+                  <Film className="w-12 h-12 text-[#d8dce2] mx-auto mb-4" />
                   <h2 className="text-lg font-semibold text-[#1a1a1a] mb-2">No profile yet</h2>
-                  <p className="text-sm text-[#666] mb-6">Complete the agency registration form to build your VA profile.</p>
-                  <Link href="/signup/agency">
-                    <Button className="bg-[#4fc487] hover:bg-[#45b078] text-white">Register Your Agency</Button>
+                  <p className="text-sm text-[#666] mb-6">Complete the production house registration form to build your VA profile.</p>
+                  <Link href="/signup/production">
+                    <Button className="bg-[#4fc487] hover:bg-[#45b078] text-white">Register Your Production House</Button>
                   </Link>
                 </div>
               )}
 
               {profile && (
                 <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
-                  {/* Left column */}
+                  {/* Left */}
                   <div className="lg:col-span-2 space-y-6">
-                    {/* About */}
                     {profile.about && (
-                      <SectionCard title="About" icon={Building2}>
+                      <SectionCard title="About" icon={Film}>
                         <p className="text-sm text-[#444] leading-relaxed">{profile.about}</p>
                         {profile.philosophy && (
                           <div className="mt-4 pt-4 border-t border-[#f0f0f0]">
@@ -196,25 +199,24 @@ function AgencyDashContent() {
                       </SectionCard>
                     )}
 
-                    {/* General Info */}
-                    <SectionCard title="General Information" icon={Briefcase}>
-                      <InfoRow label="Registered Name" value={profile.businessName} />
+                    <SectionCard title="General Information" icon={Eye}>
+                      <InfoRow label="Company Name" value={profile.businessName} />
                       <InfoRow label="Year Established" value={profile.yearEstablished} />
                       <InfoRow label="Legal Form" value={profile.legalForm} />
                       <InfoRow label="Company Level" value={profile.companyLevel} />
                       <InfoRow label="Parent Company" value={profile.parentCompany} />
-                      <InfoRow label="Agency Category" value={profile.category} />
                       <InfoRow label="Employees" value={profile.employees} />
+                      <InfoRow label="Permanent Employees" value={profile.permanentEmployees} />
+                      <InfoRow label="Freelancers" value={profile.freelancers} />
                       <InfoRow label="Coverage" value={profile.countryCoverage} />
                       <InfoRow label="Currency" value={profile.currency} />
-                      {profile.dunsNumber && <InfoRow label="D-U-N-S® Number" value={profile.dunsNumber} />}
-                      {profile.vatNumber && <InfoRow label="VAT Number" value={profile.vatNumber} />}
-                      {profile.tradeOrganizations && <InfoRow label="Trade Orgs." value={profile.tradeOrganizations} />}
+                      {profile.hasInHousePost !== null && (
+                        <InfoRow label="In-House Post" value={profile.hasInHousePost ? 'Yes' : 'No'} />
+                      )}
                     </SectionCard>
 
-                    {/* Competencies */}
                     {activeCompetencies.length > 0 && (
-                      <SectionCard title="Competencies" icon={CheckSquare}>
+                      <SectionCard title="Production Competencies" icon={CheckSquare}>
                         <div className="flex flex-wrap gap-2">
                           {activeCompetencies.map(c => (
                             <span key={c} className="bg-[#eef0f3] text-[#444] text-xs px-2.5 py-1 rounded-full">{c}</span>
@@ -223,7 +225,6 @@ function AgencyDashContent() {
                       </SectionCard>
                     )}
 
-                    {/* Sectors */}
                     {activeSectors.length > 0 && (
                       <SectionCard title="Sectors Served" icon={BarChart3}>
                         <div className="flex flex-wrap gap-2">
@@ -234,29 +235,42 @@ function AgencyDashContent() {
                       </SectionCard>
                     )}
 
-                    {/* Recent Work */}
-                    <SectionCard title="Work Portfolio" icon={Film}>
-                      <div className="grid grid-cols-2 gap-3">
-                        {agencyCampaigns.map(c => (
-                          <Link key={c.id} href={`/creative-library/${c.id}`} className="group">
-                            <img src={c.thumbnail} alt="" className="w-full h-28 object-cover rounded-lg mb-1.5" />
-                            <p className="text-xs font-medium text-[#1a1a1a] group-hover:text-[#4fc487] transition-colors truncate">{c.title}</p>
-                            <p className="text-xs text-[#999]">{c.brand} · {c.year}</p>
-                          </Link>
-                        ))}
-                      </div>
-                      <button
-                        onClick={() => setActiveTab('work')}
-                        className="mt-4 w-full text-center text-xs text-[#4fc487] font-medium hover:underline flex items-center justify-center gap-1"
-                      >
-                        Manage all work <ChevronRight className="w-3 h-3" />
-                      </button>
-                    </SectionCard>
+                    {notableClients.length > 0 && (
+                      <SectionCard title="Key Clients" icon={Users}>
+                        <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                          {notableClients.map((c, i) => (
+                            <div key={i} className="border border-[#eef0f3] rounded-lg p-3">
+                              <p className="text-sm font-medium text-[#1a1a1a]">{c.name}</p>
+                              {c.industry && <p className="text-xs text-[#999] mt-0.5">{c.industry}</p>}
+                              {c.activities && <p className="text-xs text-[#666] mt-1">{c.activities}</p>}
+                            </div>
+                          ))}
+                        </div>
+                        <button onClick={() => setActiveTab('directors')} className="mt-4 text-xs text-[#4fc487] font-medium hover:underline flex items-center gap-1">
+                          See all directors <ChevronRight className="w-3 h-3" />
+                        </button>
+                      </SectionCard>
+                    )}
+
+                    {notableAwards.length > 0 && (
+                      <SectionCard title="Awards" icon={Award}>
+                        <div className="space-y-2">
+                          {notableAwards.slice(0, 5).map((a, i) => (
+                            <div key={i} className="flex items-center gap-3 py-1.5 border-b border-[#f0f0f0] last:border-0">
+                              <div className="w-1.5 h-1.5 rounded-full bg-[#4fc487] shrink-0" />
+                              <div>
+                                <p className="text-sm text-[#1a1a1a]"><span className="font-medium">{a.festival}</span> — {a.distinction}</p>
+                                {(a.ad || a.brand) && <p className="text-xs text-[#999]">{[a.ad, a.brand, a.year].filter(Boolean).join(' · ')}</p>}
+                              </div>
+                            </div>
+                          ))}
+                        </div>
+                      </SectionCard>
+                    )}
                   </div>
 
-                  {/* Right column */}
+                  {/* Right */}
                   <div className="space-y-4">
-                    {/* Contact */}
                     <SectionCard title="Contact" icon={Mail}>
                       <div className="space-y-2.5">
                         {profile.address && (
@@ -281,7 +295,6 @@ function AgencyDashContent() {
                           </div>
                         )}
                       </div>
-                      {/* Social */}
                       {(profile.linkedin || profile.twitter || profile.instagram) && (
                         <div className="flex items-center gap-3 mt-4 pt-4 border-t border-[#f0f0f0]">
                           {profile.linkedin && (
@@ -303,27 +316,25 @@ function AgencyDashContent() {
                       )}
                     </SectionCard>
 
-                    {/* Key Contacts */}
                     {profile.contacts?.some(c => c.firstName) && (
                       <SectionCard title="Key Contacts" icon={Users}>
                         <div className="space-y-3">
                           {profile.contacts.filter(c => c.firstName).map((c, i) => (
-                            <div key={i} className="flex flex-col">
+                            <div key={i}>
                               <p className="text-sm font-medium text-[#1a1a1a]">{c.firstName} {c.lastName}</p>
                               <p className="text-xs text-[#999]">{c.role}</p>
-                              {c.email && <a href={`mailto:${c.email}`} className="text-xs text-[#4fc487] hover:underline mt-0.5">{c.email}</a>}
+                              {c.email && <a href={`mailto:${c.email}`} className="text-xs text-[#4fc487] hover:underline">{c.email}</a>}
                             </div>
                           ))}
                         </div>
                       </SectionCard>
                     )}
 
-                    {/* Quick Stats */}
                     <SectionCard title="Quick Stats" icon={TrendingUp}>
                       <div className="space-y-2.5">
                         {profile.employees && (
                           <div className="flex items-center justify-between text-sm">
-                            <span className="text-[#666]">Employees</span>
+                            <span className="text-[#666]">Staff Size</span>
                             <span className="font-semibold text-[#1a1a1a]">{profile.employees}</span>
                           </div>
                         )}
@@ -335,6 +346,18 @@ function AgencyDashContent() {
                           <span className="text-[#666]">Sectors</span>
                           <span className="font-semibold text-[#1a1a1a]">{activeSectors.length}</span>
                         </div>
+                        {notableDirectors.length > 0 && (
+                          <div className="flex items-center justify-between text-sm">
+                            <span className="text-[#666]">Directors</span>
+                            <span className="font-semibold text-[#1a1a1a]">{notableDirectors.length}</span>
+                          </div>
+                        )}
+                        {notableAwards.length > 0 && (
+                          <div className="flex items-center justify-between text-sm">
+                            <span className="text-[#666]">Award Wins</span>
+                            <span className="font-semibold text-[#1a1a1a]">{notableAwards.length}</span>
+                          </div>
+                        )}
                         {profile.yearEstablished && (
                           <div className="flex items-center justify-between text-sm">
                             <span className="text-[#666]">Founded</span>
@@ -344,7 +367,6 @@ function AgencyDashContent() {
                       </div>
                     </SectionCard>
 
-                    {/* AI Readiness */}
                     {profile.aiCurrentTools && (
                       <SectionCard title="AI Readiness" icon={Award}>
                         <p className="text-xs text-[#666] mb-1 font-medium">Current tools</p>
@@ -357,7 +379,7 @@ function AgencyDashContent() {
             </div>
           )}
 
-          {/* ── Edit Profile Tab ── */}
+          {/* ── Edit Profile ── */}
           {activeTab === 'edit' && (
             <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
               <div className="space-y-6">
@@ -365,40 +387,28 @@ function AgencyDashContent() {
                   <h2 className="font-bold text-[#1a1a1a] mb-5">Core Details</h2>
                   <div className="space-y-4">
                     <div>
-                      <label className="block text-xs font-medium text-[#666] mb-1.5">Agency Name *</label>
-                      <Input value={editDraft.businessName || ''} onChange={e => setEditDraft(p => ({ ...p, businessName: e.target.value }))} className="h-10" placeholder="Registered company name" />
+                      <label className="block text-xs font-medium text-[#666] mb-1.5">Company Name *</label>
+                      <Input value={editDraft.businessName || ''} onChange={e => setEditDraft(p => ({ ...p, businessName: e.target.value }))} className="h-10" />
                     </div>
                     <div>
                       <label className="block text-xs font-medium text-[#666] mb-1.5">Year Established</label>
-                      <Input value={editDraft.yearEstablished || ''} onChange={e => setEditDraft(p => ({ ...p, yearEstablished: e.target.value }))} className="h-10" placeholder="e.g. 2005" />
+                      <Input value={editDraft.yearEstablished || ''} onChange={e => setEditDraft(p => ({ ...p, yearEstablished: e.target.value }))} className="h-10" />
                     </div>
                     <div>
-                      <label className="block text-xs font-medium text-[#666] mb-1.5">Agency Category</label>
-                      <Input value={editDraft.category || ''} onChange={e => setEditDraft(p => ({ ...p, category: e.target.value }))} className="h-10" placeholder="e.g. Full Service, Digital, ATL" />
-                    </div>
-                    <div>
-                      <label className="block text-xs font-medium text-[#666] mb-1.5">Number of Employees</label>
-                      <Input value={editDraft.employees || ''} onChange={e => setEditDraft(p => ({ ...p, employees: e.target.value }))} className="h-10" placeholder="e.g. 51 to 100" />
+                      <label className="block text-xs font-medium text-[#666] mb-1.5">Staff Size</label>
+                      <Input value={editDraft.employees || ''} onChange={e => setEditDraft(p => ({ ...p, employees: e.target.value }))} className="h-10" />
                     </div>
                     <div>
                       <label className="block text-xs font-medium text-[#666] mb-1.5">About</label>
-                      <textarea
-                        value={editDraft.about || ''}
-                        onChange={e => setEditDraft(p => ({ ...p, about: e.target.value }))}
-                        rows={4}
-                        className="w-full border border-[#d8dce2] rounded-lg px-3 py-2.5 text-sm focus:outline-none focus:border-[#4fc487] resize-none"
-                        placeholder="Describe your agency…"
-                      />
+                      <textarea value={editDraft.about || ''} onChange={e => setEditDraft(p => ({ ...p, about: e.target.value }))} rows={4} className="w-full border border-[#d8dce2] rounded-lg px-3 py-2.5 text-sm focus:outline-none focus:border-[#4fc487] resize-none" placeholder="Describe your production house…" />
                     </div>
                     <div>
                       <label className="block text-xs font-medium text-[#666] mb-1.5">Philosophy</label>
-                      <textarea
-                        value={editDraft.philosophy || ''}
-                        onChange={e => setEditDraft(p => ({ ...p, philosophy: e.target.value }))}
-                        rows={3}
-                        className="w-full border border-[#d8dce2] rounded-lg px-3 py-2.5 text-sm focus:outline-none focus:border-[#4fc487] resize-none"
-                        placeholder="Your agency's philosophy…"
-                      />
+                      <textarea value={editDraft.philosophy || ''} onChange={e => setEditDraft(p => ({ ...p, philosophy: e.target.value }))} rows={3} className="w-full border border-[#d8dce2] rounded-lg px-3 py-2.5 text-sm focus:outline-none focus:border-[#4fc487] resize-none" />
+                    </div>
+                    <div>
+                      <label className="block text-xs font-medium text-[#666] mb-1.5">Strategic Orientation</label>
+                      <textarea value={editDraft.strategicOrientation || ''} onChange={e => setEditDraft(p => ({ ...p, strategicOrientation: e.target.value }))} rows={3} className="w-full border border-[#d8dce2] rounded-lg px-3 py-2.5 text-sm focus:outline-none focus:border-[#4fc487] resize-none" placeholder="Your strategic goals and focus areas…" />
                     </div>
                   </div>
                 </div>
@@ -434,34 +444,28 @@ function AgencyDashContent() {
                   <div className="space-y-4">
                     <div>
                       <label className="block text-xs font-medium text-[#666] mb-1.5">Website</label>
-                      <Input value={editDraft.website || ''} onChange={e => setEditDraft(p => ({ ...p, website: e.target.value }))} className="h-10" placeholder="https://youragency.com" />
+                      <Input value={editDraft.website || ''} onChange={e => setEditDraft(p => ({ ...p, website: e.target.value }))} className="h-10" placeholder="https://" />
                     </div>
                     <div>
                       <label className="block text-xs font-medium text-[#666] mb-1.5">LinkedIn</label>
-                      <Input value={editDraft.linkedin || ''} onChange={e => setEditDraft(p => ({ ...p, linkedin: e.target.value }))} className="h-10" placeholder="company handle" />
-                    </div>
-                    <div>
-                      <label className="block text-xs font-medium text-[#666] mb-1.5">Twitter / X</label>
-                      <Input value={editDraft.twitter || ''} onChange={e => setEditDraft(p => ({ ...p, twitter: e.target.value }))} className="h-10" placeholder="@handle" />
+                      <Input value={editDraft.linkedin || ''} onChange={e => setEditDraft(p => ({ ...p, linkedin: e.target.value }))} className="h-10" />
                     </div>
                     <div>
                       <label className="block text-xs font-medium text-[#666] mb-1.5">Instagram</label>
-                      <Input value={editDraft.instagram || ''} onChange={e => setEditDraft(p => ({ ...p, instagram: e.target.value }))} className="h-10" placeholder="@handle" />
+                      <Input value={editDraft.instagram || ''} onChange={e => setEditDraft(p => ({ ...p, instagram: e.target.value }))} className="h-10" />
+                    </div>
+                    <div>
+                      <label className="block text-xs font-medium text-[#666] mb-1.5">Twitter / X</label>
+                      <Input value={editDraft.twitter || ''} onChange={e => setEditDraft(p => ({ ...p, twitter: e.target.value }))} className="h-10" />
                     </div>
                   </div>
                 </div>
 
                 <div className="bg-white rounded-xl p-6 shadow-sm">
-                  <h2 className="font-bold text-[#1a1a1a] mb-5">Market Positioning</h2>
+                  <h2 className="font-bold text-[#1a1a1a] mb-5">Post-Production</h2>
                   <div>
-                    <label className="block text-xs font-medium text-[#666] mb-1.5">Specific Services</label>
-                    <textarea
-                      value={editDraft.specificServices || ''}
-                      onChange={e => setEditDraft(p => ({ ...p, specificServices: e.target.value }))}
-                      rows={4}
-                      className="w-full border border-[#d8dce2] rounded-lg px-3 py-2.5 text-sm focus:outline-none focus:border-[#4fc487] resize-none"
-                      placeholder="Describe any unique or specialized services…"
-                    />
+                    <label className="block text-xs font-medium text-[#666] mb-1.5">In-House Post Services</label>
+                    <textarea value={editDraft.postServices || ''} onChange={e => setEditDraft(p => ({ ...p, postServices: e.target.value }))} rows={4} className="w-full border border-[#d8dce2] rounded-lg px-3 py-2.5 text-sm focus:outline-none focus:border-[#4fc487] resize-none" placeholder="Describe post-production capabilities…" />
                   </div>
                 </div>
 
@@ -470,29 +474,16 @@ function AgencyDashContent() {
                   <div className="space-y-4">
                     <div>
                       <label className="block text-xs font-medium text-[#666] mb-1.5">Current AI Tools</label>
-                      <textarea
-                        value={editDraft.aiCurrentTools || ''}
-                        onChange={e => setEditDraft(p => ({ ...p, aiCurrentTools: e.target.value }))}
-                        rows={3}
-                        className="w-full border border-[#d8dce2] rounded-lg px-3 py-2.5 text-sm focus:outline-none focus:border-[#4fc487] resize-none"
-                        placeholder="What AI tools does your agency currently use?"
-                      />
+                      <textarea value={editDraft.aiCurrentTools || ''} onChange={e => setEditDraft(p => ({ ...p, aiCurrentTools: e.target.value }))} rows={3} className="w-full border border-[#d8dce2] rounded-lg px-3 py-2.5 text-sm focus:outline-none focus:border-[#4fc487] resize-none" />
                     </div>
                     <div>
                       <label className="block text-xs font-medium text-[#666] mb-1.5">Future AI Plans</label>
-                      <textarea
-                        value={editDraft.aiFuture || ''}
-                        onChange={e => setEditDraft(p => ({ ...p, aiFuture: e.target.value }))}
-                        rows={3}
-                        className="w-full border border-[#d8dce2] rounded-lg px-3 py-2.5 text-sm focus:outline-none focus:border-[#4fc487] resize-none"
-                        placeholder="How do you plan to leverage AI in the future?"
-                      />
+                      <textarea value={editDraft.aiFuture || ''} onChange={e => setEditDraft(p => ({ ...p, aiFuture: e.target.value }))} rows={3} className="w-full border border-[#d8dce2] rounded-lg px-3 py-2.5 text-sm focus:outline-none focus:border-[#4fc487] resize-none" />
                     </div>
                   </div>
                 </div>
               </div>
 
-              {/* Save bar */}
               <div className="lg:col-span-2 flex items-center justify-end gap-3 sticky bottom-6">
                 <div className="bg-white rounded-xl shadow-lg border border-[#eef0f3] flex items-center gap-3 px-5 py-3">
                   <button onClick={() => setActiveTab('overview')} className="flex items-center gap-1.5 text-sm text-[#666] hover:text-[#1a1a1a]">
@@ -506,37 +497,46 @@ function AgencyDashContent() {
             </div>
           )}
 
-          {/* ── Work Tab ── */}
-          {activeTab === 'work' && (
+          {/* ── Directors Tab ── */}
+          {activeTab === 'directors' && (
             <div>
               <div className="flex items-center justify-between mb-6">
-                <h2 className="text-xl font-bold text-[#1a1a1a]">Work Portfolio ({agencyCampaigns.length})</h2>
+                <h2 className="text-xl font-bold text-[#1a1a1a]">Directors Roster</h2>
                 <Button className="bg-[#4fc487] hover:bg-[#45b078] text-white gap-2 text-sm">
-                  <Plus className="w-4 h-4" /> Add Work
+                  <Plus className="w-4 h-4" /> Add Director
                 </Button>
               </div>
-              <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
-                {agencyCampaigns.map(c => (
-                  <div key={c.id} className="bg-white rounded-xl shadow-sm overflow-hidden">
-                    <img src={c.thumbnail} alt="" className="w-full h-40 object-cover" />
-                    <div className="p-4">
-                      <h3 className="font-medium text-[#1a1a1a] mb-1">{c.title}</h3>
-                      <p className="text-sm text-[#666]">{c.brand} · {c.year}</p>
-                      <div className="flex gap-2 mt-3">
-                        <Link href={`/creative-library/${c.id}`}><Button variant="outline" size="sm" className="text-xs border-[#d8dce2]">View</Button></Link>
+              {notableDirectors.length > 0 ? (
+                <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
+                  {notableDirectors.map((d, i) => (
+                    <div key={i} className="bg-white rounded-xl p-5 shadow-sm">
+                      <div className="w-10 h-10 bg-[#eef0f3] rounded-full flex items-center justify-center mb-3">
+                        <Camera className="w-5 h-5 text-[#4fc487]" />
+                      </div>
+                      <h3 className="font-semibold text-[#1a1a1a] mb-2">{d.name}</h3>
+                      <div className="flex flex-wrap gap-1.5">
+                        {d.exclusivity && <span className="text-xs bg-[#4fc487]/15 text-[#2d7a50] px-2 py-0.5 rounded-full">Exclusive</span>}
+                        {d.priority && <span className="text-xs bg-[#eef0f3] text-[#666] px-2 py-0.5 rounded-full">Priority</span>}
+                        {d.occasional && <span className="text-xs bg-[#eef0f3] text-[#666] px-2 py-0.5 rounded-full">Occasional</span>}
                       </div>
                     </div>
+                  ))}
+                  <div className="border-2 border-dashed border-[#d8dce2] rounded-xl flex flex-col items-center justify-center p-8 text-[#666] hover:border-[#4fc487] hover:text-[#4fc487] transition-colors cursor-pointer min-h-[150px]">
+                    <Plus className="w-8 h-8 mb-2" />
+                    <p className="text-sm font-medium">Add Director</p>
                   </div>
-                ))}
-                <div className="border-2 border-dashed border-[#d8dce2] rounded-xl flex flex-col items-center justify-center p-8 text-[#666] hover:border-[#4fc487] hover:text-[#4fc487] transition-colors cursor-pointer min-h-[200px]">
-                  <Plus className="w-8 h-8 mb-2" />
-                  <p className="text-sm font-medium">Add New Work</p>
                 </div>
-              </div>
+              ) : (
+                <div className="bg-white rounded-xl p-10 shadow-sm text-center">
+                  <Camera className="w-12 h-12 text-[#d8dce2] mx-auto mb-4" />
+                  <h3 className="font-medium text-[#1a1a1a] mb-2">No directors added yet</h3>
+                  <p className="text-sm text-[#666]">Add directors to showcase your production talent roster.</p>
+                </div>
+              )}
             </div>
           )}
 
-          {/* ── Analytics Tab ── */}
+          {/* ── Analytics ── */}
           {activeTab === 'analytics' && (
             <div className="bg-white rounded-xl p-6 shadow-sm">
               <div className="flex items-center gap-2 mb-6">
@@ -545,10 +545,10 @@ function AgencyDashContent() {
               </div>
               <div className="grid grid-cols-2 sm:grid-cols-4 gap-4 mb-8">
                 {[
-                  { label: 'Profile Views', value: '1,284', change: '+12%' },
-                  { label: 'Work Views', value: '3,451', change: '+8%' },
-                  { label: 'Followers', value: '47', change: '+5' },
-                  { label: 'Contact Clicks', value: '23', change: '+3' },
+                  { label: 'Profile Views', value: '842', change: '+9%' },
+                  { label: 'Showreel Plays', value: '1,205', change: '+15%' },
+                  { label: 'Followers', value: '31', change: '+4' },
+                  { label: 'Contact Clicks', value: '17', change: '+2' },
                 ].map(stat => (
                   <div key={stat.label} className="bg-[#eef0f3] rounded-xl p-4 text-center">
                     <p className="text-2xl font-bold text-[#1a1a1a] mb-1">{stat.value}</p>
@@ -570,10 +570,10 @@ function AgencyDashContent() {
   )
 }
 
-export default function AgencyDashboardPage() {
+export default function ProductionDashboardPage() {
   return (
     <AuthGuard>
-      <AgencyDashContent />
+      <ProductionDashContent />
     </AuthGuard>
   )
 }

@@ -1,5 +1,6 @@
 'use client'
 
+import React from 'react'
 import Link from 'next/link'
 import { useAuth } from '@/lib/auth-context'
 import { useFollow } from '@/lib/follow-context'
@@ -17,9 +18,13 @@ function DashboardContent() {
   const followedTalent = talent.filter(t => followed.talent.includes(t.id))
   const savedCampaigns = campaigns.filter(c => followed.campaigns.includes(c.id))
 
-  const roleLinks = {
+  const roleLinks: Record<string, { label: string; href: string; icon: React.ElementType; desc: string }[]> = {
     agency_owner: [
       { label: 'Manage Agency', href: '/dashboard/agency', icon: Building2, desc: 'Edit your agency profile, add work' },
+      { label: 'Settings', href: '/dashboard/settings', icon: Settings, desc: 'Account & billing settings' },
+    ],
+    production: [
+      { label: 'Manage Production', href: '/dashboard/production', icon: Film, desc: 'Edit your production house profile' },
       { label: 'Settings', href: '/dashboard/settings', icon: Settings, desc: 'Account & billing settings' },
     ],
     talent: [
@@ -33,7 +38,7 @@ function DashboardContent() {
     admin: [],
   }
 
-  const links = roleLinks[user?.role || 'marketer']
+  const links = roleLinks[user?.role ?? 'marketer'] ?? []
 
   return (
     <div className="min-h-screen bg-[#eef0f3] flex flex-col">

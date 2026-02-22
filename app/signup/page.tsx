@@ -6,21 +6,28 @@ import { useRouter } from 'next/navigation'
 import { useAuth } from '@/lib/auth-context'
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
-import { Building2, User, Eye, EyeOff } from 'lucide-react'
+import { Building2, Film, User, Eye, EyeOff } from 'lucide-react'
 
 const roles = [
   {
     id: 'agency_owner' as const,
     icon: Building2,
-    title: 'Agency / Production Co.',
-    description: 'Showcase your agency, add work, attract new clients',
+    title: 'Advertising Agency',
+    description: 'Full-service, digital, ATL, BTL or specialist agency — showcase your work and attract new clients',
     nextPath: '/signup/agency',
+  },
+  {
+    id: 'production' as const,
+    icon: Film,
+    title: 'Production House',
+    description: 'Film, animation or content production company — get discovered by agencies and brands worldwide',
+    nextPath: '/signup/production',
   },
   {
     id: 'talent' as const,
     icon: User,
     title: 'Creative Professional',
-    description: 'Build your talent profile, get discovered by top agencies',
+    description: 'Build your talent profile and get discovered by top agencies',
     nextPath: '/signup/talent',
   },
 ]
@@ -59,7 +66,7 @@ export default function SignupPage() {
   return (
     <div className="min-h-screen bg-[#eef0f3] flex flex-col">
       <header className="bg-[#2e3843] px-6 py-4 flex items-center justify-between">
-        <Link href="/" className="text-xl font-bold text-white">REQUISTI</Link>
+        <Link href="/" className="text-xl font-bold text-white">VA</Link>
         <Link href="/login" className="text-sm text-white/80 hover:text-white">
           Already have an account? Sign in
         </Link>
@@ -70,7 +77,7 @@ export default function SignupPage() {
           {step === 'role' ? (
             <div>
               <div className="text-center mb-8">
-                <h1 className="text-3xl font-bold text-[#1a1a1a] mb-2">Join REQUISTI</h1>
+                <h1 className="text-3xl font-bold text-[#1a1a1a] mb-2">Join VA</h1>
                 <p className="text-[#666]">Select the option that best describes you</p>
               </div>
               <div className="space-y-4">

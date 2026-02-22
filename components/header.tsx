@@ -50,7 +50,7 @@ export function Header() {
         <div className="flex justify-between items-center h-14 lg:h-16">
           {/* Logo */}
           <Link href="/" className="flex items-center shrink-0">
-            <span className="text-xl font-bold text-white tracking-tight">REQUISTI</span>
+            <span className="text-xl font-bold text-white tracking-tight">VA</span>
           </Link>
 
           {/* Desktop Navigation */}

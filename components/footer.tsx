@@ -9,7 +9,7 @@ export function Footer() {
         <div className="grid grid-cols-2 md:grid-cols-4 gap-8 mb-12">
           {/* Brand */}
           <div className="col-span-2 md:col-span-1">
-            <h2 className="text-xl font-bold text-white mb-3">REQUISTI</h2>
+            <h2 className="text-xl font-bold text-white mb-3">VA</h2>
             <p className="text-sm text-white/60 mb-4 max-w-48">
               The global platform connecting brands with the world's best advertising talent.
             </p>
@@ -58,7 +58,7 @@ export function Footer() {
             <h3 className="text-sm font-bold text-white/90 uppercase tracking-wide mb-4">Company</h3>
             <ul className="space-y-2.5 text-sm">
               {[
-                { label: 'About REQUISTI', href: '/about', key: 'about' },
+                { label: 'About VA', href: '/about', key: 'about' },
                 { label: 'Get Listed', href: '/signup/agency', key: 'get-listed' },
                 { label: 'Sign In', href: '/login', key: 'sign-in' },
                 { label: 'Contact', href: '/about#contact', key: 'contact' },
@@ -70,7 +70,7 @@ export function Footer() {
         </div>
 
         <div className="border-t border-white/10 pt-8 flex flex-col sm:flex-row justify-between items-center gap-4 text-sm text-white/40">
-          <p>© 2012 - 2026 REQUISTI. All rights reserved.</p>
+          <p>© 2012 - 2026 VA. All rights reserved.</p>
           <div className="flex gap-5">
             <a href="#" className="hover:text-white transition-colors">Contact & About</a>
             <a href="#" className="hover:text-white transition-colors">Legal Notice</a>

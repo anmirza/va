@@ -34,7 +34,7 @@ export default function LoginPage() {
     <div className="min-h-screen bg-[#eef0f3] flex flex-col">
       {/* Minimal header */}
       <header className="bg-[#2e3843] px-6 py-4 flex items-center justify-between">
-        <Link href="/" className="text-xl font-bold text-white">REQUISTI</Link>
+        <Link href="/" className="text-xl font-bold text-white">VA</Link>
         <Link href="/signup" className="text-sm text-white/80 hover:text-white">
           No account? Sign up
         </Link>
@@ -48,7 +48,7 @@ export default function LoginPage() {
                 <span className="text-[#4fc487] font-bold text-lg">R</span>
               </div>
               <h1 className="text-2xl font-bold text-[#1a1a1a] mb-1">Welcome back</h1>
-              <p className="text-[#666] text-sm">Sign in to your REQUISTI account</p>
+              <p className="text-[#666] text-sm">Sign in to your VA account</p>
             </div>
 
             {/* Demo credentials hint */}

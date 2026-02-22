@@ -47,7 +47,7 @@ export default function Home() {
             </span>
 
             <h1 className="text-5xl sm:text-6xl lg:text-7xl font-extrabold text-white tracking-tight mb-4 leading-none">
-              REQUISTI
+              VA
             </h1>
             <p className="text-white/70 text-base sm:text-lg max-w-xl mb-10">
               Connecting brands with the world&apos;s best advertising agencies, production companies, and creative talent.
@@ -163,7 +163,7 @@ export default function Home() {
         <section className="px-4 sm:px-6 lg:px-8 py-16 lg:py-24 max-w-3xl mx-auto text-center">
           <h2 className="text-3xl sm:text-4xl font-bold mb-4">Join the Network</h2>
           <p className="text-lg text-[#666] mb-8">
-            Join thousands of agencies and creative professionals on REQUISTI. Showcase your work and grow your business.
+            Join thousands of agencies and creative professionals on VA. Showcase your work and grow your business.
           </p>
           <div className="flex flex-col sm:flex-row gap-3 justify-center">
             <Button className="bg-[#4fc487] hover:bg-[#45b078] text-white px-8" asChild>

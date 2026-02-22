@@ -42,7 +42,7 @@ function SearchContent() {
         {/* Search hero */}
         <div className="bg-[#2e3843] px-4 sm:px-6 lg:px-8 py-12">
           <div className="max-w-3xl mx-auto">
-            <h1 className="text-3xl font-bold text-white mb-6 text-center">Search REQUISTI</h1>
+            <h1 className="text-3xl font-bold text-white mb-6 text-center">Search VA</h1>
             <div className="flex gap-3">
               <div className="flex-1 relative">
                 <Search className="absolute left-4 top-1/2 -translate-y-1/2 w-5 h-5 text-[#666]" />
@@ -80,7 +80,7 @@ function SearchContent() {
           {!query && (
             <div className="text-center py-20 text-[#666]">
               <Search className="w-16 h-16 mx-auto mb-4 text-[#d8dce2]" />
-              <p className="text-lg font-medium mb-1">Search REQUISTI</p>
+              <p className="text-lg font-medium mb-1">Search VA</p>
               <p className="text-sm">Find agencies, campaigns, talent and industry news</p>
             </div>
           )}

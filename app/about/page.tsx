@@ -14,7 +14,7 @@ const stats = [
 const team = [
   { name: 'Mark Tungate', role: 'Editor in Chief', photo: 'https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?w=300&q=80', bio: '25 years covering the advertising industry' },
   { name: 'Sophie Bernard', role: 'Head of Directory', photo: 'https://images.unsplash.com/photo-1494790108377-be9c29b29330?w=300&q=80', bio: 'Building relationships with the world\'s best agencies' },
-  { name: 'Alex Carter', role: 'Head of Technology', photo: 'https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=300&q=80', bio: 'Architecting REQUISTI\'s platform for scale' },
+  { name: 'Alex Carter', role: 'Head of Technology', photo: 'https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=300&q=80', bio: 'Architecting VA\'s platform for scale' },
 ]
 
 export default function AboutPage() {
@@ -25,7 +25,7 @@ export default function AboutPage() {
         {/* Hero */}
         <div className="bg-[#2e3843] px-4 sm:px-6 lg:px-8 py-20">
           <div className="max-w-4xl mx-auto text-center">
-            <h1 className="text-4xl sm:text-5xl font-bold text-white mb-4">About REQUISTI</h1>
+            <h1 className="text-4xl sm:text-5xl font-bold text-white mb-4">About VA</h1>
             <p className="text-white/70 text-xl max-w-2xl mx-auto">
               The global platform connecting brands with the world&apos;s best advertising and creative talent since 2012.
             </p>
@@ -50,13 +50,13 @@ export default function AboutPage() {
             <div>
               <h2 className="text-3xl font-bold text-[#1a1a1a] mb-4">Our Mission</h2>
               <p className="text-[#666] leading-relaxed mb-4">
-                REQUISTI was founded in 2012 with a simple mission: to make it easier for brands to find and work with the world&apos;s best advertising agencies and creative professionals.
+                VA was founded in 2012 with a simple mission: to make it easier for brands to find and work with the world&apos;s best advertising agencies and creative professionals.
               </p>
               <p className="text-[#666] leading-relaxed mb-4">
                 We believe great advertising has the power to change culture, build businesses, and even improve the world. Our platform celebrates that work and the people behind it.
               </p>
               <p className="text-[#666] leading-relaxed">
-                Today, REQUISTI is the leading independent platform for advertising intelligence, with thousands of agencies, production companies, and creative professionals from over 80 countries.
+                Today, VA is the leading independent platform for advertising intelligence, with thousands of agencies, production companies, and creative professionals from over 80 countries.
               </p>
             </div>
             <div className="relative h-64 rounded-2xl overflow-hidden">
@@ -84,7 +84,7 @@ export default function AboutPage() {
           <div className="bg-[#2e3843] rounded-2xl p-8 sm:p-12 text-center">
             <h2 className="text-2xl sm:text-3xl font-bold text-white mb-3">Get Your Agency Listed</h2>
             <p className="text-white/70 mb-6 max-w-lg mx-auto">
-              Join thousands of agencies worldwide who use REQUISTI to showcase their work and win new business.
+              Join thousands of agencies worldwide who use VA to showcase their work and win new business.
             </p>
             <div className="flex flex-col sm:flex-row gap-3 justify-center">
               <Link href="/signup/agency">

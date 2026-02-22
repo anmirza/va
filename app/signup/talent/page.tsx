@@ -52,7 +52,7 @@ export default function TalentSignupPage() {
   return (
     <div className="min-h-screen bg-[#eef0f3] flex flex-col">
       <header className="bg-[#2e3843] px-6 py-4">
-        <Link href="/" className="text-xl font-bold text-white">REQUISTI</Link>
+        <Link href="/" className="text-xl font-bold text-white">VA</Link>
       </header>
 
       <div className="flex-1 px-4 py-10">

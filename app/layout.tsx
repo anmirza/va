@@ -10,8 +10,8 @@ const dmSans = DM_Sans({ subsets: ['latin'], variable: '--font-dm-sans' })
 const ibmPlexMono = IBM_Plex_Mono({ weight: ['400', '500', '600'], subsets: ['latin'], variable: '--font-ibm-mono' })
 
 export const metadata: Metadata = {
-  title: 'REQUISTI - Advertising Industry Directory',
-  description: 'Discover the world\'s most innovative advertising agencies, campaigns, and talent on REQUISTI',
+  title: 'VA - Advertising Industry Directory',
+  description: 'Discover the world\'s most innovative advertising agencies, campaigns, and talent on VA',
   generator: 'v0.app',
   icons: {
     icon: [
