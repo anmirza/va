@@ -6,7 +6,7 @@ import { useRouter } from 'next/navigation'
 import { useAuth } from '@/lib/auth-context'
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
-import { Building2, User, BarChart3, Eye, EyeOff } from 'lucide-react'
+import { Building2, User, Eye, EyeOff } from 'lucide-react'
 
 const roles = [
   {
@@ -22,13 +22,6 @@ const roles = [
     title: 'Creative Professional',
     description: 'Build your talent profile, get discovered by top agencies',
     nextPath: '/signup/talent',
-  },
-  {
-    id: 'marketer' as const,
-    icon: BarChart3,
-    title: 'Brand / Marketer',
-    description: 'Find agencies, browse campaigns, access insights',
-    nextPath: '/dashboard',
   },
 ]
 

@@ -33,10 +33,6 @@ export function Footer() {
               {[
                 { label: 'Agencies', href: '/directory' },
                 { label: 'Production Companies', href: '/production' },
-                { label: 'Search Consultants', href: '/consultants' },
-                { label: 'Talent', href: '/talent' },
-                { label: 'Awards', href: '/awards' },
-                { label: 'Rankings', href: '/rankings' },
               ].map(item => (
                 <li key={item.href}><Link href={item.href} className="text-white/60 hover:text-white transition-colors">{item.label}</Link></li>
               ))}
@@ -49,8 +45,6 @@ export function Footer() {
             <ul className="space-y-2.5 text-sm">
               {[
                 { label: 'Creative Library', href: '/creative-library' },
-                { label: 'Interviews', href: '/interviews' },
-                { label: 'Insights', href: '/insights' },
                 { label: 'News', href: '/news' },
                 { label: 'Pricing', href: '/pricing' },
               ].map(item => (
@@ -66,7 +60,6 @@ export function Footer() {
               {[
                 { label: 'About REQUISTI', href: '/about', key: 'about' },
                 { label: 'Get Listed', href: '/signup/agency', key: 'get-listed' },
-                { label: 'Talent Sign Up', href: '/signup/talent', key: 'talent-signup' },
                 { label: 'Sign In', href: '/login', key: 'sign-in' },
                 { label: 'Contact', href: '/about#contact', key: 'contact' },
               ].map(item => (

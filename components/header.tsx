@@ -2,24 +2,18 @@
 
 import Link from 'next/link'
 import { useState, useRef, useEffect } from 'react'
-import { Menu, X, Search, Mail, ChevronDown, User, LayoutDashboard, LogOut, Building2, Users, MessageSquare } from 'lucide-react'
+import { Menu, X, Search, ChevronDown, User, LayoutDashboard, LogOut, Building2, Users } from 'lucide-react'
 import { useAuth } from '@/lib/auth-context'
 import { useRouter } from 'next/navigation'
 
 const directoryItems = [
   { label: 'Agencies', href: '/directory' },
   { label: 'Production Companies', href: '/production' },
-  { label: 'Search Consultants', href: '/consultants' },
-  { label: 'Academic & Education', href: '/academic' },
 ]
 
 const navItems = [
   { label: 'Directory', href: '/directory', dropdown: directoryItems },
   { label: 'Creative Library', href: '/creative-library' },
-  { label: 'Talent', href: '/talent' },
-  { label: 'Awards', href: '/awards' },
-  { label: 'Insights', href: '/insights' },
-  { label: 'Interviews', href: '/interviews' },
 ]
 
 export function Header() {
@@ -102,11 +96,6 @@ export function Header() {
 
           {/* Desktop right */}
           <div className="hidden lg:flex items-center gap-3">
-            <Link href="#newsletter" className="flex items-center gap-1.5 text-xs font-medium text-[#f5d742] hover:text-[#f5d742]/90 transition-colors">
-              <Mail className="w-3.5 h-3.5" />
-              NEWSLETTER
-            </Link>
-
             {user ? (
               <div className="relative" ref={userMenuRef}>
                 <button
