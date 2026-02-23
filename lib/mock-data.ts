@@ -35,6 +35,31 @@ export interface Company {
   clientIndustries?: string[]
   socialLinks?: { twitter?: string; linkedin?: string; instagram?: string }
   featured?: boolean
+  phone?: string
+  address?: string
+  postcode?: string
+  vatNumber?: string
+  network?: string
+  typeTags?: string[]
+  newBusinessWins?: {
+    brand: string
+    sector: string
+    type: string
+    date: string
+    reach: 'National' | 'International' | 'Global'
+    status: 'Won' | 'In Progress'
+  }[]
+  contactsByDept?: {
+    department: string
+    contacts: {
+      name: string
+      role: string
+      email?: string
+      phone?: string
+      linkedin?: string
+      photo?: string
+    }[]
+  }[]
 }
 
 export interface ProductionCompany {
@@ -195,6 +220,33 @@ export const companies: Company[] = [
     competencies: ['Full Service', 'Brand Strategy', 'Digital'],
     clientIndustries: ['Sports', 'Lifestyle', 'Technology', 'FMCG'],
     featured: true,
+    phone: '+1 503 937 7700',
+    address: '224 NW 13th Ave',
+    postcode: '97209',
+    vatNumber: 'US-82-1234567',
+    network: 'Independent',
+    typeTags: ['Full Service', 'Independent', 'Digital', 'Creative'],
+    newBusinessWins: [
+      { brand: 'Nike Running', sector: 'Sports', type: 'Creative', date: 'Jan 2025', reach: 'Global', status: 'Won' },
+      { brand: 'Coca-Cola Zero', sector: 'Beverages', type: 'Digital', date: 'Dec 2024', reach: 'International', status: 'Won' },
+      { brand: 'Google Pixel', sector: 'Technology', type: 'Creative', date: 'Nov 2024', reach: 'Global', status: 'Won' },
+      { brand: 'Uber Eats', sector: 'Technology', type: 'Social Media', date: 'Feb 2025', reach: 'National', status: 'In Progress' },
+    ],
+    contactsByDept: [
+      { department: 'Management', contacts: [
+        { name: 'Karl Lieberman', role: 'Global CEO', email: 'karl@wk.com', phone: '+1 503 937 7701' },
+        { name: 'Susan Hoffman', role: 'Chief Creative Officer', email: 'susan@wk.com' },
+      ]},
+      { department: 'Creative', contacts: [
+        { name: 'Eric Baldwin', role: 'Executive Creative Director', email: 'eric@wk.com' },
+        { name: 'Jason Bagley', role: 'Creative Director', email: 'jason@wk.com' },
+        { name: 'Danielle Flagg', role: 'Associate Creative Director' },
+      ]},
+      { department: 'Strategy', contacts: [
+        { name: 'Martin Weigel', role: 'Head of Planning', email: 'martin@wk.com' },
+        { name: 'Beth Shuster', role: 'Senior Strategist' },
+      ]},
+    ],
   },
   {
     id: '72-01',
@@ -217,6 +269,31 @@ export const companies: Company[] = [
     competencies: ['Full Service', 'Content', 'Brand Strategy'],
     clientIndustries: ['Sports', 'Technology', 'Automotive'],
     featured: true,
+    phone: '+1 310 215 9009',
+    address: '12101 W Olympic Blvd',
+    postcode: '90064',
+    vatNumber: 'US-95-7654321',
+    network: 'Independent',
+    typeTags: ['Full Service', 'Independent', 'Content'],
+    newBusinessWins: [
+      { brand: 'Adidas Originals', sector: 'Sports', type: 'Creative', date: 'Feb 2025', reach: 'Global', status: 'Won' },
+      { brand: 'PlayStation 6', sector: 'Entertainment', type: 'Digital', date: 'Jan 2025', reach: 'Global', status: 'In Progress' },
+      { brand: 'Spotify', sector: 'Technology', type: 'Social Media', date: 'Dec 2024', reach: 'International', status: 'Won' },
+    ],
+    contactsByDept: [
+      { department: 'Management', contacts: [
+        { name: 'Matt Jarvis', role: 'Co-Founder & CEO', email: 'matt@72andsunny.com' },
+        { name: 'Glenn Cole', role: 'Co-Founder & CCO', email: 'glenn@72andsunny.com' },
+      ]},
+      { department: 'Creative', contacts: [
+        { name: 'Bryan Rowles', role: 'Executive Creative Director' },
+        { name: 'Jessica Shriftman', role: 'Creative Director' },
+      ]},
+      { department: 'Strategy', contacts: [
+        { name: 'Mick DiMaria', role: 'Chief Strategy Officer' },
+        { name: 'Evin Shutt', role: 'Managing Director' },
+      ]},
+    ],
   },
   {
     id: 'droga5-01',
@@ -238,6 +315,33 @@ export const companies: Company[] = [
     awards: 203,
     competencies: ['Full Service', 'Digital', 'Design'],
     featured: true,
+    phone: '+1 212 208 1560',
+    address: '120 Wall St, 10th Floor',
+    postcode: '10005',
+    vatNumber: 'US-13-9876543',
+    network: 'Accenture Song',
+    typeTags: ['Full Service', 'Digital', 'Integrated'],
+    newBusinessWins: [
+      { brand: 'Samsung Galaxy', sector: 'Technology', type: 'Creative', date: 'Feb 2025', reach: 'Global', status: 'Won' },
+      { brand: 'NYT Digital', sector: 'Media', type: 'Digital', date: 'Jan 2025', reach: 'National', status: 'Won' },
+      { brand: 'Under Armour', sector: 'Sports', type: 'Creative', date: 'Dec 2024', reach: 'International', status: 'In Progress' },
+      { brand: 'Hennessy', sector: 'Luxury', type: 'Creative', date: 'Nov 2024', reach: 'Global', status: 'Won' },
+    ],
+    contactsByDept: [
+      { department: 'Management', contacts: [
+        { name: 'Sarah Thompson', role: 'CEO', email: 'sarah@droga5.com' },
+        { name: 'Felix Richter', role: 'President', email: 'felix@droga5.com' },
+      ]},
+      { department: 'Creative', contacts: [
+        { name: 'Tim Gordon', role: 'Chief Creative Officer', email: 'tim@droga5.com' },
+        { name: 'Leah Merken', role: 'Group Creative Director' },
+        { name: 'Kevin Brady', role: 'Creative Director' },
+      ]},
+      { department: 'Digital', contacts: [
+        { name: 'Nina Park', role: 'Head of Digital', email: 'nina@droga5.com' },
+        { name: 'Alex Duval', role: 'Technology Director' },
+      ]},
+    ],
   },
   {
     id: 'bbh-01',
@@ -401,6 +505,34 @@ export const companies: Company[] = [
     competencies: ['Full Service', 'Luxury', 'Brand Strategy'],
     clientIndustries: ['Luxury', 'Automotive', 'Media'],
     featured: true,
+    phone: '+33 1 56 41 35 00',
+    address: '117-119 Rue Saint-Denis',
+    postcode: '75001',
+    vatNumber: 'FR-76-345678901',
+    network: 'Havas Group',
+    typeTags: ['Full Service', 'Luxury', 'Creative'],
+    newBusinessWins: [
+      { brand: 'Canal+ Series', sector: 'Media', type: 'Creative', date: 'Feb 2025', reach: 'International', status: 'Won' },
+      { brand: 'Peugeot E-3008', sector: 'Automotive', type: 'Creative', date: 'Jan 2025', reach: 'Global', status: 'Won' },
+      { brand: 'Evian Sparkling', sector: 'FMCG', type: 'Digital', date: 'Dec 2024', reach: 'International', status: 'Won' },
+      { brand: 'Lacoste', sector: 'Fashion', type: 'Creative', date: 'Nov 2024', reach: 'Global', status: 'In Progress' },
+      { brand: 'Air France Premium', sector: 'Travel', type: 'Media Planning', date: 'Oct 2024', reach: 'Global', status: 'Won' },
+    ],
+    contactsByDept: [
+      { department: 'Management', contacts: [
+        { name: 'Bertille Toledano', role: 'CEO', email: 'bertille@betc.com', phone: '+33 1 56 41 35 01' },
+        { name: 'Stéphane Xiberras', role: 'Chief Creative Officer', email: 'stephane@betc.com' },
+      ]},
+      { department: 'Creative', contacts: [
+        { name: 'Isabelle Moreau', role: 'Creative Director', email: 'isabelle@betc.com' },
+        { name: 'Rémi Babinet', role: 'Founding Creative Director' },
+        { name: 'Antoine Choque', role: 'Associate Creative Director' },
+      ]},
+      { department: 'Strategy', contacts: [
+        { name: 'Clément Boisseau', role: 'Chief Strategy Officer' },
+        { name: 'Marie Laroche', role: 'Senior Planner' },
+      ]},
+    ],
   },
   {
     id: 'havas-01',
@@ -465,6 +597,33 @@ export const companies: Company[] = [
     offices: ['London', 'New York', 'Paris', 'Mumbai', 'Shanghai'],
     competencies: ['Full Service', 'PR', 'Digital', 'Brand Consulting'],
     featured: true,
+    phone: '+44 20 7345 3000',
+    address: 'Sea Containers, 18 Upper Ground',
+    postcode: 'SE1 9ET',
+    vatNumber: 'GB-123456789',
+    network: 'WPP',
+    typeTags: ['Full Service', 'PR', 'Digital', 'Brand Consulting'],
+    newBusinessWins: [
+      { brand: 'Dove Men+Care', sector: 'FMCG', type: 'Creative', date: 'Feb 2025', reach: 'Global', status: 'Won' },
+      { brand: 'IBM Cloud', sector: 'Technology', type: 'Digital', date: 'Jan 2025', reach: 'Global', status: 'Won' },
+      { brand: 'American Express UK', sector: 'Finance', type: 'Media Planning', date: 'Dec 2024', reach: 'National', status: 'In Progress' },
+      { brand: 'Prada', sector: 'Luxury', type: 'PR', date: 'Nov 2024', reach: 'International', status: 'Won' },
+    ],
+    contactsByDept: [
+      { department: 'Management', contacts: [
+        { name: 'Devika Bulchandani', role: 'Global CEO', email: 'devika@ogilvy.com', phone: '+44 20 7345 3001' },
+        { name: 'Liz Taylor', role: 'Global Chief Creative Officer', email: 'liz@ogilvy.com' },
+      ]},
+      { department: 'Creative', contacts: [
+        { name: 'Daniel Fisher', role: 'UK Chief Creative Officer', email: 'daniel@ogilvy.com' },
+        { name: 'Marcos Kotlhar', role: 'Executive Creative Director' },
+        { name: 'Sarah Coleman', role: 'Creative Director' },
+      ]},
+      { department: 'PR & Influence', contacts: [
+        { name: 'James Baldwin', role: 'Head of PR', email: 'james@ogilvy.com' },
+        { name: 'Sophie Chen', role: 'Senior Account Director' },
+      ]},
+    ],
   },
   {
     id: 'ddb-01',
@@ -1981,6 +2140,15 @@ export function getTalentByCompany(companyId: string): Person[] {
 
 export function getNewsByCategory(category: string): NewsArticle[] {
   return news.filter(n => n.category === category)
+}
+
+export function getNewsByAgency(agencyName: string): NewsArticle[] {
+  const q = agencyName.toLowerCase()
+  return news.filter(n =>
+    n.tags?.some(tag => tag.toLowerCase().includes(q)) ||
+    n.title.toLowerCase().includes(q) ||
+    n.excerpt.toLowerCase().includes(q)
+  )
 }
 
 export function getNewsById(id: string): NewsArticle | undefined {
