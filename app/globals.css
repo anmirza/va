@@ -4,82 +4,88 @@
 @custom-variant dark (&:is(.dark *));
 
 :root {
-  /* REQUISTI - Scanbook/La Réclame inspired palette */
-  --background: #eef0f3;
-  --foreground: #1a1a1a;
-  --card: #ffffff;
-  --card-foreground: #1a1a1a;
-  --popover: #ffffff;
-  --popover-foreground: #1a1a1a;
-  --primary: #2e3843;
-  --primary-foreground: #ffffff;
-  --secondary: #d8dce2;
-  --secondary-foreground: #1a1a1a;
-  --muted: #d8dce2;
-  --muted-foreground: #666666;
+  /* REQUISTI — Refined Futuristic Dark Theme (Client: #02030E base) */
+  --background: #02030E;
+  --foreground: #e8eaf0;
+  --card: rgba(255, 255, 255, 0.04);
+  --card-foreground: #e8eaf0;
+  --popover: #0c0e1a;
+  --popover-foreground: #e8eaf0;
+  --primary: #4fc487;
+  --primary-foreground: #02030E;
+  --secondary: rgba(255, 255, 255, 0.08);
+  --secondary-foreground: #c0c4d0;
+  --muted: rgba(255, 255, 255, 0.06);
+  --muted-foreground: #8890a4;
   --accent: #4fc487;
-  --accent-foreground: #ffffff;
+  --accent-foreground: #02030E;
   --destructive: #ef4444;
   --destructive-foreground: #ffffff;
-  --border: #e5e5e1;
-  --input: #f5f5f3;
+  --border: rgba(255, 255, 255, 0.10);
+  --input: rgba(255, 255, 255, 0.06);
   --ring: #4fc487;
   --accent-yellow: #f5d742;
   --gold: #d4a574;
   --silver: #c0c0c0;
   --bronze: #cd7f32;
-  --chart-1: #2563eb;
-  --chart-2: #0f0f0f;
-  --chart-3: #666666;
+  --chart-1: #4fc487;
+  --chart-2: #3b82f6;
+  --chart-3: #8890a4;
   --chart-4: #d4a574;
-  --chart-5: #d1d1cc;
-  --radius: 0.375rem;
-  --sidebar: #ffffff;
-  --sidebar-foreground: #0f0f0f;
-  --sidebar-primary: #0f0f0f;
-  --sidebar-primary-foreground: #f7f7f5;
-  --sidebar-accent: #2563eb;
-  --sidebar-accent-foreground: #ffffff;
-  --sidebar-border: #e5e5e1;
-  --sidebar-ring: #2563eb;
+  --chart-5: rgba(255,255,255,0.08);
+  --radius: 9999px;
+  --card-radius: 1rem;
+  --surface: #0a0c18;
+  --surface-bright: #111328;
+  --glow: rgba(79, 196, 135, 0.15);
+  --sidebar: #0a0c18;
+  --sidebar-foreground: #e8eaf0;
+  --sidebar-primary: #4fc487;
+  --sidebar-primary-foreground: #02030E;
+  --sidebar-accent: #4fc487;
+  --sidebar-accent-foreground: #02030E;
+  --sidebar-border: rgba(255, 255, 255, 0.08);
+  --sidebar-ring: #4fc487;
 }
 
 .dark {
-  --background: #0f0f0f;
-  --foreground: #f7f7f5;
-  --card: #1a1a18;
-  --card-foreground: #f7f7f5;
-  --popover: #1a1a18;
-  --popover-foreground: #f7f7f5;
-  --primary: #f7f7f5;
-  --primary-foreground: #0f0f0f;
-  --secondary: #2a2a28;
-  --secondary-foreground: #f7f7f5;
-  --muted: #333331;
-  --muted-foreground: #999999;
-  --accent: #3b82f6;
-  --accent-foreground: #0f0f0f;
+  /* Dark-class override not really needed since :root is already dark,
+     but kept for compatibility with components that check .dark */
+  --background: #02030E;
+  --foreground: #e8eaf0;
+  --card: rgba(255, 255, 255, 0.04);
+  --card-foreground: #e8eaf0;
+  --popover: #0c0e1a;
+  --popover-foreground: #e8eaf0;
+  --primary: #4fc487;
+  --primary-foreground: #02030E;
+  --secondary: rgba(255, 255, 255, 0.08);
+  --secondary-foreground: #c0c4d0;
+  --muted: rgba(255, 255, 255, 0.06);
+  --muted-foreground: #8890a4;
+  --accent: #4fc487;
+  --accent-foreground: #02030E;
   --destructive: #ef4444;
-  --destructive-foreground: #0f0f0f;
-  --border: #2a2a28;
-  --input: #1a1a18;
-  --ring: #3b82f6;
+  --destructive-foreground: #ffffff;
+  --border: rgba(255, 255, 255, 0.10);
+  --input: rgba(255, 255, 255, 0.06);
+  --ring: #4fc487;
   --gold: #d4a574;
   --silver: #c0c0c0;
   --bronze: #cd7f32;
-  --chart-1: #3b82f6;
-  --chart-2: #f7f7f5;
-  --chart-3: #999999;
+  --chart-1: #4fc487;
+  --chart-2: #3b82f6;
+  --chart-3: #8890a4;
   --chart-4: #d4a574;
-  --chart-5: #2a2a28;
-  --sidebar: #1a1a18;
-  --sidebar-foreground: #f7f7f5;
-  --sidebar-primary: #f7f7f5;
-  --sidebar-primary-foreground: #0f0f0f;
-  --sidebar-accent: #3b82f6;
-  --sidebar-accent-foreground: #0f0f0f;
-  --sidebar-border: #2a2a28;
-  --sidebar-ring: #3b82f6;
+  --chart-5: rgba(255,255,255,0.08);
+  --sidebar: #0a0c18;
+  --sidebar-foreground: #e8eaf0;
+  --sidebar-primary: #4fc487;
+  --sidebar-primary-foreground: #02030E;
+  --sidebar-accent: #4fc487;
+  --sidebar-accent-foreground: #02030E;
+  --sidebar-border: rgba(255, 255, 255, 0.08);
+  --sidebar-ring: #4fc487;
 }
 
 @theme inline {
@@ -131,4 +137,228 @@
   body {
     @apply bg-background text-foreground;
   }
+
+  /* Pill-shaped buttons & inputs (client requirement) */
+  button, [type="button"], [type="submit"], [type="reset"] {
+    border-radius: 9999px;
+  }
+  input:not([type="checkbox"]):not([type="radio"]):not([type="range"]),
+  select,
+  textarea {
+    border-radius: 9999px;
+    background: rgba(255, 255, 255, 0.06);
+    border-color: rgba(255, 255, 255, 0.12);
+    color: #e8eaf0;
+  }
+  textarea {
+    border-radius: 1rem;
+  }
+  select {
+    border-radius: 9999px;
+  }
+
+  /* Glass-morphism card utility */
+  .glass-card {
+    background: rgba(255, 255, 255, 0.04);
+    border: 1px solid rgba(255, 255, 255, 0.08);
+    backdrop-filter: blur(12px);
+    border-radius: 1rem;
+  }
+  .glass-card:hover {
+    background: rgba(255, 255, 255, 0.07);
+    border-color: rgba(79, 196, 135, 0.25);
+  }
+
+  /* Glow accent utility */
+  .glow-accent {
+    box-shadow: 0 0 20px rgba(79, 196, 135, 0.15), 0 0 60px rgba(79, 196, 135, 0.05);
+  }
 }
+
+/* ═══ Light Mode Override ═══ */
+.light-mode {
+  --background: #f5f6fa;
+  --foreground: #1a1a2e;
+  --card: rgba(255, 255, 255, 0.85);
+  --card-foreground: #1a1a2e;
+  --popover: #ffffff;
+  --popover-foreground: #1a1a2e;
+  --primary: #4fc487;
+  --primary-foreground: #ffffff;
+  --secondary: rgba(0, 0, 0, 0.06);
+  --secondary-foreground: #444;
+  --muted: rgba(0, 0, 0, 0.04);
+  --muted-foreground: #666;
+  --accent: #4fc487;
+  --accent-foreground: #ffffff;
+  --border: rgba(0, 0, 0, 0.10);
+  --input: rgba(0, 0, 0, 0.04);
+  --ring: #4fc487;
+  --surface: #ffffff;
+  --surface-bright: #f0f2f5;
+}
+
+.light-mode body {
+  background: #f5f6fa;
+  color: #1a1a2e;
+}
+
+/* ── Header / Navbar ── */
+.light-mode .light-header {
+  background: rgba(255, 255, 255, 0.97) !important;
+  border-bottom-color: rgba(0, 0, 0, 0.08) !important;
+  backdrop-filter: blur(12px);
+}
+.light-mode .light-header a,
+.light-mode .light-header button,
+.light-mode .light-header span {
+  color: #1a1a2e !important;
+}
+.light-mode .light-header a:hover,
+.light-mode .light-header button:hover {
+  color: #4fc487 !important;
+}
+/* Keep Sign Up button green text white */
+.light-mode .light-header a[href="/signup"] {
+  color: #fff !important;
+  background: #4fc487;
+}
+/* Nav dropdown in light mode */
+.light-mode .light-header [class*="bg-\\[\\#0c0e1a\\]"],
+.light-mode .light-header div[class*="absolute"][class*="rounded-xl"] {
+  background: #fff !important;
+  border-color: rgba(0,0,0,0.08) !important;
+  box-shadow: 0 8px 30px rgba(0,0,0,0.12) !important;
+}
+.light-mode .light-header div[class*="absolute"][class*="rounded-xl"] a {
+  color: #444 !important;
+}
+.light-mode .light-header div[class*="absolute"][class*="rounded-xl"] a:hover {
+  color: #4fc487 !important;
+  background: rgba(79,196,135,0.06) !important;
+}
+/* Arrow pointer in light mode */
+.light-mode .light-header div[class*="rotate-45"] {
+  background: #fff !important;
+  border-color: rgba(0,0,0,0.08) !important;
+}
+
+/* ── Glass Cards ── */
+.light-mode .glass-card {
+  background: rgba(255, 255, 255, 0.92) !important;
+  border: 1px solid rgba(0, 0, 0, 0.08) !important;
+  box-shadow: 0 1px 3px rgba(0,0,0,0.06);
+}
+.light-mode .glass-card:hover {
+  background: #fff !important;
+  border-color: rgba(79, 196, 135, 0.3) !important;
+  box-shadow: 0 4px 16px rgba(0,0,0,0.08);
+}
+.light-mode .glass-card * {
+  color: #1a1a2e;
+}
+.light-mode .glass-card span[class*="text-white"],
+.light-mode .glass-card p[class*="text-white"],
+.light-mode .glass-card h3[class*="text-white"],
+.light-mode .glass-card h2[class*="text-white"] {
+  color: #1a1a2e !important;
+}
+.light-mode .glass-card span[class*="text-white\\/"],
+.light-mode .glass-card p[class*="text-white\\/"] {
+  color: #666 !important;
+}
+
+/* ── Hero Section / Homepage ── */
+.light-mode section[class*="bg-\\[\\#02030E\\]"],
+.light-mode div[class*="bg-\\[\\#02030E\\]"],
+.light-mode main {
+  background: #f5f6fa !important;
+}
+/* Make hero text dark */
+.light-mode h1[class*="text-white"],
+.light-mode h2[class*="text-white"] {
+  color: #1a1a2e !important;
+}
+.light-mode p[class*="text-white"] {
+  color: #444 !important;
+}
+.light-mode span[class*="text-white\\/"] {
+  color: #666 !important;
+}
+.light-mode div[class*="text-white\\/"] {
+  color: #666 !important;
+}
+
+/* ── Hero Search Bar (light mode) ── */
+.light-mode div[class*="bg-white\\/\\[0\\.08\\]"] {
+  background: #fff !important;
+  border-color: rgba(0,0,0,0.12) !important;
+  box-shadow: 0 4px 24px rgba(0,0,0,0.08);
+}
+.light-mode div[class*="bg-white\\/\\[0\\.08\\]"] input {
+  color: #1a1a2e !important;
+  background: transparent !important;
+}
+.light-mode div[class*="bg-white\\/\\[0\\.08\\]"] input::placeholder {
+  color: #999 !important;
+}
+.light-mode div[class*="bg-white\\/\\[0\\.08\\]"] svg {
+  color: #999 !important;
+}
+
+/* Search suggestion dropdown in light */
+.light-mode div[class*="bg-\\[\\#151830\\]"] {
+  background: #fff !important;
+  border-color: rgba(0,0,0,0.10) !important;
+  box-shadow: 0 8px 30px rgba(0,0,0,0.12) !important;
+}
+.light-mode div[class*="bg-\\[\\#151830\\]"] p {
+  color: #666 !important;
+}
+.light-mode div[class*="bg-\\[\\#151830\\]"] a {
+  color: #333 !important;
+}
+.light-mode div[class*="bg-\\[\\#151830\\]"] a:hover {
+  color: #4fc487 !important;
+  background: rgba(79,196,135,0.06) !important;
+}
+
+/* ── Hero Tabs (light mode) ── */
+.light-mode button[class*="bg-white\\/\\[0\\.12\\]"] {
+  background: #fff !important;
+  border-color: rgba(0,0,0,0.12) !important;
+  color: #1a1a2e !important;
+}
+.light-mode button[class*="bg-white\\/\\[0\\.04\\]"] {
+  background: rgba(0,0,0,0.03) !important;
+  color: #888 !important;
+}
+
+/* ── Footer ── */
+.light-mode footer {
+  background: #1a1a2e !important;
+}
+
+/* ── Form Inputs (light mode) ── */
+.light-mode input:not([type="checkbox"]):not([type="radio"]):not([type="range"]),
+.light-mode select,
+.light-mode textarea {
+  background: #fff !important;
+  border-color: rgba(0,0,0,0.15) !important;
+  color: #1a1a2e !important;
+}
+.light-mode input::placeholder,
+.light-mode textarea::placeholder {
+  color: #999 !important;
+}
+
+/* ── Glow accent (muted in light mode) ── */
+.light-mode .glow-accent {
+  box-shadow: 0 2px 12px rgba(79, 196, 135, 0.08);
+}
+
+/* ── Stats row ── */
+.light-mode div[class*="text-white\\/40"] {
+  color: #888 !important;
+}
+

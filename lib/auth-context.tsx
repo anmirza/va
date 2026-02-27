@@ -15,7 +15,7 @@ export interface SignupData {
   name: string
   email: string
   password: string
-  role: 'agency_owner' | 'talent' | 'marketer'
+  role: 'agency_owner' | 'talent' | 'marketer' | 'client'
 }
 
 const AuthContext = createContext<AuthContextType | null>(null)

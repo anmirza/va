@@ -26,38 +26,38 @@ export function CompanyCard({ company }: CompanyCardProps) {
 
   return (
     <Link href={`/directory/${company.id}`}>
-      <div className="group bg-white rounded-xl shadow-sm overflow-hidden cursor-pointer transition-all duration-300 hover:shadow-lg">
+      <div className="group glass-card overflow-hidden cursor-pointer transition-all duration-300 hover:border-[#4fc487]/30 hover:shadow-lg hover:shadow-[#4fc487]/5">
         {/* Top branding/image area */}
         <div
           className="relative h-32 sm:h-36 bg-cover bg-center"
           style={{ backgroundImage: `url(${company.coverImage})` }}
         >
-          <div className="absolute inset-0 bg-gradient-to-t from-black/60 to-transparent" />
+          <div className="absolute inset-0 bg-gradient-to-t from-[#02030E] to-transparent" />
           <div className="absolute inset-0 flex items-center justify-center p-4">
-            <div className="bg-white/95 backdrop-blur px-4 py-2 rounded text-center max-w-full">
-              <p className="font-bold text-[#1a1a1a] text-sm truncate">{company.name}</p>
-              <p className="text-xs text-[#666] truncate">{company.tagline}</p>
+            <div className="bg-[#02030E]/80 backdrop-blur-md border border-white/[0.1] px-4 py-2 rounded-xl text-center max-w-full">
+              <p className="font-bold text-white text-sm truncate">{company.name}</p>
+              <p className="text-xs text-white/40 truncate">{company.tagline}</p>
             </div>
           </div>
         </div>
 
         {/* Details section */}
         <div className="p-4 sm:p-5">
-          <h3 className="font-bold text-[#1a1a1a] text-lg mb-3">{company.name}</h3>
+          <h3 className="font-bold text-white text-lg mb-3">{company.name}</h3>
 
           {/* Stats with icons */}
           <div className="space-y-2 mb-4">
-            <div className="flex items-center gap-2 text-sm text-[#666]">
+            <div className="flex items-center gap-2 text-sm text-white/40">
               <MapPin className="w-4 h-4 text-[#4fc487] shrink-0" />
               <span>{company.city}</span>
             </div>
-            <div className="flex items-center gap-2 text-sm text-[#666]">
+            <div className="flex items-center gap-2 text-sm text-white/40">
               <Users className="w-4 h-4 text-[#4fc487] shrink-0" />
               <span>
-                <span className="text-[#4fc487] font-medium">{employeeRange}</span> collaborateurs
+                <span className="text-[#4fc487] font-medium">{employeeRange}</span> collaborators
               </span>
             </div>
-            <div className="flex items-center gap-2 text-sm text-[#666]">
+            <div className="flex items-center gap-2 text-sm text-white/40">
               <Handshake className="w-4 h-4 text-[#4fc487] shrink-0" />
               <span>
                 <span className="text-[#4fc487] font-medium">{company.clients?.length ?? 0}</span> clients
@@ -65,36 +65,26 @@ export function CompanyCard({ company }: CompanyCardProps) {
             </div>
           </div>
 
-          {/* Tags */}
-          <div className="flex flex-wrap gap-1 mb-4">
-            {company.services.slice(0, 3).map((service, i) => (
-              <span key={i} className="text-xs text-[#666]">
-                #{service}
-                {i < Math.min(2, company.services.length - 1) ? ' ' : ''}
-              </span>
-            ))}
-          </div>
-
           {/* Category button */}
           <div className="mb-4">
-            <span className="inline-block px-3 py-1.5 rounded bg-[#2e3843] text-white text-xs font-medium">
+            <span className="inline-block px-3 py-1.5 rounded-full bg-[#4fc487]/10 text-[#4fc487] text-xs font-medium border border-[#4fc487]/20">
               {company.services[0] || 'Communication'}
             </span>
           </div>
 
-          {/* Dernière réalisation */}
+          {/* Latest campaign */}
           {latestProject && (
-            <div className="pt-4 border-t border-[#e5e5e1]">
-              <p className="text-sm font-medium text-[#1a1a1a] mb-2">Dernière réalisation</p>
+            <div className="pt-4 border-t border-white/[0.06]">
+              <p className="text-sm font-medium text-white/60 mb-2">Latest Work</p>
               <div className="flex gap-3">
-                <div className="w-12 h-12 shrink-0 rounded overflow-hidden bg-[#eef0f3]">
+                <div className="w-12 h-12 shrink-0 rounded-lg overflow-hidden bg-white/[0.06]">
                   <img
                     src={latestProject.thumbnail}
                     alt=""
                     className="w-full h-full object-cover"
                   />
                 </div>
-                <p className="text-sm text-[#666] line-clamp-2">{latestProject.title}</p>
+                <p className="text-sm text-white/40 line-clamp-2">{latestProject.title}</p>
               </div>
             </div>
           )}

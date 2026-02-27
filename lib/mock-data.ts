@@ -6,7 +6,7 @@ export interface User {
   id: string
   email: string
   name: string
-  role: 'agency_owner' | 'talent' | 'marketer' | 'admin'
+  role: 'agency_owner' | 'talent' | 'marketer' | 'admin' | 'client'
   companyId?: string
   talentId?: string
   avatar?: string
@@ -2115,6 +2115,13 @@ export const mockUsers: User[] = [
     name: 'Brand Manager',
     role: 'marketer',
     avatar: 'https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=100&q=80',
+  },
+  {
+    id: 'user-04',
+    email: 'client@requisti.com',
+    name: 'Client User',
+    role: 'client',
+    avatar: 'https://images.unsplash.com/photo-1535713875002-d1d0cf377fde?w=100&q=80',
   },
 ]
 

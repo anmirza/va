@@ -219,13 +219,13 @@ export default function ProductionSignupPage() {
   ]
 
   return (
-    <div className="min-h-screen bg-[#eef0f3] flex flex-col">
+    <div className="min-h-screen bg-[#02030E] flex flex-col">
       {/* Header */}
-      <header className="bg-[#2e3843] px-6 py-4 flex items-center justify-between sticky top-0 z-50">
+      <header className="bg-[#02030E]/95 backdrop-blur-md border-b border-white/[0.06] px-6 py-4 flex items-center justify-between sticky top-0 z-50">
         <Link href="/" className="text-xl font-bold text-white">VA</Link>
         <div className="flex items-center gap-3">
-          <span className="text-xs text-white/50">Step {step} of {STEPS.length}</span>
-          <Link href="/login" className="text-sm text-white/70 hover:text-white">Already listed? Sign in</Link>
+          <span className="text-xs text-white/40">Step {step} of {STEPS.length}</span>
+          <Link href="/login" className="text-sm text-white/50 hover:text-white">Already listed? <span className="font-semibold text-white">Sign in</span></Link>
         </div>
       </header>
 
@@ -237,23 +237,23 @@ export default function ProductionSignupPage() {
               <div key={s.id} className="flex items-center flex-shrink-0">
                 <button
                   onClick={() => step > s.id && setStep(s.id)}
-                  className={`flex items-center gap-1.5 px-2.5 py-2 rounded-lg text-xs font-medium transition-colors ${s.id === step ? 'bg-[#2e3843] text-white' : s.id < step ? 'text-[#4fc487] cursor-pointer hover:bg-[#d8dce2]' : 'text-[#aaa] cursor-default'}`}
+                  className={`flex items-center gap-1.5 px-2.5 py-2 rounded-lg text-xs font-medium transition-colors ${s.id === step ? 'bg-[#4fc487] text-white' : s.id < step ? 'text-[#4fc487] cursor-pointer hover:bg-white/[0.06]' : 'text-white/30 cursor-default'}`}
                 >
-                  <span className={`w-5 h-5 rounded-full flex items-center justify-center text-xs font-bold flex-shrink-0 ${s.id < step ? 'bg-[#4fc487] text-white' : s.id === step ? 'bg-white text-[#2e3843]' : 'bg-[#d8dce2] text-[#666]'}`}>
+                  <span className={`w-5 h-5 rounded-full flex items-center justify-center text-xs font-bold flex-shrink-0 ${s.id < step ? 'bg-[#4fc487] text-white' : s.id === step ? 'bg-white text-[#02030E]' : 'bg-white/[0.08] text-white/30'}`}>
                     {s.id < step ? <Check className="w-3 h-3" /> : s.id}
                   </span>
                   <span className="hidden md:inline">{s.label}</span>
                 </button>
-                {i < STEPS.length - 1 && <div className="w-4 h-px bg-[#d8dce2] flex-shrink-0" />}
+                {i < STEPS.length - 1 && <div className="w-4 h-px bg-white/[0.08] flex-shrink-0" />}
               </div>
             ))}
           </div>
-          <div className="mt-3 h-1.5 bg-[#d8dce2] rounded-full">
+          <div className="mt-3 h-1.5 bg-white/[0.06] rounded-full">
             <div className="h-full bg-[#4fc487] rounded-full transition-all duration-500" style={{ width: `${((step - 1) / (STEPS.length - 1)) * 100}%` }} />
           </div>
         </div>
 
-        <div className="bg-white rounded-2xl shadow-sm p-8">
+        <div className="glass-card p-8">
 
           {/* STEP 1 — General Info */}
           {step === 1 && (
@@ -877,12 +877,12 @@ export default function ProductionSignupPage() {
         <div className="flex items-center justify-between mt-6">
           <div>
             {step > 1 ? (
-              <Button variant="outline" onClick={() => setStep(s => s - 1)} className="border-[#d8dce2] text-[#2e3843] hover:bg-[#eef0f3]">
+              <Button variant="outline" onClick={() => setStep(s => s - 1)} className="border-white/[0.12] text-white/60 hover:bg-white/[0.06]">
                 <ChevronLeft className="w-4 h-4 mr-1" /> Back
               </Button>
             ) : (
               <Link href="/signup">
-                <Button variant="outline" className="border-[#d8dce2] text-[#2e3843] hover:bg-[#eef0f3]">
+                <Button variant="outline" className="border-white/[0.12] text-white/60 hover:bg-white/[0.06]">
                   <ChevronLeft className="w-4 h-4 mr-1" /> Cancel
                 </Button>
               </Link>
@@ -891,8 +891,8 @@ export default function ProductionSignupPage() {
           <div className="flex items-center gap-3">
             {step < STEPS.length ? (
               <>
-                <Button variant="ghost" className="text-[#666] hover:text-[#1a1a1a]" onClick={() => setStep(s => s + 1)}>Skip for now</Button>
-                <Button onClick={() => setStep(s => s + 1)} disabled={!canProceed()} className="bg-[#2e3843] hover:bg-[#1a1a1a] text-white px-6">
+                <Button variant="ghost" className="text-white/40 hover:text-white" onClick={() => setStep(s => s + 1)}>Skip for now</Button>
+                <Button onClick={() => setStep(s => s + 1)} disabled={!canProceed()} className="bg-[#4fc487] hover:bg-[#45b078] text-white px-6">
                   Continue <ChevronRight className="w-4 h-4 ml-1" />
                 </Button>
               </>
@@ -919,12 +919,12 @@ export default function ProductionSignupPage() {
 
 function StepHeader({ icon, title, subtitle }: { icon: string; title: string; subtitle: string }) {
   return (
-    <div className="mb-8 pb-6 border-b border-[#eef0f3]">
+    <div className="mb-8 pb-6 border-b border-white/[0.06]">
       <div className="flex items-center gap-3 mb-2">
         <span className="text-2xl">{icon}</span>
-        <h2 className="text-2xl font-bold text-[#1a1a1a]">{title}</h2>
+        <h2 className="text-2xl font-bold text-white">{title}</h2>
       </div>
-      <p className="text-[#666] text-sm ml-9">{subtitle}</p>
+      <p className="text-white/40 text-sm ml-9">{subtitle}</p>
     </div>
   )
 }
@@ -932,13 +932,13 @@ function StepHeader({ icon, title, subtitle }: { icon: string; title: string; su
 function FormField({ label, required, children, className }: { label: string; required?: boolean; children: React.ReactNode; className?: string }) {
   return (
     <div className={className}>
-      <label className="block text-sm font-medium text-[#1a1a1a] mb-1.5">
-        {label} {required && <span className="text-red-500">*</span>}
+      <label className="block text-sm font-medium text-white/70 mb-1.5">
+        {label} {required && <span className="text-red-400">*</span>}
       </label>
       {children}
     </div>
   )
 }
 
-const selectCls = 'w-full border border-[#d8dce2] rounded-lg px-3 py-2.5 text-sm bg-white text-[#1a1a1a] focus:outline-none focus:ring-2 focus:ring-[#4fc487]'
-const textareaCls = 'w-full border border-[#d8dce2] rounded-lg px-3 py-2.5 text-sm bg-white text-[#1a1a1a] focus:outline-none focus:ring-2 focus:ring-[#4fc487] resize-none'
+const selectCls = 'w-full border border-white/[0.12] rounded-full px-3 py-2.5 text-sm bg-white/[0.06] text-white focus:outline-none focus:ring-2 focus:ring-[#4fc487]'
+const textareaCls = 'w-full border border-white/[0.12] rounded-2xl px-3 py-2.5 text-sm bg-white/[0.06] text-white focus:outline-none focus:ring-2 focus:ring-[#4fc487] resize-none'
