@@ -6,6 +6,7 @@ import { useRouter } from 'next/navigation'
 import { ChevronRight, ChevronLeft, Check, Film, Plus, Trash2 } from 'lucide-react'
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
+import { SOCIAL_RESPONSIBILITY_QUESTIONS, CSR_IMPACT_AREAS } from '@/lib/rfi-data'
 
 // ── Step definitions ──────────────────────────────────────────────────────────
 
@@ -48,18 +49,7 @@ const CAPABILITY_AREAS = [
   'Email & Content Marketing', 'Trade Marketing', 'Retail', 'Media',
 ]
 
-const CSR_QUESTIONS = [
-  { id: '1.1', q: 'Does your company have gender equality policies in place?' },
-  { id: '1.2', q: 'Does your company adopt policies and control systems against discrimination?' },
-  { id: '1.3', q: 'Does your company provide human rights education and training programmes?' },
-  { id: '1.4', q: 'Does your company run projects in the social and environmental sectors?' },
-  { id: '1.5', q: 'Has your company established partnerships with non-profits or social enterprises?' },
-  { id: '1.7', q: 'Has your company appointed a CSR Manager or established a dedicated CSR unit?' },
-  { id: '1.8', q: 'Does your company conduct periodic social reporting (e.g. sustainability reports)?' },
-  { id: '1.9', q: 'Does your company apply ethical and environmental criteria when selecting suppliers?' },
-  { id: '1.10', q: 'Does your company require its suppliers to hold social/environmental certifications?' },
-  { id: '1.11', q: 'Does your company carry out awareness-raising initiatives on CSR for suppliers?' },
-]
+// CSR_QUESTIONS now imported from '@/lib/rfi-data' as SOCIAL_RESPONSIBILITY_QUESTIONS
 
 const PEOPLE_ROLES = [
   'Executive Producer', 'Senior Producer', 'Junior Producer', 'Creative Research Lead',
@@ -109,6 +99,10 @@ export default function ProductionSignupPage() {
   const [linkedin, setLinkedin] = useState('')
   const [instagram, setInstagram] = useState('')
   const [tiktok, setTiktok] = useState('')
+  const [pinterest, setPinterest] = useState('')
+  const [tumblr, setTumblr] = useState('')
+  const [snapchat, setSnapchat] = useState('')
+  const [reddit, setReddit] = useState('')
 
   // Step 6 — Turnover & Clients
   const YEARS = ['2024', '2023', '2022', '2021', '2020']
@@ -375,6 +369,10 @@ export default function ProductionSignupPage() {
                   { label: 'Instagram', val: instagram, set: setInstagram, ph: '@handle' },
                   { label: 'Facebook', val: facebook, set: setFacebook, ph: 'facebook.com/...' },
                   { label: 'TikTok', val: tiktok, set: setTiktok, ph: '@handle' },
+                  { label: 'Pinterest', val: pinterest, set: setPinterest, ph: 'pinterest.com/...' },
+                  { label: 'Tumblr', val: tumblr, set: setTumblr, ph: 'yourname.tumblr.com' },
+                  { label: 'Snapchat', val: snapchat, set: setSnapchat, ph: '@handle' },
+                  { label: 'Reddit', val: reddit, set: setReddit, ph: 'reddit.com/user/...' },
                 ].map(({ label, val, set, ph }) => (
                   <FormField key={label} label={label}>
                     <Input value={val} onChange={e => set(e.target.value)} placeholder={ph} />
@@ -777,18 +775,30 @@ export default function ProductionSignupPage() {
               <div>
                 <p className="text-sm font-bold text-[#1a1a1a] mb-4">Social Responsibility</p>
                 <div className="space-y-3">
-                  {CSR_QUESTIONS.map(q => (
-                    <div key={q.id} className="flex items-start gap-4 p-4 rounded-xl border border-[#e5e5e1] bg-white">
-                      <span className="text-xs font-bold text-[#999] w-8 shrink-0 mt-0.5">{q.id}</span>
-                      <p className="text-sm text-[#444] flex-1">{q.q}</p>
-                      <div className="flex gap-4 shrink-0">
-                        {[true, false].map(v => (
-                          <label key={String(v)} className="flex items-center gap-1 cursor-pointer">
-                            <input type="radio" checked={csr[q.id] === v} onChange={() => setCsr(p => ({ ...p, [q.id]: v }))} className="w-3.5 h-3.5 accent-[#4fc487]" />
-                            <span className="text-xs">{v ? 'Yes' : 'No'}</span>
-                          </label>
-                        ))}
+                  {SOCIAL_RESPONSIBILITY_QUESTIONS.map(q => (
+                    <div key={q.id}>
+                      <div className="flex items-start gap-4 p-4 rounded-xl border border-[#e5e5e1] bg-white">
+                        <span className="text-xs font-bold text-[#999] w-8 shrink-0 mt-0.5">{q.id}</span>
+                        <p className="text-sm text-[#444] flex-1">{q.text}</p>
+                        <div className="flex gap-4 shrink-0">
+                          {[true, false].map(v => (
+                            <label key={String(v)} className="flex items-center gap-1 cursor-pointer">
+                              <input type="radio" checked={csr[q.id] === v} onChange={() => setCsr(p => ({ ...p, [q.id]: v }))} className="w-3.5 h-3.5 accent-[#4fc487]" />
+                              <span className="text-xs">{v ? 'Yes' : 'No'}</span>
+                            </label>
+                          ))}
+                        </div>
                       </div>
+                      {q.id === '1.6' && (
+                        <div className="ml-12 mt-2 grid grid-cols-2 sm:grid-cols-3 gap-2">
+                          {CSR_IMPACT_AREAS.map(area => (
+                            <label key={area} className="flex items-center gap-2 bg-[#f8f8f6] rounded-lg p-2 cursor-pointer hover:bg-[#f0f0ee] transition border border-[#e5e5e1]">
+                              <input type="checkbox" checked={!!csr[`impact-${area}`]} onChange={e => setCsr(p => ({ ...p, [`impact-${area}`]: e.target.checked }))} className="w-3.5 h-3.5 accent-[#4fc487]" />
+                              <span className="text-xs text-[#666]">{area}</span>
+                            </label>
+                          ))}
+                        </div>
+                      )}
                     </div>
                   ))}
                 </div>

@@ -12,7 +12,7 @@ import {
   CAPABILITY_AREAS, AGENCY_CONTACT_ROLES, SOCIAL_MEDIA_FIELDS,
   AGENCY_PEOPLE_DEPARTMENTS, AGENCY_TALENT_ROLES, AGENCY_AWARDS,
   AI_QUESTIONS, SOCIAL_RESPONSIBILITY_QUESTIONS, INVESTMENT_CATEGORIES,
-  REGISTRATION_STEPS,
+  REGISTRATION_STEPS, CSR_IMPACT_AREAS,
 } from '@/lib/rfi-data'
 import { getTurnoverYears, REVENUE_REGIONS } from '@/lib/turnover-utils'
 
@@ -502,15 +502,29 @@ export default function AgencySignupPage() {
               </div>
               <div className="border-t border-white/[0.06] pt-5 space-y-3">
                 <p className="text-xs font-bold text-white/60 uppercase tracking-widest mb-2">Social Responsibility</p>
-                {SOCIAL_RESPONSIBILITY_QUESTIONS.map((q, i) => (
-                  <div key={i} className="flex items-start gap-3 bg-white/[0.03] rounded-xl p-3">
-                    <span className="text-xs text-white/50 flex-1">{q}</span>
-                    <select value={srAnswers[`sr-${i}`] || ''} onChange={e => setSrAnswers(prev => ({ ...prev, [`sr-${i}`]: e.target.value }))}
-                      className="bg-white/[0.04] border border-white/[0.08] text-white text-xs rounded-lg px-2 py-1">
-                      <option value="">—</option>
-                      <option value="yes">Yes</option>
-                      <option value="no">No</option>
-                    </select>
+                {SOCIAL_RESPONSIBILITY_QUESTIONS.map((q) => (
+                  <div key={q.id}>
+                    <div className="flex items-start gap-3 bg-white/[0.03] rounded-xl p-3">
+                      <span className="text-xs text-white/40 font-mono w-8 flex-shrink-0">{q.id}</span>
+                      <span className="text-xs text-white/50 flex-1">{q.text}</span>
+                      <select value={srAnswers[`sr-${q.id}`] || ''} onChange={e => setSrAnswers(prev => ({ ...prev, [`sr-${q.id}`]: e.target.value }))}
+                        className="bg-white/[0.04] border border-white/[0.08] text-white text-xs rounded-lg px-2 py-1">
+                        <option value="">—</option>
+                        <option value="yes">Yes</option>
+                        <option value="no">No</option>
+                      </select>
+                    </div>
+                    {q.id === '1.6' && (
+                      <div className="ml-11 mt-2 grid grid-cols-2 sm:grid-cols-3 gap-2">
+                        {CSR_IMPACT_AREAS.map(area => (
+                          <label key={area} className="flex items-center gap-2 bg-white/[0.02] rounded-lg p-2 cursor-pointer hover:bg-white/[0.04] transition">
+                            <input type="checkbox" checked={!!srAnswers[`impact-${area}`]} onChange={e => setSrAnswers(prev => ({ ...prev, [`impact-${area}`]: e.target.checked ? 'yes' : '' }))}
+                              className="w-3.5 h-3.5 rounded border-white/20 bg-white/[0.06] accent-[#4fc487]" />
+                            <span className="text-xs text-white/60">{area}</span>
+                          </label>
+                        ))}
+                      </div>
+                    )}
                   </div>
                 ))}
               </div>

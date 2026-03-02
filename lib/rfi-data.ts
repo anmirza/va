@@ -1,6 +1,6 @@
 /**
  * RFI Reference Data — centralized dropdown and form field data
- * Extracted from RFI Agency.xlsx, RFI Production House.xlsx, RFI POS.xlsx
+ * Extracted from RFI Agency-updated.xlsx, RFI Production House-updated.xlsx
  */
 
 // ── Agency Categories (from Settings sheet) ────────────────────────────────
@@ -47,7 +47,7 @@ export const CAPABILITY_AREAS = [
   'Retail', 'Media',
 ] as const
 
-// ── Agency Services by Group (86 individual services) ──────────────────────
+// ── Agency Services by Group (matching RFI Agency-updated.xlsx exactly) ─────
 export const AGENCY_SERVICE_GROUPS = [
   {
     label: 'Strategic & Consulting',
@@ -107,7 +107,7 @@ export const AGENCY_SERVICE_GROUPS = [
   },
 ] as const
 
-// ── Production House Services ──────────────────────────────────────────────
+// ── Production House Services (matching RFI Production House-updated.xlsx) ─
 export const PRODUCTION_SERVICE_GROUPS = [
   {
     label: 'Pre-Production',
@@ -139,74 +139,182 @@ export const POS_SERVICE_GROUPS = [
   },
 ] as const
 
-// ── Agency People Departments & Roles ──────────────────────────────────────
+// ── Agency People Departments & Roles (complete from RFI Agency-updated.xlsx rows 222-433) ──
 export const AGENCY_PEOPLE_DEPARTMENTS = [
   {
     label: 'Executive & Operation',
-    roles: ['Chairman', 'Chief Executive Officer (CEO)', 'Chief Operating Officer (COO)', 'Chief Financial Officer (CFO)', 'Chief Technology Officer (CTO)', 'Chief Digital Officer (CDO)', 'Chief Creative Officer (CCO)', 'Chief Strategy Officer (CSO)', 'President (US markets)', 'President (non-US markets)', 'Partner', 'Operations Director'],
+    roles: [
+      'Chairman', 'Chief Executive Officer (CEO)', 'Chief Operating Officer (COO)',
+      'Chief Financial Officer (CFO)', 'Chief Technology Officer (CTO)', 'Chief Digital Officer (CDO)',
+      'Chief Creative Officer (CCO)', 'Chief Strategy Officer (CSO)',
+      'President (US markets)', 'President (non-US markets)', 'Partner', 'Operations Director',
+    ],
   },
   {
     label: 'Account Management & Client Service',
-    roles: ['Business/Group Director', 'Group Account Director', 'Regional Director', 'Account Director', 'Associate Account Director', 'Junior Account Director', 'Senior Account Manager', 'Account Manager', 'Account Supervisor', 'Account Executive'],
+    roles: [
+      'Business/Group Director', 'Group Account Director', 'Regional Director',
+      'Account Director', 'Associate Account Director', 'Junior Account Director',
+      'Senior Account Manager', 'Account Manager', 'Account Supervisor',
+      'Account Executive', 'Senior Account Executive', 'Junior Account Executive',
+      'Assistant Account Executive', 'Account Coordinator', 'Client Services Associate',
+      'Account Assistant', 'Consultant', 'Senior Consultant', 'Associate Consultant', 'Assistant',
+    ],
   },
   {
     label: 'Project Management',
-    roles: ['Head of Project Management', 'Group Project Manager', 'Project Director', 'Senior Project Manager', 'Lead Project Manager', 'Project Manager', 'Associate Project Manager', 'Project Executive'],
+    roles: [
+      'Head of Project Management', 'Group Project Manager', 'Project Director',
+      'Senior Project Manager', 'Lead Project Manager', 'Project Manager',
+      'Associate Project Manager', 'Senior Project Executive', 'Project Executive',
+      'Executive Project Manager', 'Assistant Project Manager', 'Project Administrator', 'Trainee',
+    ],
   },
   {
-    label: 'Creative & Design',
-    roles: ['Chief Creative Director', 'Executive Creative Director', 'Creative Director', 'Senior Art Director', 'Art Director', 'Design Director', 'Senior Graphic Designer', 'Graphic Designer', 'Senior Copywriter', 'Copywriter', 'Content Writer'],
+    label: 'Digital Project Management',
+    roles: [
+      'Digital Project Director', 'Senior Digital Project Manager', 'Lead Digital Project Manager',
+      'Digital Project Manager', 'Associate Digital Project Manager',
+      'Senior Digital Project Executive', 'Executive Digital Project Manager',
+      'Assistant Digital Project Manager', 'Digital Project Executive',
+      'Digital Project Administrator', 'Digital Trainee',
+    ],
+  },
+  {
+    label: 'Creative & Design (Art)',
+    roles: [
+      'Chief Creative Director', 'Executive Creative Director', 'Creative Director',
+      'Creative Director (Copy)', 'Creative Director (Art)', 'Digital Creative Director',
+      'Group Head Creative', 'Creative Group Head', 'Creative Partner',
+      'Senior Art Director', 'Art Director', 'Design Director', 'Associate Design Director',
+      'Head of Design', 'Head of Digital Creative',
+      'Senior Graphic Designer', 'Graphic Designer', 'Senior Designer', 'Designer',
+      'Illustrator', 'Intermediate Illustrator',
+      'Visualiser', 'Senior Visualiser', 'Junior Visualiser',
+      'Artworker', 'Artist', 'Junior Art Director', 'Art Assistant', 'Design Assistant',
+    ],
+  },
+  {
+    label: 'Creative & Design (Copy)',
+    roles: [
+      'Copy Supervisor', 'Senior Copywriter', 'Copywriter', 'Intermediate Copywriter',
+      'Copywriter Executive', 'Senior Content Writer', 'Content Writer',
+      'Junior Content Writer', 'Proofreader',
+    ],
   },
   {
     label: 'Strategy Team',
-    roles: ['Head of Planning', 'Strategy Director', 'Planning Director', 'Senior Brand Strategist', 'Brand Planner', 'Strategic Planner', 'Content Strategist', 'Senior Planner', 'Media Planner', 'Data Analyst'],
+    roles: [
+      'Head of Planning', 'Director of Media Planning', 'Strategy Director', 'Planning Director',
+      'Head of Digital Planning', 'Analytics & CRM Director', 'Director, User Experience (UX)',
+      'Data Service Director', 'Head of Data',
+      'Senior Brand Strategist', 'Brand Planner', 'Strategic Planner', 'Content Strategist',
+      'Social Strategist', 'Senior Planner', 'Senior Digital Planner', 'Senior Comms Planner',
+      'Senior Media Planner', 'Senior Analyst', 'Media Planner', 'Analyst', 'Data Analyst',
+      'Analytics & CRM Manager', 'Junior Planner', 'Junior Brand Strategist',
+      'Junior Strategic Planner', 'Junior Strategist', 'Junior Data Planner',
+      'Junior Data Analyst', 'Assistant Planner', 'Strategy Executive',
+    ],
   },
   {
     label: 'Social Media',
-    roles: ['Head of Social', 'Social Media Director', 'Social Media Strategist', 'Community Manager', 'Social Media Manager', 'Social Media Executive', 'Social Media Editor'],
+    roles: [
+      'Head of Social', 'Social Media Director', 'Social Media Strategist',
+      'Community Manager', 'Community Manager Overtime', 'Social Media Manager',
+      'Social Media Executive', 'Social Media Editor',
+    ],
   },
   {
     label: 'Technology Development',
-    roles: ['Technology Director', 'Head of Technology', 'Head of Digital', 'Senior Developer', 'Web Developer', 'Front End Developer', 'Software Engineer', 'UX Architect', 'Head of UX', 'SEO Manager'],
+    roles: [
+      'Technology Director', 'Head of Technology', 'Head of Digital',
+      'Head of Digital Production', 'Technology Manager', 'Digital Director',
+      'Senior Technical Producer', 'Technical Manager',
+      'Senior Developer', 'Digital Developer', 'Web Developer', 'Front End Developer',
+      'Senior Software Engineer', 'Software Engineer',
+      'Senior Systems Engineer', 'System Administrator', 'Support Analyst',
+      'QA Manager', 'Junior Quality Assurance',
+      'Web Producer', 'Senior Web Producer', 'Digital Producer', 'Executive Digital Producer',
+      'Flash Developer', 'Media Developer', 'Content Engineer',
+      'SEO Manager', 'Senior SEO Executive', 'Growth Hacker',
+      'Online Marketing Manager', 'Ecommerce Admin Assistant',
+      'UX Architect', 'Head of UX', 'Senior User Experience Designer', 'Junior User Experience Designer',
+    ],
+  },
+  {
+    label: '3D Animation',
+    roles: ['3D/CGI Artist', '3D Motion Animator'],
   },
   {
     label: 'Production',
-    roles: ['Head of Production', 'Senior Producer', 'Producer', 'Junior Producer', 'Creative Producer', 'Director of Photography', 'Senior Editor', 'Production Assistant', 'Art Buyer'],
+    roles: [
+      'Head of Production', 'Head of Broadcast', 'Studio Director', 'Chief Producer',
+      'Senior Producer', 'Producer (TV/Audio Visual/Radio)', 'AV Producer',
+      'Film Director', 'Film Producer', 'Film Manager',
+      'Senior TV Producer', 'Junior TV Producer', 'Junior Producer',
+      'Production Controller', 'Post Producer', 'Events Producer', 'Creative Producer',
+      'Director of Photography', 'Senior Editor', 'Edit Assistant', 'Production Assistant',
+      'Assistant Production Manager', 'TV Admin', 'TV Assistant', 'TV Coordinator',
+      'Talent Coordinator', 'Music Production', 'Art Buyer',
+      'Art Studio Manager', 'Assistant Studio Manager',
+    ],
+  },
+  {
+    label: 'Other',
+    roles: ['Other'],
   },
 ] as const
 
-// ── Production House People Roles ──────────────────────────────────────────
+// ── Production House People Roles (from RFI Production House-updated.xlsx rows 198-209) ──
 export const PRODUCTION_PEOPLE_ROLES = [
   'Executive Producer', 'Senior Producer', 'Junior Producer',
   'Creative Research Lead', 'Production Manager', 'Production Coordinator',
   'Production Supervisor', 'Coordinator',
 ] as const
 
-// ── Agency Awards ──────────────────────────────────────────────────────────
+// ── Agency Awards (from RFI Agency-updated.xlsx rows 467-479) ──────────────
 export const AGENCY_AWARDS = [
   'Cannes Lions', 'The One Show', 'D&AD', 'Clio Awards', 'LIA',
   'ADC Awards', 'Webby Awards', 'Effie Awards', 'Epica Awards',
   'Eurobest', 'NY Festival Adv', 'AME',
 ] as const
 
-// ── Production House Awards ────────────────────────────────────────────────
+// ── Production House Awards (from RFI Production House-updated.xlsx rows 247-259) ──
 export const PRODUCTION_AWARDS = [
   'AICP', 'Ciclope Festival', 'British Arrows', 'Shots', 'Clio Awards',
   'D&AD', 'The One Show', 'Creative Circle', 'APA Show', 'YDA', 'VES', 'LIA',
 ] as const
 
-// ── Social Responsibility Questions ────────────────────────────────────────
+// ── Governance Questions (long-text prompts from Excel) ────────────────────
+export const GOVERNANCE_QUESTIONS = [
+  'Kindly detail the control and quality assurance systems established within your designated Creative Network for the purpose of monitoring and managing performance and Service Level Agreements (SLAs).',
+  'Please outline the protocols in place for managing client data within your selected Creative Network, particularly if these differ from those of the Holding Group. Furthermore, please specify if your Creative Network utilises its own Data Management Platform (DMP).',
+  'With regard to global brand governance, please clarify the distinction between global and local strategies. Describe the processes, including tools, systems, and the level of autonomy within a structured framework, employed to manage global governance and local adaptation.',
+  'Please include any additional information that you deem pertinent.',
+] as const
+
+// ── Social Responsibility Questions (matching both Excel files) ────────────
 export const SOCIAL_RESPONSIBILITY_QUESTIONS = [
-  'Does your company have gender equality policies in place?',
-  'Does your company adopt policies and control systems against discrimination?',
-  'Does your company provide human rights education and training programmes?',
-  'Does your company run projects in the social and environmental sectors?',
-  'Has your company established partnerships with non-profits, social enterprises, or similar organisations?',
-  'In the case of activated projects, what are the impact areas?',
-  'Has your company appointed a CSR Manager or established a dedicated organisational unit for Corporate Social Responsibility?',
-  'Does your company conduct periodic social reporting?',
-  'Does your company apply ethical and environmental criteria when selecting suppliers?',
-  'Does your company require its suppliers to hold social and/or environmental certifications?',
+  { id: '1.1', text: 'Does your company have gender equality policies in place?' },
+  { id: '1.2', text: 'Does your company adopt policies and control systems against discrimination?' },
+  { id: '1.3', text: 'Does your company provide human rights education and training programmes?' },
+  { id: '1.4', text: 'Does your company run projects in the social and environmental sectors?' },
+  { id: '1.5', text: 'Has your company established partnerships with non-profits, social enterprises, or similar organisations?' },
+  { id: '1.6', text: 'In the case of activated projects, what are the impact areas?' },
+  { id: '1.7', text: 'Has your company appointed a CSR Manager or established a dedicated organisational unit for Corporate Social Responsibility?' },
+  { id: '1.8', text: 'Does your company conduct periodic social reporting (e.g., social balance sheets, sustainability reports)?' },
+  { id: '1.9', text: 'Does your company apply ethical and environmental criteria when selecting suppliers?' },
+  { id: '1.10', text: 'Does your company require its suppliers to hold social and/or environmental certifications?' },
+  { id: '1.11', text: 'Does your company carry out awareness-raising initiatives on CSR for its suppliers?' },
+] as const
+
+// ── CSR Impact Areas (sub-items for question 1.6) ──────────────────────────
+export const CSR_IMPACT_AREAS = [
+  'Social Inclusion (Disability & Minorities)',
+  'Gender equality',
+  'PMIs involvement',
+  'Fair trade',
+  'Other',
 ] as const
 
 // ── AI Questions ───────────────────────────────────────────────────────────
@@ -225,6 +333,15 @@ export const INVESTMENT_CATEGORIES = [
   'Media & Advertising', 'Training', 'Other',
 ] as const
 
+// ── Attachments Requested ──────────────────────────────────────────────────
+export const ATTACHMENTS_REQUESTED = [
+  { id: '1.1', label: 'Organisational Chart' },
+  { id: '1.2', label: 'Chamber of Commerce Extract/View' },
+  { id: '1.3', label: 'References' },
+  { id: '1.4', label: 'Company profile (Creds)' },
+  { id: '1.5', label: 'Certifications' },
+] as const
+
 // ── Registration steps (8 steps per client feedback) ───────────────────────
 export const REGISTRATION_STEPS = [
   { key: 'general-info', label: 'General Info', shortLabel: 'General' },
@@ -237,7 +354,7 @@ export const REGISTRATION_STEPS = [
   { key: 'add-on', label: 'Add-On', shortLabel: 'Add-On' },
 ] as const
 
-// ── Countries (full list from Drop-down sheet) ─────────────────────────────
+// ── Countries (full list from Drop-down sheet — 194 countries) ─────────────
 export const COUNTRIES = [
   'Afghanistan', 'Albania', 'Algeria', 'Andorra', 'Angola', 'Antigua and Barbuda',
   'Argentina', 'Armenia', 'Australia', 'Austria', 'Azerbaijan', 'Bahamas', 'Bahrain',
@@ -291,3 +408,11 @@ export const SOCIAL_MEDIA_FIELDS = [
 export const AGENCY_TALENT_ROLES = [
   'Executive Creative Director', 'Creative Director', 'Chief Strategy Officer',
 ] as const
+
+// ── Turnover Regions (from Excel column headers) ───────────────────────────
+export const TURNOVER_REGIONS = ['LOCAL', 'GLOBAL', 'NAM', 'EUROPE', 'LATAM', 'AFRICA', 'APAC'] as const
+
+// ── Turnover Years ─────────────────────────────────────────────────────────
+export function getTurnoverYears(): string[] {
+  return ['2025', '2024', '2023', '2022', '2021']
+}
