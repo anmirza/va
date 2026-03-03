@@ -49,7 +49,7 @@ function DashboardContent() {
       <Header />
       <main className="flex-1">
         {/* Page header */}
-        <div className="bg-gradient-to-r from-[#0a0c18] via-[#111328] to-[#0a0c18] px-4 sm:px-6 lg:px-8 py-10 border-b border-border">
+        <div className="bg-card px-4 sm:px-6 lg:px-8 py-10 border-b border-border">
           <div className="max-w-6xl mx-auto">
             <div className="flex items-center gap-4">
               {user?.avatar ? (

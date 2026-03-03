@@ -1,5 +1,6 @@
 'use client'
 
+import { useState } from 'react'
 import Link from 'next/link'
 import { Header } from '@/components/header'
 import { Footer } from '@/components/footer'
@@ -20,6 +21,8 @@ const disciplines = [
 ]
 
 export default function Home() {
+  const [showMoreAgencies, setShowMoreAgencies] = useState(false)
+
   return (
     <div className="min-h-screen bg-[#02030E] flex flex-col">
       <Header />
@@ -91,10 +94,22 @@ export default function Home() {
             </Link>
           </div>
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-            {companies.slice(0, 6).map((company) => (
+            {companies.slice(0, showMoreAgencies ? 12 : 6).map((company) => (
               <CompanyCard key={company.id} company={company} />
             ))}
           </div>
+          
+          {companies.length > 6 && (
+            <div className="mt-10 flex justify-center">
+              <Button
+                variant="outline"
+                className="border-white/20 text-white hover:bg-white/10"
+                onClick={() => setShowMoreAgencies(!showMoreAgencies)}
+              >
+                {showMoreAgencies ? 'View less' : 'Show more'}
+              </Button>
+            </div>
+          )}
         </section>
 
         {/* Latest Creative Work */}
