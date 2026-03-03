@@ -93,17 +93,17 @@ export default function ClientSignupPage() {
                   <div>
                     <label className="block text-sm font-medium text-white/60 mb-1.5">Company Name *</label>
                     <Input value={formData.companyName} onChange={e => update('companyName', e.target.value)}
-                      className="h-10 bg-white/[0.06] border-white/[0.12] text-white rounded-full" required />
+                      className="h-10 bg-white/[0.06] border-white/[0.12] text-white rounded-xl" required />
                   </div>
                   <div>
                     <label className="block text-sm font-medium text-white/60 mb-1.5">Industry</label>
                     <Input value={formData.industry} onChange={e => update('industry', e.target.value)}
-                      className="h-10 bg-white/[0.06] border-white/[0.12] text-white rounded-full" />
+                      className="h-10 bg-white/[0.06] border-white/[0.12] text-white rounded-xl" />
                   </div>
                   <div>
                     <label className="block text-sm font-medium text-white/60 mb-1.5">Country *</label>
                     <select value={formData.country} onChange={e => update('country', e.target.value)}
-                      className="w-full h-10 bg-white/[0.06] border border-white/[0.12] text-white text-sm rounded-full px-3">
+                      className="w-full h-10 bg-white/[0.06] border border-white/[0.12] text-white text-sm rounded-xl px-3">
                       <option value="">Select country</option>
                       {COUNTRIES.map(c => <option key={c} value={c}>{c}</option>)}
                     </select>
@@ -111,12 +111,12 @@ export default function ClientSignupPage() {
                   <div>
                     <label className="block text-sm font-medium text-white/60 mb-1.5">City</label>
                     <Input value={formData.city} onChange={e => update('city', e.target.value)}
-                      className="h-10 bg-white/[0.06] border-white/[0.12] text-white rounded-full" />
+                      className="h-10 bg-white/[0.06] border-white/[0.12] text-white rounded-xl" />
                   </div>
                   <div>
                     <label className="block text-sm font-medium text-white/60 mb-1.5">Company Size</label>
                     <select value={formData.employeeSize} onChange={e => update('employeeSize', e.target.value)}
-                      className="w-full h-10 bg-white/[0.06] border border-white/[0.12] text-white text-sm rounded-full px-3">
+                      className="w-full h-10 bg-white/[0.06] border border-white/[0.12] text-white text-sm rounded-xl px-3">
                       <option value="">Select size</option>
                       {EMPLOYEE_SIZES.map(s => <option key={s} value={s}>{s}</option>)}
                     </select>
@@ -124,7 +124,7 @@ export default function ClientSignupPage() {
                   <div>
                     <label className="block text-sm font-medium text-white/60 mb-1.5">Website</label>
                     <Input value={formData.website} onChange={e => update('website', e.target.value)}
-                      placeholder="https://" className="h-10 bg-white/[0.06] border-white/[0.12] text-white rounded-full" />
+                      placeholder="https://" className="h-10 bg-white/[0.06] border-white/[0.12] text-white rounded-xl" />
                   </div>
                 </div>
               </div>
@@ -141,32 +141,32 @@ export default function ClientSignupPage() {
                   <div>
                     <label className="block text-sm font-medium text-white/60 mb-1.5">Name *</label>
                     <Input value={formData.contactName} onChange={e => update('contactName', e.target.value)}
-                      className="h-10 bg-white/[0.06] border-white/[0.12] text-white rounded-full" required />
+                      className="h-10 bg-white/[0.06] border-white/[0.12] text-white rounded-xl" required />
                   </div>
                   <div>
                     <label className="block text-sm font-medium text-white/60 mb-1.5">Surname *</label>
                     <Input value={formData.contactSurname} onChange={e => update('contactSurname', e.target.value)}
-                      className="h-10 bg-white/[0.06] border-white/[0.12] text-white rounded-full" required />
+                      className="h-10 bg-white/[0.06] border-white/[0.12] text-white rounded-xl" required />
                   </div>
                   <div>
                     <label className="block text-sm font-medium text-white/60 mb-1.5">Corporate Email *</label>
                     <Input type="email" value={formData.contactEmail} onChange={e => update('contactEmail', e.target.value)}
-                      placeholder="you@company.com" className="h-10 bg-white/[0.06] border-white/[0.12] text-white rounded-full" required />
+                      placeholder="you@company.com" className="h-10 bg-white/[0.06] border-white/[0.12] text-white rounded-xl" required />
                   </div>
                   <div>
                     <label className="block text-sm font-medium text-white/60 mb-1.5">Phone</label>
                     <Input value={formData.contactPhone} onChange={e => update('contactPhone', e.target.value)}
-                      className="h-10 bg-white/[0.06] border-white/[0.12] text-white rounded-full" />
+                      className="h-10 bg-white/[0.06] border-white/[0.12] text-white rounded-xl" />
                   </div>
                   <div>
                     <label className="block text-sm font-medium text-white/60 mb-1.5">Role/Title</label>
                     <Input value={formData.contactRole} onChange={e => update('contactRole', e.target.value)}
-                      className="h-10 bg-white/[0.06] border-white/[0.12] text-white rounded-full" />
+                      className="h-10 bg-white/[0.06] border-white/[0.12] text-white rounded-xl" />
                   </div>
                   <div>
                     <label className="block text-sm font-medium text-white/60 mb-1.5">LinkedIn</label>
                     <Input value={formData.linkedin} onChange={e => update('linkedin', e.target.value)}
-                      placeholder="linkedin.com/in/..." className="h-10 bg-white/[0.06] border-white/[0.12] text-white rounded-full" />
+                      placeholder="linkedin.com/in/..." className="h-10 bg-white/[0.06] border-white/[0.12] text-white rounded-xl" />
                   </div>
                 </div>
               </div>

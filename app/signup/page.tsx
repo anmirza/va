@@ -153,7 +153,7 @@ export default function SignupPage() {
                     value={name}
                     onChange={e => setName(e.target.value)}
                     placeholder="Your name"
-                    className="h-11 bg-white/[0.06] border-white/[0.12] text-white placeholder:text-white/30 rounded-full"
+                    className="h-11 bg-white/[0.06] border-white/[0.12] text-white placeholder:text-white/30 rounded-xl"
                     required
                   />
                 </div>
@@ -164,7 +164,7 @@ export default function SignupPage() {
                     value={email}
                     onChange={e => setEmail(e.target.value)}
                     placeholder="you@company.com"
-                    className="h-11 bg-white/[0.06] border-white/[0.12] text-white placeholder:text-white/30 rounded-full"
+                    className="h-11 bg-white/[0.06] border-white/[0.12] text-white placeholder:text-white/30 rounded-xl"
                     required
                   />
                   <p className="text-xs text-white/30 mt-1">Personal email addresses (Gmail, Yahoo, etc.) are not accepted</p>
@@ -177,7 +177,7 @@ export default function SignupPage() {
                       value={password}
                       onChange={e => setPassword(e.target.value)}
                       placeholder="Min 8 characters"
-                      className="h-11 bg-white/[0.06] border-white/[0.12] text-white placeholder:text-white/30 pr-10 rounded-full"
+                      className="h-11 bg-white/[0.06] border-white/[0.12] text-white placeholder:text-white/30 pr-10 rounded-xl"
                       minLength={8}
                       required
                     />
@@ -197,7 +197,7 @@ export default function SignupPage() {
                 )}
                 <Button
                   type="submit"
-                  className="w-full h-11 bg-[#4fc487] hover:bg-[#45b078] text-white rounded-full"
+                  className="w-full h-11 bg-[#4fc487] hover:bg-[#45b078] text-white rounded-xl"
                   disabled={isLoading}
                 >
                   {isLoading ? 'Creating account...' : 'Create Account'}

@@ -33,7 +33,7 @@
   --chart-3: #8890a4;
   --chart-4: #d4a574;
   --chart-5: rgba(255,255,255,0.08);
-  --radius: 9999px;
+  --radius: 0.75rem;
   --card-radius: 1rem;
   --surface: #0a0c18;
   --surface-bright: #111328;
@@ -138,23 +138,17 @@
     @apply bg-background text-foreground;
   }
 
-  /* Pill-shaped buttons & inputs (client requirement) */
-  button, [type="button"], [type="submit"], [type="reset"] {
-    border-radius: 9999px;
-  }
+  /* Base form styling (dark-first) */
   input:not([type="checkbox"]):not([type="radio"]):not([type="range"]),
   select,
   textarea {
-    border-radius: 9999px;
+    border-radius: 0.75rem;
     background: rgba(255, 255, 255, 0.06);
     border-color: rgba(255, 255, 255, 0.12);
     color: #e8eaf0;
   }
   textarea {
-    border-radius: 1rem;
-  }
-  select {
-    border-radius: 9999px;
+    border-radius: 0.75rem;
   }
 
   /* Glass-morphism card utility */
@@ -370,5 +364,37 @@ select option {
 /* ── Stats row ── */
 .light-mode div[class*="text-white\\/40"] {
   color: #888 !important;
+}
+
+/* ── Dashboard Cards & Settings (light mode) ── */
+.light-mode div[class*="bg-white\\/\\[0\\.05\\]"],
+.light-mode div[class*="bg-white\\/\\[0\\.04\\]"] {
+  background: rgba(255, 255, 255, 0.92) !important;
+  border-color: rgba(0, 0, 0, 0.08) !important;
+  box-shadow: 0 1px 3px rgba(0,0,0,0.06);
+}
+.light-mode nav[class*="bg-white\\/\\[0\\.05\\]"] {
+  background: rgba(255, 255, 255, 0.92) !important;
+  border-color: rgba(0, 0, 0, 0.08) !important;
+  box-shadow: 0 1px 3px rgba(0,0,0,0.06);
+}
+.light-mode button[class*="bg-white\\/\\[0\\.08\\]"] {
+  background: rgba(0, 0, 0, 0.04) !important;
+}
+.light-mode button[class*="text-white\\/50"] {
+  color: #666 !important;
+}
+.light-mode label[class*="text-white\\/70"] {
+  color: #444 !important;
+}
+.light-mode div[class*="text-white\\/50"] {
+  color: #666 !important;
+}
+.light-mode button[class*="text-red-400"] {
+  color: #dc2626 !important;
+}
+/* Dashboard page bg in light mode */
+.light-mode div[class*="bg-\\[\\#02030E\\]"] {
+  background: #f5f6fa !important;
 }
 

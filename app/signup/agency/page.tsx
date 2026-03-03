@@ -664,6 +664,6 @@ function FormField({ label, required, children, className }: { label: string; re
   )
 }
 
-const inputCls = 'h-10 bg-white/[0.06] border-white/[0.12] text-white placeholder:text-white/20 rounded-full'
-const selectCls = 'w-full h-10 bg-white/[0.06] border border-white/[0.12] text-white text-sm rounded-full px-3 focus:outline-none focus:ring-2 focus:ring-[#4fc487] [&_option]:bg-[#1a1d2e] [&_option]:text-white'
+const inputCls = 'h-10 bg-white/[0.06] border-white/[0.12] text-white placeholder:text-white/20 rounded-xl'
+const selectCls = 'w-full h-10 bg-white/[0.06] border border-white/[0.12] text-white text-sm rounded-xl px-3 focus:outline-none focus:ring-2 focus:ring-[#4fc487] [&_option]:bg-[#1a1d2e] [&_option]:text-white'
 const textareaCls = 'w-full bg-white/[0.06] border border-white/[0.12] text-white text-sm rounded-xl px-3 py-2.5 focus:outline-none focus:ring-2 focus:ring-[#4fc487] resize-none placeholder:text-white/20'

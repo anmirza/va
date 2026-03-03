@@ -62,19 +62,19 @@ interface ProductionProfile {
 function InfoRow({ label, value }: { label: string; value?: string }) {
   if (!value) return null
   return (
-    <div className="flex flex-col sm:flex-row sm:items-center gap-1 py-2.5 border-b border-[#f0f0f0] last:border-0">
-      <span className="text-xs font-medium text-[#999] uppercase tracking-wide sm:w-44 shrink-0">{label}</span>
-      <span className="text-sm text-[#1a1a1a]">{value}</span>
+    <div className="flex flex-col sm:flex-row sm:items-center gap-1 py-2.5 border-b border-border last:border-0">
+      <span className="text-xs font-medium text-muted-foreground uppercase tracking-wide sm:w-44 shrink-0">{label}</span>
+      <span className="text-sm text-foreground">{value}</span>
     </div>
   )
 }
 
 function SectionCard({ title, icon: Icon, children }: { title: string; icon: React.ElementType; children: React.ReactNode }) {
   return (
-    <div className="bg-white rounded-xl shadow-sm overflow-hidden">
-      <div className="flex items-center gap-2.5 px-6 py-4 border-b border-[#eef0f3]">
+    <div className="bg-card border border-border rounded-xl border border-border overflow-hidden">
+      <div className="flex items-center gap-2.5 px-6 py-4 border-b border-border">
         <Icon className="w-4 h-4 text-[#4fc487]" />
-        <h3 className="font-semibold text-[#1a1a1a] text-sm">{title}</h3>
+        <h3 className="font-semibold text-foreground text-sm">{title}</h3>
       </div>
       <div className="px-6 py-4">{children}</div>
     </div>
@@ -128,15 +128,15 @@ function ProductionDashContent() {
   ] as const
 
   return (
-    <div className="min-h-screen bg-[#eef0f3] flex flex-col">
+    <div className="min-h-screen bg-background flex flex-col">
       <Header />
       <main className="flex-1">
         {/* Page header */}
-        <div className="bg-[#2e3843] px-4 sm:px-6 lg:px-8 py-10">
+        <div className="bg-card border-b border-border px-4 sm:px-6 lg:px-8 py-10">
           <div className="max-w-6xl mx-auto flex items-center justify-between gap-4">
             <div>
-              <Link href="/dashboard" className="text-sm text-white/60 hover:text-white mb-2 block">← Dashboard</Link>
-              <h1 className="text-2xl font-bold text-white">{profile?.businessName || user?.name || 'My Production House'}</h1>
+              <Link href="/dashboard" className="text-sm text-muted-foreground hover:text-foreground mb-2 block">← Dashboard</Link>
+              <h1 className="text-2xl font-bold text-foreground">{profile?.businessName || user?.name || 'My Production House'}</h1>
               {(profile?.city || profile?.country) && (
                 <p className="text-[#98F5CC] text-sm flex items-center gap-1.5 mt-1">
                   <MapPin className="w-3.5 h-3.5" />
@@ -154,14 +154,14 @@ function ProductionDashContent() {
 
         <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
           {/* Tabs */}
-          <div className="flex gap-1 bg-white rounded-xl p-1 shadow-sm mb-8 overflow-x-auto">
+          <div className="flex gap-1 bg-card border border-border rounded-xl p-1 shadow-sm mb-8 overflow-x-auto">
             {TABS.map(tab => {
               const Icon = tab.icon
               return (
                 <button
                   key={tab.id}
                   onClick={() => setActiveTab(tab.id)}
-                  className={`flex items-center gap-2 px-4 py-2.5 rounded-lg text-sm font-medium whitespace-nowrap transition-colors flex-1 justify-center ${activeTab === tab.id ? 'bg-[#2e3843] text-white' : 'text-[#666] hover:text-[#1a1a1a]'}`}
+                  className={`flex items-center gap-2 px-4 py-2.5 rounded-lg text-sm font-medium whitespace-nowrap transition-colors flex-1 justify-center ${activeTab === tab.id ? 'bg-secondary text-foreground shadow-sm' : 'text-muted-foreground hover:bg-muted hover:text-foreground'}`}
                 >
                   <Icon className="w-4 h-4" />{tab.label}
                 </button>
@@ -173,12 +173,12 @@ function ProductionDashContent() {
           {activeTab === 'overview' && (
             <div className="space-y-6">
               {!profile && (
-                <div className="bg-white rounded-xl p-10 shadow-sm text-center">
-                  <Film className="w-12 h-12 text-[#d8dce2] mx-auto mb-4" />
-                  <h2 className="text-lg font-semibold text-[#1a1a1a] mb-2">No profile yet</h2>
-                  <p className="text-sm text-[#666] mb-6">Complete the production house registration form to build your VA profile.</p>
+                <div className="bg-card border border-border rounded-xl p-10 shadow-sm text-center">
+                  <Film className="w-12 h-12 text-muted-foreground mx-auto mb-4" />
+                  <h2 className="text-lg font-semibold text-foreground mb-2">No profile yet</h2>
+                  <p className="text-sm text-muted-foreground mb-6">Complete the production house registration form to build your VA profile.</p>
                   <Link href="/signup/production">
-                    <Button className="bg-[#4fc487] hover:bg-[#45b078] text-white">Register Your Production House</Button>
+                    <Button className="bg-[#4fc487] hover:bg-[#45b078] text-foreground">Register Your Production House</Button>
                   </Link>
                 </div>
               )}
@@ -189,11 +189,11 @@ function ProductionDashContent() {
                   <div className="lg:col-span-2 space-y-6">
                     {profile.about && (
                       <SectionCard title="About" icon={Film}>
-                        <p className="text-sm text-[#444] leading-relaxed">{profile.about}</p>
+                        <p className="text-sm text-muted-foreground leading-relaxed">{profile.about}</p>
                         {profile.philosophy && (
-                          <div className="mt-4 pt-4 border-t border-[#f0f0f0]">
-                            <p className="text-xs font-semibold text-[#999] uppercase tracking-wide mb-1">Philosophy</p>
-                            <p className="text-sm text-[#444] leading-relaxed">{profile.philosophy}</p>
+                          <div className="mt-4 pt-4 border-t border-border">
+                            <p className="text-xs font-semibold text-muted-foreground uppercase tracking-wide mb-1">Philosophy</p>
+                            <p className="text-sm text-muted-foreground leading-relaxed">{profile.philosophy}</p>
                           </div>
                         )}
                       </SectionCard>
@@ -219,7 +219,7 @@ function ProductionDashContent() {
                       <SectionCard title="Production Competencies" icon={CheckSquare}>
                         <div className="flex flex-wrap gap-2">
                           {activeCompetencies.map(c => (
-                            <span key={c} className="bg-[#eef0f3] text-[#444] text-xs px-2.5 py-1 rounded-full">{c}</span>
+                            <span key={c} className="bg-muted border border-border text-muted-foreground text-xs px-2.5 py-1 rounded-full">{c}</span>
                           ))}
                         </div>
                       </SectionCard>
@@ -229,7 +229,7 @@ function ProductionDashContent() {
                       <SectionCard title="Sectors Served" icon={BarChart3}>
                         <div className="flex flex-wrap gap-2">
                           {activeSectors.map(s => (
-                            <span key={s} className="border border-[#d8dce2] text-[#444] text-xs px-2.5 py-1 rounded-full">{s}</span>
+                            <span key={s} className="border border-border text-muted-foreground text-xs px-2.5 py-1 rounded-full">{s}</span>
                           ))}
                         </div>
                       </SectionCard>
@@ -239,10 +239,10 @@ function ProductionDashContent() {
                       <SectionCard title="Key Clients" icon={Users}>
                         <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
                           {notableClients.map((c, i) => (
-                            <div key={i} className="border border-[#eef0f3] rounded-lg p-3">
-                              <p className="text-sm font-medium text-[#1a1a1a]">{c.name}</p>
-                              {c.industry && <p className="text-xs text-[#999] mt-0.5">{c.industry}</p>}
-                              {c.activities && <p className="text-xs text-[#666] mt-1">{c.activities}</p>}
+                            <div key={i} className="border border-border rounded-lg p-3">
+                              <p className="text-sm font-medium text-foreground">{c.name}</p>
+                              {c.industry && <p className="text-xs text-muted-foreground mt-0.5">{c.industry}</p>}
+                              {c.activities && <p className="text-xs text-muted-foreground mt-1">{c.activities}</p>}
                             </div>
                           ))}
                         </div>
@@ -256,11 +256,11 @@ function ProductionDashContent() {
                       <SectionCard title="Awards" icon={Award}>
                         <div className="space-y-2">
                           {notableAwards.slice(0, 5).map((a, i) => (
-                            <div key={i} className="flex items-center gap-3 py-1.5 border-b border-[#f0f0f0] last:border-0">
+                            <div key={i} className="flex items-center gap-3 py-1.5 border-b border-border last:border-0">
                               <div className="w-1.5 h-1.5 rounded-full bg-[#4fc487] shrink-0" />
                               <div>
-                                <p className="text-sm text-[#1a1a1a]"><span className="font-medium">{a.festival}</span> — {a.distinction}</p>
-                                {(a.ad || a.brand) && <p className="text-xs text-[#999]">{[a.ad, a.brand, a.year].filter(Boolean).join(' · ')}</p>}
+                                <p className="text-sm text-foreground"><span className="font-medium">{a.festival}</span> — {a.distinction}</p>
+                                {(a.ad || a.brand) && <p className="text-xs text-muted-foreground">{[a.ad, a.brand, a.year].filter(Boolean).join(' · ')}</p>}
                               </div>
                             </div>
                           ))}
@@ -275,8 +275,8 @@ function ProductionDashContent() {
                       <div className="space-y-2.5">
                         {profile.address && (
                           <div className="flex items-start gap-2">
-                            <MapPin className="w-4 h-4 text-[#999] mt-0.5 shrink-0" />
-                            <p className="text-sm text-[#444]">{profile.address}, {profile.postcode}<br />{profile.city}, {profile.country}</p>
+                            <MapPin className="w-4 h-4 text-muted-foreground mt-0.5 shrink-0" />
+                            <p className="text-sm text-muted-foreground">{profile.address}, {profile.postcode}<br />{profile.city}, {profile.country}</p>
                           </div>
                         )}
                         {profile.website && (
@@ -285,30 +285,30 @@ function ProductionDashContent() {
                           </a>
                         )}
                         {primaryContact?.email && (
-                          <a href={`mailto:${primaryContact.email}`} className="flex items-center gap-2 text-sm text-[#444] hover:text-[#4fc487]">
+                          <a href={`mailto:${primaryContact.email}`} className="flex items-center gap-2 text-sm text-muted-foreground hover:text-[#4fc487]">
                             <Mail className="w-4 h-4 shrink-0" />{primaryContact.email}
                           </a>
                         )}
                         {primaryContact?.telephone && (
-                          <div className="flex items-center gap-2 text-sm text-[#444]">
+                          <div className="flex items-center gap-2 text-sm text-muted-foreground">
                             <Phone className="w-4 h-4 shrink-0" />{primaryContact.telephone}
                           </div>
                         )}
                       </div>
                       {(profile.linkedin || profile.twitter || profile.instagram) && (
-                        <div className="flex items-center gap-3 mt-4 pt-4 border-t border-[#f0f0f0]">
+                        <div className="flex items-center gap-3 mt-4 pt-4 border-t border-border">
                           {profile.linkedin && (
-                            <a href={`https://linkedin.com/company/${profile.linkedin}`} target="_blank" rel="noreferrer" className="text-[#666] hover:text-[#4fc487]">
+                            <a href={`https://linkedin.com/company/${profile.linkedin}`} target="_blank" rel="noreferrer" className="text-muted-foreground hover:text-[#4fc487]">
                               <Linkedin className="w-4 h-4" />
                             </a>
                           )}
                           {profile.twitter && (
-                            <a href={`https://twitter.com/${profile.twitter}`} target="_blank" rel="noreferrer" className="text-[#666] hover:text-[#4fc487]">
+                            <a href={`https://twitter.com/${profile.twitter}`} target="_blank" rel="noreferrer" className="text-muted-foreground hover:text-[#4fc487]">
                               <Twitter className="w-4 h-4" />
                             </a>
                           )}
                           {profile.instagram && (
-                            <a href={`https://instagram.com/${profile.instagram}`} target="_blank" rel="noreferrer" className="text-[#666] hover:text-[#4fc487]">
+                            <a href={`https://instagram.com/${profile.instagram}`} target="_blank" rel="noreferrer" className="text-muted-foreground hover:text-[#4fc487]">
                               <Instagram className="w-4 h-4" />
                             </a>
                           )}
@@ -321,8 +321,8 @@ function ProductionDashContent() {
                         <div className="space-y-3">
                           {profile.contacts.filter(c => c.firstName).map((c, i) => (
                             <div key={i}>
-                              <p className="text-sm font-medium text-[#1a1a1a]">{c.firstName} {c.lastName}</p>
-                              <p className="text-xs text-[#999]">{c.role}</p>
+                              <p className="text-sm font-medium text-foreground">{c.firstName} {c.lastName}</p>
+                              <p className="text-xs text-muted-foreground">{c.role}</p>
                               {c.email && <a href={`mailto:${c.email}`} className="text-xs text-[#4fc487] hover:underline">{c.email}</a>}
                             </div>
                           ))}
@@ -334,34 +334,34 @@ function ProductionDashContent() {
                       <div className="space-y-2.5">
                         {profile.employees && (
                           <div className="flex items-center justify-between text-sm">
-                            <span className="text-[#666]">Staff Size</span>
-                            <span className="font-semibold text-[#1a1a1a]">{profile.employees}</span>
+                            <span className="text-muted-foreground">Staff Size</span>
+                            <span className="font-semibold text-foreground">{profile.employees}</span>
                           </div>
                         )}
                         <div className="flex items-center justify-between text-sm">
-                          <span className="text-[#666]">Competencies</span>
-                          <span className="font-semibold text-[#1a1a1a]">{activeCompetencies.length}</span>
+                          <span className="text-muted-foreground">Competencies</span>
+                          <span className="font-semibold text-foreground">{activeCompetencies.length}</span>
                         </div>
                         <div className="flex items-center justify-between text-sm">
-                          <span className="text-[#666]">Sectors</span>
-                          <span className="font-semibold text-[#1a1a1a]">{activeSectors.length}</span>
+                          <span className="text-muted-foreground">Sectors</span>
+                          <span className="font-semibold text-foreground">{activeSectors.length}</span>
                         </div>
                         {notableDirectors.length > 0 && (
                           <div className="flex items-center justify-between text-sm">
-                            <span className="text-[#666]">Directors</span>
-                            <span className="font-semibold text-[#1a1a1a]">{notableDirectors.length}</span>
+                            <span className="text-muted-foreground">Directors</span>
+                            <span className="font-semibold text-foreground">{notableDirectors.length}</span>
                           </div>
                         )}
                         {notableAwards.length > 0 && (
                           <div className="flex items-center justify-between text-sm">
-                            <span className="text-[#666]">Award Wins</span>
-                            <span className="font-semibold text-[#1a1a1a]">{notableAwards.length}</span>
+                            <span className="text-muted-foreground">Award Wins</span>
+                            <span className="font-semibold text-foreground">{notableAwards.length}</span>
                           </div>
                         )}
                         {profile.yearEstablished && (
                           <div className="flex items-center justify-between text-sm">
-                            <span className="text-[#666]">Founded</span>
-                            <span className="font-semibold text-[#1a1a1a]">{profile.yearEstablished}</span>
+                            <span className="text-muted-foreground">Founded</span>
+                            <span className="font-semibold text-foreground">{profile.yearEstablished}</span>
                           </div>
                         )}
                       </div>
@@ -369,8 +369,8 @@ function ProductionDashContent() {
 
                     {profile.aiCurrentTools && (
                       <SectionCard title="AI Readiness" icon={Award}>
-                        <p className="text-xs text-[#666] mb-1 font-medium">Current tools</p>
-                        <p className="text-sm text-[#444]">{profile.aiCurrentTools}</p>
+                        <p className="text-xs text-muted-foreground mb-1 font-medium">Current tools</p>
+                        <p className="text-sm text-muted-foreground">{profile.aiCurrentTools}</p>
                       </SectionCard>
                     )}
                   </div>
@@ -383,55 +383,55 @@ function ProductionDashContent() {
           {activeTab === 'edit' && (
             <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
               <div className="space-y-6">
-                <div className="bg-white rounded-xl p-6 shadow-sm">
-                  <h2 className="font-bold text-[#1a1a1a] mb-5">Core Details</h2>
+                <div className="bg-card border border-border rounded-xl p-6 shadow-sm">
+                  <h2 className="font-bold text-foreground mb-5">Core Details</h2>
                   <div className="space-y-4">
                     <div>
-                      <label className="block text-xs font-medium text-[#666] mb-1.5">Company Name *</label>
+                      <label className="block text-xs font-medium text-muted-foreground mb-1.5">Company Name *</label>
                       <Input value={editDraft.businessName || ''} onChange={e => setEditDraft(p => ({ ...p, businessName: e.target.value }))} className="h-10" />
                     </div>
                     <div>
-                      <label className="block text-xs font-medium text-[#666] mb-1.5">Year Established</label>
+                      <label className="block text-xs font-medium text-muted-foreground mb-1.5">Year Established</label>
                       <Input value={editDraft.yearEstablished || ''} onChange={e => setEditDraft(p => ({ ...p, yearEstablished: e.target.value }))} className="h-10" />
                     </div>
                     <div>
-                      <label className="block text-xs font-medium text-[#666] mb-1.5">Staff Size</label>
+                      <label className="block text-xs font-medium text-muted-foreground mb-1.5">Staff Size</label>
                       <Input value={editDraft.employees || ''} onChange={e => setEditDraft(p => ({ ...p, employees: e.target.value }))} className="h-10" />
                     </div>
                     <div>
-                      <label className="block text-xs font-medium text-[#666] mb-1.5">About</label>
-                      <textarea value={editDraft.about || ''} onChange={e => setEditDraft(p => ({ ...p, about: e.target.value }))} rows={4} className="w-full border border-[#d8dce2] rounded-lg px-3 py-2.5 text-sm focus:outline-none focus:border-[#4fc487] resize-none" placeholder="Describe your production house…" />
+                      <label className="block text-xs font-medium text-muted-foreground mb-1.5">About</label>
+                      <textarea value={editDraft.about || ''} onChange={e => setEditDraft(p => ({ ...p, about: e.target.value }))} rows={4} className="w-full border border-border rounded-lg px-3 py-2.5 text-sm focus:outline-none focus:border-[#4fc487] resize-none" placeholder="Describe your production house…" />
                     </div>
                     <div>
-                      <label className="block text-xs font-medium text-[#666] mb-1.5">Philosophy</label>
-                      <textarea value={editDraft.philosophy || ''} onChange={e => setEditDraft(p => ({ ...p, philosophy: e.target.value }))} rows={3} className="w-full border border-[#d8dce2] rounded-lg px-3 py-2.5 text-sm focus:outline-none focus:border-[#4fc487] resize-none" />
+                      <label className="block text-xs font-medium text-muted-foreground mb-1.5">Philosophy</label>
+                      <textarea value={editDraft.philosophy || ''} onChange={e => setEditDraft(p => ({ ...p, philosophy: e.target.value }))} rows={3} className="w-full border border-border rounded-lg px-3 py-2.5 text-sm focus:outline-none focus:border-[#4fc487] resize-none" />
                     </div>
                     <div>
-                      <label className="block text-xs font-medium text-[#666] mb-1.5">Strategic Orientation</label>
-                      <textarea value={editDraft.strategicOrientation || ''} onChange={e => setEditDraft(p => ({ ...p, strategicOrientation: e.target.value }))} rows={3} className="w-full border border-[#d8dce2] rounded-lg px-3 py-2.5 text-sm focus:outline-none focus:border-[#4fc487] resize-none" placeholder="Your strategic goals and focus areas…" />
+                      <label className="block text-xs font-medium text-muted-foreground mb-1.5">Strategic Orientation</label>
+                      <textarea value={editDraft.strategicOrientation || ''} onChange={e => setEditDraft(p => ({ ...p, strategicOrientation: e.target.value }))} rows={3} className="w-full border border-border rounded-lg px-3 py-2.5 text-sm focus:outline-none focus:border-[#4fc487] resize-none" placeholder="Your strategic goals and focus areas…" />
                     </div>
                   </div>
                 </div>
 
-                <div className="bg-white rounded-xl p-6 shadow-sm">
-                  <h2 className="font-bold text-[#1a1a1a] mb-5">Location</h2>
+                <div className="bg-card border border-border rounded-xl p-6 shadow-sm">
+                  <h2 className="font-bold text-foreground mb-5">Location</h2>
                   <div className="space-y-4">
                     <div className="grid grid-cols-2 gap-3">
                       <div>
-                        <label className="block text-xs font-medium text-[#666] mb-1.5">City *</label>
+                        <label className="block text-xs font-medium text-muted-foreground mb-1.5">City *</label>
                         <Input value={editDraft.city || ''} onChange={e => setEditDraft(p => ({ ...p, city: e.target.value }))} className="h-10" />
                       </div>
                       <div>
-                        <label className="block text-xs font-medium text-[#666] mb-1.5">Country *</label>
+                        <label className="block text-xs font-medium text-muted-foreground mb-1.5">Country *</label>
                         <Input value={editDraft.country || ''} onChange={e => setEditDraft(p => ({ ...p, country: e.target.value }))} className="h-10" />
                       </div>
                     </div>
                     <div>
-                      <label className="block text-xs font-medium text-[#666] mb-1.5">Street Address</label>
+                      <label className="block text-xs font-medium text-muted-foreground mb-1.5">Street Address</label>
                       <Input value={editDraft.address || ''} onChange={e => setEditDraft(p => ({ ...p, address: e.target.value }))} className="h-10" />
                     </div>
                     <div>
-                      <label className="block text-xs font-medium text-[#666] mb-1.5">Postcode</label>
+                      <label className="block text-xs font-medium text-muted-foreground mb-1.5">Postcode</label>
                       <Input value={editDraft.postcode || ''} onChange={e => setEditDraft(p => ({ ...p, postcode: e.target.value }))} className="h-10" />
                     </div>
                   </div>
@@ -439,57 +439,57 @@ function ProductionDashContent() {
               </div>
 
               <div className="space-y-6">
-                <div className="bg-white rounded-xl p-6 shadow-sm">
-                  <h2 className="font-bold text-[#1a1a1a] mb-5">Online Presence</h2>
+                <div className="bg-card border border-border rounded-xl p-6 shadow-sm">
+                  <h2 className="font-bold text-foreground mb-5">Online Presence</h2>
                   <div className="space-y-4">
                     <div>
-                      <label className="block text-xs font-medium text-[#666] mb-1.5">Website</label>
+                      <label className="block text-xs font-medium text-muted-foreground mb-1.5">Website</label>
                       <Input value={editDraft.website || ''} onChange={e => setEditDraft(p => ({ ...p, website: e.target.value }))} className="h-10" placeholder="https://" />
                     </div>
                     <div>
-                      <label className="block text-xs font-medium text-[#666] mb-1.5">LinkedIn</label>
+                      <label className="block text-xs font-medium text-muted-foreground mb-1.5">LinkedIn</label>
                       <Input value={editDraft.linkedin || ''} onChange={e => setEditDraft(p => ({ ...p, linkedin: e.target.value }))} className="h-10" />
                     </div>
                     <div>
-                      <label className="block text-xs font-medium text-[#666] mb-1.5">Instagram</label>
+                      <label className="block text-xs font-medium text-muted-foreground mb-1.5">Instagram</label>
                       <Input value={editDraft.instagram || ''} onChange={e => setEditDraft(p => ({ ...p, instagram: e.target.value }))} className="h-10" />
                     </div>
                     <div>
-                      <label className="block text-xs font-medium text-[#666] mb-1.5">Twitter / X</label>
+                      <label className="block text-xs font-medium text-muted-foreground mb-1.5">Twitter / X</label>
                       <Input value={editDraft.twitter || ''} onChange={e => setEditDraft(p => ({ ...p, twitter: e.target.value }))} className="h-10" />
                     </div>
                   </div>
                 </div>
 
-                <div className="bg-white rounded-xl p-6 shadow-sm">
-                  <h2 className="font-bold text-[#1a1a1a] mb-5">Post-Production</h2>
+                <div className="bg-card border border-border rounded-xl p-6 shadow-sm">
+                  <h2 className="font-bold text-foreground mb-5">Post-Production</h2>
                   <div>
-                    <label className="block text-xs font-medium text-[#666] mb-1.5">In-House Post Services</label>
-                    <textarea value={editDraft.postServices || ''} onChange={e => setEditDraft(p => ({ ...p, postServices: e.target.value }))} rows={4} className="w-full border border-[#d8dce2] rounded-lg px-3 py-2.5 text-sm focus:outline-none focus:border-[#4fc487] resize-none" placeholder="Describe post-production capabilities…" />
+                    <label className="block text-xs font-medium text-muted-foreground mb-1.5">In-House Post Services</label>
+                    <textarea value={editDraft.postServices || ''} onChange={e => setEditDraft(p => ({ ...p, postServices: e.target.value }))} rows={4} className="w-full border border-border rounded-lg px-3 py-2.5 text-sm focus:outline-none focus:border-[#4fc487] resize-none" placeholder="Describe post-production capabilities…" />
                   </div>
                 </div>
 
-                <div className="bg-white rounded-xl p-6 shadow-sm">
-                  <h2 className="font-bold text-[#1a1a1a] mb-5">AI & Innovation</h2>
+                <div className="bg-card border border-border rounded-xl p-6 shadow-sm">
+                  <h2 className="font-bold text-foreground mb-5">AI & Innovation</h2>
                   <div className="space-y-4">
                     <div>
-                      <label className="block text-xs font-medium text-[#666] mb-1.5">Current AI Tools</label>
-                      <textarea value={editDraft.aiCurrentTools || ''} onChange={e => setEditDraft(p => ({ ...p, aiCurrentTools: e.target.value }))} rows={3} className="w-full border border-[#d8dce2] rounded-lg px-3 py-2.5 text-sm focus:outline-none focus:border-[#4fc487] resize-none" />
+                      <label className="block text-xs font-medium text-muted-foreground mb-1.5">Current AI Tools</label>
+                      <textarea value={editDraft.aiCurrentTools || ''} onChange={e => setEditDraft(p => ({ ...p, aiCurrentTools: e.target.value }))} rows={3} className="w-full border border-border rounded-lg px-3 py-2.5 text-sm focus:outline-none focus:border-[#4fc487] resize-none" />
                     </div>
                     <div>
-                      <label className="block text-xs font-medium text-[#666] mb-1.5">Future AI Plans</label>
-                      <textarea value={editDraft.aiFuture || ''} onChange={e => setEditDraft(p => ({ ...p, aiFuture: e.target.value }))} rows={3} className="w-full border border-[#d8dce2] rounded-lg px-3 py-2.5 text-sm focus:outline-none focus:border-[#4fc487] resize-none" />
+                      <label className="block text-xs font-medium text-muted-foreground mb-1.5">Future AI Plans</label>
+                      <textarea value={editDraft.aiFuture || ''} onChange={e => setEditDraft(p => ({ ...p, aiFuture: e.target.value }))} rows={3} className="w-full border border-border rounded-lg px-3 py-2.5 text-sm focus:outline-none focus:border-[#4fc487] resize-none" />
                     </div>
                   </div>
                 </div>
               </div>
 
               <div className="lg:col-span-2 flex items-center justify-end gap-3 sticky bottom-6">
-                <div className="bg-white rounded-xl shadow-lg border border-[#eef0f3] flex items-center gap-3 px-5 py-3">
-                  <button onClick={() => setActiveTab('overview')} className="flex items-center gap-1.5 text-sm text-[#666] hover:text-[#1a1a1a]">
+                <div className="bg-card border border-border rounded-xl border border-border flex items-center gap-3 px-5 py-3">
+                  <button onClick={() => setActiveTab('overview')} className="flex items-center gap-1.5 text-sm text-muted-foreground hover:text-foreground">
                     <X className="w-4 h-4" /> Cancel
                   </button>
-                  <Button onClick={handleSave} className="bg-[#4fc487] hover:bg-[#45b078] text-white gap-2 text-sm">
+                  <Button onClick={handleSave} className="bg-[#4fc487] hover:bg-[#45b078] text-foreground gap-2 text-sm">
                     <Save className="w-4 h-4" />{saved ? 'Saved!' : 'Save Changes'}
                   </Button>
                 </div>
@@ -501,36 +501,36 @@ function ProductionDashContent() {
           {activeTab === 'directors' && (
             <div>
               <div className="flex items-center justify-between mb-6">
-                <h2 className="text-xl font-bold text-[#1a1a1a]">Directors Roster</h2>
-                <Button className="bg-[#4fc487] hover:bg-[#45b078] text-white gap-2 text-sm">
+                <h2 className="text-xl font-bold text-foreground">Directors Roster</h2>
+                <Button className="bg-[#4fc487] hover:bg-[#45b078] text-foreground gap-2 text-sm">
                   <Plus className="w-4 h-4" /> Add Director
                 </Button>
               </div>
               {notableDirectors.length > 0 ? (
                 <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
                   {notableDirectors.map((d, i) => (
-                    <div key={i} className="bg-white rounded-xl p-5 shadow-sm">
-                      <div className="w-10 h-10 bg-[#eef0f3] rounded-full flex items-center justify-center mb-3">
+                    <div key={i} className="bg-card border border-border rounded-xl p-5 shadow-sm">
+                      <div className="w-10 h-10 bg-muted border border-border rounded-full flex items-center justify-center mb-3">
                         <Camera className="w-5 h-5 text-[#4fc487]" />
                       </div>
-                      <h3 className="font-semibold text-[#1a1a1a] mb-2">{d.name}</h3>
+                      <h3 className="font-semibold text-foreground mb-2">{d.name}</h3>
                       <div className="flex flex-wrap gap-1.5">
                         {d.exclusivity && <span className="text-xs bg-[#4fc487]/15 text-[#2d7a50] px-2 py-0.5 rounded-full">Exclusive</span>}
-                        {d.priority && <span className="text-xs bg-[#eef0f3] text-[#666] px-2 py-0.5 rounded-full">Priority</span>}
-                        {d.occasional && <span className="text-xs bg-[#eef0f3] text-[#666] px-2 py-0.5 rounded-full">Occasional</span>}
+                        {d.priority && <span className="text-xs bg-muted border border-border text-muted-foreground px-2 py-0.5 rounded-full">Priority</span>}
+                        {d.occasional && <span className="text-xs bg-muted border border-border text-muted-foreground px-2 py-0.5 rounded-full">Occasional</span>}
                       </div>
                     </div>
                   ))}
-                  <div className="border-2 border-dashed border-[#d8dce2] rounded-xl flex flex-col items-center justify-center p-8 text-[#666] hover:border-[#4fc487] hover:text-[#4fc487] transition-colors cursor-pointer min-h-[150px]">
+                  <div className="border-2 border-dashed border-border rounded-xl flex flex-col items-center justify-center p-8 text-muted-foreground hover:border-[#4fc487] hover:text-[#4fc487] transition-colors cursor-pointer min-h-[150px]">
                     <Plus className="w-8 h-8 mb-2" />
                     <p className="text-sm font-medium">Add Director</p>
                   </div>
                 </div>
               ) : (
-                <div className="bg-white rounded-xl p-10 shadow-sm text-center">
-                  <Camera className="w-12 h-12 text-[#d8dce2] mx-auto mb-4" />
-                  <h3 className="font-medium text-[#1a1a1a] mb-2">No directors added yet</h3>
-                  <p className="text-sm text-[#666]">Add directors to showcase your production talent roster.</p>
+                <div className="bg-card border border-border rounded-xl p-10 shadow-sm text-center">
+                  <Camera className="w-12 h-12 text-muted-foreground mx-auto mb-4" />
+                  <h3 className="font-medium text-foreground mb-2">No directors added yet</h3>
+                  <p className="text-sm text-muted-foreground">Add directors to showcase your production talent roster.</p>
                 </div>
               )}
             </div>
@@ -538,10 +538,10 @@ function ProductionDashContent() {
 
           {/* ── Analytics ── */}
           {activeTab === 'analytics' && (
-            <div className="bg-white rounded-xl p-6 shadow-sm">
+            <div className="bg-card border border-border rounded-xl p-6 shadow-sm">
               <div className="flex items-center gap-2 mb-6">
                 <TrendingUp className="w-5 h-5 text-[#4fc487]" />
-                <h2 className="font-bold text-[#1a1a1a]">Profile Analytics</h2>
+                <h2 className="font-bold text-foreground">Profile Analytics</h2>
               </div>
               <div className="grid grid-cols-2 sm:grid-cols-4 gap-4 mb-8">
                 {[
@@ -550,17 +550,17 @@ function ProductionDashContent() {
                   { label: 'Followers', value: '31', change: '+4' },
                   { label: 'Contact Clicks', value: '17', change: '+2' },
                 ].map(stat => (
-                  <div key={stat.label} className="bg-[#eef0f3] rounded-xl p-4 text-center">
-                    <p className="text-2xl font-bold text-[#1a1a1a] mb-1">{stat.value}</p>
-                    <p className="text-xs text-[#666] mb-1">{stat.label}</p>
+                  <div key={stat.label} className="bg-muted border border-border rounded-xl p-4 text-center">
+                    <p className="text-2xl font-bold text-foreground mb-1">{stat.value}</p>
+                    <p className="text-xs text-muted-foreground mb-1">{stat.label}</p>
                     <p className="text-xs text-[#4fc487] font-medium">{stat.change} this month</p>
                   </div>
                 ))}
               </div>
               <div className="border border-[#f5d742] bg-[#f5d742]/10 rounded-xl p-4 text-center">
                 <p className="text-sm font-medium text-[#a87e00] mb-1">Unlock Full Analytics</p>
-                <p className="text-xs text-[#666] mb-3">Upgrade to Pro to see detailed traffic sources, engagement metrics, and more.</p>
-                <Link href="/pricing"><Button className="bg-[#f5d742] hover:bg-[#e6c93c] text-[#1a1a1a] text-sm">View Plans</Button></Link>
+                <p className="text-xs text-muted-foreground mb-3">Upgrade to Pro to see detailed traffic sources, engagement metrics, and more.</p>
+                <Link href="/pricing"><Button className="bg-[#f5d742] hover:bg-[#e6c93c] text-foreground text-sm">View Plans</Button></Link>
               </div>
             </div>
           )}

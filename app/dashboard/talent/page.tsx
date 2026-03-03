@@ -17,18 +17,18 @@ function TalentDashContent() {
   const [activeTab, setActiveTab] = useState<'overview' | 'edit'>('overview')
 
   return (
-    <div className="min-h-screen bg-[#eef0f3] flex flex-col">
+    <div className="min-h-screen bg-background flex flex-col">
       <Header />
       <main className="flex-1">
-        <div className="bg-[#2e3843] px-4 sm:px-6 lg:px-8 py-10">
+        <div className="bg-card border-b border-border px-4 sm:px-6 lg:px-8 py-10">
           <div className="max-w-4xl mx-auto flex items-center justify-between">
             <div>
-              <Link href="/dashboard" className="text-sm text-white/60 hover:text-white mb-2 block">← Dashboard</Link>
-              <h1 className="text-2xl font-bold text-white">{profile?.name || 'My Profile'}</h1>
+              <Link href="/dashboard" className="text-sm text-muted-foreground hover:text-foreground mb-2 block">← Dashboard</Link>
+              <h1 className="text-2xl font-bold text-foreground">{profile?.name || 'My Profile'}</h1>
               <p className="text-[#98F5CC] text-sm">{profile?.role}</p>
             </div>
             {profile && (
-              <Link href={`/talent/${profile.id}`} className="text-sm text-white/60 hover:text-white flex items-center gap-1.5">
+              <Link href={`/talent/${profile.id}`} className="text-sm text-muted-foreground hover:text-foreground flex items-center gap-1.5">
                 <Eye className="w-4 h-4" /> View Public Profile
               </Link>
             )}
@@ -36,9 +36,9 @@ function TalentDashContent() {
         </div>
 
         <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
-          <div className="flex gap-1 bg-white rounded-xl p-1 shadow-sm mb-8 max-w-xs">
+          <div className="flex gap-1 bg-card border border-border rounded-xl p-1 shadow-sm mb-8 max-w-xs">
             {(['overview', 'edit'] as const).map(tab => (
-              <button key={tab} onClick={() => setActiveTab(tab)} className={`flex-1 px-4 py-2 rounded-lg text-sm font-medium capitalize transition-colors ${activeTab === tab ? 'bg-[#2e3843] text-white' : 'text-[#666] hover:text-[#1a1a1a]'}`}>
+              <button key={tab} onClick={() => setActiveTab(tab)} className={`flex-1 px-4 py-2 rounded-lg text-sm font-medium capitalize transition-colors ${activeTab === tab ? 'bg-secondary text-foreground shadow-sm' : 'text-muted-foreground hover:bg-muted hover:text-foreground'}`}>
                 {tab === 'edit' ? <><Edit className="w-3.5 h-3.5 inline mr-1" />Edit</> : 'Overview'}
               </button>
             ))}
@@ -47,21 +47,21 @@ function TalentDashContent() {
           {activeTab === 'overview' && profile && (
             <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
               <div className="lg:col-span-2 space-y-6">
-                <div className="bg-white rounded-xl p-6 shadow-sm flex items-start gap-5">
+                <div className="bg-card border border-border rounded-xl p-6 shadow-sm flex items-start gap-5">
                   <img src={profile.photo} alt={profile.name} className="w-24 h-24 rounded-xl object-cover shrink-0" />
                   <div>
-                    <h2 className="font-bold text-[#1a1a1a] text-xl">{profile.name}</h2>
+                    <h2 className="font-bold text-foreground text-xl">{profile.name}</h2>
                     <p className="text-[#4fc487] mb-1">{profile.role}</p>
-                    {company && <Link href={`/directory/${company.id}`} className="text-sm text-[#666] hover:text-[#4fc487]">{company.name}</Link>}
-                    {profile.bio && <p className="text-sm text-[#666] mt-3 leading-relaxed">{profile.bio}</p>}
+                    {company && <Link href={`/directory/${company.id}`} className="text-sm text-muted-foreground hover:text-[#4fc487]">{company.name}</Link>}
+                    {profile.bio && <p className="text-sm text-muted-foreground mt-3 leading-relaxed">{profile.bio}</p>}
                   </div>
                 </div>
                 {profile.expertise && (
-                  <div className="bg-white rounded-xl p-6 shadow-sm">
-                    <h3 className="font-bold text-[#1a1a1a] mb-3">Expertise</h3>
+                  <div className="bg-card border border-border rounded-xl p-6 shadow-sm">
+                    <h3 className="font-bold text-foreground mb-3">Expertise</h3>
                     <div className="flex flex-wrap gap-2">
                       {profile.expertise.map(e => (
-                        <span key={e} className="px-3 py-1.5 bg-[#eef0f3] text-sm text-[#2e3843] rounded-full font-medium">{e}</span>
+                        <span key={e} className="px-3 py-1.5 bg-muted border border-border text-sm text-[#2e3843] rounded-full font-medium">{e}</span>
                       ))}
                     </div>
                   </div>
@@ -69,17 +69,17 @@ function TalentDashContent() {
               </div>
               <div className="space-y-4">
                 <div className="bg-[#2e3843] rounded-xl p-5 text-center">
-                  <p className="text-white font-bold text-2xl mb-1">0</p>
-                  <p className="text-white/60 text-sm">Profile followers</p>
+                  <p className="text-foreground font-bold text-2xl mb-1">0</p>
+                  <p className="text-muted-foreground text-sm">Profile followers</p>
                 </div>
-                <div className="bg-white rounded-xl p-5 shadow-sm">
-                  <p className="text-xs text-[#666] mb-3 font-medium">Visibility</p>
-                  <div className="h-2 bg-[#d8dce2] rounded-full overflow-hidden">
+                <div className="bg-card border border-border rounded-xl p-5 shadow-sm">
+                  <p className="text-xs text-muted-foreground mb-3 font-medium">Visibility</p>
+                  <div className="h-2 bg-white/[0.12] rounded-full overflow-hidden">
                     <div className="h-full bg-[#4fc487] rounded-full" style={{ width: '35%' }} />
                   </div>
-                  <p className="text-xs text-[#666] mt-2">35% profile completeness</p>
+                  <p className="text-xs text-muted-foreground mt-2">35% profile completeness</p>
                   <Link href="/pricing" className="block mt-3">
-                    <Button className="w-full text-xs bg-[#f5d742] hover:bg-[#e6c93c] text-[#1a1a1a]">Boost Visibility</Button>
+                    <Button className="w-full text-xs bg-[#f5d742] hover:bg-[#e6c93c] text-foreground">Boost Visibility</Button>
                   </Link>
                 </div>
               </div>
@@ -87,16 +87,16 @@ function TalentDashContent() {
           )}
 
           {activeTab === 'edit' && profile && (
-            <div className="bg-white rounded-xl p-6 shadow-sm max-w-2xl">
-              <h2 className="font-bold text-[#1a1a1a] mb-6">Edit Profile</h2>
+            <div className="bg-card border border-border rounded-xl p-6 shadow-sm max-w-2xl">
+              <h2 className="font-bold text-foreground mb-6">Edit Profile</h2>
               <div className="space-y-4">
                 <div><label className="block text-sm font-medium mb-1.5">Full Name</label><Input defaultValue={profile.name} className="h-11" /></div>
                 <div><label className="block text-sm font-medium mb-1.5">Role / Title</label><Input defaultValue={profile.role} className="h-11" /></div>
                 <div><label className="block text-sm font-medium mb-1.5">Bio</label>
-                  <textarea defaultValue={profile.bio || ''} rows={4} className="w-full border border-[#d8dce2] rounded-lg px-3 py-2.5 text-sm focus:outline-none focus:border-[#4fc487] resize-none" />
+                  <textarea defaultValue={profile.bio || ''} rows={4} className="w-full border border-border rounded-lg px-3 py-2.5 text-sm focus:outline-none focus:border-[#4fc487] resize-none" />
                 </div>
                 <div><label className="block text-sm font-medium mb-1.5">Photo URL</label><Input defaultValue={profile.photo} className="h-11" /></div>
-                <Button className="bg-[#4fc487] hover:bg-[#45b078] text-white">Save Changes</Button>
+                <Button className="bg-[#4fc487] hover:bg-[#45b078] text-foreground">Save Changes</Button>
               </div>
             </div>
           )}
