@@ -12,7 +12,7 @@ import {
   CAPABILITY_AREAS, AGENCY_CONTACT_ROLES, SOCIAL_MEDIA_FIELDS,
   AGENCY_PEOPLE_DEPARTMENTS, AGENCY_TALENT_ROLES, AGENCY_AWARDS,
   AI_QUESTIONS, SOCIAL_RESPONSIBILITY_QUESTIONS, INVESTMENT_CATEGORIES,
-  REGISTRATION_STEPS, CSR_IMPACT_AREAS,
+  REGISTRATION_STEPS, CSR_IMPACT_AREAS, ATTACHMENTS_REQUESTED,
 } from '@/lib/rfi-data'
 import { getTurnoverYears, REVENUE_REGIONS } from '@/lib/turnover-utils'
 
@@ -74,7 +74,7 @@ export default function AgencySignupPage() {
   const [outsources, setOutsources] = useState(false)
 
   // Step 6 — People & Talent
-  const [peopleCounts, setPeopleCounts] = useState<Record<string, { employees: string; freelancers: string }>>({})
+  const [peopleCounts, setPeopleCounts] = useState<Record<string, { employees: string; freelancers: string; salary: string }>>({})
   const [talentEntries, setTalentEntries] = useState(AGENCY_TALENT_ROLES.map(role => ({ role, name: '', linkedin: '' })))
 
   // Step 7 — Awards & Infos
@@ -445,18 +445,21 @@ export default function AgencySignupPage() {
           {step === 6 && (
             <div>
               <StepHeader icon="👥" title="People & Talent" subtitle="Staff headcount by department and primary talent" />
+              <p className="text-xs text-white/30 italic mb-4">Note: Please complete the Annual Salary column only upon receipt of this Request for Information (RFI) during a pitch process.</p>
               <div className="space-y-6">
-                {AGENCY_PEOPLE_DEPARTMENTS.map(dept => (
+              {AGENCY_PEOPLE_DEPARTMENTS.map(dept => (
                   <div key={dept.label}>
                     <p className="text-xs font-bold text-[#4fc487]/60 uppercase tracking-widest mb-2">{dept.label}</p>
-                    <div className="grid grid-cols-1 sm:grid-cols-2 gap-2">
-                      {dept.roles.slice(0, 6).map(role => (
+                    <div className="grid grid-cols-1 gap-1.5">
+                      {dept.roles.map(role => (
                         <div key={role} className="flex items-center gap-2 bg-white/[0.03] rounded-xl px-3 py-2">
                           <span className="text-xs text-white/50 flex-1 truncate">{role}</span>
-                          <input type="number" min={0} value={peopleCounts[role]?.employees || ''} onChange={e => setPeopleCounts(prev => ({ ...prev, [role]: { ...prev[role], employees: e.target.value, freelancers: prev[role]?.freelancers || '' } }))}
-                            placeholder="Emp" className="w-14 text-xs text-center bg-white/[0.04] border border-white/[0.08] text-white rounded-lg py-1" />
-                          <input type="number" min={0} value={peopleCounts[role]?.freelancers || ''} onChange={e => setPeopleCounts(prev => ({ ...prev, [role]: { ...prev[role], freelancers: e.target.value, employees: prev[role]?.employees || '' } }))}
-                            placeholder="Free" className="w-14 text-xs text-center bg-white/[0.04] border border-white/[0.08] text-white rounded-lg py-1" />
+                          <input type="number" min={0} value={peopleCounts[role]?.employees || ''} onChange={e => setPeopleCounts(prev => ({ ...prev, [role]: { ...prev[role], employees: e.target.value, freelancers: prev[role]?.freelancers || '', salary: prev[role]?.salary || '' } }))}
+                            placeholder="# Emp" className="w-16 text-xs text-center bg-white/[0.04] border border-white/[0.08] text-white rounded-lg py-1" />
+                          <input type="number" min={0} value={peopleCounts[role]?.freelancers || ''} onChange={e => setPeopleCounts(prev => ({ ...prev, [role]: { ...prev[role], freelancers: e.target.value, employees: prev[role]?.employees || '', salary: prev[role]?.salary || '' } }))}
+                            placeholder="# Free" className="w-16 text-xs text-center bg-white/[0.04] border border-white/[0.08] text-white rounded-lg py-1" />
+                          <input type="number" min={0} value={peopleCounts[role]?.salary || ''} onChange={e => setPeopleCounts(prev => ({ ...prev, [role]: { ...prev[role], salary: e.target.value, employees: prev[role]?.employees || '', freelancers: prev[role]?.freelancers || '' } }))}
+                            placeholder="Salary" className="w-16 text-xs text-center bg-white/[0.04] border border-white/[0.08] text-white rounded-lg py-1" />
                         </div>
                       ))}
                     </div>
@@ -558,11 +561,31 @@ export default function AgencySignupPage() {
                 </FormField>
               </div>
               <div className="border-t border-white/[0.06] pt-5 mt-6">
-                <p className="text-xs font-bold text-white/60 uppercase tracking-widest mb-3">Attachments</p>
-                <p className="text-xs text-white/30 mb-3">Upload: Org Chart, Chamber of Commerce Extract, References, Company Profile, Certifications</p>
-                <div className="border-2 border-dashed border-white/[0.08] rounded-xl p-8 text-center">
-                  <p className="text-sm text-white/30">Drag & drop files here or click to browse</p>
-                  <p className="text-xs text-white/20 mt-1">PDF, PPT, DOC — max 10MB each</p>
+                <p className="text-xs font-bold text-white/60 uppercase tracking-widest mb-4">Attachments Requested</p>
+                <div className="space-y-3 mb-6">
+                  {ATTACHMENTS_REQUESTED.map(att => (
+                    <div key={att.id} className="flex items-center gap-4 bg-white/[0.03] rounded-xl px-4 py-3">
+                      <span className="text-xs font-mono text-white/40 w-8 flex-shrink-0">{att.id}</span>
+                      <span className="text-sm text-white/60 flex-1">{att.label}</span>
+                      <label className="flex items-center gap-2 px-3 py-1.5 bg-white/[0.04] border border-white/[0.08] rounded-lg cursor-pointer hover:bg-white/[0.08] transition">
+                        <span className="text-xs text-white/40">Upload</span>
+                        <input type="file" className="hidden" />
+                      </label>
+                    </div>
+                  ))}
+                </div>
+                <div className="bg-white/[0.03] rounded-xl p-5 border border-white/[0.06]">
+                  <p className="text-sm text-white/60 font-medium mb-2">Please provide a presentation (.pdf or .ppt file) summarizing the following:</p>
+                  <ul className="space-y-1 text-xs text-white/40 list-disc pl-4">
+                    <li>Short agency presentation including key figures, capabilities, services, technologies, headcounts, organization, main clients</li>
+                    <li>Expertise of your agency</li>
+                    <li>Management of International accounts: organisational team structure and digital strategies at country level with client references</li>
+                    <li>Contact details for 2 current clients who would speak about their experience working with you</li>
+                  </ul>
+                  <div className="border-2 border-dashed border-white/[0.08] rounded-xl p-6 text-center mt-4">
+                    <p className="text-sm text-white/30">Drag & drop presentation here or click to browse</p>
+                    <p className="text-xs text-white/20 mt-1">PDF, PPT, DOC — max 10MB</p>
+                  </div>
                 </div>
               </div>
             </div>
@@ -642,5 +665,5 @@ function FormField({ label, required, children, className }: { label: string; re
 }
 
 const inputCls = 'h-10 bg-white/[0.06] border-white/[0.12] text-white placeholder:text-white/20 rounded-full'
-const selectCls = 'w-full h-10 bg-white/[0.06] border border-white/[0.12] text-white text-sm rounded-full px-3 focus:outline-none focus:ring-2 focus:ring-[#4fc487]'
+const selectCls = 'w-full h-10 bg-white/[0.06] border border-white/[0.12] text-white text-sm rounded-full px-3 focus:outline-none focus:ring-2 focus:ring-[#4fc487] [&_option]:bg-[#1a1d2e] [&_option]:text-white'
 const textareaCls = 'w-full bg-white/[0.06] border border-white/[0.12] text-white text-sm rounded-xl px-3 py-2.5 focus:outline-none focus:ring-2 focus:ring-[#4fc487] resize-none placeholder:text-white/20'

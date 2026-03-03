@@ -351,6 +351,16 @@
 .light-mode textarea::placeholder {
   color: #999 !important;
 }
+.light-mode select option {
+  background: #fff !important;
+  color: #1a1a2e !important;
+}
+
+/* ── Dark mode select option styling ── */
+select option {
+  background: #1a1d2e;
+  color: #fff;
+}
 
 /* ── Glow accent (muted in light mode) ── */
 .light-mode .glow-accent {
