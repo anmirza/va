@@ -205,24 +205,7 @@ export default function CompanyProfilePage() {
                   <p className="text-sm text-white/50 leading-relaxed">{company.about}</p>
                 </section>
 
-                {/* Key Stats with sparklines — icons for simple, charts for trends */}
-                <section className="glass-card p-6">
-                  <h2 className="text-base font-bold mb-4 text-white">Key Stats</h2>
-                  <div className="grid grid-cols-2 md:grid-cols-5 gap-4">
-                    {statCards.map(card => (
-                      <div key={card.label} className="bg-white/[0.03] border border-white/[0.06] rounded-xl p-4 relative">
-                        <div className="flex items-start justify-between mb-1">
-                          <p className="text-2xl font-bold text-white">{card.value}</p>
-                          {card.trend === 'up' && <ArrowUpRight className="w-5 h-5 text-[#4fc487]" />}
-                          {card.trend === 'down' && <ArrowDownRight className="w-5 h-5 text-[#e74c3c]" />}
-                          {!card.trend && <Building2 className="w-5 h-5 text-white/20" />}
-                        </div>
-                        <p className="text-[10px] uppercase tracking-wider text-white/30 font-semibold mb-1">{card.label}</p>
-                        {card.data.length > 0 && <Sparkline data={card.data} color={card.color} width={120} height={28} />}
-                      </div>
-                    ))}
-                  </div>
-                </section>
+
 
                 {/* Suggestions */}
                 <div className="grid grid-cols-1 lg:grid-cols-5 gap-6">
