@@ -320,7 +320,7 @@ export default function AgencySignupPage() {
                                   ...prev,
                                   [`${year}-${type}`]: { ...prev[`${year}-${type}`], [region]: e.target.value }
                                 }))}
-                                className="w-20 bg-white/[0.04] border border-white/[0.08] text-white text-xs rounded-lg px-2 py-1.5 text-center" />
+                                className="w-20 bg-white/[0.04] border border-white/[0.08] text-foreground text-xs rounded-lg px-2 py-1.5 text-center focus:border-[#4fc487] outline-none" />
                             </td>
                           ))}
                         </tr>
@@ -616,12 +616,12 @@ export default function AgencySignupPage() {
         <div className="flex items-center justify-between mt-6">
           <div>
             {step > 1 ? (
-              <Button variant="outline" onClick={() => setStep(s => s - 1)} className="border-white/20 text-white hover:bg-white/10 rounded-full">
+              <Button variant="outline" onClick={() => setStep(s => s - 1)} className="border-border text-foreground hover:bg-muted rounded-full">
                 <ChevronLeft className="w-4 h-4 mr-1" /> Back
               </Button>
             ) : (
               <Link href="/signup">
-                <Button variant="outline" className="border-white/20 text-white hover:bg-white/10 rounded-full">
+                <Button variant="outline" className="border-border text-foreground hover:bg-muted rounded-full">
                   <ChevronLeft className="w-4 h-4 mr-1" /> Cancel
                 </Button>
               </Link>

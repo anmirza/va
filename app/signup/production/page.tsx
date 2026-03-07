@@ -946,12 +946,12 @@ export default function ProductionSignupPage() {
         <div className="flex items-center justify-between mt-6">
           <div>
             {step > 1 ? (
-              <Button variant="outline" onClick={() => setStep(s => s - 1)} className="border-white/[0.12] text-white/60 hover:bg-white/[0.06]">
+              <Button variant="outline" onClick={() => setStep(s => s - 1)} className="border-border text-foreground hover:bg-muted">
                 <ChevronLeft className="w-4 h-4 mr-1" /> Back
               </Button>
             ) : (
               <Link href="/signup">
-                <Button variant="outline" className="border-white/[0.12] text-white/60 hover:bg-white/[0.06]">
+                <Button variant="outline" className="border-border text-foreground hover:bg-muted">
                   <ChevronLeft className="w-4 h-4 mr-1" /> Cancel
                 </Button>
               </Link>
