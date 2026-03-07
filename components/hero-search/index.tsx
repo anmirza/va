@@ -71,7 +71,7 @@ export default function HeroSearch() {
   return (
     <div ref={containerRef} className="w-full max-w-3xl mx-auto">
       {/* Category Tabs — centered above the search bar */}
-      <div className="flex items-center justify-center gap-4 mb-3">
+      <div className="flex items-center justify-center gap-2 mb-2 relative z-20">
         {categories.map((cat) => {
           const isActive = activeCategory === cat.key
           return (
@@ -82,26 +82,25 @@ export default function HeroSearch() {
                   flex flex-col items-center justify-center gap-1.5 px-6 pt-3 pb-2.5 min-w-[130px] transition-all duration-200
                   ${isActive
                     ? isLight
-                      ? 'bg-gray-600 text-white rounded-t-xl border border-gray-500 border-b-transparent relative z-10 shadow-md'
-                      : 'bg-[#4a4a4a] text-white border border-white/40 border-b-transparent rounded-t-md relative z-10 shadow-lg'
+                      ? 'bg-gray-700 text-white rounded-xl border border-gray-600 shadow-md relative z-10'
+                      : 'bg-[#4a4a4a] text-white border border-white/20 rounded-xl shadow-lg relative z-10'
                     : isLight
-                      ? 'text-gray-500 hover:text-gray-800 hover:bg-gray-100/50 rounded-xl'
-                      : 'text-white/80 font-medium hover:text-white hover:bg-white/[0.05] rounded-xl border border-transparent'
+                      ? 'text-gray-600 hover:text-gray-900 hover:bg-gray-200/50 rounded-xl'
+                      : 'text-white/70 font-medium hover:text-white hover:bg-white/[0.08] rounded-xl border border-transparent'
                   }
                 `}
-                style={isActive ? { transform: 'translateY(1px)' } : {}}
               >
-                {cat.key === 'agencies' ? <Building2 className="w-5 h-5" strokeWidth={1.5} /> : <Film className="w-5 h-5" strokeWidth={1.5} />}
+                {cat.key === 'agencies' ? <Building2 className="w-5 h-5 mb-0.5" strokeWidth={1.5} /> : <Film className="w-5 h-5 mb-0.5" strokeWidth={1.5} />}
                 <span className="text-[13px] font-semibold tracking-wide whitespace-nowrap">{cat.label}</span>
               </button>
               
               {/* Tooltip arrow for active tab */}
               {isActive && (
                 <div 
-                  className={`absolute -bottom-1.5 left-1/2 -translate-x-1/2 w-3.5 h-3.5 rotate-45 z-20 ${
+                  className={`absolute -bottom-1.5 left-1/2 -translate-x-1/2 w-3.5 h-3.5 rotate-45 z-0 ${
                     isLight 
-                      ? 'bg-gray-600 border-r border-b border-gray-500' 
-                      : 'bg-[#4a4a4a] border-r border-b border-white/40'
+                      ? 'bg-gray-700 border-r border-b border-gray-600' 
+                      : 'bg-[#4a4a4a] border-r border-b border-white/20'
                   }`}
                 />
               )}

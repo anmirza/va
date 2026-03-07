@@ -283,6 +283,18 @@
   color: #666 !important;
 }
 
+/* Fix for Browse Agencies / Outline buttons in light mode */
+.light-mode a.border-white\/20, 
+.light-mode button.border-white\/20 {
+  color: #1a1a2e !important;
+  border-color: rgba(0, 0, 0, 0.15) !important;
+}
+.light-mode a.border-white\/20:hover, 
+.light-mode button.border-white\/20:hover {
+  background-color: rgba(0, 0, 0, 0.05) !important;
+  color: #4fc487 !important;
+}
+
 /* ── Hero Search Bar (light mode) ── */
 .light-mode div[class*="bg-white\\/\\[0\\.08\\]"] {
   background: #fff !important;
