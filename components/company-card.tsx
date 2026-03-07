@@ -35,8 +35,8 @@ export function CompanyCard({ company }: CompanyCardProps) {
           <div className="absolute inset-0 bg-gradient-to-t from-[#02030E] to-transparent" />
           <div className="absolute inset-0 flex items-center justify-center p-4">
             <div className="bg-[#02030E]/80 backdrop-blur-md border border-white/[0.1] px-4 py-2 rounded-xl text-center max-w-full">
-              <p className="font-bold text-white text-sm truncate">{company.name}</p>
-              <p className="text-xs text-white/40 truncate">{company.tagline}</p>
+              <p className="font-bold shadow-sm text-sm truncate badge-text-main">{company.name}</p>
+              <p className="text-xs shadow-sm truncate badge-text-sub">{company.tagline}</p>
             </div>
           </div>
         </div>

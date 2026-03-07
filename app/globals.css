@@ -261,6 +261,15 @@
 .light-mode .glass-card p[class*="text-white\\/"] {
   color: #666 !important;
 }
+/* Preserve white text for image overlays even in light mode */
+.badge-text-main,
+.light-mode .glass-card .badge-text-main {
+  color: #ffffff !important;
+}
+.badge-text-sub,
+.light-mode .glass-card .badge-text-sub {
+  color: rgba(255, 255, 255, 0.7) !important;
+}
 
 /* ── Hero Section / Homepage ── */
 .light-mode section[class*="bg-\\[\\#02030E\\]"],
