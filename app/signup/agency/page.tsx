@@ -54,7 +54,7 @@ export default function AgencySignupPage() {
   const [clients, setClients] = useState([{ name: '', industry: '', activities: '', year: '', turnover: '', incidence: '', exclusivity: false }])
 
   // Step 4 — Knowledge & Competencies
-  const [competencies, setCompetencies] = useState<Record<string, boolean>>({})
+  const [competencies, setCompetencies] = useState<Record<string, string>>({})
   const [capabilityAllocation, setCapabilityAllocation] = useState<Record<string, string>>({})
   const [marketPositioning, setMarketPositioning] = useState('')
   const [mainCapability, setMainCapability] = useState('')
@@ -75,10 +75,10 @@ export default function AgencySignupPage() {
 
   // Step 6 — People & Talent
   const [peopleCounts, setPeopleCounts] = useState<Record<string, { employees: string; freelancers: string; salary: string }>>({})
-  const [talentEntries, setTalentEntries] = useState(AGENCY_TALENT_ROLES.map(role => ({ role, name: '', linkedin: '' })))
+  const [talentEntries, setTalentEntries] = useState([{ role: '', name: '', linkedin: '' }])
 
   // Step 7 — Awards & Infos
-  const [awards, setAwards] = useState(AGENCY_AWARDS.map(name => ({ name, distinction: '', category: '', year: '', ad: '', brand: '' })))
+  const [awards, setAwards] = useState([{ name: '', distinction: '', category: '', year: '', ad: '', brand: '' }])
   const [aiAnswers, setAiAnswers] = useState<Record<string, string>>({})
   const [srAnswers, setSrAnswers] = useState<Record<string, string>>({})
 
@@ -117,10 +117,6 @@ export default function AgencySignupPage() {
 
   const updateContact = (idx: number, field: string, value: string) => {
     setContacts(prev => prev.map((c, i) => i === idx ? { ...c, [field]: value } : c))
-  }
-
-  const toggleCompetency = (skill: string) => {
-    setCompetencies(prev => ({ ...prev, [skill]: !prev[skill] }))
   }
 
   const allocationTotal = Object.values(capabilityAllocation).reduce((sum, v) => sum + (parseFloat(v) || 0), 0)
@@ -392,7 +388,7 @@ export default function AgencySignupPage() {
                   </div>
                 ))}
               </div>
-              {/* Service checkboxes */}
+              {/* Service allocations (percentages) */}
               <div className="space-y-6">
                 {AGENCY_SERVICE_GROUPS.map(group => (
                   <div key={group.label}>
@@ -403,10 +399,13 @@ export default function AgencySignupPage() {
                     </p>
                     <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-2">
                       {group.items.map(skill => (
-                        <label key={skill} className={`flex items-center gap-2 p-2.5 rounded-xl border cursor-pointer transition-all text-xs ${competencies[skill] ? 'bg-[#4fc487]/10 border-[#4fc487]/30 text-[#4fc487]' : 'bg-white/[0.03] border-white/[0.06] text-white/50 hover:border-white/20'}`}>
-                          <input type="checkbox" checked={!!competencies[skill]} onChange={() => toggleCompetency(skill)} className="w-3.5 h-3.5 accent-[#4fc487]" />
-                          {skill}
-                        </label>
+                        <div key={skill} className={`flex items-center gap-2 p-2.5 rounded-xl border transition-all text-xs ${competencies[skill] ? 'bg-[#4fc487]/10 border-[#4fc487]/30 text-[#4fc487]' : 'bg-white/[0.03] border-white/[0.06] text-white/50'}`}>
+                          <span className="flex-1 truncate" title={skill}>{skill}</span>
+                          <div className="flex items-center gap-1 shrink-0">
+                            <input type="number" min={0} max={100} value={competencies[skill] || ''} onChange={e => setCompetencies(prev => ({ ...prev, [skill]: e.target.value }))} className="w-14 text-xs text-center bg-white/[0.04] border border-white/[0.08] text-white rounded-lg py-1" placeholder="0" />
+                            <span className="text-xs text-white/30">%</span>
+                          </div>
+                        </div>
                       ))}
                     </div>
                   </div>
@@ -468,13 +467,26 @@ export default function AgencySignupPage() {
               </div>
               <div className="border-t border-white/[0.06] pt-5 mt-6">
                 <p className="text-xs font-bold text-white/60 uppercase tracking-widest mb-4">Primary Talent</p>
-                {talentEntries.map((t, i) => (
-                  <div key={t.role} className="grid grid-cols-3 gap-3 mb-3">
-                    <span className="text-xs text-white/50 flex items-center">{t.role}</span>
-                    <Input value={t.name} onChange={e => { const n = [...talentEntries]; n[i].name = e.target.value; setTalentEntries(n) }} placeholder="Name" className={inputCls + ' h-8 text-xs'} />
-                    <Input value={t.linkedin} onChange={e => { const n = [...talentEntries]; n[i].linkedin = e.target.value; setTalentEntries(n) }} placeholder="LinkedIn" className={inputCls + ' h-8 text-xs'} />
-                  </div>
-                ))}
+                <div className="space-y-3 mb-4">
+                  {talentEntries.map((t, i) => (
+                    <div key={i} className="grid grid-cols-1 sm:grid-cols-[1fr_1fr_auto] gap-3 items-center">
+                      <select value={t.role} onChange={e => { const n = [...talentEntries]; n[i].role = e.target.value; setTalentEntries(n) }} className={selectCls + ' h-9 text-xs'}>
+                        <option value="">Select Role</option>
+                        {AGENCY_PEOPLE_DEPARTMENTS.flatMap(dept => dept.roles).map(role => (
+                          <option key={role} value={role}>{role}</option>
+                        ))}
+                      </select>
+                      <Input value={t.name} onChange={e => { const n = [...talentEntries]; n[i].name = e.target.value; setTalentEntries(n) }} placeholder="Name" className={inputCls + ' h-9 text-xs'} />
+                      <div className="flex items-center gap-2">
+                        <Input value={t.linkedin} onChange={e => { const n = [...talentEntries]; n[i].linkedin = e.target.value; setTalentEntries(n) }} placeholder="LinkedIn" className={inputCls + ' h-9 text-xs flex-1 sm:w-48'} />
+                        <button onClick={() => setTalentEntries(prev => prev.filter((_, idx) => idx !== i))} className="text-red-400 hover:text-red-300 p-1.5 bg-white/[0.03] rounded-lg border border-white/[0.06]">
+                          <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" /></svg>
+                        </button>
+                      </div>
+                    </div>
+                  ))}
+                </div>
+                <button onClick={() => setTalentEntries(prev => [...prev, { role: '', name: '', linkedin: '' }])} className="text-xs text-[#4fc487] hover:bg-[#4fc487]/10 px-3 py-1.5 rounded-lg border border-[#4fc487]/30 transition-colors inline-block">+ Add Talent</button>
               </div>
             </div>
           )}
@@ -483,18 +495,24 @@ export default function AgencySignupPage() {
           {step === 7 && (
             <div>
               <StepHeader icon="🏆" title="Awards & Infos" subtitle="Awards, AI usage, and social responsibility" />
-              <div className="space-y-4 mb-8">
+              <div className="space-y-4 mb-4">
                 {awards.map((award, i) => (
-                  <div key={award.name} className="grid grid-cols-2 sm:grid-cols-6 gap-2 items-center">
-                    <span className="text-xs text-white/50 col-span-2 sm:col-span-1">{award.name}</span>
-                    <Input value={award.distinction} onChange={e => { const a = [...awards]; a[i].distinction = e.target.value; setAwards(a) }} placeholder="Distinction" className={inputCls + ' h-8 text-xs'} />
-                    <Input value={award.category} onChange={e => { const a = [...awards]; a[i].category = e.target.value; setAwards(a) }} placeholder="Category" className={inputCls + ' h-8 text-xs'} />
-                    <Input value={award.year} onChange={e => { const a = [...awards]; a[i].year = e.target.value; setAwards(a) }} placeholder="Year" className={inputCls + ' h-8 text-xs'} />
-                    <Input value={award.ad} onChange={e => { const a = [...awards]; a[i].ad = e.target.value; setAwards(a) }} placeholder="Ad" className={inputCls + ' h-8 text-xs'} />
-                    <Input value={award.brand} onChange={e => { const a = [...awards]; a[i].brand = e.target.value; setAwards(a) }} placeholder="Brand" className={inputCls + ' h-8 text-xs'} />
+                  <div key={i} className="grid grid-cols-1 sm:grid-cols-[1.5fr_1fr_1fr_80px_1fr_1fr_auto] gap-2 items-center bg-white/[0.02] p-3 rounded-xl border border-white/[0.04]">
+                    <Input value={award.name} onChange={e => { const a = [...awards]; a[i].name = e.target.value; setAwards(a) }} placeholder="Award Name (e.g. Cannes Lions)" className={inputCls + ' h-9 text-xs'} />
+                    <Input value={award.distinction} onChange={e => { const a = [...awards]; a[i].distinction = e.target.value; setAwards(a) }} placeholder="Distinction" className={inputCls + ' h-9 text-xs'} />
+                    <Input value={award.category} onChange={e => { const a = [...awards]; a[i].category = e.target.value; setAwards(a) }} placeholder="Category" className={inputCls + ' h-9 text-xs'} />
+                    <Input value={award.year} onChange={e => { const a = [...awards]; a[i].year = e.target.value; setAwards(a) }} placeholder="Year" className={inputCls + ' h-9 text-xs'} />
+                    <Input value={award.ad} onChange={e => { const a = [...awards]; a[i].ad = e.target.value; setAwards(a) }} placeholder="Ad" className={inputCls + ' h-9 text-xs'} />
+                    <div className="flex items-center gap-2 max-sm:col-span-full">
+                      <Input value={award.brand} onChange={e => { const a = [...awards]; a[i].brand = e.target.value; setAwards(a) }} placeholder="Brand" className={inputCls + ' h-9 text-xs flex-1'} />
+                      <button onClick={() => setAwards(prev => prev.filter((_, idx) => idx !== i))} title="Remove" className="text-red-400 hover:text-red-300 p-2 bg-white/[0.03] rounded-lg border border-white/[0.06] shrink-0">
+                        <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" /></svg>
+                      </button>
+                    </div>
                   </div>
                 ))}
               </div>
+              <button onClick={() => setAwards(prev => [...prev, { name: '', distinction: '', category: '', year: '', ad: '', brand: '' }])} className="text-xs text-[#4fc487] hover:bg-[#4fc487]/10 px-3 py-1.5 rounded-lg border border-[#4fc487]/30 transition-colors inline-block mb-8">+ Add Award</button>
               <div className="border-t border-white/[0.06] pt-5 space-y-4 mb-8">
                 <p className="text-xs font-bold text-white/60 uppercase tracking-widest mb-2">AI Usage</p>
                 {AI_QUESTIONS.map((q, i) => (
@@ -503,34 +521,7 @@ export default function AgencySignupPage() {
                   </FormField>
                 ))}
               </div>
-              <div className="border-t border-white/[0.06] pt-5 space-y-3">
-                <p className="text-xs font-bold text-white/60 uppercase tracking-widest mb-2">Social Responsibility</p>
-                {SOCIAL_RESPONSIBILITY_QUESTIONS.map((q) => (
-                  <div key={q.id}>
-                    <div className="flex items-start gap-3 bg-white/[0.03] rounded-xl p-3">
-                      <span className="text-xs text-white/40 font-mono w-8 flex-shrink-0">{q.id}</span>
-                      <span className="text-xs text-white/50 flex-1">{q.text}</span>
-                      <select value={srAnswers[`sr-${q.id}`] || ''} onChange={e => setSrAnswers(prev => ({ ...prev, [`sr-${q.id}`]: e.target.value }))}
-                        className="bg-white/[0.04] border border-white/[0.08] text-white text-xs rounded-lg px-2 py-1">
-                        <option value="">—</option>
-                        <option value="yes">Yes</option>
-                        <option value="no">No</option>
-                      </select>
-                    </div>
-                    {q.id === '1.6' && (
-                      <div className="ml-11 mt-2 grid grid-cols-2 sm:grid-cols-3 gap-2">
-                        {CSR_IMPACT_AREAS.map(area => (
-                          <label key={area} className="flex items-center gap-2 bg-white/[0.02] rounded-lg p-2 cursor-pointer hover:bg-white/[0.04] transition">
-                            <input type="checkbox" checked={!!srAnswers[`impact-${area}`]} onChange={e => setSrAnswers(prev => ({ ...prev, [`impact-${area}`]: e.target.checked ? 'yes' : '' }))}
-                              className="w-3.5 h-3.5 rounded border-white/20 bg-white/[0.06] accent-[#4fc487]" />
-                            <span className="text-xs text-white/60">{area}</span>
-                          </label>
-                        ))}
-                      </div>
-                    )}
-                  </div>
-                ))}
-              </div>
+
             </div>
           )}
 
@@ -560,6 +551,34 @@ export default function AgencySignupPage() {
                   <textarea value={activityOutside} onChange={e => setActivityOutside(e.target.value)} rows={2} className={textareaCls} placeholder="International presence..." />
                 </FormField>
               </div>
+              <div className="border-t border-white/[0.06] pt-5 space-y-3 mt-6 mb-6">
+                <p className="text-xs font-bold text-white/60 uppercase tracking-widest mb-2">Social Responsibility</p>
+                {SOCIAL_RESPONSIBILITY_QUESTIONS.map((q) => (
+                  <div key={q.id}>
+                    <div className="flex items-start gap-3 bg-white/[0.03] rounded-xl p-3">
+                      <span className="text-xs text-white/40 font-mono w-8 flex-shrink-0">{q.id}</span>
+                      <span className="text-xs text-white/50 flex-1">{q.text}</span>
+                      <select value={srAnswers[`sr-${q.id}`] || ''} onChange={e => setSrAnswers(prev => ({ ...prev, [`sr-${q.id}`]: e.target.value }))}
+                        className="bg-white/[0.04] border border-white/[0.08] text-white text-xs rounded-lg px-2 py-1">
+                        <option value="">—</option>
+                        <option value="yes">Yes</option>
+                        <option value="no">No</option>
+                      </select>
+                    </div>
+                    {q.id === '1.6' && (
+                      <div className="ml-11 mt-2 grid grid-cols-2 sm:grid-cols-3 gap-2">
+                        {CSR_IMPACT_AREAS.map(area => (
+                          <label key={area} className="flex items-center gap-2 bg-white/[0.02] rounded-lg p-2 cursor-pointer hover:bg-white/[0.04] transition">
+                            <input type="checkbox" checked={!!srAnswers[`impact-${area}`]} onChange={e => setSrAnswers(prev => ({ ...prev, [`impact-${area}`]: e.target.checked ? 'yes' : '' }))}
+                              className="w-3.5 h-3.5 rounded border-white/20 bg-white/[0.06] accent-[#4fc487]" />
+                            <span className="text-xs text-white/60">{area}</span>
+                          </label>
+                        ))}
+                      </div>
+                    )}
+                  </div>
+                ))}
+              </div>
               <div className="border-t border-white/[0.06] pt-5 mt-6">
                 <p className="text-xs font-bold text-white/60 uppercase tracking-widest mb-4">Attachments Requested</p>
                 <div className="space-y-3 mb-6">
@@ -569,7 +588,7 @@ export default function AgencySignupPage() {
                       <span className="text-sm text-white/60 flex-1">{att.label}</span>
                       <label className="flex items-center gap-2 px-3 py-1.5 bg-white/[0.04] border border-white/[0.08] rounded-lg cursor-pointer hover:bg-white/[0.08] transition">
                         <span className="text-xs text-white/40">Upload</span>
-                        <input type="file" className="hidden" />
+                        <input type="file" accept=".pdf" className="hidden" />
                       </label>
                     </div>
                   ))}

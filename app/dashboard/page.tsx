@@ -43,6 +43,7 @@ function DashboardContent() {
   }
 
   const links = roleLinks[user?.role ?? 'marketer'] ?? []
+  const isClientOrMarketer = user?.role === 'client' || user?.role === 'marketer'
 
   return (
     <div className="min-h-screen bg-background flex flex-col">
@@ -114,7 +115,7 @@ function DashboardContent() {
               </div>
 
               {/* Saved Campaigns */}
-              {savedCampaigns.length > 0 && (
+              {isClientOrMarketer && savedCampaigns.length > 0 && (
                 <div>
                   <div className="flex items-center justify-between mb-4">
                     <h2 className="text-xl font-bold text-foreground flex items-center gap-2"><Bookmark className="w-5 h-5 text-[#4fc487]" /> Saved Campaigns</h2>
@@ -138,34 +139,36 @@ function DashboardContent() {
             {/* Sidebar */}
             <div className="space-y-6">
               {/* Followed agencies */}
-              <div className="glass-card p-6">
-                <div className="flex items-center justify-between mb-4">
-                  <h3 className="font-bold text-foreground flex items-center gap-2"><Heart className="w-4 h-4 text-[#4fc487]" /> Following</h3>
-                  <Link href="/directory" className="text-xs text-[#4fc487] hover:underline">Browse</Link>
-                </div>
-                {followedAgencies.length > 0 ? (
-                  <div className="space-y-3">
-                    {followedAgencies.slice(0, 5).map(c => (
-                      <Link key={c.id} href={`/directory/${c.id}`} className="flex items-center gap-3 group">
-                        <div className="w-8 h-8 bg-white/[0.06] rounded-lg flex items-center justify-center text-muted-foreground font-bold text-xs shrink-0">
-                          {c.name[0]}
-                        </div>
-                        <div className="min-w-0">
-                          <p className="text-sm font-medium text-foreground group-hover:text-[#4fc487] transition-colors truncate">{c.name}</p>
-                          <p className="text-xs text-foreground/30">{c.city}</p>
-                        </div>
+              {isClientOrMarketer && (
+                <div className="glass-card p-6">
+                  <div className="flex items-center justify-between mb-4">
+                    <h3 className="font-bold text-foreground flex items-center gap-2"><Heart className="w-4 h-4 text-[#4fc487]" /> Following</h3>
+                    <Link href="/directory" className="text-xs text-[#4fc487] hover:underline">Browse</Link>
+                  </div>
+                  {followedAgencies.length > 0 ? (
+                    <div className="space-y-3">
+                      {followedAgencies.slice(0, 5).map(c => (
+                        <Link key={c.id} href={`/directory/${c.id}`} className="flex items-center gap-3 group">
+                          <div className="w-8 h-8 bg-white/[0.06] rounded-lg flex items-center justify-center text-muted-foreground font-bold text-xs shrink-0">
+                            {c.name[0]}
+                          </div>
+                          <div className="min-w-0">
+                            <p className="text-sm font-medium text-foreground group-hover:text-[#4fc487] transition-colors truncate">{c.name}</p>
+                            <p className="text-xs text-foreground/30">{c.city}</p>
+                          </div>
+                        </Link>
+                      ))}
+                    </div>
+                  ) : (
+                    <div className="text-center py-4">
+                      <p className="text-sm text-foreground/30 mb-2">Not following any agencies yet</p>
+                      <Link href="/directory">
+                        <Button size="sm" className="bg-[#4fc487] hover:bg-[#45b078] text-foreground text-xs rounded-full">Discover Agencies</Button>
                       </Link>
-                    ))}
-                  </div>
-                ) : (
-                  <div className="text-center py-4">
-                    <p className="text-sm text-foreground/30 mb-2">Not following any agencies yet</p>
-                    <Link href="/directory">
-                      <Button size="sm" className="bg-[#4fc487] hover:bg-[#45b078] text-foreground text-xs rounded-full">Discover Agencies</Button>
-                    </Link>
-                  </div>
-                )}
-              </div>
+                    </div>
+                  )}
+                </div>
+              )}
 
               {/* Account card */}
               <div className="glass-card p-6">

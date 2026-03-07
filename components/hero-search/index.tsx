@@ -3,6 +3,7 @@
 import { useState, useRef, useEffect, useCallback } from 'react'
 import { useRouter } from 'next/navigation'
 import Link from 'next/link'
+import { Building2, Film } from 'lucide-react'
 import { categories, type CategoryConfig, type CategoryKey } from './suggestion-data'
 
 const SearchIcon = () => (
@@ -70,33 +71,43 @@ export default function HeroSearch() {
   return (
     <div ref={containerRef} className="w-full max-w-3xl mx-auto">
       {/* Category Tabs — centered above the search bar */}
-      <div className="flex items-center justify-center gap-1 mb-0">
-        {categories.map((cat) => (
-          <button
-            key={cat.key}
-            onClick={() => handleCategoryChange(cat.key)}
-            className={`
-              relative px-6 py-2.5 text-sm font-semibold whitespace-nowrap transition-all duration-200
-              rounded-t-xl
-              ${activeCategory === cat.key
-                ? isLight
-                  ? 'bg-white text-[#1a1a2e] border border-gray-200 border-b-transparent shadow-sm'
-                  : 'bg-white/[0.12] text-white border border-white/[0.15] border-b-transparent backdrop-blur-md'
-                : isLight
-                  ? 'bg-gray-100 text-gray-500 border border-transparent hover:bg-gray-200 hover:text-gray-700'
-                  : 'bg-white/[0.04] text-white/50 border border-transparent hover:bg-white/[0.08] hover:text-white/70'
-              }
-            `}
-          >
-            {cat.label}
-            {activeCategory === cat.key && (
-              <span
-                className="absolute bottom-0 left-3 right-3 h-[2px] bg-[#4fc487] rounded-full"
-                aria-hidden="true"
-              />
-            )}
-          </button>
-        ))}
+      <div className="flex items-center justify-center gap-4 mb-3">
+        {categories.map((cat) => {
+          const isActive = activeCategory === cat.key
+          return (
+            <div key={cat.key} className="relative group">
+              <button
+                onClick={() => handleCategoryChange(cat.key)}
+                className={`
+                  flex flex-col items-center justify-center gap-1.5 px-6 pt-3 pb-2.5 min-w-[130px] transition-all duration-200
+                  ${isActive
+                    ? isLight
+                      ? 'bg-gray-600 text-white rounded-t-xl border border-gray-500 border-b-transparent relative z-10 shadow-md'
+                      : 'bg-[#4a4a4a] text-white border border-white/40 border-b-transparent rounded-t-md relative z-10 shadow-lg'
+                    : isLight
+                      ? 'text-gray-500 hover:text-gray-800 hover:bg-gray-100/50 rounded-xl'
+                      : 'text-white/80 font-medium hover:text-white hover:bg-white/[0.05] rounded-xl border border-transparent'
+                  }
+                `}
+                style={isActive ? { transform: 'translateY(1px)' } : {}}
+              >
+                {cat.key === 'agencies' ? <Building2 className="w-5 h-5" strokeWidth={1.5} /> : <Film className="w-5 h-5" strokeWidth={1.5} />}
+                <span className="text-[13px] font-semibold tracking-wide whitespace-nowrap">{cat.label}</span>
+              </button>
+              
+              {/* Tooltip arrow for active tab */}
+              {isActive && (
+                <div 
+                  className={`absolute -bottom-1.5 left-1/2 -translate-x-1/2 w-3.5 h-3.5 rotate-45 z-20 ${
+                    isLight 
+                      ? 'bg-gray-600 border-r border-b border-gray-500' 
+                      : 'bg-[#4a4a4a] border-r border-b border-white/40'
+                  }`}
+                />
+              )}
+            </div>
+          )
+        })}
       </div>
 
       {/* Search Input Bar */}

@@ -3,9 +3,9 @@
  * In 2026: [2025, 2024, 2023, 2022, 2021]
  * In 2027: [2026, 2025, 2024, 2023, 2022]
  */
-export function getTurnoverYears(): number[] {
+export function getTurnoverYears(): string[] {
   const currentYear = new Date().getFullYear()
-  return Array.from({ length: 5 }, (_, i) => currentYear - 1 - i)
+  return Array.from({ length: 5 }, (_, i) => (currentYear - 1 - i).toString())
 }
 
 /** Revenue regions used in turnover tables */

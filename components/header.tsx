@@ -19,7 +19,7 @@ const whatWeDoItems = [
 
 const auraItems = [
   { label: 'Database', href: '/directory' },
-  { label: 'Analytics', href: '#' },
+  // { label: 'Analytics', href: '#' },
   { label: 'Insights', href: '#' },
 ]
 
@@ -82,16 +82,16 @@ export function Header() {
   }
 
   return (
-    <header className="sticky top-0 z-50 bg-[#02030E]/95 backdrop-blur-md border-b border-white/[0.06] light-header">
+    <header className="sticky top-0 z-50 bg-[#02030E] border-b border-white/[0.06] light-header">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="flex justify-between items-center h-14 lg:h-16">
           {/* Logo */}
-          <Link href="/" className="flex items-center shrink-0">
-            <span className="text-xl font-bold text-white tracking-tight">VA</span>
+          <Link href="/" className="flex flex-1 items-center shrink-0">
+            <span className="text-3xl font-bold text-white tracking-tight">VA</span>
           </Link>
 
           {/* Desktop Navigation — centrally aligned */}
-          <nav className="hidden lg:flex items-center gap-1 mx-auto" ref={dropdownRef}>
+          <nav className="hidden lg:flex flex-none items-center gap-1 mx-auto" ref={dropdownRef}>
             {navItems.map((item) => (
               <div key={item.label} className="relative">
                 {item.dropdown ? (
@@ -138,7 +138,7 @@ export function Header() {
           </nav>
 
           {/* Desktop right — Theme toggle + Search + User */}
-          <div className="hidden lg:flex items-center gap-2">
+          <div className="hidden lg:flex flex-1 items-center justify-end gap-2">
             {/* Dark/Light toggle */}
             <button
               onClick={toggleTheme}

@@ -81,6 +81,7 @@ export default function Home() {
         </section>
 
         {/* Featured Agencies — max 6 cards */}
+        {false && (
         <section className="px-4 sm:px-6 lg:px-8 py-16 lg:py-24 max-w-7xl mx-auto">
           <div className="flex items-end justify-between mb-10">
             <h2 className="text-2xl sm:text-3xl font-bold text-white">
@@ -112,6 +113,8 @@ export default function Home() {
           )}
         </section>
 
+        )}
+
         {/* Latest Creative Work */}
         <section className="px-4 sm:px-6 lg:px-8 py-16 lg:py-24 max-w-7xl mx-auto">
           <div className="flex items-end justify-between mb-10">
@@ -128,6 +131,7 @@ export default function Home() {
         </section>
 
         {/* Latest News — dark glass cards */}
+        {false && (
         <section className="px-4 sm:px-6 lg:px-8 py-16 lg:py-24 max-w-7xl mx-auto">
           <div className="flex flex-col lg:flex-row gap-12 lg:gap-16">
             <div className="shrink-0 lg:max-w-xs">
@@ -158,6 +162,8 @@ export default function Home() {
             </div>
           </div>
         </section>
+
+        )}
 
         {/* Browse by Discipline — with Award tag added */}
         <section className="px-4 sm:px-6 lg:px-8 py-16 lg:py-24 max-w-7xl mx-auto">

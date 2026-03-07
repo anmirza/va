@@ -53,7 +53,7 @@ export default function SignupPage() {
   const [isLoading, setIsLoading] = useState(false)
 
   // Corporate email validation — block personal email domains
-  const BLOCKED_DOMAINS = ['gmail.com', 'yahoo.com', 'hotmail.com', 'outlook.com', 'aol.com', 'icloud.com', 'mail.com', 'protonmail.com', 'zoho.com', 'yandex.com', 'live.com', 'msn.com', 'me.com']
+  const BLOCKED_DOMAINS = ['gmail.com', 'yahoo.com', 'hotmail.com', 'outlook.com', 'aol.com', 'icloud.com', 'mail.com', 'protonmail.com', 'zoho.com', 'yandex.com', 'live.com', 'msn.com', 'me.com', 'mac.com', 'gmx.com']
 
   const handleRoleSelect = (role: typeof roles[0]) => {
     setSelectedRole(role)

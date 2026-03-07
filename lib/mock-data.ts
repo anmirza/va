@@ -6,7 +6,8 @@ export interface User {
   id: string
   email: string
   name: string
-  role: 'agency_owner' | 'talent' | 'marketer' | 'admin' | 'client'
+  role: 'agency_owner' | 'talent' | 'marketer' | 'admin' | 'client' | 'production'
+  status?: 'pending_review' | 'active'
   companyId?: string
   talentId?: string
   avatar?: string

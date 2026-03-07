@@ -22,25 +22,6 @@ import {
 import { useParams } from 'next/navigation'
 import { useAuth } from '@/lib/auth-context'
 
-/* ──────────── tiny SVG sparkline ──────────── */
-function Sparkline({ data, color, width = 120, height = 32 }: { data: number[]; color: string; width?: number; height?: number }) {
-  if (data.length < 2) return null
-  const max = Math.max(...data)
-  const min = Math.min(...data)
-  const range = max - min || 1
-  const points = data.map((v, i) => {
-    const x = (i / (data.length - 1)) * width
-    const y = height - ((v - min) / range) * (height - 4) - 2
-    return `${x},${y}`
-  }).join(' ')
-  return (
-    <svg width={width} height={height} className="mt-1">
-      <polyline fill="none" stroke={color} strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" points={points} />
-      <polyline fill={`${color}15`} stroke="none" points={`0,${height} ${points} ${width},${height}`} />
-    </svg>
-  )
-}
-
 /* ──────────── mock data generators ──────────── */
 function seededData(seed: string, len: number, min: number, max: number): number[] {
   let h = 0
@@ -109,8 +90,8 @@ export default function CompanyProfilePage() {
     { label: 'AWARDS', value: String(company.awards), trend: 'up' as const, color: '#f59e0b', data: awardsData },
   ]
 
-  // Client-only favourite
-  const isClient = user?.role === ('client' as string)
+  // Client-only favouriting (Client or Marketer)
+  const isClientOrMarketer = user?.role === 'client' || user?.role === 'marketer'
 
   return (
     <div className="min-h-screen bg-[#02030E] flex flex-col">
@@ -158,17 +139,17 @@ export default function CompanyProfilePage() {
                   {company.socialLinks?.instagram && <a href={company.socialLinks.instagram} target="_blank" rel="noreferrer" className="w-8 h-8 rounded-full bg-white/[0.06] border border-white/[0.08] text-white/60 flex items-center justify-center hover:bg-white/[0.12]"><Instagram className="w-4 h-4" /></a>}
                 </div>
                 <div className="flex gap-2">
-                  {/* Favourite — only show if logged in as Client */}
-                  {isClient && (
-                    <Button variant="outline" size="sm" onClick={() => setIsFavourited(!isFavourited)}
-                      className={`gap-1 rounded-full text-xs ${isFavourited ? 'border-[#4fc487] text-[#4fc487] bg-[#4fc487]/10' : 'border-white/20 text-white/60 hover:bg-white/10'}`}>
-                      <Heart className={`w-3 h-3 ${isFavourited ? 'fill-[#4fc487]' : ''}`} />{isFavourited ? 'Favourited' : 'Favourite'}
-                    </Button>
-                  )}
-                  {user && (
-                    <Button variant="outline" size="sm" className="gap-1 border-white/20 text-white/60 hover:bg-white/10 rounded-full text-xs">
-                      <Bookmark className="w-3 h-3" />Add to List
-                    </Button>
+                  {/* Favourite / Add to List — only show if logged in as Client/Marketer */}
+                  {isClientOrMarketer && (
+                    <>
+                      <Button variant="outline" size="sm" onClick={() => setIsFavourited(!isFavourited)}
+                        className={`gap-1 rounded-full text-xs ${isFavourited ? 'border-[#4fc487] text-[#4fc487] bg-[#4fc487]/10' : 'border-white/20 text-white/60 hover:bg-white/10'}`}>
+                        <Heart className={`w-3 h-3 ${isFavourited ? 'fill-[#4fc487]' : ''}`} />{isFavourited ? 'Favourited' : 'Favourite'}
+                      </Button>
+                      <Button variant="outline" size="sm" className="gap-1 border-white/20 text-white/60 hover:bg-white/10 rounded-full text-xs">
+                        <Bookmark className="w-3 h-3" />Add to List
+                      </Button>
+                    </>
                   )}
                 </div>
               </div>
@@ -282,7 +263,10 @@ export default function CompanyProfilePage() {
                       <div key={card.label} className="bg-white/[0.03] border border-white/[0.06] rounded-xl p-4">
                         <p className="text-2xl font-bold text-white">{card.value}</p>
                         <p className="text-[10px] uppercase tracking-wider text-white/30 font-semibold mb-1">{card.label}</p>
-                        {card.data.length > 0 && <Sparkline data={card.data} color={card.color} width={120} height={28} />}
+                        <div className="flex items-center gap-1 mt-2">
+                          {card.trend === 'up' ? <TrendingUp className="w-4 h-4 text-[#4fc487]" /> : card.trend === 'down' ? <TrendingDown className="w-4 h-4 text-red-400" /> : null}
+                          <span className="text-xs text-white/50">vs last year</span>
+                        </div>
                       </div>
                     ))}
                   </div>

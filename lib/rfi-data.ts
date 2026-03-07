@@ -412,7 +412,4 @@ export const AGENCY_TALENT_ROLES = [
 // ── Turnover Regions (from Excel column headers) ───────────────────────────
 export const TURNOVER_REGIONS = ['LOCAL', 'GLOBAL', 'NAM', 'EUROPE', 'LATAM', 'AFRICA', 'APAC'] as const
 
-// ── Turnover Years ─────────────────────────────────────────────────────────
-export function getTurnoverYears(): string[] {
-  return ['2025', '2024', '2023', '2022', '2021']
-}
+

@@ -7,6 +7,7 @@ import { ChevronRight, ChevronLeft, Check, Film, Plus, Trash2, Upload } from 'lu
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
 import { SOCIAL_RESPONSIBILITY_QUESTIONS, CSR_IMPACT_AREAS, ATTACHMENTS_REQUESTED } from '@/lib/rfi-data'
+import { getTurnoverYears } from '@/lib/turnover-utils'
 
 // ── Step definitions ──────────────────────────────────────────────────────────
 
@@ -106,14 +107,14 @@ export default function ProductionSignupPage() {
   const [reddit, setReddit] = useState('')
 
   // Step 6 — Turnover & Clients
-  const YEARS = ['2024', '2023', '2022', '2021', '2020']
+  const turnoverYears = getTurnoverYears()
   const REVENUE_REGIONS = ['Local', 'Global', 'NAM', 'Europe', 'LATAM', 'Africa', 'APAC']
   const [financials, setFinancials] = useState<Record<string, string>>({})
   const [clients, setClients] = useState([{ name: '', industry: '', activities: '', year: '', turnover: '', incidence: '', exclusivity: false }])
   const [workedWithClient, setWorkedWithClient] = useState<boolean | null>(null)
 
   // Step 7 — Competencies
-  const [competencies, setCompetencies] = useState<Record<string, boolean>>({})
+  const [competencies, setCompetencies] = useState<Record<string, string>>({})
   const [capabilityAllocation, setCapabilityAllocation] = useState<Record<string, string>>({})
 
   // Step 8 — Sectors
@@ -134,7 +135,7 @@ export default function ProductionSignupPage() {
   const [investments, setInvestments] = useState<Record<string, string>>({})
 
   // Step 11 — Awards & CSR
-  const [awards, setAwards] = useState(AWARD_FESTIVALS.map(f => ({ festival: f, distinction: '', category: '', year: '', ad: '', brand: '' })))
+  const [awards, setAwards] = useState([{ festival: '', distinction: '', category: '', year: '', ad: '', brand: '' }])
   const [csr, setCsr] = useState<Record<string, boolean | null>>({})
 
   // Step 12 — About & AI
@@ -398,7 +399,7 @@ export default function ProductionSignupPage() {
                     </tr>
                   </thead>
                   <tbody>
-                    {YEARS.map((year, yi) => (
+                    {turnoverYears.map((year, yi) => (
                       <React.Fragment key={year}>
                         <tr className={yi % 2 === 0 ? 'bg-white/[0.03]' : 'bg-white/[0.06]'}>
                           <td className="px-3 py-2 font-medium text-white/80 whitespace-nowrap">{year} — Revenue</td>
@@ -464,7 +465,7 @@ export default function ProductionSignupPage() {
                         ].map(f => (
                           <FormField key={f.key} label={f.label}>
                             <Input
-                              value={(client as Record<string, string>)[f.key] || ''}
+                              value={(client as any)[f.key] || ''}
                               onChange={e => setClients(p => p.map((c, idx) => idx === i ? { ...c, [f.key]: e.target.value } : c))}
                               placeholder={f.placeholder}
                             />
@@ -530,12 +531,15 @@ export default function ProductionSignupPage() {
                     <p className="text-xs font-bold text-white/50 uppercase tracking-widest mb-3 flex items-center gap-2">
                       <span className="flex-1 h-px bg-white/[0.08]" />{group.label}<span className="flex-1 h-px bg-white/[0.08]" />
                     </p>
-                    <div className="grid grid-cols-1 sm:grid-cols-2 gap-2">
+                    <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-2">
                       {group.items.map(skill => (
-                        <label key={skill} className={`flex items-center gap-2.5 p-2.5 rounded-lg border cursor-pointer transition-all ${competencies[skill] ? 'bg-[#4fc487]/10 border-[#4fc487]' : 'bg-white/[0.03] border-white/[0.1] hover:border-white/[0.2]'}`}>
-                          <input type="checkbox" checked={!!competencies[skill]} onChange={() => setCompetencies(prev => ({ ...prev, [skill]: !prev[skill] }))} className="w-4 h-4 accent-[#4fc487]" />
-                          <span className="text-sm text-white/70">{skill}</span>
-                        </label>
+                        <div key={skill} className={`flex items-center gap-2 p-2.5 rounded-xl border transition-all text-xs ${competencies[skill] ? 'bg-[#4fc487]/10 border-[#4fc487]/30 text-[#4fc487]' : 'bg-white/[0.03] border-white/[0.1]'}`}>
+                          <span className="flex-1 truncate" title={skill}>{skill}</span>
+                          <div className="flex items-center gap-1 shrink-0">
+                            <input type="number" min={0} max={100} value={competencies[skill] || ''} onChange={e => setCompetencies(prev => ({ ...prev, [skill]: e.target.value }))} className="w-14 text-xs text-center bg-white/[0.04] border border-white/[0.08] text-white rounded-lg py-1" placeholder="0" />
+                            <span className="text-xs text-white/30">%</span>
+                          </div>
+                        </div>
                       ))}
                     </div>
                   </div>
@@ -711,7 +715,7 @@ export default function ProductionSignupPage() {
                           </td>
                           {['exclusivity', 'priority', 'occasional'].map(field => (
                             <td key={field} className="px-3 py-1.5 text-center">
-                              <input type="checkbox" checked={(d as Record<string, boolean>)[field] || false} onChange={e => setDirectors(p => p.map((r, idx) => idx === i ? { ...r, [field]: e.target.checked } : r))} className="w-4 h-4 accent-[#4fc487]" />
+                              <input type="checkbox" checked={(d as any)[field] || false} onChange={e => setDirectors(p => p.map((r, idx) => idx === i ? { ...r, [field]: e.target.checked } : r))} className="w-4 h-4 accent-[#4fc487]" />
                             </td>
                           ))}
                           <td className="px-2">
@@ -752,25 +756,31 @@ export default function ProductionSignupPage() {
                   <table className="w-full text-sm border-collapse min-w-[700px]">
                     <thead>
                       <tr className="bg-white/[0.06]">
-                        {['Festival', 'Distinction', 'Category', 'Year', 'Awarded Ad', 'Brand'].map(h => (
-                          <th key={h} className="text-left px-3 py-2.5 text-xs font-medium text-white/50">{h}</th>
+                        {['Festival', 'Distinction', 'Category', 'Year', 'Awarded Ad', 'Brand', ''].map(h => (
+                          <th key={h || 'action'} className="text-left px-3 py-2.5 text-xs font-medium text-white/50">{h}</th>
                         ))}
                       </tr>
                     </thead>
                     <tbody>
                       {awards.map((award, i) => (
-                        <tr key={award.festival} className={i % 2 === 0 ? 'bg-white/[0.03]' : 'bg-white/[0.06]'}>
-                          <td className="px-3 py-2 text-sm font-medium text-white/70 whitespace-nowrap">{award.festival}</td>
+                        <tr key={i} className={i % 2 === 0 ? 'bg-white/[0.03]' : 'bg-white/[0.06]'}>
+                          <td className="px-2 py-1.5">
+                            <input value={award.festival} onChange={e => setAwards(p => p.map((a, idx) => idx === i ? { ...a, festival: e.target.value } : a))} className="w-full text-xs border border-white/[0.12] rounded px-2 py-1.5 bg-white/[0.04] text-white focus:outline-none focus:ring-1 focus:ring-[#4fc487]" placeholder="Festival" />
+                          </td>
                           {['distinction', 'category', 'year', 'ad', 'brand'].map(field => (
                             <td key={field} className="px-2 py-1.5">
                               <input value={(award as Record<string, string>)[field] || ''} onChange={e => setAwards(p => p.map((a, idx) => idx === i ? { ...a, [field]: e.target.value } : a))} className="w-full text-xs border border-white/[0.12] rounded px-2 py-1.5 bg-white/[0.04] text-white focus:outline-none focus:ring-1 focus:ring-[#4fc487]" placeholder="—" />
                             </td>
                           ))}
+                          <td className="px-2">
+                            <button onClick={() => setAwards(prev => prev.filter((_, idx) => idx !== i))} className="text-red-400 hover:text-red-300 p-1 shrink-0"><Trash2 className="w-4 h-4" /></button>
+                          </td>
                         </tr>
                       ))}
                     </tbody>
                   </table>
                 </div>
+                <button onClick={() => setAwards(prev => [...prev, { festival: '', distinction: '', category: '', year: '', ad: '', brand: '' }])} className="text-xs text-[#4fc487] hover:bg-[#4fc487]/10 px-3 py-1.5 rounded-lg border border-[#4fc487]/30 transition-colors inline-block mt-3">+ Add Award</button>
               </div>
 
               <div>
@@ -900,7 +910,7 @@ export default function ProductionSignupPage() {
                         <label className="flex items-center gap-2 px-3 py-1.5 bg-white/[0.04] border border-white/[0.08] rounded-lg cursor-pointer hover:bg-white/[0.08] transition">
                           <Upload className="w-3.5 h-3.5 text-white/40" />
                           <span className="text-xs text-white/50">Upload</span>
-                          <input type="file" className="hidden" />
+                        <input type="file" accept=".pdf" className="hidden" />
                         </label>
                       </div>
                     ))}

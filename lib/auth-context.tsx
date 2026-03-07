@@ -15,7 +15,7 @@ export interface SignupData {
   name: string
   email: string
   password: string
-  role: 'agency_owner' | 'talent' | 'marketer' | 'client'
+  role: 'agency_owner' | 'talent' | 'marketer' | 'client' | 'production'
 }
 
 const AuthContext = createContext<AuthContextType | null>(null)
@@ -72,6 +72,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
       email: data.email,
       name: data.name,
       role: data.role,
+      status: ['agency_owner', 'production'].includes(data.role) ? 'pending_review' : 'active',
     }
     setUser(newUser)
     localStorage.setItem(STORAGE_KEY, JSON.stringify(newUser))
