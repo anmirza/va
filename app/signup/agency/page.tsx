@@ -13,6 +13,7 @@ import {
   AGENCY_PEOPLE_DEPARTMENTS, AGENCY_TALENT_ROLES, AGENCY_AWARDS,
   AI_QUESTIONS, SOCIAL_RESPONSIBILITY_QUESTIONS, INVESTMENT_CATEGORIES,
   REGISTRATION_STEPS, CSR_IMPACT_AREAS, ATTACHMENTS_REQUESTED,
+  GOVERNANCE_QUESTIONS,
 } from '@/lib/rfi-data'
 import { getTurnoverYears, REVENUE_REGIONS } from '@/lib/turnover-utils'
 
@@ -497,15 +498,17 @@ export default function AgencySignupPage() {
                 <FormField label="Local Representation"><textarea value={localRepresentation} onChange={e => setLocalRepresentation(e.target.value)} rows={2} className={textareaCls} placeholder="Local offices..." /></FormField>
                 <div className="border-t border-white/[0.06] pt-5">
                   <p className="text-xs font-bold text-white/60 uppercase tracking-widest mb-4">Governance</p>
-                  <FormField label="Quality Assurance & SLA Systems"><textarea value={governanceQA} onChange={e => setGovernanceQA(e.target.value)} rows={2} className={textareaCls} /></FormField>
-                  <FormField label="Client Data Management Protocols" className="mt-4"><textarea value={governanceData} onChange={e => setGovernanceData(e.target.value)} rows={2} className={textareaCls} /></FormField>
-                  <FormField label="Global vs. Local Governance" className="mt-4"><textarea value={governanceGlobal} onChange={e => setGovernanceGlobal(e.target.value)} rows={2} className={textareaCls} /></FormField>
-                  <FormField label="Additional Information" className="mt-4"><textarea value={governanceAdditional} onChange={e => setGovernanceAdditional(e.target.value)} rows={2} className={textareaCls} /></FormField>
+                  <FormField label={GOVERNANCE_QUESTIONS[0]}><textarea value={governanceQA} onChange={e => setGovernanceQA(e.target.value)} rows={2} className={textareaCls} /></FormField>
+                  <FormField label={GOVERNANCE_QUESTIONS[1]} className="mt-4"><textarea value={governanceData} onChange={e => setGovernanceData(e.target.value)} rows={2} className={textareaCls} /></FormField>
+                  <FormField label={GOVERNANCE_QUESTIONS[2]} className="mt-4"><textarea value={governanceGlobal} onChange={e => setGovernanceGlobal(e.target.value)} rows={2} className={textareaCls} /></FormField>
+                  <FormField label={GOVERNANCE_QUESTIONS[3]} className="mt-4"><textarea value={governanceAdditional} onChange={e => setGovernanceAdditional(e.target.value)} rows={2} className={textareaCls} /></FormField>
                 </div>
                 <div className="border-t border-white/[0.06] pt-5">
                   <label className="flex items-center gap-3 cursor-pointer">
                     <input type="checkbox" checked={outsources} onChange={e => setOutsources(e.target.checked)} className="w-4 h-4 accent-[#0763d8]" />
-                    <span className="text-sm text-white/60">Does your company subcontract activities or phases of services?</span>
+                    <span className="text-sm text-white/60">
+                      Please indicate if your company subcontract activities or some phase of services
+                    </span>
                   </label>
                 </div>
               </div>
