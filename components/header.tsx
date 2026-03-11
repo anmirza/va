@@ -87,7 +87,11 @@ export function Header() {
         <div className="flex justify-between items-center h-14 lg:h-16">
           {/* Logo */}
           <Link href="/" className="flex flex-1 items-center shrink-0">
-            <span className="text-3xl font-bold text-white tracking-tight">VA</span>
+            <img
+              src="/logos/va-consulting.svg"
+              alt="VA Consulting"
+              className="h-7 w-auto"
+            />
           </Link>
 
           {/* Desktop Navigation — centrally aligned */}

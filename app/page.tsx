@@ -80,8 +80,7 @@ export default function Home() {
           </div>
         </section>
 
-        {/* Featured Agencies — max 6 cards */}
-        {false && (
+        {/* Featured Agencies — max 6 cards with show more/less */}
         <section className="px-4 sm:px-6 lg:px-8 py-16 lg:py-24 max-w-7xl mx-auto">
           <div className="flex items-end justify-between mb-10">
             <h2 className="text-2xl sm:text-3xl font-bold text-white">
@@ -107,13 +106,11 @@ export default function Home() {
                 className="border-white/20 text-white hover:bg-white/10"
                 onClick={() => setShowMoreAgencies(!showMoreAgencies)}
               >
-                {showMoreAgencies ? 'View less' : 'Show more'}
+                {showMoreAgencies ? 'Show less' : 'Show more'}
               </Button>
             </div>
           )}
         </section>
-
-        )}
 
         {/* Latest Creative Work */}
         <section className="px-4 sm:px-6 lg:px-8 py-16 lg:py-24 max-w-7xl mx-auto">
@@ -126,6 +123,67 @@ export default function Home() {
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
             {campaigns.slice(0, 4).map((campaign) => (
               <CampaignCard key={campaign.id} campaign={campaign} />
+            ))}
+          </div>
+        </section>
+
+        {/* Spotlight Reports / Research-style cards */}
+        <section className="px-4 sm:px-6 lg:px-8 pb-16 lg:pb-24 max-w-7xl mx-auto">
+          <div className="flex items-end justify-between mb-10">
+            <h2 className="text-2xl sm:text-3xl font-bold text-white">
+              Creative Insights &amp; Reports
+            </h2>
+          </div>
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
+            {campaigns.slice(0, 8).map((campaign, index) => (
+              <Link
+                key={campaign.id}
+                href={`/campaigns/${campaign.id}`}
+                className="group relative overflow-hidden rounded-xl bg-[#020617] aspect-[3/5] cursor-pointer"
+              >
+                {/* Front state – image with title */}
+                <div className="absolute inset-0 transition-opacity duration-300 group-hover:opacity-0">
+                  <img
+                    src={campaign.thumbnail}
+                    alt={campaign.title}
+                    className="absolute inset-0 w-full h-full object-cover"
+                  />
+                  <div className="absolute inset-0 bg-gradient-to-t from-black/85 via-black/40 to-transparent" />
+                  <div className="absolute inset-x-0 bottom-0 p-4 sm:p-5">
+                    <p className="text-[11px] font-semibold tracking-[0.18em] uppercase text-amber-300 mb-2">
+                      {index % 2 === 0 ? 'Research Report' : 'Creative Case Study'}
+                    </p>
+                    <h3 className="text-white font-semibold text-base sm:text-lg leading-snug mb-1 line-clamp-2">
+                      {campaign.title} – {campaign.brand}
+                    </h3>
+                    <p className="text-xs text-[#98F5CC] font-medium">
+                      {campaign.agency} · {campaign.mediaType || campaign.format.join(' / ')}
+                    </p>
+                  </div>
+                </div>
+
+                {/* Hover state – solid panel with copy + Explore */}
+                <div className="absolute inset-0 opacity-0 translate-y-4 group-hover:opacity-100 group-hover:translate-y-0 transition-all duration-300 bg-gradient-to-b from-[#020617] via-[#020618] to-[#030712]">
+                  <div className="flex h-full flex-col p-5 sm:p-6">
+                    <p className="text-[11px] font-semibold tracking-[0.18em] uppercase text-amber-300 mb-3">
+                      {index % 2 === 0 ? 'Research Report' : 'Creative Case Study'}
+                    </p>
+                    <h3 className="text-white font-semibold text-base sm:text-lg leading-snug mb-3">
+                      {campaign.title} – {campaign.brand}
+                    </h3>
+                    <p className="text-sm text-white/80 leading-relaxed line-clamp-5">
+                      {campaign.description ||
+                        `A closer look at how ${campaign.agency} and ${campaign.brand} used ${campaign.mediaType || campaign.format.join('/')} to move the ${campaign.sector?.toLowerCase() || 'category'} forward.`}
+                    </p>
+                    <div className="mt-auto flex justify-end">
+                      <span className="inline-flex items-center gap-1 text-sm font-medium text-[#98F5CC]">
+                        Explore
+                        <ArrowRight className="w-3.5 h-3.5" />
+                      </span>
+                    </div>
+                  </div>
+                </div>
+              </Link>
             ))}
           </div>
         </section>
@@ -164,26 +222,6 @@ export default function Home() {
         </section>
 
         )}
-
-        {/* Browse by Discipline — with Award tag added */}
-        <section className="px-4 sm:px-6 lg:px-8 py-16 lg:py-24 max-w-7xl mx-auto">
-          <h2 className="text-2xl sm:text-3xl font-bold text-[#0763d8] mb-8">Browse by Discipline</h2>
-          <div className="flex flex-wrap gap-2">
-            {disciplines.map((tag) => (
-              <Link
-                key={tag}
-                href={`/directory?competency=${encodeURIComponent(tag.toLowerCase().replace(/[\s/&]+/g, '-'))}`}
-              >
-                <Badge
-                  variant="outline"
-                  className="px-4 py-2 rounded-full bg-white/[0.06] border border-white/[0.08] text-white/70 hover:bg-[#0763d8]/20 hover:text-[#0763d8] hover:border-[#0763d8]/30 cursor-pointer transition-colors"
-                >
-                  {tag}
-                </Badge>
-              </Link>
-            ))}
-          </div>
-        </section>
 
         {/* Join the Network CTA */}
         <section className="px-4 sm:px-6 lg:px-8 py-16 lg:py-24 max-w-3xl mx-auto text-center">
