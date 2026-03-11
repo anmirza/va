@@ -149,7 +149,7 @@ export default function HeroSearch() {
           <div className={`h-8 w-px my-3 ${isLight ? 'bg-gray-200' : 'bg-white/[0.1]'}`} />
           <button
             type="submit"
-            className="flex items-center gap-2 px-6 py-4 bg-[#4fc487] hover:bg-[#45b078] text-white font-semibold text-sm transition-all duration-200 rounded-r-2xl flex-shrink-0"
+            className="flex items-center gap-2 px-6 py-4 bg-[#0763d8] hover:bg-[#0655b3] text-white font-semibold text-sm transition-all duration-200 rounded-r-2xl flex-shrink-0"
           >
             <span>Search</span>
             <ArrowIcon />
@@ -174,7 +174,7 @@ export default function HeroSearch() {
               </p>
               <Link
                 href={activeCfg.page}
-                className="flex items-center gap-1.5 text-xs text-[#4fc487] hover:text-[#6ddb9f] font-medium transition-colors"
+                className="flex items-center gap-1.5 text-xs text-[#0763d8] hover:text-[#1a75eb] font-medium transition-colors"
                 onClick={() => setIsOpen(false)}
               >
                 View all <ArrowIcon />
@@ -187,7 +187,7 @@ export default function HeroSearch() {
             }`}>
               {activeCfg.groups.map((group) => (
                 <div key={group.heading} className="p-5">
-                  <p className="flex items-center gap-2 text-xs font-bold text-[#4fc487]/80 uppercase tracking-wider mb-3">
+                  <p className="flex items-center gap-2 text-xs font-bold text-[#0763d8]/80 uppercase tracking-wider mb-3">
                     <span>{group.icon}</span>
                     {group.heading}
                   </p>
@@ -198,12 +198,12 @@ export default function HeroSearch() {
                           href={item.href}
                           className={`flex items-center gap-2.5 py-2 px-3 rounded-lg text-sm font-medium transition-all duration-150 group ${
                             isLight
-                              ? 'text-gray-700 hover:text-[#4fc487] hover:bg-[#4fc487]/[0.06]'
-                              : 'text-white/90 hover:text-[#4fc487] hover:bg-white/[0.06]'
+                              ? 'text-gray-700 hover:text-[#0763d8] hover:bg-[#0763d8]/[0.06]'
+                              : 'text-white/90 hover:text-[#0763d8] hover:bg-white/[0.06]'
                           }`}
                           onClick={() => setIsOpen(false)}
                         >
-                          <span className="w-1.5 h-1.5 rounded-full bg-[#4fc487]/50 group-hover:bg-[#4fc487] flex-shrink-0 transition-colors" />
+                          <span className="w-1.5 h-1.5 rounded-full bg-[#0763d8]/50 group-hover:bg-[#0763d8] flex-shrink-0 transition-colors" />
                           {item.label}
                         </Link>
                       </li>

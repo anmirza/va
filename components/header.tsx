@@ -99,7 +99,7 @@ export function Header() {
                     onClick={() => setOpenDropdown(openDropdown === item.label ? null : item.label)}
                     className={`flex items-center gap-1.5 px-3 py-2 text-sm font-medium transition-colors ${
                       openDropdown === item.label
-                        ? 'text-[#4fc487]'
+                        ? 'text-[#0763d8]'
                         : 'text-white/80 hover:text-white'
                     }`}
                   >
@@ -124,10 +124,10 @@ export function Header() {
                       <Link
                         key={sub.href + sub.label}
                         href={sub.href}
-                        className="flex items-center gap-3 px-4 py-2.5 text-sm text-white/70 hover:bg-white/[0.06] hover:text-[#4fc487] transition-colors mx-1 rounded-lg"
+                        className="flex items-center gap-3 px-4 py-2.5 text-sm text-white/70 hover:bg-white/[0.06] hover:text-[#0763d8] transition-colors mx-1 rounded-lg"
                         onClick={() => setOpenDropdown(null)}
                       >
-                        <span className="w-1.5 h-1.5 rounded-full bg-[#4fc487]/40" />
+                        <span className="w-1.5 h-1.5 rounded-full bg-[#0763d8]/40" />
                         {sub.label}
                       </Link>
                     ))}
@@ -191,7 +191,7 @@ export function Header() {
                   {user.avatar ? (
                     <img src={user.avatar} alt="" className="w-6 h-6 rounded-full object-cover" />
                   ) : (
-                    <div className="w-6 h-6 rounded-full bg-[#4fc487] flex items-center justify-center text-white text-xs font-bold">
+                    <div className="w-6 h-6 rounded-full bg-[#0763d8] flex items-center justify-center text-white text-xs font-bold">
                       {user.name[0].toUpperCase()}
                     </div>
                   )}
@@ -200,20 +200,20 @@ export function Header() {
                 </button>
                 {userMenuOpen && (
                   <div className="absolute right-0 top-full mt-2 bg-[#0c0e1a] border border-white/[0.08] rounded-xl shadow-2xl shadow-black/50 py-2 w-48 z-50">
-                    <Link href="/dashboard" className="flex items-center gap-2 px-4 py-2.5 text-sm text-white/70 hover:bg-white/[0.06] hover:text-[#4fc487] mx-1 rounded-lg" onClick={() => setUserMenuOpen(false)}>
+                    <Link href="/dashboard" className="flex items-center gap-2 px-4 py-2.5 text-sm text-white/70 hover:bg-white/[0.06] hover:text-[#0763d8] mx-1 rounded-lg" onClick={() => setUserMenuOpen(false)}>
                       <LayoutDashboard className="w-4 h-4 text-white/40" /> Dashboard
                     </Link>
                     {user.role === 'agency_owner' && (
-                      <Link href="/dashboard/agency" className="flex items-center gap-2 px-4 py-2.5 text-sm text-white/70 hover:bg-white/[0.06] hover:text-[#4fc487] mx-1 rounded-lg" onClick={() => setUserMenuOpen(false)}>
+                      <Link href="/dashboard/agency" className="flex items-center gap-2 px-4 py-2.5 text-sm text-white/70 hover:bg-white/[0.06] hover:text-[#0763d8] mx-1 rounded-lg" onClick={() => setUserMenuOpen(false)}>
                         <Building2 className="w-4 h-4 text-white/40" /> Manage Agency
                       </Link>
                     )}
                     {user.role === 'talent' && (
-                      <Link href="/dashboard/talent" className="flex items-center gap-2 px-4 py-2.5 text-sm text-white/70 hover:bg-white/[0.06] hover:text-[#4fc487] mx-1 rounded-lg" onClick={() => setUserMenuOpen(false)}>
+                      <Link href="/dashboard/talent" className="flex items-center gap-2 px-4 py-2.5 text-sm text-white/70 hover:bg-white/[0.06] hover:text-[#0763d8] mx-1 rounded-lg" onClick={() => setUserMenuOpen(false)}>
                         <Users className="w-4 h-4 text-white/40" /> My Profile
                       </Link>
                     )}
-                    <Link href="/dashboard/settings" className="flex items-center gap-2 px-4 py-2.5 text-sm text-white/70 hover:bg-white/[0.06] hover:text-[#4fc487] mx-1 rounded-lg" onClick={() => setUserMenuOpen(false)}>
+                    <Link href="/dashboard/settings" className="flex items-center gap-2 px-4 py-2.5 text-sm text-white/70 hover:bg-white/[0.06] hover:text-[#0763d8] mx-1 rounded-lg" onClick={() => setUserMenuOpen(false)}>
                       <User className="w-4 h-4 text-white/40" /> Settings
                     </Link>
                     <div className="border-t border-white/[0.06] my-1 mx-2" />
@@ -230,7 +230,7 @@ export function Header() {
                 </Link>
                 <Link
                   href="/signup"
-                  className="text-sm font-medium bg-[#4fc487] hover:bg-[#45b078] text-white px-5 py-1.5 rounded-full transition-colors"
+                  className="text-sm font-medium bg-[#0763d8] hover:bg-[#0655b3] text-white px-5 py-1.5 rounded-full transition-colors"
                 >
                   Sign Up
                 </Link>
@@ -273,7 +273,7 @@ export function Header() {
                     <Link
                       key={sub.href + sub.label}
                       href={sub.href}
-                      className="block pl-8 pr-4 py-2 text-sm text-white/60 hover:bg-white/[0.06] hover:text-[#4fc487] transition-colors"
+                      className="block pl-8 pr-4 py-2 text-sm text-white/60 hover:bg-white/[0.06] hover:text-[#0763d8] transition-colors"
                       onClick={() => setIsMenuOpen(false)}
                     >
                       {sub.label}
@@ -296,7 +296,7 @@ export function Header() {
                     <Link href="/login" className="block w-full text-center py-2.5 text-sm text-white border border-white/20 rounded-full" onClick={() => setIsMenuOpen(false)}>
                       Sign In
                     </Link>
-                    <Link href="/signup" className="block w-full text-center py-2.5 text-sm bg-[#4fc487] text-white rounded-full" onClick={() => setIsMenuOpen(false)}>
+                    <Link href="/signup" className="block w-full text-center py-2.5 text-sm bg-[#0763d8] text-white rounded-full" onClick={() => setIsMenuOpen(false)}>
                       Sign Up
                     </Link>
                   </>

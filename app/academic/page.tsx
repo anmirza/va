@@ -88,7 +88,7 @@ function AcademicContent() {
             <select
               value={selectedCountry}
               onChange={e => setSelectedCountry(e.target.value)}
-              className="text-sm border border-[#d8dce2] rounded-lg px-3 py-2 bg-white text-[#1a1a1a] focus:outline-none focus:ring-2 focus:ring-[#4fc487]"
+              className="text-sm border border-[#d8dce2] rounded-lg px-3 py-2 bg-white text-[#1a1a1a] focus:outline-none focus:ring-2 focus:ring-[#0763d8]"
             >
               {COUNTRIES.map(c => <option key={c}>{c}</option>)}
             </select>
@@ -115,9 +115,9 @@ function AcademicContent() {
                   </span>
                 </div>
                 <div className="p-5">
-                  <h3 className="font-bold text-[#1a1a1a] mb-2 group-hover:text-[#4fc487] transition-colors">{institution.name}</h3>
+                  <h3 className="font-bold text-[#1a1a1a] mb-2 group-hover:text-[#0763d8] transition-colors">{institution.name}</h3>
                   <div className="flex items-center gap-1.5 text-sm text-[#666] mb-3">
-                    <MapPin className="w-4 h-4 text-[#4fc487] shrink-0" />
+                    <MapPin className="w-4 h-4 text-[#0763d8] shrink-0" />
                     {institution.city}, {institution.country}
                   </div>
                   <p className="text-sm text-[#666] line-clamp-2 mb-3">{institution.description}</p>
@@ -135,7 +135,7 @@ function AcademicContent() {
             <div className="text-center py-20 text-[#666]">
               <BookOpen className="w-12 h-12 text-[#d8dce2] mx-auto mb-4" />
               <p className="text-lg font-medium mb-2">No institutions found.</p>
-              <button onClick={() => { setQuery(''); setSelectedType('All'); setSelectedCountry('All') }} className="text-sm text-[#4fc487] hover:underline">Clear filters</button>
+              <button onClick={() => { setQuery(''); setSelectedType('All'); setSelectedCountry('All') }} className="text-sm text-[#0763d8] hover:underline">Clear filters</button>
             </div>
           )}
         </div>

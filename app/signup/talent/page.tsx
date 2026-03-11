@@ -62,16 +62,16 @@ export default function TalentSignupPage() {
             <div className="flex justify-between mb-2">
               {STEPS.map((s, i) => (
                 <div key={s} className="flex items-center gap-1">
-                  <div className={`w-7 h-7 rounded-full flex items-center justify-center text-xs font-bold transition-colors ${i < step ? 'bg-[#4fc487] text-white' : i === step ? 'bg-[#2e3843] text-white' : 'bg-[#d8dce2] text-[#666]'}`}>
+                  <div className={`w-7 h-7 rounded-full flex items-center justify-center text-xs font-bold transition-colors ${i < step ? 'bg-[#0763d8] text-white' : i === step ? 'bg-[#2e3843] text-white' : 'bg-[#d8dce2] text-[#666]'}`}>
                     {i < step ? <Check className="w-3.5 h-3.5" /> : i + 1}
                   </div>
                   <span className={`text-xs hidden sm:inline ${i === step ? 'text-[#1a1a1a] font-medium' : 'text-[#666]'}`}>{s}</span>
-                  {i < STEPS.length - 1 && <div className={`h-0.5 w-12 sm:w-24 mx-1 ${i < step ? 'bg-[#4fc487]' : 'bg-[#d8dce2]'}`} />}
+                  {i < STEPS.length - 1 && <div className={`h-0.5 w-12 sm:w-24 mx-1 ${i < step ? 'bg-[#0763d8]' : 'bg-[#d8dce2]'}`} />}
                 </div>
               ))}
             </div>
             <div className="h-1 bg-[#d8dce2] rounded-full overflow-hidden">
-              <div className="h-full bg-[#4fc487] rounded-full transition-all" style={{ width: `${((step + 1) / STEPS.length) * 100}%` }} />
+              <div className="h-full bg-[#0763d8] rounded-full transition-all" style={{ width: `${((step + 1) / STEPS.length) * 100}%` }} />
             </div>
           </div>
 
@@ -120,14 +120,14 @@ export default function TalentSignupPage() {
                       key={opt}
                       type="button"
                       onClick={() => toggleExpertise(opt)}
-                      className={`px-3 py-2 rounded-full text-sm border transition-colors ${data.expertise.includes(opt) ? 'bg-[#4fc487] text-white border-[#4fc487]' : 'bg-white text-[#666] border-[#d8dce2] hover:border-[#4fc487]'}`}
+                      className={`px-3 py-2 rounded-full text-sm border transition-colors ${data.expertise.includes(opt) ? 'bg-[#0763d8] text-white border-[#0763d8]' : 'bg-white text-[#666] border-[#d8dce2] hover:border-[#0763d8]'}`}
                     >
                       {opt}
                     </button>
                   ))}
                 </div>
                 {data.expertise.length > 0 && (
-                  <p className="text-sm text-[#4fc487] mt-4">{data.expertise.length} skill{data.expertise.length !== 1 ? 's' : ''} selected</p>
+                  <p className="text-sm text-[#0763d8] mt-4">{data.expertise.length} skill{data.expertise.length !== 1 ? 's' : ''} selected</p>
                 )}
               </div>
             )}
@@ -147,7 +147,7 @@ export default function TalentSignupPage() {
                       onChange={e => update({ bio: e.target.value })}
                       placeholder="Write a short bio about yourself - your background, achievements, and what drives you."
                       rows={5}
-                      className="w-full border border-[#d8dce2] rounded-lg px-3 py-2.5 text-sm focus:outline-none focus:border-[#4fc487] resize-none"
+                      className="w-full border border-[#d8dce2] rounded-lg px-3 py-2.5 text-sm focus:outline-none focus:border-[#0763d8] resize-none"
                     />
                   </div>
                   <div>
@@ -171,7 +171,7 @@ export default function TalentSignupPage() {
                   Next <ChevronRight className="w-4 h-4" />
                 </Button>
               ) : (
-                <Button onClick={() => router.push('/dashboard/talent')} className="bg-[#4fc487] hover:bg-[#45b078] text-white">
+                <Button onClick={() => router.push('/dashboard/talent')} className="bg-[#0763d8] hover:bg-[#0655b3] text-white">
                   Create Profile
                 </Button>
               )}

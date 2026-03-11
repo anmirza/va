@@ -2,7 +2,7 @@
 
 import Link from 'next/link'
 import { Company } from '@/lib/mock-data'
-import { MapPin, Users, Handshake } from 'lucide-react'
+import { MapPin, Users, Handshake, Award } from 'lucide-react'
 import { getCampaignsByAgency } from '@/lib/mock-data'
 
 interface CompanyCardProps {
@@ -26,7 +26,7 @@ export function CompanyCard({ company }: CompanyCardProps) {
 
   return (
     <Link href={`/directory/${company.id}`}>
-      <div className="group glass-card overflow-hidden cursor-pointer transition-all duration-300 hover:border-[#4fc487]/30 hover:shadow-lg hover:shadow-[#4fc487]/5">
+      <div className="group glass-card overflow-hidden cursor-pointer transition-all duration-300 hover:border-[#0763d8]/30 hover:shadow-lg hover:shadow-[#0763d8]/5">
         {/* Top branding/image area */}
         <div
           className="relative h-32 sm:h-36 bg-cover bg-center"
@@ -48,26 +48,32 @@ export function CompanyCard({ company }: CompanyCardProps) {
           {/* Stats with icons */}
           <div className="space-y-2 mb-4">
             <div className="flex items-center gap-2 text-sm text-white/40">
-              <MapPin className="w-4 h-4 text-[#4fc487] shrink-0" />
+              <MapPin className="w-4 h-4 text-[#0763d8] shrink-0" />
               <span>{company.city}</span>
             </div>
             <div className="flex items-center gap-2 text-sm text-white/40">
-              <Users className="w-4 h-4 text-[#4fc487] shrink-0" />
+              <Users className="w-4 h-4 text-[#0763d8] shrink-0" />
               <span>
-                <span className="text-[#4fc487] font-medium">{employeeRange}</span> collaborators
+                <span className="text-[#0763d8] font-medium">{employeeRange}</span> collaborators
               </span>
             </div>
             <div className="flex items-center gap-2 text-sm text-white/40">
-              <Handshake className="w-4 h-4 text-[#4fc487] shrink-0" />
+              <Handshake className="w-4 h-4 text-[#0763d8] shrink-0" />
               <span>
-                <span className="text-[#4fc487] font-medium">{company.clients?.length ?? 0}</span> clients
+                <span className="text-[#0763d8] font-medium">{company.clients?.length ?? 0}</span> clients
+              </span>
+            </div>
+            <div className="flex items-center gap-2 text-sm text-white/40">
+              <Award className="w-4 h-4 text-[#0763d8] shrink-0" />
+              <span>
+                <span className="text-[#0763d8] font-medium">{company.awards ?? 0}</span> awards
               </span>
             </div>
           </div>
 
           {/* Category button */}
           <div className="mb-4">
-            <span className="inline-block px-3 py-1.5 rounded-full bg-[#4fc487]/10 text-[#4fc487] text-xs font-medium border border-[#4fc487]/20">
+            <span className="inline-block px-3 py-1.5 rounded-full bg-[#0763d8]/10 text-[#0763d8] text-xs font-medium border border-[#0763d8]/20">
               {company.services[0] || 'Communication'}
             </span>
           </div>

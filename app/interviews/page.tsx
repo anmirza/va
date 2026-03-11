@@ -41,7 +41,7 @@ export default function InterviewsPage() {
                 </div>
                 <div className="flex-1 p-6">
                   <span className="inline-block px-3 py-1 bg-[#eef0f3] text-xs font-medium text-[#666] rounded-full mb-3">{interview.category}</span>
-                  <h2 className="text-xl font-bold text-[#1a1a1a] mb-2 group-hover:text-[#4fc487] transition-colors">{interview.title}</h2>
+                  <h2 className="text-xl font-bold text-[#1a1a1a] mb-2 group-hover:text-[#0763d8] transition-colors">{interview.title}</h2>
                   <p className="text-[#666] text-sm mb-4 line-clamp-2">{interview.excerpt}</p>
                   <div className="flex items-center gap-4 text-xs text-[#666]">
                     <span className="flex items-center gap-1.5"><User className="w-3.5 h-3.5" />By {interview.author}</span>

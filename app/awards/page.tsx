@@ -93,7 +93,7 @@ function AwardsContent() {
                 <Link key={org.id} href={`/awards/${org.id}`} className="group bg-white rounded-xl p-4 shadow-sm hover:shadow-md transition-shadow flex items-center gap-3 min-w-[180px]">
                   <Trophy className="w-5 h-5 text-[#f5d742] shrink-0" />
                   <div>
-                    <p className="text-sm font-medium text-[#1a1a1a] group-hover:text-[#4fc487] transition-colors">{org.name}</p>
+                    <p className="text-sm font-medium text-[#1a1a1a] group-hover:text-[#0763d8] transition-colors">{org.name}</p>
                     <p className="text-xs text-[#666]">{org.country} · {org.frequency}</p>
                   </div>
                 </Link>

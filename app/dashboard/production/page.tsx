@@ -73,7 +73,7 @@ function SectionCard({ title, icon: Icon, children }: { title: string; icon: Rea
   return (
     <div className="bg-card border border-border rounded-xl border border-border overflow-hidden">
       <div className="flex items-center gap-2.5 px-6 py-4 border-b border-border">
-        <Icon className="w-4 h-4 text-[#4fc487]" />
+        <Icon className="w-4 h-4 text-[#0763d8]" />
         <h3 className="font-semibold text-foreground text-sm">{title}</h3>
       </div>
       <div className="px-6 py-4">{children}</div>
@@ -145,7 +145,7 @@ function ProductionDashContent() {
               )}
             </div>
             {profile && (
-              <div className="hidden sm:flex items-center gap-1.5 bg-[#4fc487]/20 text-[#4fc487] text-xs font-medium px-3 py-1.5 rounded-full">
+              <div className="hidden sm:flex items-center gap-1.5 bg-[#0763d8]/20 text-[#0763d8] text-xs font-medium px-3 py-1.5 rounded-full">
                 <CheckSquare className="w-3.5 h-3.5" /> Profile complete
               </div>
             )}
@@ -178,7 +178,7 @@ function ProductionDashContent() {
                   <h2 className="text-lg font-semibold text-foreground mb-2">No profile yet</h2>
                   <p className="text-sm text-muted-foreground mb-6">Complete the production house registration form to build your VA profile.</p>
                   <Link href="/signup/production">
-                    <Button className="bg-[#4fc487] hover:bg-[#45b078] text-foreground">Register Your Production House</Button>
+                    <Button className="bg-[#0763d8] hover:bg-[#0655b3] text-foreground">Register Your Production House</Button>
                   </Link>
                 </div>
               )}
@@ -246,7 +246,7 @@ function ProductionDashContent() {
                             </div>
                           ))}
                         </div>
-                        <button onClick={() => setActiveTab('directors')} className="mt-4 text-xs text-[#4fc487] font-medium hover:underline flex items-center gap-1">
+                        <button onClick={() => setActiveTab('directors')} className="mt-4 text-xs text-[#0763d8] font-medium hover:underline flex items-center gap-1">
                           See all directors <ChevronRight className="w-3 h-3" />
                         </button>
                       </SectionCard>
@@ -257,7 +257,7 @@ function ProductionDashContent() {
                         <div className="space-y-2">
                           {notableAwards.slice(0, 5).map((a, i) => (
                             <div key={i} className="flex items-center gap-3 py-1.5 border-b border-border last:border-0">
-                              <div className="w-1.5 h-1.5 rounded-full bg-[#4fc487] shrink-0" />
+                              <div className="w-1.5 h-1.5 rounded-full bg-[#0763d8] shrink-0" />
                               <div>
                                 <p className="text-sm text-foreground"><span className="font-medium">{a.festival}</span> — {a.distinction}</p>
                                 {(a.ad || a.brand) && <p className="text-xs text-muted-foreground">{[a.ad, a.brand, a.year].filter(Boolean).join(' · ')}</p>}
@@ -280,12 +280,12 @@ function ProductionDashContent() {
                           </div>
                         )}
                         {profile.website && (
-                          <a href={profile.website.startsWith('http') ? profile.website : `https://${profile.website}`} target="_blank" rel="noreferrer" className="flex items-center gap-2 text-sm text-[#4fc487] hover:underline">
+                          <a href={profile.website.startsWith('http') ? profile.website : `https://${profile.website}`} target="_blank" rel="noreferrer" className="flex items-center gap-2 text-sm text-[#0763d8] hover:underline">
                             <Globe className="w-4 h-4 shrink-0" />{profile.website.replace(/^https?:\/\//, '')}
                           </a>
                         )}
                         {primaryContact?.email && (
-                          <a href={`mailto:${primaryContact.email}`} className="flex items-center gap-2 text-sm text-muted-foreground hover:text-[#4fc487]">
+                          <a href={`mailto:${primaryContact.email}`} className="flex items-center gap-2 text-sm text-muted-foreground hover:text-[#0763d8]">
                             <Mail className="w-4 h-4 shrink-0" />{primaryContact.email}
                           </a>
                         )}
@@ -298,17 +298,17 @@ function ProductionDashContent() {
                       {(profile.linkedin || profile.twitter || profile.instagram) && (
                         <div className="flex items-center gap-3 mt-4 pt-4 border-t border-border">
                           {profile.linkedin && (
-                            <a href={`https://linkedin.com/company/${profile.linkedin}`} target="_blank" rel="noreferrer" className="text-muted-foreground hover:text-[#4fc487]">
+                            <a href={`https://linkedin.com/company/${profile.linkedin}`} target="_blank" rel="noreferrer" className="text-muted-foreground hover:text-[#0763d8]">
                               <Linkedin className="w-4 h-4" />
                             </a>
                           )}
                           {profile.twitter && (
-                            <a href={`https://twitter.com/${profile.twitter}`} target="_blank" rel="noreferrer" className="text-muted-foreground hover:text-[#4fc487]">
+                            <a href={`https://twitter.com/${profile.twitter}`} target="_blank" rel="noreferrer" className="text-muted-foreground hover:text-[#0763d8]">
                               <Twitter className="w-4 h-4" />
                             </a>
                           )}
                           {profile.instagram && (
-                            <a href={`https://instagram.com/${profile.instagram}`} target="_blank" rel="noreferrer" className="text-muted-foreground hover:text-[#4fc487]">
+                            <a href={`https://instagram.com/${profile.instagram}`} target="_blank" rel="noreferrer" className="text-muted-foreground hover:text-[#0763d8]">
                               <Instagram className="w-4 h-4" />
                             </a>
                           )}
@@ -323,7 +323,7 @@ function ProductionDashContent() {
                             <div key={i}>
                               <p className="text-sm font-medium text-foreground">{c.firstName} {c.lastName}</p>
                               <p className="text-xs text-muted-foreground">{c.role}</p>
-                              {c.email && <a href={`mailto:${c.email}`} className="text-xs text-[#4fc487] hover:underline">{c.email}</a>}
+                              {c.email && <a href={`mailto:${c.email}`} className="text-xs text-[#0763d8] hover:underline">{c.email}</a>}
                             </div>
                           ))}
                         </div>
@@ -400,15 +400,15 @@ function ProductionDashContent() {
                     </div>
                     <div>
                       <label className="block text-xs font-medium text-muted-foreground mb-1.5">About</label>
-                      <textarea value={editDraft.about || ''} onChange={e => setEditDraft(p => ({ ...p, about: e.target.value }))} rows={4} className="w-full border border-border rounded-lg px-3 py-2.5 text-sm focus:outline-none focus:border-[#4fc487] resize-none" placeholder="Describe your production house…" />
+                      <textarea value={editDraft.about || ''} onChange={e => setEditDraft(p => ({ ...p, about: e.target.value }))} rows={4} className="w-full border border-border rounded-lg px-3 py-2.5 text-sm focus:outline-none focus:border-[#0763d8] resize-none" placeholder="Describe your production house…" />
                     </div>
                     <div>
                       <label className="block text-xs font-medium text-muted-foreground mb-1.5">Philosophy</label>
-                      <textarea value={editDraft.philosophy || ''} onChange={e => setEditDraft(p => ({ ...p, philosophy: e.target.value }))} rows={3} className="w-full border border-border rounded-lg px-3 py-2.5 text-sm focus:outline-none focus:border-[#4fc487] resize-none" />
+                      <textarea value={editDraft.philosophy || ''} onChange={e => setEditDraft(p => ({ ...p, philosophy: e.target.value }))} rows={3} className="w-full border border-border rounded-lg px-3 py-2.5 text-sm focus:outline-none focus:border-[#0763d8] resize-none" />
                     </div>
                     <div>
                       <label className="block text-xs font-medium text-muted-foreground mb-1.5">Strategic Orientation</label>
-                      <textarea value={editDraft.strategicOrientation || ''} onChange={e => setEditDraft(p => ({ ...p, strategicOrientation: e.target.value }))} rows={3} className="w-full border border-border rounded-lg px-3 py-2.5 text-sm focus:outline-none focus:border-[#4fc487] resize-none" placeholder="Your strategic goals and focus areas…" />
+                      <textarea value={editDraft.strategicOrientation || ''} onChange={e => setEditDraft(p => ({ ...p, strategicOrientation: e.target.value }))} rows={3} className="w-full border border-border rounded-lg px-3 py-2.5 text-sm focus:outline-none focus:border-[#0763d8] resize-none" placeholder="Your strategic goals and focus areas…" />
                     </div>
                   </div>
                 </div>
@@ -465,7 +465,7 @@ function ProductionDashContent() {
                   <h2 className="font-bold text-foreground mb-5">Post-Production</h2>
                   <div>
                     <label className="block text-xs font-medium text-muted-foreground mb-1.5">In-House Post Services</label>
-                    <textarea value={editDraft.postServices || ''} onChange={e => setEditDraft(p => ({ ...p, postServices: e.target.value }))} rows={4} className="w-full border border-border rounded-lg px-3 py-2.5 text-sm focus:outline-none focus:border-[#4fc487] resize-none" placeholder="Describe post-production capabilities…" />
+                    <textarea value={editDraft.postServices || ''} onChange={e => setEditDraft(p => ({ ...p, postServices: e.target.value }))} rows={4} className="w-full border border-border rounded-lg px-3 py-2.5 text-sm focus:outline-none focus:border-[#0763d8] resize-none" placeholder="Describe post-production capabilities…" />
                   </div>
                 </div>
 
@@ -474,11 +474,11 @@ function ProductionDashContent() {
                   <div className="space-y-4">
                     <div>
                       <label className="block text-xs font-medium text-muted-foreground mb-1.5">Current AI Tools</label>
-                      <textarea value={editDraft.aiCurrentTools || ''} onChange={e => setEditDraft(p => ({ ...p, aiCurrentTools: e.target.value }))} rows={3} className="w-full border border-border rounded-lg px-3 py-2.5 text-sm focus:outline-none focus:border-[#4fc487] resize-none" />
+                      <textarea value={editDraft.aiCurrentTools || ''} onChange={e => setEditDraft(p => ({ ...p, aiCurrentTools: e.target.value }))} rows={3} className="w-full border border-border rounded-lg px-3 py-2.5 text-sm focus:outline-none focus:border-[#0763d8] resize-none" />
                     </div>
                     <div>
                       <label className="block text-xs font-medium text-muted-foreground mb-1.5">Future AI Plans</label>
-                      <textarea value={editDraft.aiFuture || ''} onChange={e => setEditDraft(p => ({ ...p, aiFuture: e.target.value }))} rows={3} className="w-full border border-border rounded-lg px-3 py-2.5 text-sm focus:outline-none focus:border-[#4fc487] resize-none" />
+                      <textarea value={editDraft.aiFuture || ''} onChange={e => setEditDraft(p => ({ ...p, aiFuture: e.target.value }))} rows={3} className="w-full border border-border rounded-lg px-3 py-2.5 text-sm focus:outline-none focus:border-[#0763d8] resize-none" />
                     </div>
                   </div>
                 </div>
@@ -489,7 +489,7 @@ function ProductionDashContent() {
                   <button onClick={() => setActiveTab('overview')} className="flex items-center gap-1.5 text-sm text-muted-foreground hover:text-foreground">
                     <X className="w-4 h-4" /> Cancel
                   </button>
-                  <Button onClick={handleSave} className="bg-[#4fc487] hover:bg-[#45b078] text-foreground gap-2 text-sm">
+                  <Button onClick={handleSave} className="bg-[#0763d8] hover:bg-[#0655b3] text-foreground gap-2 text-sm">
                     <Save className="w-4 h-4" />{saved ? 'Saved!' : 'Save Changes'}
                   </Button>
                 </div>
@@ -502,7 +502,7 @@ function ProductionDashContent() {
             <div>
               <div className="flex items-center justify-between mb-6">
                 <h2 className="text-xl font-bold text-foreground">Directors Roster</h2>
-                <Button className="bg-[#4fc487] hover:bg-[#45b078] text-foreground gap-2 text-sm">
+                <Button className="bg-[#0763d8] hover:bg-[#0655b3] text-foreground gap-2 text-sm">
                   <Plus className="w-4 h-4" /> Add Director
                 </Button>
               </div>
@@ -511,17 +511,17 @@ function ProductionDashContent() {
                   {notableDirectors.map((d, i) => (
                     <div key={i} className="bg-card border border-border rounded-xl p-5 shadow-sm">
                       <div className="w-10 h-10 bg-muted border border-border rounded-full flex items-center justify-center mb-3">
-                        <Camera className="w-5 h-5 text-[#4fc487]" />
+                        <Camera className="w-5 h-5 text-[#0763d8]" />
                       </div>
                       <h3 className="font-semibold text-foreground mb-2">{d.name}</h3>
                       <div className="flex flex-wrap gap-1.5">
-                        {d.exclusivity && <span className="text-xs bg-[#4fc487]/15 text-[#2d7a50] px-2 py-0.5 rounded-full">Exclusive</span>}
+                        {d.exclusivity && <span className="text-xs bg-[#0763d8]/15 text-[#2d7a50] px-2 py-0.5 rounded-full">Exclusive</span>}
                         {d.priority && <span className="text-xs bg-muted border border-border text-muted-foreground px-2 py-0.5 rounded-full">Priority</span>}
                         {d.occasional && <span className="text-xs bg-muted border border-border text-muted-foreground px-2 py-0.5 rounded-full">Occasional</span>}
                       </div>
                     </div>
                   ))}
-                  <div className="border-2 border-dashed border-border rounded-xl flex flex-col items-center justify-center p-8 text-muted-foreground hover:border-[#4fc487] hover:text-[#4fc487] transition-colors cursor-pointer min-h-[150px]">
+                  <div className="border-2 border-dashed border-border rounded-xl flex flex-col items-center justify-center p-8 text-muted-foreground hover:border-[#0763d8] hover:text-[#0763d8] transition-colors cursor-pointer min-h-[150px]">
                     <Plus className="w-8 h-8 mb-2" />
                     <p className="text-sm font-medium">Add Director</p>
                   </div>
@@ -540,7 +540,7 @@ function ProductionDashContent() {
           {activeTab === 'analytics' && (
             <div className="bg-card border border-border rounded-xl p-6 shadow-sm">
               <div className="flex items-center gap-2 mb-6">
-                <TrendingUp className="w-5 h-5 text-[#4fc487]" />
+                <TrendingUp className="w-5 h-5 text-[#0763d8]" />
                 <h2 className="font-bold text-foreground">Profile Analytics</h2>
               </div>
               <div className="grid grid-cols-2 sm:grid-cols-4 gap-4 mb-8">
@@ -553,7 +553,7 @@ function ProductionDashContent() {
                   <div key={stat.label} className="bg-muted border border-border rounded-xl p-4 text-center">
                     <p className="text-2xl font-bold text-foreground mb-1">{stat.value}</p>
                     <p className="text-xs text-muted-foreground mb-1">{stat.label}</p>
-                    <p className="text-xs text-[#4fc487] font-medium">{stat.change} this month</p>
+                    <p className="text-xs text-[#0763d8] font-medium">{stat.change} this month</p>
                   </div>
                 ))}
               </div>

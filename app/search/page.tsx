@@ -91,14 +91,14 @@ function SearchContent() {
               {(activeTab === 'all' || activeTab === 'agencies') && results.agencies.length > 0 && (
                 <section>
                   <h2 className="text-lg font-bold text-[#1a1a1a] mb-4 flex items-center gap-2">
-                    <Building2 className="w-5 h-5 text-[#4fc487]" /> Agencies ({results.agencies.length})
+                    <Building2 className="w-5 h-5 text-[#0763d8]" /> Agencies ({results.agencies.length})
                   </h2>
                   <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
                     {results.agencies.slice(0, activeTab === 'all' ? 3 : 12).map(company => (
                       <Link key={company.id} href={`/directory/${company.id}`} className="group bg-white rounded-xl p-4 shadow-sm hover:shadow-md transition-shadow flex items-center gap-3">
                         <div className="w-10 h-10 bg-[#eef0f3] rounded-lg flex items-center justify-center font-bold text-[#2e3843] shrink-0">{company.name[0]}</div>
                         <div className="min-w-0">
-                          <p className="font-medium text-[#1a1a1a] group-hover:text-[#4fc487] transition-colors truncate">{company.name}</p>
+                          <p className="font-medium text-[#1a1a1a] group-hover:text-[#0763d8] transition-colors truncate">{company.name}</p>
                           <p className="text-xs text-[#666]">{company.city}, {company.country}</p>
                         </div>
                       </Link>
@@ -111,14 +111,14 @@ function SearchContent() {
               {(activeTab === 'all' || activeTab === 'campaigns') && results.campaigns.length > 0 && (
                 <section>
                   <h2 className="text-lg font-bold text-[#1a1a1a] mb-4 flex items-center gap-2">
-                    <Film className="w-5 h-5 text-[#4fc487]" /> Campaigns ({results.campaigns.length})
+                    <Film className="w-5 h-5 text-[#0763d8]" /> Campaigns ({results.campaigns.length})
                   </h2>
                   <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-4">
                     {results.campaigns.slice(0, activeTab === 'all' ? 4 : 12).map(c => (
                       <Link key={c.id} href={`/campaigns/${c.id}`} className="group bg-white rounded-xl shadow-sm overflow-hidden hover:shadow-md transition-shadow">
                         <img src={c.thumbnail} alt="" className="w-full h-28 object-cover group-hover:scale-105 transition-transform duration-300" />
                         <div className="p-3">
-                          <p className="text-sm font-medium text-[#1a1a1a] group-hover:text-[#4fc487] transition-colors line-clamp-1">{c.title}</p>
+                          <p className="text-sm font-medium text-[#1a1a1a] group-hover:text-[#0763d8] transition-colors line-clamp-1">{c.title}</p>
                           <p className="text-xs text-[#666]">{c.brand}</p>
                         </div>
                       </Link>
@@ -131,13 +131,13 @@ function SearchContent() {
               {(activeTab === 'all' || activeTab === 'talent') && results.talent.length > 0 && (
                 <section>
                   <h2 className="text-lg font-bold text-[#1a1a1a] mb-4 flex items-center gap-2">
-                    <Users className="w-5 h-5 text-[#4fc487]" /> Talent ({results.talent.length})
+                    <Users className="w-5 h-5 text-[#0763d8]" /> Talent ({results.talent.length})
                   </h2>
                   <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-4">
                     {results.talent.slice(0, activeTab === 'all' ? 4 : 12).map(person => (
                       <Link key={person.id} href={`/talent/${person.id}`} className="group bg-white rounded-xl p-4 shadow-sm hover:shadow-md transition-shadow text-center">
                         <img src={person.photo} alt={person.name} className="w-16 h-16 rounded-xl object-cover mx-auto mb-2" />
-                        <p className="text-sm font-medium text-[#1a1a1a] group-hover:text-[#4fc487] transition-colors">{person.name}</p>
+                        <p className="text-sm font-medium text-[#1a1a1a] group-hover:text-[#0763d8] transition-colors">{person.name}</p>
                         <p className="text-xs text-[#666]">{person.role}</p>
                       </Link>
                     ))}
@@ -149,7 +149,7 @@ function SearchContent() {
               {(activeTab === 'all' || activeTab === 'news') && results.news.length > 0 && (
                 <section>
                   <h2 className="text-lg font-bold text-[#1a1a1a] mb-4 flex items-center gap-2">
-                    <Newspaper className="w-5 h-5 text-[#4fc487]" /> News ({results.news.length})
+                    <Newspaper className="w-5 h-5 text-[#0763d8]" /> News ({results.news.length})
                   </h2>
                   <div className="space-y-3">
                     {results.news.slice(0, activeTab === 'all' ? 3 : 10).map(article => (
@@ -157,7 +157,7 @@ function SearchContent() {
                         <img src={article.thumbnail} alt="" className="w-20 h-16 object-cover rounded-lg shrink-0" />
                         <div className="min-w-0">
                           <span className="text-xs text-[#666] font-medium">{article.category}</span>
-                          <p className="font-medium text-[#1a1a1a] group-hover:text-[#4fc487] transition-colors line-clamp-1 mt-0.5">{article.title}</p>
+                          <p className="font-medium text-[#1a1a1a] group-hover:text-[#0763d8] transition-colors line-clamp-1 mt-0.5">{article.title}</p>
                           <p className="text-xs text-[#666] mt-1 line-clamp-1">{article.excerpt}</p>
                         </div>
                       </Link>
@@ -183,7 +183,7 @@ function SearchContent() {
 
 export default function SearchPage() {
   return (
-    <Suspense fallback={<div className="min-h-screen bg-[#eef0f3] flex items-center justify-center"><div className="w-8 h-8 border-4 border-[#4fc487] border-t-transparent rounded-full animate-spin" /></div>}>
+    <Suspense fallback={<div className="min-h-screen bg-[#eef0f3] flex items-center justify-center"><div className="w-8 h-8 border-4 border-[#0763d8] border-t-transparent rounded-full animate-spin" /></div>}>
       <SearchContent />
     </Suspense>
   )

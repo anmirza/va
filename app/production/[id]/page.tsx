@@ -74,7 +74,7 @@ export default function ProductionDetailPage({ params }: { params: Promise<{ id:
                   <div className="flex justify-between"><dt className="text-muted-foreground">Team Size</dt><dd className="font-medium">{company.employees}</dd></div>
                 </dl>
                 {company.website && (
-                  <a href={`https://${company.website}`} target="_blank" rel="noopener noreferrer" className="flex items-center gap-1.5 text-[#4fc487] hover:underline text-sm mt-4">
+                  <a href={`https://${company.website}`} target="_blank" rel="noopener noreferrer" className="flex items-center gap-1.5 text-[#0763d8] hover:underline text-sm mt-4">
                     <Globe className="w-4 h-4" />{company.website}
                   </a>
                 )}

@@ -33,7 +33,7 @@ export default function AboutPage() {
         </div>
 
         {/* Stats */}
-        <div className="bg-[#4fc487] px-4 sm:px-6 lg:px-8 py-10">
+        <div className="bg-[#0763d8] px-4 sm:px-6 lg:px-8 py-10">
           <div className="max-w-4xl mx-auto grid grid-cols-2 sm:grid-cols-4 gap-6 text-center">
             {stats.map(stat => (
               <div key={stat.label}>
@@ -73,7 +73,7 @@ export default function AboutPage() {
                 <div key={member.name} className="bg-white rounded-2xl p-6 shadow-sm text-center">
                   <img src={member.photo} alt={member.name} className="w-20 h-20 rounded-xl object-cover mx-auto mb-4" />
                   <h3 className="font-bold text-[#1a1a1a] mb-1">{member.name}</h3>
-                  <p className="text-sm text-[#4fc487] mb-2">{member.role}</p>
+                  <p className="text-sm text-[#0763d8] mb-2">{member.role}</p>
                   <p className="text-xs text-[#666]">{member.bio}</p>
                 </div>
               ))}
@@ -88,7 +88,7 @@ export default function AboutPage() {
             </p>
             <div className="flex flex-col sm:flex-row gap-3 justify-center">
               <Link href="/signup/agency">
-                <Button className="bg-[#4fc487] hover:bg-[#45b078] text-white px-8">List Your Agency</Button>
+                <Button className="bg-[#0763d8] hover:bg-[#0655b3] text-white px-8">List Your Agency</Button>
               </Link>
               <Link href="/pricing">
                 <Button variant="outline" className="border-white/30 text-white hover:bg-white/10 px-8">View Plans</Button>

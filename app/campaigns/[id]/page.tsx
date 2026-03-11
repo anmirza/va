@@ -54,7 +54,7 @@ export default function CampaignDetailPage({ params }: { params: Promise<{ id: s
                     onClick={() => toggleCampaign(id)}
                     variant="outline"
                     size="sm"
-                    className={`border gap-1.5 ${saved ? 'border-[#4fc487] text-[#4fc487]' : 'border-[#d8dce2] text-[#666]'}`}
+                    className={`border gap-1.5 ${saved ? 'border-[#0763d8] text-[#0763d8]' : 'border-[#d8dce2] text-[#666]'}`}
                   >
                     {saved ? <BookmarkCheck className="w-4 h-4" /> : <Bookmark className="w-4 h-4" />}
                     {saved ? 'Saved' : 'Save'}
@@ -64,7 +64,7 @@ export default function CampaignDetailPage({ params }: { params: Promise<{ id: s
                 <div className="grid grid-cols-3 gap-4 mt-6 pt-6 border-t border-[#e5e5e1]">
                   {campaign.views && (
                     <div className="text-center">
-                      <div className="flex items-center justify-center gap-1 text-[#4fc487] mb-1">
+                      <div className="flex items-center justify-center gap-1 text-[#0763d8] mb-1">
                         <Eye className="w-4 h-4" />
                         <span className="font-bold">{(campaign.views / 1000000).toFixed(0)}M</span>
                       </div>
@@ -96,7 +96,7 @@ export default function CampaignDetailPage({ params }: { params: Promise<{ id: s
                     {related.map(c => (
                       <Link key={c.id} href={`/campaigns/${c.id}`} className="group block">
                         <img src={c.thumbnail} alt="" className="w-full h-28 object-cover rounded-lg mb-2" />
-                        <p className="text-sm font-medium text-[#1a1a1a] group-hover:text-[#4fc487] transition-colors line-clamp-1">{c.title}</p>
+                        <p className="text-sm font-medium text-[#1a1a1a] group-hover:text-[#0763d8] transition-colors line-clamp-1">{c.title}</p>
                         <p className="text-xs text-[#666]">{c.brand}</p>
                       </Link>
                     ))}
@@ -115,7 +115,7 @@ export default function CampaignDetailPage({ params }: { params: Promise<{ id: s
                       {agency.name[0]}
                     </div>
                     <div>
-                      <p className="font-medium text-[#1a1a1a] group-hover:text-[#4fc487] transition-colors">{agency.name}</p>
+                      <p className="font-medium text-[#1a1a1a] group-hover:text-[#0763d8] transition-colors">{agency.name}</p>
                       <p className="text-sm text-[#666]">{agency.city}, {agency.country}</p>
                     </div>
                   </Link>

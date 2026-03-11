@@ -53,7 +53,7 @@ export default function AwardShowPage({ params }: { params: Promise<{ id: string
                           <p className="text-xs text-[#666] mt-0.5">{award.year}</p>
                         </div>
                         {company && (
-                          <Link href={`/directory/${company.id}`} className="shrink-0 text-right hover:text-[#4fc487] transition-colors">
+                          <Link href={`/directory/${company.id}`} className="shrink-0 text-right hover:text-[#0763d8] transition-colors">
                             <p className="text-sm font-medium text-[#1a1a1a]">{company.name}</p>
                             <p className="text-xs text-[#666]">{company.city}</p>
                           </Link>
@@ -87,7 +87,7 @@ export default function AwardShowPage({ params }: { params: Promise<{ id: string
                     <dd className="font-medium text-[#1a1a1a] capitalize">{org.frequency}</dd>
                   </div>
                 </dl>
-                <a href={`https://${org.website}`} target="_blank" rel="noopener noreferrer" className="flex items-center gap-1.5 text-[#4fc487] hover:underline text-sm mt-4">
+                <a href={`https://${org.website}`} target="_blank" rel="noopener noreferrer" className="flex items-center gap-1.5 text-[#0763d8] hover:underline text-sm mt-4">
                   <Globe className="w-4 h-4" /> {org.website}
                 </a>
               </div>

@@ -50,7 +50,7 @@ export default function InsightsPage() {
                 </div>
                 <div className="sm:w-3/5 p-6 sm:p-8 flex flex-col justify-center">
                   <span className="inline-block px-3 py-1 bg-[#eef0f3] text-xs font-medium text-[#666] rounded-full mb-3 w-fit">{featured.category}</span>
-                  <h2 className="text-2xl font-bold text-[#1a1a1a] mb-3 group-hover:text-[#4fc487] transition-colors">{featured.title}</h2>
+                  <h2 className="text-2xl font-bold text-[#1a1a1a] mb-3 group-hover:text-[#0763d8] transition-colors">{featured.title}</h2>
                   <p className="text-[#666] mb-4 line-clamp-3">{featured.excerpt}</p>
                   <div className="flex items-center gap-4 text-sm text-[#666]">
                     <span className="flex items-center gap-1.5"><User className="w-3.5 h-3.5" />{featured.author}</span>
@@ -70,7 +70,7 @@ export default function InsightsPage() {
                 </div>
                 <div className="p-5">
                   <span className="text-xs text-[#666] font-medium">{insight.category}</span>
-                  <h3 className="font-bold text-[#1a1a1a] mt-1 mb-2 group-hover:text-[#4fc487] transition-colors line-clamp-2">{insight.title}</h3>
+                  <h3 className="font-bold text-[#1a1a1a] mt-1 mb-2 group-hover:text-[#0763d8] transition-colors line-clamp-2">{insight.title}</h3>
                   <p className="text-sm text-[#666] line-clamp-2 mb-3">{insight.excerpt}</p>
                   <div className="flex items-center gap-3 text-xs text-[#666]">
                     <span>{insight.author}</span>

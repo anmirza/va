@@ -24,7 +24,7 @@ export default function NewsDetailPage({ params }: { params: Promise<{ id: strin
           <img src={article.thumbnail} alt="" className="absolute inset-0 w-full h-full object-cover" />
           <div className="absolute inset-0 bg-gradient-to-t from-[#2e3843] via-[#2e3843]/50 to-transparent" />
           <div className="absolute bottom-0 left-0 right-0 px-4 sm:px-6 lg:px-8 pb-8 max-w-4xl mx-auto">
-            <span className="inline-block px-3 py-1 bg-[#4fc487] text-white text-xs font-medium rounded-full mb-3">{article.category}</span>
+            <span className="inline-block px-3 py-1 bg-[#0763d8] text-white text-xs font-medium rounded-full mb-3">{article.category}</span>
             <h1 className="text-2xl sm:text-3xl lg:text-4xl font-bold text-white">{article.title}</h1>
           </div>
         </div>
@@ -33,7 +33,7 @@ export default function NewsDetailPage({ params }: { params: Promise<{ id: strin
           <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
             {/* Article */}
             <article className="lg:col-span-2">
-              <Link href="/news" className="flex items-center gap-1.5 text-sm text-[#666] hover:text-[#4fc487] mb-6 transition-colors">
+              <Link href="/news" className="flex items-center gap-1.5 text-sm text-[#666] hover:text-[#0763d8] mb-6 transition-colors">
                 <ArrowLeft className="w-4 h-4" /> Back to News
               </Link>
               <div className="flex items-center gap-4 text-sm text-[#666] mb-6">
@@ -72,7 +72,7 @@ export default function NewsDetailPage({ params }: { params: Promise<{ id: strin
                     {related.map(n => (
                       <Link key={n.id} href={`/news/${n.id}`} className="group block">
                         <img src={n.thumbnail} alt="" className="w-full h-28 object-cover rounded-lg mb-2" />
-                        <p className="text-sm font-medium text-[#1a1a1a] group-hover:text-[#4fc487] transition-colors line-clamp-2">{n.title}</p>
+                        <p className="text-sm font-medium text-[#1a1a1a] group-hover:text-[#0763d8] transition-colors line-clamp-2">{n.title}</p>
                         <p className="text-xs text-[#666] mt-1">{n.date}</p>
                       </Link>
                     ))}

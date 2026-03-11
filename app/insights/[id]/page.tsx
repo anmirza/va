@@ -22,7 +22,7 @@ export default function InsightDetailPage({ params }: { params: Promise<{ id: st
           <img src={insight.thumbnail} alt="" className="absolute inset-0 w-full h-full object-cover" />
           <div className="absolute inset-0 bg-gradient-to-t from-[#2e3843] via-[#2e3843]/60 to-transparent" />
           <div className="absolute bottom-0 left-0 right-0 px-4 sm:px-6 lg:px-8 pb-8 max-w-4xl mx-auto">
-            <span className="inline-block px-3 py-1 bg-[#4fc487]/80 text-white text-xs font-medium rounded-full mb-3">{insight.category}</span>
+            <span className="inline-block px-3 py-1 bg-[#0763d8]/80 text-white text-xs font-medium rounded-full mb-3">{insight.category}</span>
             <h1 className="text-2xl sm:text-3xl font-bold text-white">{insight.title}</h1>
           </div>
         </div>
@@ -30,7 +30,7 @@ export default function InsightDetailPage({ params }: { params: Promise<{ id: st
         <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-10">
           <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
             <article className="lg:col-span-2">
-              <Link href="/insights" className="flex items-center gap-1.5 text-sm text-[#666] hover:text-[#4fc487] mb-6 transition-colors">
+              <Link href="/insights" className="flex items-center gap-1.5 text-sm text-[#666] hover:text-[#0763d8] mb-6 transition-colors">
                 <ArrowLeft className="w-4 h-4" /> Back to Insights
               </Link>
               <div className="flex items-center gap-4 text-sm text-[#666] mb-6">
@@ -56,7 +56,7 @@ export default function InsightDetailPage({ params }: { params: Promise<{ id: st
                   {related.map(i => (
                     <Link key={i.id} href={`/insights/${i.id}`} className="group block">
                       <img src={i.thumbnail} alt="" className="w-full h-24 object-cover rounded-lg mb-2" />
-                      <p className="text-sm font-medium text-[#1a1a1a] group-hover:text-[#4fc487] transition-colors line-clamp-2">{i.title}</p>
+                      <p className="text-sm font-medium text-[#1a1a1a] group-hover:text-[#0763d8] transition-colors line-clamp-2">{i.title}</p>
                       <p className="text-xs text-[#666] mt-1">{i.author}</p>
                     </Link>
                   ))}

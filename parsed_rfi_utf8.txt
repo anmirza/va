@@ -1,0 +1,786 @@
+=== RFI Agency-updated.xlsx ===
+
+SECTION: GENERAL INFORMATION
+  Row 8: Registered Business Name, D-U-N-S® number, VAT Registration Number
+  Row 11: Legal form:, Company registration number:, Year Enstablished:
+
+SECTION: ORGANIZATION & STRUCTURE
+  Row 18: # of Employees, Company Level, Parent Company Name
+  Row 21: Category, Agency Currency, Euro - EUR, Trade Organizations
+
+SECTION: REGISTERED OFFICE ADDRESS
+  Row 28: Country Coverage, Address, Postcode
+  Row 30: City, Country
+
+SECTION: ABOUT
+  Row 36: About
+  Row 39: Philosophy & Competitive Advantages
+  Row 42: Network Description
+  Row 45: Local Rapresentation
+
+SECTION: CONTACT DETAILS
+  Row 52: CEO, General Manager, Business Director, ECD, Executive Producer
+  Row 53: Name
+  Row 54: Surname
+  Row 55: Linkedin
+  Row 56: Telephone
+  Row 57: Mobile
+  Row 58: Email
+
+SECTION: SOCIAL MEDIA
+  Row 64: Official Website, X (Twitter), Facebook
+  Row 66: Linkedin, Instagram, Tiktok
+  Row 68: Pinterest, Tumblr, Snapchat
+  Row 70: Reddit
+
+SECTION: TURNOVER & CLIENTS
+  Row 76: LOCAL, GLOBAL, NAM, EUROPE, LATAM, AFRICA, APAC
+  Row 77: 2025, Annual Revenue
+  Row 78: EBITA
+  Row 79: 2024, Annual Revenue
+  Row 80: EBITA
+  Row 81: 2023, Annual Revenue
+  Row 82: EBITA
+  Row 83: 2022, Annual Revenue
+  Row 84: EBITA
+  Row 85: 2021, Annual Revenue
+  Row 86: EBITA
+  Row 89: Main Clients, Industry, Principal Activities, Year, Turnover in EUR, Client incidence in %, Exclusivity
+  Row 90: False
+  Row 91: False
+  Row 92: False
+  Row 93: False
+  Row 94: False
+  Row 95: False
+  Row 97: Note: Please complete the section below only upon receipt of this Request for Information (RFI) during a pitch process.
+  Row 99: Yes, No
+  Row 100: Please specify whether your company is currently working or has previously worked with the CLIENT., False, False
+  Row 102: If Yes, please fill the form below:
+  Row 104: Client Division, Principal Activities, Year, Turnover in EUR, Client incidence in %
+  Row 112: Duration of Engagement with the Client
+
+SECTION: KNOWLEDGE & COMPETENCIES
+  Row 119: Please delineate your areas of expertise in communication, with percentage allocations for each. (in the past 3 years).
+  Row 120: Communication Areas
+  Row 121: Automotive & Mobility, False, Energy, False, Lifestyle, 0.0
+  Row 122: Beauty & Personal Care, False, Entertainment & Media, False, Mobility & Transportation, 0.0
+  Row 123: Beverage, False, Fashion & Luxury, False, Pet Care, 0.0
+  Row 124: Consumer Goods, False, Food & Beverage, False, Sport & Outdoor, 0.0
+  Row 125: Corporate & B2B, False, Healthcare & Pharma, False, Tobacco, 0.0
+  Row 126: Electronics & Technology, False, Home & Living, False, Travel, Tourism & Hospitality, 0.0
+  Row 128: Total, 0
+  Row 130: If you had to prioritize your positioning, which ones would best describe your company?
+  Row 131: Market Positioning
+  Row 133: Main Capabilities, Secondary Capabilities, Additional Capabilities
+  Row 137: Services
+  Row 138: Strategic & Consulting
+  Row 139: Strategic Planning, False, Positioning Strategy Develop., False, Marketing Research, 0.0
+  Row 140: Brand Audit, False, Reputation Management, False, Consumer Insight, 0.0
+  Row 141: Brand Identity Development, False, Crisis Management, False
+  Row 142: Creative & Content
+  Row 143: Campaign Creation, False, Content Creattion Copywriting, False, Photography, Photography, 0.0
+  Row 144: Creative Concept Develop., False, Graphic Design, Graphic Design, False, Illustration, Illustration, 0.0
+  Row 145: Creative Production, False, Point of Sale Materials, Point of Sale Materials, False, Motion Graphics & Animation, Motion Graphics & Animation, 0.0
+  Row 146: Audio / Visual Production
+  Row 147: Video Production, False, Audio Production, False, Post Production & Editing, 0.0
+  Row 148: PR & Events
+  Row 149: Media Relations, False, Press Releases & Press Kits, Press Releases & Press Kits, False, Experiental Marketing, 0.0
+  Row 150: Public Relations Strategy, False, Event Organization & Mng, Event Organization & Mng, False, Influencer Relations, 0.0
+  Row 151: Sponsorshi Management, Sponsorshi Management, False
+  Row 152: Above the Line
+  Row 153: Media Management, False, Media Buying, Media Buying, False, Broadcast Advertising, Broadcast Advertising, 0.0
+  Row 154: Media Planning, False, Media Agencies Coordination, Media Agencies Coordination, False, OOH / DOOH, OOH / DOOH, 0.0
+  Row 155: Below the Line
+  Row 156: Direct Marketing, False, In-store Marketing, In-store Marketing, False, Merchandising Strategy, Merchandising Strategy, 0.0
+  Row 157: Promotional Marketing, False, Sampling Campaigns, Sampling Campaigns, False
+  Row 158: Digital Marketing
+  Row 159: Digital Strategy, False, SEM, SEM, False, Performance Marketing, Performance Marketing, 0.0
+  Row 160: SEO, False, Display & Programmatic adv, Display & Programmatic adv, False, Digital Data Analysis / Reporting, Digital Data Analysis / Reporting, 0.0
+  Row 161: Social media & Influencer Marketing
+  Row 162: Social Listening, Social Listening, False, Content Creation Copywriting, Content Creattion Copywriting, False, Sentiment Analysis, Sentiment Analysis, 0.0
+  Row 163: Community Management, False, Influencer Marketing Strategy, Influencer Marketing Strategy, False, Paid Social Campaigns, 0.0
+  Row 164: Social Media Strategy & Mng, False
+  Row 165: Technology & Digital
+  Row 166: E-commerce Solution, False, CRM Integration & Mng, CRM Integration & Management, False, Martech Implementation, Martech Implementation, 0.0
+  Row 167: App Development, False, Marketing Automation, Marketing Automation, False, UX/UI Design, UX/UI Design, 0.0
+  Row 168: Web Developmente & Manteinance, False
+  Row 169: Analytics & Reporting
+  Row 170: Results & Campaign Analysis, False, Consumer Behavior Analysis, Consumer Behavior Analysis, False, Data-driven Marketing Insights, 0.0
+  Row 171: ROI & Performance Measurement, ROI & Performance Measurement, False
+  Row 172: Email & Content Marketing
+  Row 173: Email Marketing Campaigns, False, Content Marketing Strategy, Content Marketing Strategy, False, White Papers & E-books, White Papers & E-books, 0.0
+  Row 174: Newsletter Development, False, Blog & Article Creation, Blog & Article Creation, False
+  Row 175: Trade Marketing
+  Row 176: Point-of-Sale (POS) Materials, False, Distribution Channel Analysis, Distribution Channel Analysis, False, Channel Promotions, Channel Promotions, 0.0
+  Row 177: Trade Events, False, Distributor Relationship Mng, Distributor Relationship Management, False
+  Row 178: Retail
+  Row 179: Visual Merchandising, False, Omnichannel Retail Strategy, Omnichannel Retail Strategy, False, Merchandising & Planogramming, Merchandising & Planogramming, 0.0
+  Row 180: Retail Sales Analysis, False, In-Store Customer Experience, In-Store Customer Experience, False
+  Row 181: Media
+  Row 182: Media Space Buying, False, Media Content Development, Media Content Development, False, Media Monitoring, Media Monitoring, 0.0
+  Row 183: Editorial Planning, False, Impact Analysis, Impact Analysis, False
+
+SECTION: ACTIVITIES
+  Row 188: Yes, No
+  Row 189: Please indicate if your company subcontract activities or some phase of services, False, False
+  Row 191: If Yes, please fill the form below:
+  Row 193: Activities outsourced, detailed description, % Contractual value
+
+SECTION: GOVERNANCE & SOW
+  Row 204: Kindly detail the control and quality assurance systems established within your designated Creative Network for the purpose of monitoring and managing performance and Service Level Agreements (SLAs).
+  Row 207: Please outline the protocols in place for managing client data within your selected Creative Network, particularly if these differ from those of the Holding Group. Furthermore, please specify if your Creative Network utilises its own Data Management Platform (DMP).
+  Row 209: With regard to global brand governance, please clarify the distinction between global and local strategies. Describe the processes, including tools, systems, and the level of autonomy within a structured framework, employed to manage global governance and local adaptation.
+  Row 212: Please include any additional information that you deem pertinent.
+
+SECTION: PEOPLE
+  Row 219: Note: Please complete the Annual Salary column only upon receipt of this Request for Information (RFI) during a pitch process.
+  Row 221: # of employees, # of freelancers, Annual Salary (average)
+  Row 222: Executive & Operation
+
+SECTION: Chairman
+  Row 224: Chief Executive Officer (CEO), Chief Executive Officer (CEO), Chief Executive Officer (CEO), Chief Executive Officer (CEO), Chief Executive Officer (CEO), Chief Executive Officer (CEO)
+  Row 225: Chief Operating Officer (COO), Chief Operating Officer (COO), Chief Operating Officer (COO), Chief Operating Officer (COO), Chief Operating Officer (COO), Chief Operating Officer (COO)
+  Row 226: Chief Financial Officer (CFO), Chief Financial Officer (CFO), Chief Financial Officer (CFO), Chief Financial Officer (CFO), Chief Financial Officer (CFO), Chief Financial Officer (CFO)
+  Row 227: Chief Technology Officer (CTO), Chief Technology Officer (CTO), Chief Technology Officer (CTO), Chief Technology Officer (CTO), Chief Technology Officer (CTO), Chief Technology Officer (CTO)
+  Row 228: Chief Digital Officer (CDO), Chief Digital Officer (CDO), Chief Digital Officer (CDO), Chief Digital Officer (CDO), Chief Digital Officer (CDO), Chief Digital Officer (CDO)
+  Row 229: Chief Creative Officer (CCO), Chief Creative Officer (CCO), Chief Creative Officer (CCO), Chief Creative Officer (CCO), Chief Creative Officer (CCO), Chief Creative Officer (CCO)
+  Row 230: Chief Strategy Officer (CSO), Chief Strategy Officer (CSO), Chief Strategy Officer (CSO), Chief Strategy Officer (CSO), Chief Strategy Officer (CSO), Chief Strategy Officer (CSO)
+  Row 231: President (US markets), President (US markets), President (US markets), President (US markets), President (US markets), President (US markets)
+  Row 232: President (non-US markets), President (non-US markets), President (non-US markets), President (non-US markets), President (non-US markets), President (non-US markets)
+  Row 233: Partner, Partner, Partner, Partner, Partner, Partner
+  Row 234: Operations Director, Operations Director, Operations Director, Operations Director, Operations Director, Operations Director
+  Row 235: Account Management & Client Service
+  Row 236: Business/Group Director, Business/Group Director, Business/Group Director, Business/Group Director, Business/Group Director, Business/Group Director
+  Row 237: Group Account Director, Group Account Director, Group Account Director, Group Account Director, Group Account Director, Group Account Director
+  Row 238: Regional Director, Regional Director, Regional Director, Regional Director, Regional Director, Regional Director
+  Row 239: Account Director, Account Director, Account Director, Account Director, Account Director, Account Director
+  Row 240: Associate Account Director, Associate Account Director, Associate Account Director, Associate Account Director, Associate Account Director, Associate Account Director
+  Row 241: Junior Account Director, Junior Account Director, Junior Account Director, Junior Account Director, Junior Account Director, Junior Account Director
+  Row 242: Senior Account Manager, Senior Account Manager, Senior Account Manager, Senior Account Manager, Senior Account Manager, Senior Account Manager
+  Row 243: Account Manager, Account Manager, Account Manager, Account Manager, Account Manager, Account Manager
+  Row 244: Account Supervisor, Account Supervisor, Account Supervisor, Account Supervisor, Account Supervisor, Account Supervisor
+  Row 245: Account Executive, Account Executive, Account Executive, Account Executive, Account Executive, Account Executive
+  Row 246: Senior Account Executive, Senior Account Executive, Senior Account Executive, Senior Account Executive, Senior Account Executive, Senior Account Executive
+  Row 247: Junior Account Executive, Junior Account Executive, Junior Account Executive, Junior Account Executive, Junior Account Executive, Junior Account Executive
+  Row 248: Assistant Account Executive, Assistant Account Executive, Assistant Account Executive, Assistant Account Executive, Assistant Account Executive, Assistant Account Executive
+  Row 249: Account Coordinator, Account Coordinator, Account Coordinator, Account Coordinator, Account Coordinator, Account Coordinator
+  Row 250: Client Services Associate, Client Services Associate, Client Services Associate, Client Services Associate, Client Services Associate, Client Services Associate
+  Row 251: Account Assistant, Account Assistant, Account Assistant, Account Assistant, Account Assistant, Account Assistant
+  Row 252: Consultant, Consultant, Consultant, Consultant, Consultant, Consultant
+  Row 253: Senior Consultant, Senior Consultant, Senior Consultant, Senior Consultant, Senior Consultant, Senior Consultant
+  Row 254: Associate Consultant, Associate Consultant, Associate Consultant, Associate Consultant, Associate Consultant, Associate Consultant
+  Row 255: Assistant, Assistant, Assistant, Assistant, Assistant, Assistant
+  Row 256: Project Management
+  Row 257: Head of Project Management, Head of Project Management, Head of Project Management, Head of Project Management, Head of Project Management, Head of Project Management
+  Row 258: Group Project Manager, Group Project Manager, Group Project Manager, Group Project Manager, Group Project Manager, Group Project Manager
+  Row 259: Project Director, Project Director, Project Director, Project Director, Project Director, Project Director
+  Row 260: Senior Project Manager, Senior Project Manager, Senior Project Manager, Senior Project Manager, Senior Project Manager, Senior Project Manager
+  Row 261: Lead Project Manager, Lead Project Manager, Lead Project Manager, Lead Project Manager, Lead Project Manager, Lead Project Manager
+  Row 262: Project Manager, Project Manager, Project Manager, Project Manager, Project Manager, Project Manager
+  Row 263: Associate Project Manager, Associate Project Manager, Associate Project Manager, Associate Project Manager, Associate Project Manager, Associate Project Manager
+  Row 264: Senior Project Executive, Senior Project Executive, Senior Project Executive, Senior Project Executive, Senior Project Executive, Senior Project Executive
+  Row 265: Project Executive, Project Executive, Project Executive, Project Executive, Project Executive, Project Executive
+  Row 266: Executive Project Manager, Executive Project Manager, Executive Project Manager, Executive Project Manager, Executive Project Manager, Executive Project Manager
+  Row 267: Assistant Project Manager, Assistant Project Manager, Assistant Project Manager, Assistant Project Manager, Assistant Project Manager, Assistant Project Manager
+  Row 268: Project Administrator, Project Administrator, Project Administrator, Project Administrator, Project Administrator, Project Administrator
+  Row 269: Trainee, Trainee, Trainee, Trainee, Trainee, Trainee
+  Row 270: Digital Project Management
+  Row 271: Digital Project Director, Digital Project Director, Digital Project Director, Digital Project Director, Digital Project Director, Digital Project Director
+  Row 272: Senior Digital Project Manager, Senior Digital Project Manager, Senior Digital Project Manager, Senior Digital Project Manager, Senior Digital Project Manager, Senior Digital Project Manager
+  Row 273: Lead Digital Project Manager, Lead Digital Project Manager, Lead Digital Project Manager, Lead Digital Project Manager, Lead Digital Project Manager, Lead Digital Project Manager
+  Row 274: Digital Project Manager, Digital Project Manager, Digital Project Manager, Digital Project Manager, Digital Project Manager, Digital Project Manager
+  Row 275: Associate Digital Project Manager, Associate Digital Project Manager, Associate Digital Project Manager, Associate Digital Project Manager, Associate Digital Project Manager, Associate Digital Project Manager
+  Row 276: Senior Digital Project Executive, Senior Digital Project Executive, Senior Digital Project Executive, Senior Digital Project Executive, Senior Digital Project Executive, Senior Digital Project Executive
+  Row 277: Executive Digital Project Manager, Executive Digital Project Manager, Executive Digital Project Manager, Executive Digital Project Manager, Executive Digital Project Manager, Executive Digital Project Manager
+  Row 278: Assistant Digital Project Manager, Assistant Digital Project Manager, Assistant Digital Project Manager, Assistant Digital Project Manager, Assistant Digital Project Manager, Assistant Digital Project Manager
+  Row 279: Digital Project Executive, Digital Project Executive, Digital Project Executive, Digital Project Executive, Digital Project Executive, Digital Project Executive
+  Row 280: Digital Project Administrator, Digital Project Administrator, Digital Project Administrator, Digital Project Administrator, Digital Project Administrator, Digital Project Administrator
+  Row 281: Digital Trainee, Digital Trainee, Digital Trainee, Digital Trainee, Digital Trainee, Digital Trainee
+  Row 282: Creative & Design
+
+SECTION: Chief Creative Director
+
+SECTION: Executive Creative Director
+
+SECTION: Creative Director
+
+SECTION: Creative Director (Copy)
+
+SECTION: Creative Director (Art)
+
+SECTION: Digital Creative Director
+
+SECTION: Group Head Creative
+
+SECTION: Creative Group Head
+
+SECTION: Creative Partner
+
+SECTION: Senior Art Director
+
+SECTION: Art Director
+
+SECTION: Design Director
+
+SECTION: Associate Design Director
+
+SECTION: Head of Design
+
+SECTION: Head of Digital Creative
+
+SECTION: Senior Graphic Designer
+
+SECTION: Graphic Designer
+
+SECTION: Senior Designer
+
+SECTION: Designer
+
+SECTION: Illustrator
+
+SECTION: Intermediate Illustrator
+
+SECTION: Visualiser
+
+SECTION: Senior Visualiser
+
+SECTION: Junior Visualiser
+
+SECTION: Artworker
+
+SECTION: Artist
+
+SECTION: Junior Art Director
+
+SECTION: Art Assistant
+
+SECTION: Design Assistant
+  Row 312: Creative & Design
+
+SECTION: Copy Supervisor
+
+SECTION: Senior Copywriter
+
+SECTION: Copywriter
+
+SECTION: Intermediate Copywriter
+
+SECTION: Copywriter Executive
+
+SECTION: Senior Content Writer
+
+SECTION: Content Writer
+
+SECTION: Junior Content Writer
+
+SECTION: Proofreader
+  Row 322: Strategy Team
+
+SECTION: Head of Planning
+
+SECTION: Director of Media Planning
+
+SECTION: Strategy Director
+
+SECTION: Planning Director
+
+SECTION: Head of Digital Planning
+
+SECTION: Analytics & CRM Director
+
+SECTION: Director, User Experience (UX)
+
+SECTION: Data Service Director
+
+SECTION: Head of Data
+
+SECTION: Senior Brand Strategist
+
+SECTION: Brand Planner
+
+SECTION: Strategic Planner
+
+SECTION: Content Strategist
+
+SECTION: Social Strategist
+
+SECTION: Senior Planner
+
+SECTION: Senior Digital Planner
+
+SECTION: Senior Comms Planner
+
+SECTION: Senior Media Planner
+
+SECTION: Senior Analyst
+
+SECTION: Media Planner
+
+SECTION: Analyst
+
+SECTION: Data Analyst
+
+SECTION: Analytics & CRM Manager
+
+SECTION: Junior Planner
+
+SECTION: Junior Brand Strategist
+
+SECTION: Junior Strategic Planner
+
+SECTION: Junior Strategist
+
+SECTION: Junior Data Planner
+
+SECTION: Junior Data Analyst
+
+SECTION: Assistant Planner
+
+SECTION: Strategy Executive
+  Row 354: Social Media
+
+SECTION: Head of Social
+
+SECTION: Social Media Director
+
+SECTION: Social Media Strategist
+
+SECTION: Community Manager
+
+SECTION: Community Manager Overtime
+
+SECTION: Social Media Manager
+
+SECTION: Social Media Executive
+
+SECTION: Social Media Editor
+  Row 363: Technology Development
+
+SECTION: Technology Director
+
+SECTION: Head of Technology
+
+SECTION: Head of Digital
+
+SECTION: Head of Digital Production
+
+SECTION: Technology Manager
+
+SECTION: Digital Director
+
+SECTION: Senior Technical Producer
+
+SECTION: Technical Manager
+
+SECTION: Senior Developer
+
+SECTION: Digital Developer
+
+SECTION: Web Developer
+
+SECTION: Front End Developer
+
+SECTION: Senior Software Engineer
+
+SECTION: Software Engineer
+
+SECTION: Senior Systems Engineer
+
+SECTION: System Administrator
+
+SECTION: Support Analyst
+
+SECTION: QA Manager
+
+SECTION: Junior Quality Assurance
+
+SECTION: Web Producer
+
+SECTION: Senior Web Producer
+
+SECTION: Digital Producer
+
+SECTION: Executive Digital Producer
+
+SECTION: Flash Developer
+
+SECTION: Media Developer
+
+SECTION: Content Engineer
+
+SECTION: SEO Manager
+
+SECTION: Senior SEO Executive
+
+SECTION: Growth Hacker
+
+SECTION: Online Marketing Manager
+
+SECTION: Ecommerce Admin Assistant
+
+SECTION: UX Architect
+
+SECTION: Head of UX
+
+SECTION: Senior User Experience Designer
+
+SECTION: Junior User Experience Designer
+  Row 399: 3D Animation
+  Row 400: 3D/CGI Artist, 3D/CGI Artist, 3D/CGI Artist, 3D/CGI Artist, 3D/CGI Artist, 3D/CGI Artist
+  Row 401: 3D Motion Animator, 3D Motion Animator, 3D Motion Animator, 3D Motion Animator, 3D Motion Animator, 3D Motion Animator
+  Row 402: Production
+
+SECTION: Head of Production
+
+SECTION: Head of Broadcast
+
+SECTION: Studio Director
+
+SECTION: Chief Producer
+
+SECTION: Senior Producer
+
+SECTION: Producer (TV/Audio Visual/Radio)
+
+SECTION: AV Producer
+
+SECTION: Film Director
+
+SECTION: Film Producer
+
+SECTION: Film Manager
+
+SECTION: Senior TV Producer
+
+SECTION: Junior TV Producer
+
+SECTION: Junior Producer
+
+SECTION: Production Controller
+
+SECTION: Post Producer
+
+SECTION: Events Producer
+
+SECTION: Creative Producer
+
+SECTION: Director of Photography
+
+SECTION: Senior Editor
+
+SECTION: Edit Assistant
+
+SECTION: Production Assistant
+
+SECTION: Assistant Production Manager
+
+SECTION: TV Admin
+
+SECTION: TV Assistant
+
+SECTION: TV Coordinator
+
+SECTION: Talent Coordinator
+
+SECTION: Music Production
+
+SECTION: Art Buyer
+
+SECTION: Art Studio Manager
+
+SECTION: Assistant Studio Manager
+  Row 433: Other
+  Row 446: # of permanent employees as of the last fiscal year:
+  Row 448: # of freelancers as of the last fiscal year:
+
+SECTION: TALENT
+  Row 454: Please specify the primary talent from your agency for this role.
+  Row 456: Role, Name, Linkedin Profile
+  Row 457: Executive Creative Director
+  Row 458: Creative Director
+  Row 459: Chief Strategy Officer
+
+SECTION: AWARD
+  Row 465: Distinction, Category, Year, Awarded Ad, Brand
+  Row 466: Cannes Lions
+  Row 467: The One Show
+  Row 468: D&AD
+  Row 469: Clio Awards
+  Row 470: LIA
+  Row 471: ADC Awards
+  Row 472: Webby Awards
+  Row 473: Effie Awards
+  Row 474: Epica Awards
+  Row 475: Eurobest
+  Row 476: NY Festival Adv
+  Row 477: AME
+
+SECTION: OTHER INFORMATION
+  Row 486: Does your company propose specific services and/or tool(s) and/or app(s) you'd like to mention?
+  Row 489: Which AI tools are your Agencies currently utilising?
+  Row 492: Are there any AI implementations your Agencies anticipate adopting in the foreseeable future?
+  Row 495: Please describe the benefits that the utilisation of AI can deliver, providing specific case examples.
+  Row 498: Please elaborate on the ethical aspects of AI usage, specifically describing your compliance with ethical standards and privacy protection principles.
+  Row 501: Kindly describe your approach to the mitigation of risks associated with AI use.
+
+SECTION: SOCIAL RESPONSIBILITY
+  Row 508: RIF., REQUESTS, NOTE
+  Row 509: 1.1, Does your company have gender equality policies in place?
+  Row 510: 1.2, Does your company adopt policies and control systems against discrimination?
+  Row 511: 1.3, Does your company provide human rights education and training programmes?
+  Row 512: 1.4, Does your company run projects in the social and environmental sectors?
+  Row 513: 1.5, Has your company established partnerships with non-profits, social enterprises, or similar organisations?
+  Row 514: 1.6, In the case of activated projects, what are the impact areas?, Social Inclusion (Disability & Minorities)
+  Row 515: Gender equality
+  Row 516: PMIs involvement
+  Row 517: Fair trade
+  Row 518: Other
+  Row 519: 1.7, Has your company appointed a CSR Manager or established a dedicated organisational unit for Corporate Social Responsibility?
+  Row 520: 1.8, Does your company conduct periodic social reporting (e.g., social balance sheets, sustainability reports)?
+  Row 521: 1.9, Does your company apply ethical and environmental criteria when selecting suppliers?
+  Row 522: 1.10, Does your company require its suppliers to hold social and/or environmental certifications?
+  Row 523: 1.11
+
+SECTION: INVESTMENTS
+  Row 529: % of turnover invested in Euro - EUR, IT Equipment
+  Row 530: Innovation
+  Row 531: Sustainable development
+  Row 532: Media & advertising
+  Row 533: Training
+  Row 534: Other
+  Row 536: RIF., REQUESTS, NOTE
+  Row 537: 1.1, Could you please present your strategic development orientation?
+  Row 538: 1.2, Do you have any activity out of your Country / City?
+
+SECTION: ATTACHMENTS
+  Row 544: RIF., ATTACHMENTS REQUESTED, NOTE
+  Row 545: 1.1, Organisational Chart
+  Row 546: 1.2, Chamber of Commerce Extract/View
+  Row 547: 1.3, References
+  Row 548: 1.4, Company profile (Creds)
+  Row 549: 1.5, Certifications
+  Row 551: Please provide a presentation (.pdf or .ppt file) summarizing the following items and questions:
+At this stage we would like to see key agency capabilities and credentials before moving to a full pitch. Please use this opportunity to show off your agencies, your expertise and your achievements.
+  Row 552: Your presentation should include the following:
+- Short agency presentation including key figures, key capabilities and services offered, main technologies and platforms managed, headcounts, organization, main clients.
+- Expertise of your agency
+- Management of International accounts : outline your organisational team structure and explain how you would deliverdigital strategies and activities across brands at a country level. Please provide client references.
+- Please provide contact details for 2 current clients who would be happy to talk to us about their experiences of working with you.
+
+SECTION: END
+
+=== RFI Production House-updated.xlsx ===
+
+SECTION: GENERAL INFORMATION
+  Row 8: Registered Business Name, D-U-N-S® number, VAT Registration Number
+  Row 11: Legal form:, Company registration number:, Year Enstablished:
+
+SECTION: ORGANIZATION & STRUCTURE
+  Row 18: # of Employees, Company Level, Parent Company Name
+  Row 21: Category, Agency Currency, Euro - EUR, Trade Organizations
+
+SECTION: REGISTERED OFFICE ADDRESS
+  Row 28: Country Coverage, Address, Postcode
+  Row 30: City, Country
+
+SECTION: ABOUT
+  Row 36: About
+  Row 39: Philosophy & Competitive Advantages
+  Row 42: Network Description
+  Row 45: Local Rapresentation
+
+SECTION: CONTACT DETAILS
+  Row 52: CEO, General Manager, Business Director, Executive Producer
+  Row 53: Name
+  Row 54: Surname
+  Row 55: Linkedin
+  Row 56: Telephone
+  Row 57: Mobile
+  Row 58: Email
+
+SECTION: SOCIAL MEDIA
+  Row 64: Official Website, X (Twitter), Facebook
+  Row 66: Linkedin, Instagram, Tiktok
+  Row 68: Pinterest, Tumblr, Snapchat
+  Row 70: Reddit
+
+SECTION: TURNOVER & CLIENTS
+  Row 76: LOCAL, GLOBAL, NAM, EUROPE, LATAM, AFRICA, APAC
+  Row 77: 2025, Annual Revenue
+  Row 78: EBITA
+  Row 79: 2024, Annual Revenue
+  Row 80: EBITA
+  Row 81: 2023, Annual Revenue
+  Row 82: EBITA
+  Row 83: 2022, Annual Revenue
+  Row 84: EBITA
+  Row 85: 2021, Annual Revenue
+  Row 86: EBITA
+  Row 89: Main Clients, Industry, Principal Activities, Year, Turnover in EUR, Client incidence in %, Exclusivity
+  Row 90: False
+  Row 91: False
+  Row 92: False
+  Row 93: False
+  Row 94: False
+  Row 95: False
+  Row 97: Note: Please complete the section below only upon receipt of this Request for Information (RFI) during a pitch process.
+  Row 99: Yes, No
+  Row 100: Please specify whether your company is currently working or has previously worked with the CLIENT., False, False
+  Row 102: If Yes, please fill the form below:
+  Row 104: Client Division, Principal Activities, Year, Turnover in EUR, Client incidence in %
+  Row 112: Duration of Engagement with the Client
+
+SECTION: KNOWLEDGE & COMPETENCIES
+  Row 118: Please delineate your areas of expertise in communication, with percentage allocations for each. (in the past 3 years).
+  Row 119: Communication Areas
+  Row 120: Automotive & Mobility, False, Energy, False, Lifestyle, False
+  Row 121: Beauty & Personal Care, False, Entertainment & Media, False, Mobility & Transportation, False
+  Row 122: Beverage, False, Fashion & Luxury, False, Pet Care, False
+  Row 123: Consumer Goods, False, Food & Beverage, False, Sport & Outdoor, False
+  Row 124: Corporate & B2B, False, Healthcare & Pharma, False, Tobacco, False
+  Row 125: Electronics & Technology, False, Home & Living, False, Travel, Tourism & Hospitality, False
+  Row 127: Total, 0
+  Row 129: Services
+  Row 130: Pre-Production
+  Row 131: Director Scouting, False, Location scouting, False, Booklet creation, False
+  Row 132: Casting Scounting, False
+  Row 133: Production
+  Row 134: Rental of technical equipment, False, Crew, False, Logistics for the client, False
+  Row 135: Purchase of HDDs for footage, False, Delivery to post-production, False, Logistics for the Agency, False
+  Row 136: Post-Production
+  Row 137: Coordination of post-production, False, Possibility of delivering to broadcasters, False
+
+SECTION: POST PRODUCTION
+  Row 143: Please; indicate whether you have an in-house post-production department. If so, which services does it cover (editing, color grading, VFX, sound design, etc.)?, Yes, No
+  Row 144: False, False
+  Row 146: If outsourced, which companies do you usually collaborate with?
+  Row 148: Name, Location, Audio, Video
+  Row 149: False, False
+  Row 150: False, False
+  Row 151: False, False
+  Row 152: False, False
+  Row 153: False, False
+  Row 154: False, False
+  Row 155: False, False
+  Row 156: False, False
+  Row 157: False, False
+  Row 158: False, False
+
+SECTION: ACTIVITIES
+  Row 163: Yes, No
+  Row 164: Please indicate if your company subcontract activities or some phase of services, False, False
+  Row 166: If Yes, please fill the form below:
+  Row 168: Activities outsourced, detailed description, % Contractual value
+
+SECTION: GOVERNANCE & SOW
+  Row 179: Kindly detail the control and quality assurance systems established within your designated Creative Network for the purpose of monitoring and managing performance and Service Level Agreements (SLAs).
+  Row 182: Please outline the protocols in place for managing client data within your selected Creative Network, particularly if these differ from those of the Holding Group. Furthermore, please specify if your Creative Network utilises its own Data Management Platform (DMP).
+  Row 184: With regard to global brand governance, please clarify the distinction between global and local strategies. Describe the processes, including tools, systems, and the level of autonomy within a structured framework, employed to manage global governance and local adaptation.
+  Row 188: Please include any additional information that you deem pertinent.
+
+SECTION: PEOPLE
+  Row 195: Note: Please complete the Annual Salary column only upon receipt of this Request for Information (RFI) during a pitch process.
+  Row 197: # of employees, # of freelancers, Annual Salary (average)
+  Row 198: Executive & Operation
+
+SECTION: Executive Producer
+
+SECTION: Senior Producer
+
+SECTION: Junior Producer
+
+SECTION: Creative Research Lead
+
+SECTION: Production Manager
+
+SECTION: Production Coordinator
+
+SECTION: Production Supervisor
+
+SECTION: Coordinator
+  Row 207: Other
+  Row 220: # of permanent employees as of the last fiscal year:
+  Row 222: # of freelancers as of the last fiscal year:
+
+SECTION: DIRECTORS
+  Row 228: Please indicate the main directors you have worked with and if you have an exclusive ,priority or an occasional relationship with them.
+  Row 231: Name, Exclusivity, Priority, Occasional collaboration
+  Row 232: False, False, False
+  Row 233: False, False, False, False, False, 0.0, 0.0, False, 0.0, False, False, False, 0.0, 0.0, False, False, False, False, False, False, 0.0, False, 0.0, False, False, 0.0, False
+  Row 234: False, False, False, False, False, 0.0, 0.0, False, 0.0, False, False, False, 0.0, 0.0, False, False, False, False, False, False, 0.0, False, 0.0, False, False, 0.0, False
+  Row 235: False, False, False, False, False, 0.0, 0.0, False, 0.0, False, False, False, 0.0, 0.0, False, False, False, False, False, False, 0.0, False, 0.0, False, False, 0.0, False
+  Row 236: False, False, False
+  Row 237: False, False, False
+  Row 238: False, False, False
+  Row 239: False, False, False
+  Row 240: False, False, False
+
+SECTION: AWARD
+  Row 246: Distinction, Category, Year, Awarded Ad, Brand
+  Row 247: AICP
+  Row 248: Ciclope Festival
+  Row 249: British Arrows
+  Row 250: Shots
+  Row 251: Clio Awards
+  Row 252: D&AD
+  Row 253: The One Show
+  Row 254: Creative Circle
+  Row 255: APA Show
+  Row 256: YDA
+  Row 257: VES
+  Row 258: LIA
+
+SECTION: OTHER INFORMATION
+  Row 267: Does your company propose specific services and/or tool(s) and/or app(s) you'd like to mention?
+  Row 270: Which AI tools are your Agencies currently utilising?
+  Row 273: Are there any AI implementations your Agencies anticipate adopting in the foreseeable future?
+  Row 276: Please describe the benefits that the utilisation of AI can deliver, providing specific case examples.
+  Row 279: Please elaborate on the ethical aspects of AI usage, specifically describing your compliance with ethical standards and privacy protection principles.
+  Row 282: Kindly describe your approach to the mitigation of risks associated with AI use.
+
+SECTION: SOCIAL RESPONSIBILITY
+  Row 289: RIF., REQUESTS, NOTE
+  Row 290: 1.1, Does your company have gender equality policies in place?
+  Row 291: 1.2, Does your company adopt policies and control systems against discrimination?
+  Row 292: 1.3, Does your company provide human rights education and training programmes?
+  Row 293: 1.4, Does your company run projects in the social and environmental sectors?
+  Row 294: 1.5, Has your company established partnerships with non-profits, social enterprises, or similar organisations?
+  Row 295: 1.6, In the case of activated projects, what are the impact areas?, Social Inclusion (Disability & Minorities)
+  Row 296: Gender equality
+  Row 297: PMIs involvement
+  Row 298: Fair trade
+  Row 299: Other
+  Row 300: 1.7, Has your company appointed a CSR Manager or established a dedicated organisational unit for Corporate Social Responsibility?
+  Row 301: 1.8, Does your company conduct periodic social reporting (e.g., social balance sheets, sustainability reports)?
+  Row 302: 1.9, Does your company apply ethical and environmental criteria when selecting suppliers?
+  Row 303: 1.10, Does your company require its suppliers to hold social and/or environmental certifications?
+  Row 304: 1.11, Does your company carry out awareness-raising initiatives on CSR for its suppliers?
+
+SECTION: INVESTMENTS
+  Row 310: % of turnover invested in Euro - EUR, IT Equipment
+  Row 311: Innovation
+  Row 312: Sustainable development
+  Row 313: Media & advertising
+  Row 314: Training
+  Row 315: Other
+  Row 317: RIF., REQUESTS, NOTE
+  Row 318: 1.1, Could you please present your strategic development orientation?
+  Row 319: 1.2, Do you have any activity out of your Country / City?
+
+SECTION: ATTACHMENTS
+  Row 325: RIF., ATTACHMENTS REQUESTED, NOTE
+  Row 326: 1.1, Organisational Chart
+  Row 327: 1.2, Chamber of Commerce Extract/View
+  Row 328: 1.3, References
+  Row 329: 1.4, Company profile (Creds)
+  Row 330: 1.5, Certifications
+  Row 332: Please provide a presentation (.pdf or .ppt file) summarizing the following items and questions:
+At this stage we would like to see key agency capabilities and credentials before moving to a full pitch. Please use this opportunity to show off your agencies, your expertise and your achievements.
+  Row 333: Your presentation should include the following:
+- Short agency presentation including key figures, key capabilities and services offered, main technologies and platforms managed, headcounts, organization, main clients.
+- Expertise of your agency
+- Management of International accounts : outline your organisational team structure and explain how you would deliverdigital strategies and activities across brands at a country level. Please provide client references.
+- Please provide contact details for 2 current clients who would be happy to talk to us about their experiences of working with you.
+
+SECTION: END
+

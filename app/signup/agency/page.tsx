@@ -3,7 +3,7 @@
 import { useState } from 'react'
 import Link from 'next/link'
 import { useRouter } from 'next/navigation'
-import { ChevronRight, ChevronLeft, Check, Building2 } from 'lucide-react'
+import { ChevronRight, ChevronLeft, Check, Building2, Plus, Trash2 } from 'lucide-react'
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
 import {
@@ -43,7 +43,7 @@ export default function AgencySignupPage() {
   const [postcode, setPostcode] = useState('')
   const [city, setCity] = useState('')
   const [country, setCountry] = useState('')
-  const [contacts, setContacts] = useState(
+  const [contacts, setContacts] = useState<{ role: string; firstName: string; lastName: string; linkedin: string; telephone: string; mobile: string; email: string }[]>(
     AGENCY_CONTACT_ROLES.map(role => ({ role, firstName: '', lastName: '', linkedin: '', telephone: '', mobile: '', email: '' }))
   )
   const [socialMedia, setSocialMedia] = useState<Record<string, string>>({})
@@ -52,6 +52,9 @@ export default function AgencySignupPage() {
   const turnoverYears = getTurnoverYears()
   const [revenue, setRevenue] = useState<Record<string, Record<string, string>>>({})
   const [clients, setClients] = useState([{ name: '', industry: '', activities: '', year: '', turnover: '', incidence: '', exclusivity: false }])
+  const [workedWithClient, setWorkedWithClient] = useState('')
+  const [clientPitch, setClientPitch] = useState([{ division: '', activities: '', year: '', turnover: '', incidence: '' }])
+  const [clientDuration, setClientDuration] = useState('')
 
   // Step 4 — Knowledge & Competencies
   const [competencies, setCompetencies] = useState<Record<string, string>>({})
@@ -60,7 +63,7 @@ export default function AgencySignupPage() {
   const [mainCapability, setMainCapability] = useState('')
   const [secondaryCapability, setSecondaryCapability] = useState('')
   const [additionalCapability, setAdditionalCapability] = useState('')
-  const [selectedSectors, setSelectedSectors] = useState<Record<string, boolean>>({})
+  const [sectorPercentages, setSectorPercentages] = useState<Record<string, string>>({})
 
   // Step 5 — Governance & SOW
   const [about, setAbout] = useState('')
@@ -75,6 +78,7 @@ export default function AgencySignupPage() {
 
   // Step 6 — People & Talent
   const [peopleCounts, setPeopleCounts] = useState<Record<string, { employees: string; freelancers: string; salary: string }>>({})
+  const [otherRoles, setOtherRoles] = useState<{ id: string; name: string }[]>([{ id: 'other-1', name: 'Other' }])
   const [talentEntries, setTalentEntries] = useState([{ role: '', name: '', linkedin: '' }])
 
   // Step 7 — Awards & Infos
@@ -97,15 +101,24 @@ export default function AgencySignupPage() {
   const handleSubmit = async () => {
     setIsSubmitting(true)
     await new Promise(r => setTimeout(r, 1500))
+    const finalPeopleCounts = { ...peopleCounts }
+    otherRoles.forEach(r => {
+      if (finalPeopleCounts[r.id]) {
+        const stats = finalPeopleCounts[r.id]
+        delete finalPeopleCounts[r.id]
+        if (r.name.trim()) finalPeopleCounts[r.name.trim()] = stats
+      }
+    })
+
     const profile = {
       businessName, dunsNumber, vatNumber, legalForm, companyRegNumber, yearEstablished,
       employees, companyLevel, parentCompany, category, currency, tradeOrganizations,
       countryCoverage, address, postcode, city, country, contacts, socialMedia,
-      revenue, clients, competencies, capabilityAllocation, marketPositioning,
-      mainCapability, secondaryCapability, additionalCapability, selectedSectors,
+      revenue, clients, workedWithClient, clientPitch, clientDuration, competencies, capabilityAllocation, marketPositioning,
+      mainCapability, secondaryCapability, additionalCapability, sectorPercentages,
       about, philosophy, networkDescription, localRepresentation,
       governanceQA, governanceData, governanceGlobal, governanceAdditional, outsources,
-      peopleCounts, talentEntries, awards, aiAnswers, srAnswers,
+      peopleCounts: finalPeopleCounts, talentEntries, awards, aiAnswers, srAnswers,
       investments, strategicDev, activityOutside,
       submittedAt: new Date().toISOString(),
     }
@@ -142,14 +155,14 @@ export default function AgencySignupPage() {
                 <button
                   onClick={() => step > i + 1 && setStep(i + 1)}
                   className={`flex items-center gap-2 px-3 py-2 rounded-full text-xs font-medium transition-colors ${
-                    i + 1 === step ? 'bg-[#4fc487]/20 text-[#4fc487] border border-[#4fc487]/30' :
-                    i + 1 < step ? 'text-[#4fc487] cursor-pointer hover:bg-white/[0.06]' :
+                    i + 1 === step ? 'bg-[#0763d8]/20 text-[#0763d8] border border-[#0763d8]/30' :
+                    i + 1 < step ? 'text-[#0763d8] cursor-pointer hover:bg-white/[0.06]' :
                     'text-white/20 cursor-default'
                   }`}
                 >
                   <span className={`w-5 h-5 rounded-full flex items-center justify-center text-xs font-bold flex-shrink-0 ${
-                    i + 1 < step ? 'bg-[#4fc487] text-white' :
-                    i + 1 === step ? 'bg-[#4fc487]/30 text-[#4fc487]' :
+                    i + 1 < step ? 'bg-[#0763d8] text-white' :
+                    i + 1 === step ? 'bg-[#0763d8]/30 text-[#0763d8]' :
                     'bg-white/[0.06] text-white/30'
                   }`}>
                     {i + 1 < step ? <Check className="w-3 h-3" /> : i + 1}
@@ -162,7 +175,7 @@ export default function AgencySignupPage() {
           </div>
           <div className="mt-3 h-1.5 bg-white/[0.06] rounded-full">
             <div
-              className="h-full bg-[#4fc487] rounded-full transition-all duration-500"
+              className="h-full bg-[#0763d8] rounded-full transition-all duration-500"
               style={{ width: `${((step - 1) / (REGISTRATION_STEPS.length - 1)) * 100}%` }}
             />
           </div>
@@ -194,7 +207,7 @@ export default function AgencySignupPage() {
                 <FormField label="Year Established">
                   <Input type="number" value={yearEstablished} onChange={e => setYearEstablished(e.target.value)} placeholder="e.g. 2005" min={1800} max={2026} className={inputCls} />
                 </FormField>
-                <FormField label="Number of Employees" required>
+                <FormField label="# of Employees" required>
                   <select value={employees} onChange={e => setEmployees(e.target.value)} className={selectCls}>
                     <option value="">Select range</option>
                     {EMPLOYEE_SIZES.map(r => <option key={r}>{r}</option>)}
@@ -209,18 +222,18 @@ export default function AgencySignupPage() {
                 <FormField label="Parent Company Name">
                   <Input value={parentCompany} onChange={e => setParentCompany(e.target.value)} placeholder="If part of a group" className={inputCls} />
                 </FormField>
-                <FormField label="Agency Category" required>
+                <FormField label="Category" required>
                   <select value={category} onChange={e => setCategory(e.target.value)} className={selectCls}>
                     <option value="">Select category</option>
                     {AGENCY_CATEGORIES.map(c => <option key={c}>{c}</option>)}
                   </select>
                 </FormField>
-                <FormField label="Currency">
+                <FormField label="Agency Currency">
                   <select value={currency} onChange={e => setCurrency(e.target.value)} className={selectCls}>
                     {TOP_CURRENCIES.map(c => <option key={c}>{c}</option>)}
                   </select>
                 </FormField>
-                <FormField label="Trade Organisations">
+                <FormField label="Trade Organizations">
                   <Input value={tradeOrganizations} onChange={e => setTradeOrganizations(e.target.value)} placeholder="e.g. IPA, ISBA, EACA" className={inputCls} />
                 </FormField>
               </div>
@@ -256,11 +269,27 @@ export default function AgencySignupPage() {
                 </FormField>
               </div>
               {/* Key Contacts */}
-              <p className="text-xs font-bold text-white/60 uppercase tracking-widest mb-4">Key Contacts</p>
+              <div className="flex items-center justify-between mb-4">
+                <p className="text-xs font-bold text-white/60 uppercase tracking-widest">Key Contacts</p>
+                <Button type="button" variant="outline" onClick={() => setContacts(p => [...p, { role: 'Additional Contact', firstName: '', lastName: '', email: '', linkedin: '', telephone: '', mobile: '' }])} className="text-xs h-8 px-3">
+                  <Plus className="w-3 h-3 mr-1" /> Add Contact
+                </Button>
+              </div>
               <div className="space-y-4 mb-8">
                 {contacts.map((contact, idx) => (
-                  <div key={contact.role} className="bg-white/[0.03] border border-white/[0.06] rounded-xl p-5">
-                    <p className="text-sm font-bold text-[#4fc487] mb-4 uppercase tracking-wide">{contact.role}</p>
+                  <div key={idx} className="bg-white/[0.03] border border-white/[0.06] rounded-xl p-5">
+                    <div className="flex items-center justify-between mb-4">
+                      {idx >= AGENCY_CONTACT_ROLES.length ? (
+                        <Input value={contact.role} onChange={e => updateContact(idx, 'role', e.target.value)} placeholder="Role Name" className="max-w-[200px] h-8 text-sm font-bold bg-transparent border-b border-white/20 rounded-none px-0 text-[#0763d8] uppercase tracking-wide focus-visible:ring-0 focus-visible:border-[#0763d8]" />
+                      ) : (
+                        <p className="text-sm font-bold text-[#0763d8] uppercase tracking-wide">{contact.role}</p>
+                      )}
+                      {idx >= AGENCY_CONTACT_ROLES.length && (
+                        <button onClick={() => setContacts(p => p.filter((_, i) => i !== idx))} className="text-red-400 hover:text-red-500 transition-colors">
+                          <Trash2 className="w-4 h-4" />
+                        </button>
+                      )}
+                    </div>
                     <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3">
                       {[
                         { label: 'First Name', field: 'firstName' },
@@ -320,7 +349,7 @@ export default function AgencySignupPage() {
                                   ...prev,
                                   [`${year}-${type}`]: { ...prev[`${year}-${type}`], [region]: e.target.value }
                                 }))}
-                                className="w-20 bg-white/[0.04] border border-white/[0.08] text-foreground text-xs rounded-lg px-2 py-1.5 text-center focus:border-[#4fc487] outline-none" />
+                                className="w-20 bg-white/[0.04] border border-white/[0.08] text-foreground text-xs rounded-lg px-2 py-1.5 text-center focus:border-[#0763d8] outline-none" />
                             </td>
                           ))}
                         </tr>
@@ -333,16 +362,56 @@ export default function AgencySignupPage() {
               <p className="text-xs font-bold text-white/60 uppercase tracking-widest mb-4">Main Clients</p>
               <div className="space-y-3">
                 {clients.map((client, idx) => (
-                  <div key={idx} className="grid grid-cols-2 sm:grid-cols-4 gap-2">
-                    <Input value={client.name} onChange={e => { const c = [...clients]; c[idx].name = e.target.value; setClients(c) }} placeholder="Client name" className={inputCls + ' h-9 text-xs'} />
+                  <div key={idx} className="grid grid-cols-2 sm:grid-cols-4 xl:grid-cols-8 gap-2">
+                    <Input value={client.name} onChange={e => { const c = [...clients]; c[idx].name = e.target.value; setClients(c) }} placeholder="Client name" className={inputCls + ' h-9 text-xs sm:col-span-2'} />
                     <Input value={client.industry} onChange={e => { const c = [...clients]; c[idx].industry = e.target.value; setClients(c) }} placeholder="Industry" className={inputCls + ' h-9 text-xs'} />
                     <Input value={client.activities} onChange={e => { const c = [...clients]; c[idx].activities = e.target.value; setClients(c) }} placeholder="Activities" className={inputCls + ' h-9 text-xs'} />
+                    <Input value={client.year} onChange={e => { const c = [...clients]; c[idx].year = e.target.value; setClients(c) }} placeholder="Year" className={inputCls + ' h-9 text-xs'} />
+                    <Input value={client.turnover} onChange={e => { const c = [...clients]; c[idx].turnover = e.target.value; setClients(c) }} placeholder="Turnover in EUR" className={inputCls + ' h-9 text-xs'} />
                     <Input value={client.incidence} onChange={e => { const c = [...clients]; c[idx].incidence = e.target.value; setClients(c) }} placeholder="% incidence" className={inputCls + ' h-9 text-xs'} />
+                    <label className="flex items-center gap-2 h-9 px-3 rounded-xl border border-white/[0.12] bg-white/[0.06] text-white text-xs cursor-pointer">
+                      <input type="checkbox" checked={client.exclusivity} onChange={e => { const c = [...clients]; c[idx].exclusivity = e.target.checked; setClients(c) }} className="accent-[#0763d8]" />
+                      Exclusivity
+                    </label>
                   </div>
                 ))}
                 <button onClick={() => setClients(prev => [...prev, { name: '', industry: '', activities: '', year: '', turnover: '', incidence: '', exclusivity: false }])}
-                  className="text-xs text-[#4fc487] hover:text-[#45b078]">+ Add client</button>
+                  className="text-xs text-[#0763d8] hover:text-[#0655b3]">+ Add client</button>
               </div>
+              
+              <div className="border-t border-white/[0.06] pt-6 mt-8">
+                <p className="text-xs text-white/40 italic mb-4">Note: Please complete the section below only upon receipt of this Request for Information (RFI) during a pitch process.</p>
+                <FormField label="Please specify whether your company is currently working or has previously worked with the CLIENT.">
+                  <select value={workedWithClient} onChange={e => setWorkedWithClient(e.target.value)} className={selectCls}>
+                    <option value="">Select</option>
+                    <option value="Yes">Yes</option>
+                    <option value="No">No</option>
+                  </select>
+                </FormField>
+                
+                {workedWithClient === 'Yes' && (
+                  <div className="mt-6 space-y-4">
+                    <p className="text-xs font-bold text-white/60 uppercase tracking-widest">Client Engagement Details</p>
+                    <div className="space-y-3">
+                      {clientPitch.map((pitch, idx) => (
+                        <div key={idx} className="grid grid-cols-2 sm:grid-cols-5 gap-2">
+                          <Input value={pitch.division} onChange={e => { const p = [...clientPitch]; p[idx].division = e.target.value; setClientPitch(p) }} placeholder="Client Division" className={inputCls + ' h-9 text-xs'} />
+                          <Input value={pitch.activities} onChange={e => { const p = [...clientPitch]; p[idx].activities = e.target.value; setClientPitch(p) }} placeholder="Principal Activities" className={inputCls + ' h-9 text-xs'} />
+                          <Input value={pitch.year} onChange={e => { const p = [...clientPitch]; p[idx].year = e.target.value; setClientPitch(p) }} placeholder="Year" className={inputCls + ' h-9 text-xs'} />
+                          <Input value={pitch.turnover} onChange={e => { const p = [...clientPitch]; p[idx].turnover = e.target.value; setClientPitch(p) }} placeholder="Turnover (EUR)" className={inputCls + ' h-9 text-xs'} />
+                          <Input value={pitch.incidence} onChange={e => { const p = [...clientPitch]; p[idx].incidence = e.target.value; setClientPitch(p) }} placeholder="% incidence" className={inputCls + ' h-9 text-xs'} />
+                        </div>
+                      ))}
+                      <button onClick={() => setClientPitch(prev => [...prev, { division: '', activities: '', year: '', turnover: '', incidence: '' }])}
+                        className="text-xs text-[#0763d8] hover:text-[#0655b3]">+ Add row</button>
+                    </div>
+                    <FormField label="Duration of Engagement with the Client" className="mt-4">
+                      <Input value={clientDuration} onChange={e => setClientDuration(e.target.value)} placeholder="e.g. 3 years" className={inputCls} />
+                    </FormField>
+                  </div>
+                )}
+              </div>
+
             </div>
           )}
 
@@ -352,12 +421,15 @@ export default function AgencySignupPage() {
               <StepHeader icon="🎯" title="Knowledge & Competencies" subtitle="Communication areas, capabilities, and service expertise" />
               {/* Communication Areas */}
               <p className="text-xs font-bold text-white/60 uppercase tracking-widest mb-3">Communication Areas</p>
-              <div className="grid grid-cols-2 sm:grid-cols-3 gap-2 mb-8">
+              <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-2 mb-8">
                 {COMMUNICATION_AREAS.map(area => (
-                  <label key={area} className={`flex items-center gap-2 p-2.5 rounded-xl border cursor-pointer transition-all text-xs ${selectedSectors[area] ? 'bg-[#4fc487]/10 border-[#4fc487]/30 text-[#4fc487]' : 'bg-white/[0.03] border-white/[0.06] text-white/60 hover:border-white/20'}`}>
-                    <input type="checkbox" checked={!!selectedSectors[area]} onChange={() => setSelectedSectors(prev => ({ ...prev, [area]: !prev[area] }))} className="w-3.5 h-3.5 accent-[#4fc487]" />
-                    {area}
-                  </label>
+                  <div key={area} className={`flex items-center gap-2 p-2.5 rounded-xl border transition-all text-xs ${sectorPercentages[area] ? 'bg-[#0763d8]/10 border-[#0763d8]/30 text-[#0763d8]' : 'bg-white/[0.03] border-white/[0.06] text-white/50'}`}>
+                    <span className="flex-1 truncate" title={area}>{area}</span>
+                    <div className="flex items-center gap-1 shrink-0">
+                      <input type="number" min={0} max={100} value={sectorPercentages[area] || ''} onChange={e => setSectorPercentages(prev => ({ ...prev, [area]: e.target.value }))} className="w-14 text-xs text-center bg-white/[0.04] border border-white/[0.08] text-foreground rounded-lg py-1 focus:border-[#0763d8] outline-none" placeholder="0" />
+                      <span className="text-xs text-white/30">%</span>
+                    </div>
+                  </div>
                 ))}
               </div>
               {/* Capabilities */}
@@ -374,7 +446,7 @@ export default function AgencySignupPage() {
                 ))}
               </div>
               {/* Service allocation */}
-              <p className="text-xs font-bold text-white/60 uppercase tracking-widest mb-3">Service Allocation <span className={`ml-2 ${allocationTotal > 100 ? 'text-red-400' : allocationTotal === 100 ? 'text-[#4fc487]' : ''}`}>({allocationTotal}%)</span></p>
+              <p className="text-xs font-bold text-white/60 uppercase tracking-widest mb-3">Service Allocation <span className={`ml-2 ${allocationTotal > 100 ? 'text-red-400' : allocationTotal === 100 ? 'text-[#0763d8]' : ''}`}>({allocationTotal}%)</span></p>
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-2 mb-8">
                 {CAPABILITY_AREAS.map(area => (
                   <div key={area} className="flex items-center gap-3 bg-white/[0.03] rounded-xl px-4 py-2.5">
@@ -392,14 +464,14 @@ export default function AgencySignupPage() {
               <div className="space-y-6">
                 {AGENCY_SERVICE_GROUPS.map(group => (
                   <div key={group.label}>
-                    <p className="text-xs font-bold text-[#4fc487]/60 uppercase tracking-widest mb-2 flex items-center gap-2">
+                    <p className="text-xs font-bold text-[#0763d8]/60 uppercase tracking-widest mb-2 flex items-center gap-2">
                       <span className="flex-1 h-px bg-white/[0.06]" />
                       {group.label}
                       <span className="flex-1 h-px bg-white/[0.06]" />
                     </p>
                     <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-2">
                       {group.items.map(skill => (
-                        <div key={skill} className={`flex items-center gap-2 p-2.5 rounded-xl border transition-all text-xs ${competencies[skill] ? 'bg-[#4fc487]/10 border-[#4fc487]/30 text-[#4fc487]' : 'bg-white/[0.03] border-white/[0.06] text-white/50'}`}>
+                        <div key={skill} className={`flex items-center gap-2 p-2.5 rounded-xl border transition-all text-xs ${competencies[skill] ? 'bg-[#0763d8]/10 border-[#0763d8]/30 text-[#0763d8]' : 'bg-white/[0.03] border-white/[0.06] text-white/50'}`}>
                           <span className="flex-1 truncate" title={skill}>{skill}</span>
                           <div className="flex items-center gap-1 shrink-0">
                             <input type="number" min={0} max={100} value={competencies[skill] || ''} onChange={e => setCompetencies(prev => ({ ...prev, [skill]: e.target.value }))} className="w-14 text-xs text-center bg-white/[0.04] border border-white/[0.08] text-white rounded-lg py-1" placeholder="0" />
@@ -432,7 +504,7 @@ export default function AgencySignupPage() {
                 </div>
                 <div className="border-t border-white/[0.06] pt-5">
                   <label className="flex items-center gap-3 cursor-pointer">
-                    <input type="checkbox" checked={outsources} onChange={e => setOutsources(e.target.checked)} className="w-4 h-4 accent-[#4fc487]" />
+                    <input type="checkbox" checked={outsources} onChange={e => setOutsources(e.target.checked)} className="w-4 h-4 accent-[#0763d8]" />
                     <span className="text-sm text-white/60">Does your company subcontract activities or phases of services?</span>
                   </label>
                 </div>
@@ -448,20 +520,60 @@ export default function AgencySignupPage() {
               <div className="space-y-6">
               {AGENCY_PEOPLE_DEPARTMENTS.map(dept => (
                   <div key={dept.label}>
-                    <p className="text-xs font-bold text-[#4fc487]/60 uppercase tracking-widest mb-2">{dept.label}</p>
-                    <div className="grid grid-cols-1 gap-1.5">
-                      {dept.roles.map(role => (
-                        <div key={role} className="flex items-center gap-2 bg-white/[0.03] rounded-xl px-3 py-2">
-                          <span className="text-xs text-white/50 flex-1 truncate">{role}</span>
-                          <input type="number" min={0} value={peopleCounts[role]?.employees || ''} onChange={e => setPeopleCounts(prev => ({ ...prev, [role]: { ...prev[role], employees: e.target.value, freelancers: prev[role]?.freelancers || '', salary: prev[role]?.salary || '' } }))}
-                            placeholder="# Emp" className="w-16 text-xs text-center bg-white/[0.04] border border-white/[0.08] text-white rounded-lg py-1" />
-                          <input type="number" min={0} value={peopleCounts[role]?.freelancers || ''} onChange={e => setPeopleCounts(prev => ({ ...prev, [role]: { ...prev[role], freelancers: e.target.value, employees: prev[role]?.employees || '', salary: prev[role]?.salary || '' } }))}
-                            placeholder="# Free" className="w-16 text-xs text-center bg-white/[0.04] border border-white/[0.08] text-white rounded-lg py-1" />
-                          <input type="number" min={0} value={peopleCounts[role]?.salary || ''} onChange={e => setPeopleCounts(prev => ({ ...prev, [role]: { ...prev[role], salary: e.target.value, employees: prev[role]?.employees || '', freelancers: prev[role]?.freelancers || '' } }))}
-                            placeholder="Salary" className="w-16 text-xs text-center bg-white/[0.04] border border-white/[0.08] text-white rounded-lg py-1" />
-                        </div>
-                      ))}
-                    </div>
+                    <p className="text-xs font-bold text-[#0763d8]/60 uppercase tracking-widest mb-2">{dept.label}</p>
+                    {dept.label === 'Other' ? (
+                      <div className="grid grid-cols-1 gap-1.5">
+                        {otherRoles.map(role => (
+                          <div key={role.id} className="flex items-center gap-2 bg-white/[0.03] rounded-xl px-3 py-2">
+                            <input
+                              value={role.name}
+                              onChange={e => setOtherRoles(prev => prev.map(r => r.id === role.id ? { ...r, name: e.target.value } : r))}
+                              className="text-xs text-white bg-transparent border-b border-white/[0.12] focus:border-[#0763d8] focus:outline-none flex-1 truncate py-1"
+                              placeholder="Role Name"
+                            />
+                            <input type="number" min={0} value={peopleCounts[role.id]?.employees || ''} onChange={e => setPeopleCounts(prev => ({ ...prev, [role.id]: { ...prev[role.id], employees: e.target.value, freelancers: prev[role.id]?.freelancers || '', salary: prev[role.id]?.salary || '' } }))}
+                              placeholder="# Emp" className="w-16 text-xs text-center bg-white/[0.04] border border-white/[0.08] text-white rounded-lg py-1" />
+                            <input type="number" min={0} value={peopleCounts[role.id]?.freelancers || ''} onChange={e => setPeopleCounts(prev => ({ ...prev, [role.id]: { ...prev[role.id], freelancers: e.target.value, employees: prev[role.id]?.employees || '', salary: prev[role.id]?.salary || '' } }))}
+                              placeholder="# Free" className="w-16 text-xs text-center bg-white/[0.04] border border-white/[0.08] text-white rounded-lg py-1" />
+                            <input type="number" min={0} value={peopleCounts[role.id]?.salary || ''} onChange={e => setPeopleCounts(prev => ({ ...prev, [role.id]: { ...prev[role.id], salary: e.target.value, employees: prev[role.id]?.employees || '', freelancers: prev[role.id]?.freelancers || '' } }))}
+                              placeholder="Salary" className="w-16 text-xs text-center bg-white/[0.04] border border-white/[0.08] text-white rounded-lg py-1" />
+                            {otherRoles.length > 1 && (
+                              <button
+                                type="button"
+                                onClick={() => {
+                                  setOtherRoles(prev => prev.filter(r => r.id !== role.id));
+                                  setPeopleCounts(prev => { const n = { ...prev }; delete n[role.id]; return n; });
+                                }}
+                                className="p-1 text-white/30 hover:text-red-400 hover:bg-red-400/10 rounded-lg transition-colors"
+                              >
+                                <Trash2 className="w-3.5 h-3.5" />
+                              </button>
+                            )}
+                          </div>
+                        ))}
+                        <button
+                          type="button"
+                          onClick={() => setOtherRoles(prev => [...prev, { id: `other-${Date.now()}`, name: '' }])}
+                          className="mt-2 flex items-center gap-2 px-4 py-1.5 border border-[#0763d8]/20 text-[#0763d8] text-xs font-medium rounded-full hover:bg-[#0763d8]/10 transition-colors w-max"
+                        >
+                          <Plus className="w-3 h-3" /> Add Role
+                        </button>
+                      </div>
+                    ) : (
+                      <div className="grid grid-cols-1 gap-1.5">
+                        {dept.roles.map(role => (
+                          <div key={role} className="flex items-center gap-2 bg-white/[0.03] rounded-xl px-3 py-2">
+                            <span className="text-xs text-white/50 flex-1 truncate">{role}</span>
+                            <input type="number" min={0} value={peopleCounts[role]?.employees || ''} onChange={e => setPeopleCounts(prev => ({ ...prev, [role]: { ...prev[role], employees: e.target.value, freelancers: prev[role]?.freelancers || '', salary: prev[role]?.salary || '' } }))}
+                              placeholder="# Emp" className="w-16 text-xs text-center bg-white/[0.04] border border-white/[0.08] text-white rounded-lg py-1" />
+                            <input type="number" min={0} value={peopleCounts[role]?.freelancers || ''} onChange={e => setPeopleCounts(prev => ({ ...prev, [role]: { ...prev[role], freelancers: e.target.value, employees: prev[role]?.employees || '', salary: prev[role]?.salary || '' } }))}
+                              placeholder="# Free" className="w-16 text-xs text-center bg-white/[0.04] border border-white/[0.08] text-white rounded-lg py-1" />
+                            <input type="number" min={0} value={peopleCounts[role]?.salary || ''} onChange={e => setPeopleCounts(prev => ({ ...prev, [role]: { ...prev[role], salary: e.target.value, employees: prev[role]?.employees || '', freelancers: prev[role]?.freelancers || '' } }))}
+                              placeholder="Salary" className="w-16 text-xs text-center bg-white/[0.04] border border-white/[0.08] text-white rounded-lg py-1" />
+                          </div>
+                        ))}
+                      </div>
+                    )}
                   </div>
                 ))}
               </div>
@@ -486,7 +598,7 @@ export default function AgencySignupPage() {
                     </div>
                   ))}
                 </div>
-                <button onClick={() => setTalentEntries(prev => [...prev, { role: '', name: '', linkedin: '' }])} className="text-xs text-[#4fc487] hover:bg-[#4fc487]/10 px-3 py-1.5 rounded-lg border border-[#4fc487]/30 transition-colors inline-block">+ Add Talent</button>
+                <button onClick={() => setTalentEntries(prev => [...prev, { role: '', name: '', linkedin: '' }])} className="text-xs text-[#0763d8] hover:bg-[#0763d8]/10 px-3 py-1.5 rounded-lg border border-[#0763d8]/30 transition-colors inline-block">+ Add Talent</button>
               </div>
             </div>
           )}
@@ -512,7 +624,7 @@ export default function AgencySignupPage() {
                   </div>
                 ))}
               </div>
-              <button onClick={() => setAwards(prev => [...prev, { name: '', distinction: '', category: '', year: '', ad: '', brand: '' }])} className="text-xs text-[#4fc487] hover:bg-[#4fc487]/10 px-3 py-1.5 rounded-lg border border-[#4fc487]/30 transition-colors inline-block mb-8">+ Add Award</button>
+              <button onClick={() => setAwards(prev => [...prev, { name: '', distinction: '', category: '', year: '', ad: '', brand: '' }])} className="text-xs text-[#0763d8] hover:bg-[#0763d8]/10 px-3 py-1.5 rounded-lg border border-[#0763d8]/30 transition-colors inline-block mb-8">+ Add Award</button>
               <div className="border-t border-white/[0.06] pt-5 space-y-4 mb-8">
                 <p className="text-xs font-bold text-white/60 uppercase tracking-widest mb-2">AI Usage</p>
                 {AI_QUESTIONS.map((q, i) => (
@@ -570,7 +682,7 @@ export default function AgencySignupPage() {
                         {CSR_IMPACT_AREAS.map(area => (
                           <label key={area} className="flex items-center gap-2 bg-white/[0.02] rounded-lg p-2 cursor-pointer hover:bg-white/[0.04] transition">
                             <input type="checkbox" checked={!!srAnswers[`impact-${area}`]} onChange={e => setSrAnswers(prev => ({ ...prev, [`impact-${area}`]: e.target.checked ? 'yes' : '' }))}
-                              className="w-3.5 h-3.5 rounded border-white/20 bg-white/[0.06] accent-[#4fc487]" />
+                              className="w-3.5 h-3.5 rounded border-white/20 bg-white/[0.06] accent-[#0763d8]" />
                             <span className="text-xs text-white/60">{area}</span>
                           </label>
                         ))}
@@ -594,16 +706,17 @@ export default function AgencySignupPage() {
                   ))}
                 </div>
                 <div className="bg-white/[0.03] rounded-xl p-5 border border-white/[0.06]">
-                  <p className="text-sm text-white/60 font-medium mb-2">Please provide a presentation (.pdf or .ppt file) summarizing the following:</p>
+                  <p className="text-sm text-white/60 font-medium mb-2">Please provide a presentation (.pdf file) summarizing the following:</p>
                   <ul className="space-y-1 text-xs text-white/40 list-disc pl-4">
                     <li>Short agency presentation including key figures, capabilities, services, technologies, headcounts, organization, main clients</li>
                     <li>Expertise of your agency</li>
                     <li>Management of International accounts: organisational team structure and digital strategies at country level with client references</li>
                     <li>Contact details for 2 current clients who would speak about their experience working with you</li>
                   </ul>
-                  <div className="border-2 border-dashed border-white/[0.08] rounded-xl p-6 text-center mt-4">
+                  <div className="border-2 border-dashed border-white/[0.08] rounded-xl p-6 text-center mt-4 cursor-pointer hover:bg-white/[0.04] transition relative">
+                    <input type="file" accept=".pdf" className="absolute inset-0 w-full h-full opacity-0 cursor-pointer" />
                     <p className="text-sm text-white/30">Drag & drop presentation here or click to browse</p>
-                    <p className="text-xs text-white/20 mt-1">PDF, PPT, DOC — max 10MB</p>
+                    <p className="text-xs text-white/20 mt-1">PDF — max 10MB</p>
                   </div>
                 </div>
               </div>
@@ -634,13 +747,13 @@ export default function AgencySignupPage() {
                   Skip for now
                 </Button>
                 <Button onClick={() => setStep(s => s + 1)} disabled={!canProceed()}
-                  className="bg-[#4fc487] hover:bg-[#45b078] text-white px-6 rounded-full">
+                  className="bg-[#0763d8] hover:bg-[#0655b3] text-white px-6 rounded-full">
                   Continue <ChevronRight className="w-4 h-4 ml-1" />
                 </Button>
               </>
             ) : (
               <Button onClick={handleSubmit} disabled={isSubmitting}
-                className="bg-[#4fc487] hover:bg-[#45b078] text-white px-8 rounded-full">
+                className="bg-[#0763d8] hover:bg-[#0655b3] text-white px-8 rounded-full">
                 {isSubmitting ? (
                   <span className="flex items-center gap-2">
                     <svg className="animate-spin w-4 h-4" viewBox="0 0 24 24" fill="none"><circle cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4" className="opacity-25" /><path d="M4 12a8 8 0 018-8" stroke="currentColor" strokeWidth="4" className="opacity-75" /></svg>
@@ -684,5 +797,5 @@ function FormField({ label, required, children, className }: { label: string; re
 }
 
 const inputCls = 'h-10 bg-white/[0.06] border-white/[0.12] text-white placeholder:text-white/20 rounded-xl'
-const selectCls = 'w-full h-10 bg-white/[0.06] border border-white/[0.12] text-white text-sm rounded-xl px-3 focus:outline-none focus:ring-2 focus:ring-[#4fc487] [&_option]:bg-[#1a1d2e] [&_option]:text-white'
-const textareaCls = 'w-full bg-white/[0.06] border border-white/[0.12] text-white text-sm rounded-xl px-3 py-2.5 focus:outline-none focus:ring-2 focus:ring-[#4fc487] resize-none placeholder:text-white/20'
+const selectCls = 'w-full h-10 bg-white/[0.06] border border-white/[0.12] text-white text-sm rounded-xl px-3 focus:outline-none focus:ring-2 focus:ring-[#0763d8] [&_option]:bg-[#1a1d2e] [&_option]:text-white'
+const textareaCls = 'w-full bg-white/[0.06] border border-white/[0.12] text-white text-sm rounded-xl px-3 py-2.5 focus:outline-none focus:ring-2 focus:ring-[#0763d8] resize-none placeholder:text-white/20'

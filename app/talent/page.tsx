@@ -86,10 +86,10 @@ function TalentContent() {
                         className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"
                       />
                     </div>
-                    <h3 className="font-bold text-sm text-[#1a1a1a] mb-0.5 group-hover:text-[#4fc487] transition-colors line-clamp-1">
+                    <h3 className="font-bold text-sm text-[#1a1a1a] mb-0.5 group-hover:text-[#0763d8] transition-colors line-clamp-1">
                       {person.name}
                     </h3>
-                    <p className="text-xs text-[#4fc487] mb-0.5">{person.role}</p>
+                    <p className="text-xs text-[#0763d8] mb-0.5">{person.role}</p>
                     <p className="text-xs text-[#666]">{person.company}</p>
                   </div>
                 </Link>
@@ -99,7 +99,7 @@ function TalentContent() {
             {filtered.length === 0 && (
               <div className="text-center py-20 text-[#666]">
                 <p className="text-lg font-medium mb-2">No talent found.</p>
-                <button onClick={() => { setQuery(''); setSelectedRole('All') }} className="text-sm text-[#4fc487] hover:underline">Clear filters</button>
+                <button onClick={() => { setQuery(''); setSelectedRole('All') }} className="text-sm text-[#0763d8] hover:underline">Clear filters</button>
               </div>
             )}
           </div>

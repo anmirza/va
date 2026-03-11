@@ -59,7 +59,7 @@ export default async function AcademicDetailPage({ params }: Props) {
               <div className="bg-white rounded-xl shadow-sm p-6 sm:p-8">
                 <h2 className="text-xl font-bold text-[#1a1a1a] mb-5">
                   <span className="flex items-center gap-2">
-                    <BookOpen className="w-5 h-5 text-[#4fc487]" />
+                    <BookOpen className="w-5 h-5 text-[#0763d8]" />
                     Programmes Offered
                   </span>
                 </h2>
@@ -69,7 +69,7 @@ export default async function AcademicDetailPage({ params }: Props) {
                       key={program}
                       className="flex items-center gap-3 p-3 rounded-lg bg-[#eef0f3] hover:bg-[#d8dce2] transition-colors"
                     >
-                      <span className="w-2 h-2 rounded-full bg-[#4fc487] shrink-0" />
+                      <span className="w-2 h-2 rounded-full bg-[#0763d8] shrink-0" />
                       <span className="text-sm font-medium text-[#1a1a1a]">{program}</span>
                     </div>
                   ))}
@@ -81,7 +81,7 @@ export default async function AcademicDetailPage({ params }: Props) {
                 <div className="bg-white rounded-xl shadow-sm p-6 sm:p-8">
                   <h2 className="text-xl font-bold text-[#1a1a1a] mb-4">
                     <span className="flex items-center gap-2">
-                      <Users className="w-5 h-5 text-[#4fc487]" />
+                      <Users className="w-5 h-5 text-[#0763d8]" />
                       Notable Alumni
                     </span>
                   </h2>
@@ -104,21 +104,21 @@ export default async function AcademicDetailPage({ params }: Props) {
                 <h3 className="text-base font-bold text-[#1a1a1a] mb-4 uppercase tracking-wide text-sm">Quick Facts</h3>
                 <dl className="space-y-3">
                   <div className="flex items-start gap-3">
-                    <MapPin className="w-4 h-4 text-[#4fc487] mt-0.5 shrink-0" />
+                    <MapPin className="w-4 h-4 text-[#0763d8] mt-0.5 shrink-0" />
                     <div>
                       <dt className="text-xs text-[#666] uppercase tracking-wide">Location</dt>
                       <dd className="text-sm font-medium text-[#1a1a1a]">{institution.city}, {institution.country}</dd>
                     </div>
                   </div>
                   <div className="flex items-start gap-3">
-                    <Calendar className="w-4 h-4 text-[#4fc487] mt-0.5 shrink-0" />
+                    <Calendar className="w-4 h-4 text-[#0763d8] mt-0.5 shrink-0" />
                     <div>
                       <dt className="text-xs text-[#666] uppercase tracking-wide">Founded</dt>
                       <dd className="text-sm font-medium text-[#1a1a1a]">{institution.founded}</dd>
                     </div>
                   </div>
                   <div className="flex items-start gap-3">
-                    <BookOpen className="w-4 h-4 text-[#4fc487] mt-0.5 shrink-0" />
+                    <BookOpen className="w-4 h-4 text-[#0763d8] mt-0.5 shrink-0" />
                     <div>
                       <dt className="text-xs text-[#666] uppercase tracking-wide">Type</dt>
                       <dd className="text-sm font-medium text-[#1a1a1a]">{institution.type}</dd>
@@ -154,13 +154,13 @@ export default async function AcademicDetailPage({ params }: Props) {
                           <img src={related.coverImage} alt="" className="w-full h-full object-cover" />
                         </div>
                         <div className="min-w-0">
-                          <p className="text-sm font-medium text-[#1a1a1a] group-hover:text-[#4fc487] transition-colors line-clamp-1">{related.name}</p>
+                          <p className="text-sm font-medium text-[#1a1a1a] group-hover:text-[#0763d8] transition-colors line-clamp-1">{related.name}</p>
                           <p className="text-xs text-[#666]">{related.city}, {related.country}</p>
                         </div>
                       </Link>
                     ))}
                 </div>
-                <Link href="/academic" className="block mt-4 text-xs text-center text-[#4fc487] hover:underline font-medium">
+                <Link href="/academic" className="block mt-4 text-xs text-center text-[#0763d8] hover:underline font-medium">
                   View all institutions →
                 </Link>
               </div>

@@ -75,7 +75,7 @@ function CreativeLibraryContent() {
                   className="pl-12 h-12 bg-white border-0 text-[#1a1a1a]"
                 />
               </div>
-              <Button className="h-12 px-6 bg-[#4fc487] hover:bg-[#45b078] text-white shrink-0">
+              <Button className="h-12 px-6 bg-[#0763d8] hover:bg-[#0655b3] text-white shrink-0">
                 Search
               </Button>
             </div>
@@ -121,7 +121,7 @@ function CreativeLibraryContent() {
                 </div>
                 <div className="sm:w-1/2 p-6 sm:p-8 flex flex-col justify-center">
                   <span className="inline-block px-3 py-1 bg-[#f5d742]/20 text-[#a87e00] text-xs font-medium rounded-full mb-3 w-fit">Ad of the Day</span>
-                  <h3 className="text-2xl font-bold text-[#1a1a1a] mb-2 group-hover:text-[#4fc487] transition-colors">{adOfTheDay.title}</h3>
+                  <h3 className="text-2xl font-bold text-[#1a1a1a] mb-2 group-hover:text-[#0763d8] transition-colors">{adOfTheDay.title}</h3>
                   <p className="text-[#666] mb-4">Brand: <span className="font-medium text-[#1a1a1a]">{adOfTheDay.brand}</span> · Agency: <span className="font-medium text-[#1a1a1a]">{adOfTheDay.agency}</span></p>
                   {adOfTheDay.awardWins && (
                     <div className="flex items-center gap-1.5 text-[#f5d742]">
@@ -180,7 +180,7 @@ function CreativeLibraryContent() {
                       ))}
                     </div>
                     <Link href={`/campaigns/${campaign.id}`}>
-                      <h3 className="font-bold text-[#1a1a1a] text-sm mb-1 line-clamp-1 group-hover:text-[#4fc487] transition-colors">{campaign.title}</h3>
+                      <h3 className="font-bold text-[#1a1a1a] text-sm mb-1 line-clamp-1 group-hover:text-[#0763d8] transition-colors">{campaign.title}</h3>
                     </Link>
                     <p className="text-xs text-[#666] mb-3">{campaign.brand} · {campaign.agency}</p>
                     <div className="flex items-center justify-between">
@@ -191,7 +191,7 @@ function CreativeLibraryContent() {
                       )}
                       <button
                         onClick={() => toggleCampaign(campaign.id)}
-                        className={`ml-auto p-1.5 rounded-lg transition-colors ${saved ? 'text-[#4fc487]' : 'text-[#d8dce2] hover:text-[#4fc487]'}`}
+                        className={`ml-auto p-1.5 rounded-lg transition-colors ${saved ? 'text-[#0763d8]' : 'text-[#d8dce2] hover:text-[#0763d8]'}`}
                       >
                         {saved ? <BookmarkCheck className="w-4 h-4" /> : <Bookmark className="w-4 h-4" />}
                       </button>

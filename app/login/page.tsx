@@ -45,7 +45,7 @@ export default function LoginPage() {
           <div className="bg-white rounded-2xl shadow-lg p-8">
             <div className="mb-8 text-center">
               <div className="w-12 h-12 bg-[#2e3843] rounded-xl flex items-center justify-center mx-auto mb-4">
-                <span className="text-[#4fc487] font-bold text-lg">R</span>
+                <span className="text-[#0763d8] font-bold text-lg">R</span>
               </div>
               <h1 className="text-2xl font-bold text-[#1a1a1a] mb-1">Welcome back</h1>
               <p className="text-[#666] text-sm">Sign in to your VA account</p>
@@ -68,7 +68,7 @@ export default function LoginPage() {
                     value={email}
                     onChange={e => setEmail(e.target.value)}
                     placeholder="you@example.com"
-                    className="pl-10 h-11 border-[#d8dce2] focus:border-[#4fc487]"
+                    className="pl-10 h-11 border-[#d8dce2] focus:border-[#0763d8]"
                     required
                   />
                 </div>
@@ -83,7 +83,7 @@ export default function LoginPage() {
                     value={password}
                     onChange={e => setPassword(e.target.value)}
                     placeholder="••••••••"
-                    className="pl-10 pr-10 h-11 border-[#d8dce2] focus:border-[#4fc487]"
+                    className="pl-10 pr-10 h-11 border-[#d8dce2] focus:border-[#0763d8]"
                     required
                   />
                   <button
@@ -104,7 +104,7 @@ export default function LoginPage() {
 
               <Button
                 type="submit"
-                className="w-full h-11 bg-[#4fc487] hover:bg-[#45b078] text-white font-medium"
+                className="w-full h-11 bg-[#0763d8] hover:bg-[#0655b3] text-white font-medium"
                 disabled={isLoading}
               >
                 {isLoading ? (
@@ -118,7 +118,7 @@ export default function LoginPage() {
 
             <div className="mt-6 pt-6 border-t border-[#e5e5e1] text-center text-sm text-[#666]">
               Don&apos;t have an account?{' '}
-              <Link href="/signup" className="text-[#4fc487] hover:underline font-medium">
+              <Link href="/signup" className="text-[#0763d8] hover:underline font-medium">
                 Sign up for free
               </Link>
             </div>

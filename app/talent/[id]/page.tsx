@@ -54,9 +54,9 @@ export default function TalentDetailPage({ params }: { params: Promise<{ id: str
                 <Button
                   onClick={() => toggleTalent(id)}
                   variant="outline"
-                  className={`border-2 shrink-0 ${isFollowing ? 'border-[#4fc487] text-[#4fc487] bg-transparent' : 'border-white/30 text-white bg-transparent hover:bg-white/10'}`}
+                  className={`border-2 shrink-0 ${isFollowing ? 'border-[#0763d8] text-[#0763d8] bg-transparent' : 'border-white/30 text-white bg-transparent hover:bg-white/10'}`}
                 >
-                  <Heart className={`w-4 h-4 mr-2 ${isFollowing ? 'fill-[#4fc487]' : ''}`} />
+                  <Heart className={`w-4 h-4 mr-2 ${isFollowing ? 'fill-[#0763d8]' : ''}`} />
                   {isFollowing ? 'Following' : 'Follow'}
                 </Button>
               </div>
@@ -97,7 +97,7 @@ export default function TalentDetailPage({ params }: { params: Promise<{ id: str
                       {company.name[0]}
                     </div>
                     <div>
-                      <p className="font-medium text-[#1a1a1a] group-hover:text-[#4fc487] transition-colors">{company.name}</p>
+                      <p className="font-medium text-[#1a1a1a] group-hover:text-[#0763d8] transition-colors">{company.name}</p>
                       <p className="text-sm text-[#666]">{company.city}, {company.country}</p>
                     </div>
                   </Link>
@@ -108,10 +108,10 @@ export default function TalentDetailPage({ params }: { params: Promise<{ id: str
                   <h3 className="font-bold text-[#1a1a1a] mb-4">Connect</h3>
                   <div className="space-y-2 text-sm">
                     {person.socialLinks.linkedin && (
-                      <a href={person.socialLinks.linkedin} className="block text-[#4fc487] hover:underline">LinkedIn</a>
+                      <a href={person.socialLinks.linkedin} className="block text-[#0763d8] hover:underline">LinkedIn</a>
                     )}
                     {person.socialLinks.twitter && (
-                      <a href={`https://twitter.com/${person.socialLinks.twitter}`} className="block text-[#4fc487] hover:underline">@{person.socialLinks.twitter}</a>
+                      <a href={`https://twitter.com/${person.socialLinks.twitter}`} className="block text-[#0763d8] hover:underline">@{person.socialLinks.twitter}</a>
                     )}
                   </div>
                 </div>

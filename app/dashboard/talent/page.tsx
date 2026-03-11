@@ -51,8 +51,8 @@ function TalentDashContent() {
                   <img src={profile.photo} alt={profile.name} className="w-24 h-24 rounded-xl object-cover shrink-0" />
                   <div>
                     <h2 className="font-bold text-foreground text-xl">{profile.name}</h2>
-                    <p className="text-[#4fc487] mb-1">{profile.role}</p>
-                    {company && <Link href={`/directory/${company.id}`} className="text-sm text-muted-foreground hover:text-[#4fc487]">{company.name}</Link>}
+                    <p className="text-[#0763d8] mb-1">{profile.role}</p>
+                    {company && <Link href={`/directory/${company.id}`} className="text-sm text-muted-foreground hover:text-[#0763d8]">{company.name}</Link>}
                     {profile.bio && <p className="text-sm text-muted-foreground mt-3 leading-relaxed">{profile.bio}</p>}
                   </div>
                 </div>
@@ -75,7 +75,7 @@ function TalentDashContent() {
                 <div className="bg-card border border-border rounded-xl p-5 shadow-sm">
                   <p className="text-xs text-muted-foreground mb-3 font-medium">Visibility</p>
                   <div className="h-2 bg-white/[0.12] rounded-full overflow-hidden">
-                    <div className="h-full bg-[#4fc487] rounded-full" style={{ width: '35%' }} />
+                    <div className="h-full bg-[#0763d8] rounded-full" style={{ width: '35%' }} />
                   </div>
                   <p className="text-xs text-muted-foreground mt-2">35% profile completeness</p>
                   <Link href="/pricing" className="block mt-3">
@@ -93,10 +93,10 @@ function TalentDashContent() {
                 <div><label className="block text-sm font-medium mb-1.5">Full Name</label><Input defaultValue={profile.name} className="h-11" /></div>
                 <div><label className="block text-sm font-medium mb-1.5">Role / Title</label><Input defaultValue={profile.role} className="h-11" /></div>
                 <div><label className="block text-sm font-medium mb-1.5">Bio</label>
-                  <textarea defaultValue={profile.bio || ''} rows={4} className="w-full border border-border rounded-lg px-3 py-2.5 text-sm focus:outline-none focus:border-[#4fc487] resize-none" />
+                  <textarea defaultValue={profile.bio || ''} rows={4} className="w-full border border-border rounded-lg px-3 py-2.5 text-sm focus:outline-none focus:border-[#0763d8] resize-none" />
                 </div>
                 <div><label className="block text-sm font-medium mb-1.5">Photo URL</label><Input defaultValue={profile.photo} className="h-11" /></div>
-                <Button className="bg-[#4fc487] hover:bg-[#45b078] text-foreground">Save Changes</Button>
+                <Button className="bg-[#0763d8] hover:bg-[#0655b3] text-foreground">Save Changes</Button>
               </div>
             </div>
           )}

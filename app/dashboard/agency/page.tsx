@@ -67,7 +67,7 @@ function SectionCard({ title, icon: Icon, children }: { title: string; icon: Rea
   return (
     <div className="bg-card rounded-lg border border-border overflow-hidden">
       <div className="flex items-center gap-2.5 px-6 py-4 border-b border-border">
-        <Icon className="w-4 h-4 text-[#4fc487]" />
+        <Icon className="w-4 h-4 text-[#0763d8]" />
         <h3 className="font-semibold text-foreground text-sm">{title}</h3>
       </div>
       <div className="px-6 py-4">{children}</div>
@@ -140,7 +140,7 @@ function AgencyDashContent() {
             </div>
             <div className="flex items-center gap-3">
               {profile && (
-                <div className="hidden sm:flex items-center gap-1.5 bg-[#4fc487]/20 text-[#4fc487] text-xs font-medium px-3 py-1.5 rounded-full">
+                <div className="hidden sm:flex items-center gap-1.5 bg-[#0763d8]/20 text-[#0763d8] text-xs font-medium px-3 py-1.5 rounded-full">
                   <CheckSquare className="w-3.5 h-3.5" /> Profile complete
                 </div>
               )}
@@ -174,7 +174,7 @@ function AgencyDashContent() {
                   <h2 className="text-lg font-semibold text-foreground mb-2">No profile yet</h2>
                   <p className="text-sm text-muted-foreground mb-6">Complete the agency registration form to build your VA profile.</p>
                   <Link href="/signup/agency">
-                    <Button className="bg-[#4fc487] hover:bg-[#45b078] text-foreground">Register Your Agency</Button>
+                    <Button className="bg-[#0763d8] hover:bg-[#0655b3] text-foreground">Register Your Agency</Button>
                   </Link>
                 </div>
               )}
@@ -240,14 +240,14 @@ function AgencyDashContent() {
                         {agencyCampaigns.map(c => (
                           <Link key={c.id} href={`/creative-library/${c.id}`} className="group">
                             <img src={c.thumbnail} alt="" className="w-full h-28 object-cover rounded-lg mb-1.5" />
-                            <p className="text-xs font-medium text-foreground group-hover:text-[#4fc487] transition-colors truncate">{c.title}</p>
+                            <p className="text-xs font-medium text-foreground group-hover:text-[#0763d8] transition-colors truncate">{c.title}</p>
                             <p className="text-xs text-muted-foreground">{c.brand} · {c.year}</p>
                           </Link>
                         ))}
                       </div>
                       <button
                         onClick={() => setActiveTab('work')}
-                        className="mt-4 w-full text-center text-xs text-[#4fc487] font-medium hover:underline flex items-center justify-center gap-1"
+                        className="mt-4 w-full text-center text-xs text-[#0763d8] font-medium hover:underline flex items-center justify-center gap-1"
                       >
                         Manage all work <ChevronRight className="w-3 h-3" />
                       </button>
@@ -266,12 +266,12 @@ function AgencyDashContent() {
                           </div>
                         )}
                         {profile.website && (
-                          <a href={profile.website.startsWith('http') ? profile.website : `https://${profile.website}`} target="_blank" rel="noreferrer" className="flex items-center gap-2 text-sm text-[#4fc487] hover:underline">
+                          <a href={profile.website.startsWith('http') ? profile.website : `https://${profile.website}`} target="_blank" rel="noreferrer" className="flex items-center gap-2 text-sm text-[#0763d8] hover:underline">
                             <Globe className="w-4 h-4 shrink-0" />{profile.website.replace(/^https?:\/\//, '')}
                           </a>
                         )}
                         {primaryContact?.email && (
-                          <a href={`mailto:${primaryContact.email}`} className="flex items-center gap-2 text-sm text-muted-foreground hover:text-[#4fc487]">
+                          <a href={`mailto:${primaryContact.email}`} className="flex items-center gap-2 text-sm text-muted-foreground hover:text-[#0763d8]">
                             <Mail className="w-4 h-4 shrink-0" />{primaryContact.email}
                           </a>
                         )}
@@ -285,17 +285,17 @@ function AgencyDashContent() {
                       {(profile.linkedin || profile.twitter || profile.instagram) && (
                         <div className="flex items-center gap-3 mt-4 pt-4 border-t border-border">
                           {profile.linkedin && (
-                            <a href={`https://linkedin.com/company/${profile.linkedin}`} target="_blank" rel="noreferrer" className="text-muted-foreground hover:text-[#4fc487]">
+                            <a href={`https://linkedin.com/company/${profile.linkedin}`} target="_blank" rel="noreferrer" className="text-muted-foreground hover:text-[#0763d8]">
                               <Linkedin className="w-4 h-4" />
                             </a>
                           )}
                           {profile.twitter && (
-                            <a href={`https://twitter.com/${profile.twitter}`} target="_blank" rel="noreferrer" className="text-muted-foreground hover:text-[#4fc487]">
+                            <a href={`https://twitter.com/${profile.twitter}`} target="_blank" rel="noreferrer" className="text-muted-foreground hover:text-[#0763d8]">
                               <Twitter className="w-4 h-4" />
                             </a>
                           )}
                           {profile.instagram && (
-                            <a href={`https://instagram.com/${profile.instagram}`} target="_blank" rel="noreferrer" className="text-muted-foreground hover:text-[#4fc487]">
+                            <a href={`https://instagram.com/${profile.instagram}`} target="_blank" rel="noreferrer" className="text-muted-foreground hover:text-[#0763d8]">
                               <Instagram className="w-4 h-4" />
                             </a>
                           )}
@@ -311,7 +311,7 @@ function AgencyDashContent() {
                             <div key={i} className="flex flex-col">
                               <p className="text-sm font-medium text-foreground">{c.firstName} {c.lastName}</p>
                               <p className="text-xs text-muted-foreground">{c.role}</p>
-                              {c.email && <a href={`mailto:${c.email}`} className="text-xs text-[#4fc487] hover:underline mt-0.5">{c.email}</a>}
+                              {c.email && <a href={`mailto:${c.email}`} className="text-xs text-[#0763d8] hover:underline mt-0.5">{c.email}</a>}
                             </div>
                           ))}
                         </div>
@@ -386,7 +386,7 @@ function AgencyDashContent() {
                         value={editDraft.about || ''}
                         onChange={e => setEditDraft(p => ({ ...p, about: e.target.value }))}
                         rows={4}
-                        className="w-full border border-border rounded-lg px-3 py-2.5 text-sm focus:outline-none focus:border-[#4fc487] resize-none"
+                        className="w-full border border-border rounded-lg px-3 py-2.5 text-sm focus:outline-none focus:border-[#0763d8] resize-none"
                         placeholder="Describe your agency…"
                       />
                     </div>
@@ -396,7 +396,7 @@ function AgencyDashContent() {
                         value={editDraft.philosophy || ''}
                         onChange={e => setEditDraft(p => ({ ...p, philosophy: e.target.value }))}
                         rows={3}
-                        className="w-full border border-border rounded-lg px-3 py-2.5 text-sm focus:outline-none focus:border-[#4fc487] resize-none"
+                        className="w-full border border-border rounded-lg px-3 py-2.5 text-sm focus:outline-none focus:border-[#0763d8] resize-none"
                         placeholder="Your agency's philosophy…"
                       />
                     </div>
@@ -459,7 +459,7 @@ function AgencyDashContent() {
                       value={editDraft.specificServices || ''}
                       onChange={e => setEditDraft(p => ({ ...p, specificServices: e.target.value }))}
                       rows={4}
-                      className="w-full border border-border rounded-lg px-3 py-2.5 text-sm focus:outline-none focus:border-[#4fc487] resize-none"
+                      className="w-full border border-border rounded-lg px-3 py-2.5 text-sm focus:outline-none focus:border-[#0763d8] resize-none"
                       placeholder="Describe any unique or specialized services…"
                     />
                   </div>
@@ -474,7 +474,7 @@ function AgencyDashContent() {
                         value={editDraft.aiCurrentTools || ''}
                         onChange={e => setEditDraft(p => ({ ...p, aiCurrentTools: e.target.value }))}
                         rows={3}
-                        className="w-full border border-border rounded-lg px-3 py-2.5 text-sm focus:outline-none focus:border-[#4fc487] resize-none"
+                        className="w-full border border-border rounded-lg px-3 py-2.5 text-sm focus:outline-none focus:border-[#0763d8] resize-none"
                         placeholder="What AI tools does your agency currently use?"
                       />
                     </div>
@@ -484,7 +484,7 @@ function AgencyDashContent() {
                         value={editDraft.aiFuture || ''}
                         onChange={e => setEditDraft(p => ({ ...p, aiFuture: e.target.value }))}
                         rows={3}
-                        className="w-full border border-border rounded-lg px-3 py-2.5 text-sm focus:outline-none focus:border-[#4fc487] resize-none"
+                        className="w-full border border-border rounded-lg px-3 py-2.5 text-sm focus:outline-none focus:border-[#0763d8] resize-none"
                         placeholder="How do you plan to leverage AI in the future?"
                       />
                     </div>
@@ -498,7 +498,7 @@ function AgencyDashContent() {
                   <button onClick={() => setActiveTab('overview')} className="flex items-center gap-1.5 text-sm text-muted-foreground hover:text-foreground">
                     <X className="w-4 h-4" /> Cancel
                   </button>
-                  <Button onClick={handleSave} className="bg-[#4fc487] hover:bg-[#45b078] text-foreground gap-2 text-sm">
+                  <Button onClick={handleSave} className="bg-[#0763d8] hover:bg-[#0655b3] text-foreground gap-2 text-sm">
                     <Save className="w-4 h-4" />{saved ? 'Saved!' : 'Save Changes'}
                   </Button>
                 </div>
@@ -511,7 +511,7 @@ function AgencyDashContent() {
             <div>
               <div className="flex items-center justify-between mb-6">
                 <h2 className="text-xl font-bold text-foreground">Work Portfolio ({agencyCampaigns.length})</h2>
-                <Button className="bg-[#4fc487] hover:bg-[#45b078] text-foreground gap-2 text-sm">
+                <Button className="bg-[#0763d8] hover:bg-[#0655b3] text-foreground gap-2 text-sm">
                   <Plus className="w-4 h-4" /> Add Work
                 </Button>
               </div>
@@ -528,7 +528,7 @@ function AgencyDashContent() {
                     </div>
                   </div>
                 ))}
-                <div className="border-2 border-dashed border-border rounded-xl flex flex-col items-center justify-center p-8 text-muted-foreground hover:border-[#4fc487] hover:text-[#4fc487] transition-colors cursor-pointer min-h-[200px]">
+                <div className="border-2 border-dashed border-border rounded-xl flex flex-col items-center justify-center p-8 text-muted-foreground hover:border-[#0763d8] hover:text-[#0763d8] transition-colors cursor-pointer min-h-[200px]">
                   <Plus className="w-8 h-8 mb-2" />
                   <p className="text-sm font-medium">Add New Work</p>
                 </div>
@@ -540,7 +540,7 @@ function AgencyDashContent() {
           {activeTab === 'analytics' && (
             <div className="bg-card border border-border rounded-xl p-6 shadow-sm">
               <div className="flex items-center gap-2 mb-6">
-                <TrendingUp className="w-5 h-5 text-[#4fc487]" />
+                <TrendingUp className="w-5 h-5 text-[#0763d8]" />
                 <h2 className="font-bold text-foreground">Profile Analytics</h2>
               </div>
               <div className="grid grid-cols-2 sm:grid-cols-4 gap-4 mb-8">
@@ -553,7 +553,7 @@ function AgencyDashContent() {
                   <div key={stat.label} className="bg-muted border border-border rounded-xl p-4 text-center">
                     <p className="text-2xl font-bold text-foreground mb-1">{stat.value}</p>
                     <p className="text-xs text-muted-foreground mb-1">{stat.label}</p>
-                    <p className="text-xs text-[#4fc487] font-medium">{stat.change} this month</p>
+                    <p className="text-xs text-[#0763d8] font-medium">{stat.change} this month</p>
                   </div>
                 ))}
               </div>

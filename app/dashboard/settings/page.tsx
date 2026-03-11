@@ -81,9 +81,9 @@ function SettingsContent() {
                       <div className="px-3 py-2.5 border border-border rounded-lg bg-muted text-sm text-muted-foreground capitalize">{user?.role?.replace('_', ' ')}</div>
                     </div>
                     {saved ? (
-                      <div className="px-4 py-2.5 bg-[#4fc487]/20 text-[#4fc487] rounded-lg text-sm font-medium">Changes saved!</div>
+                      <div className="px-4 py-2.5 bg-[#0763d8]/20 text-[#0763d8] rounded-lg text-sm font-medium">Changes saved!</div>
                     ) : (
-                      <Button onClick={handleSave} className="bg-[#4fc487] hover:bg-[#45b078] text-white">Save Changes</Button>
+                      <Button onClick={handleSave} className="bg-[#0763d8] hover:bg-[#0655b3] text-white">Save Changes</Button>
                     )}
                   </div>
                 </div>
@@ -118,11 +118,11 @@ function SettingsContent() {
                         </div>
                         <label className="relative inline-flex items-center cursor-pointer">
                           <input type="checkbox" defaultChecked className="sr-only peer" />
-                          <div className="w-10 h-6 bg-secondary peer-checked:bg-[#4fc487] rounded-full transition-colors peer-focus:ring-2 peer-focus:ring-[#4fc487]/20 after:content-[''] after:absolute after:top-0.5 after:left-0.5 after:bg-white after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:after:translate-x-4" />
+                          <div className="w-10 h-6 bg-secondary peer-checked:bg-[#0763d8] rounded-full transition-colors peer-focus:ring-2 peer-focus:ring-[#0763d8]/20 after:content-[''] after:absolute after:top-0.5 after:left-0.5 after:bg-white after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:after:translate-x-4" />
                         </label>
                       </div>
                     ))}
-                    <Button className="bg-[#4fc487] hover:bg-[#45b078] text-white">Save Preferences</Button>
+                    <Button className="bg-[#0763d8] hover:bg-[#0655b3] text-white">Save Preferences</Button>
                   </div>
                 </div>
               )}

@@ -62,7 +62,7 @@ export default function CompanyProfilePage() {
         <main className="flex-1 flex items-center justify-center">
           <div className="text-center">
             <h1 className="text-2xl font-serif font-bold mb-2 text-white">Agency not found</h1>
-            <Link href="/directory" className="text-[#4fc487] hover:underline">Back to Directory</Link>
+            <Link href="/directory" className="text-[#0763d8] hover:underline">Back to Directory</Link>
           </div>
         </main>
         <Footer />
@@ -83,7 +83,7 @@ export default function CompanyProfilePage() {
   const awardsData = seededData(company.id + 'awd', 12, 5, company.awards)
 
   const statCards = [
-    { label: 'REVENUE', value: company.turnover || 'N/A', trend: 'up' as const, color: '#4fc487', data: revenueData },
+    { label: 'REVENUE', value: company.turnover || 'N/A', trend: 'up' as const, color: '#0763d8', data: revenueData },
     { label: 'EBITDA', value: company.turnover ? `${parseInt(company.turnover.replace(/[^0-9]/g, '')) * 0.15 | 0}M` : 'N/A', trend: 'up' as const, color: '#3b82f6', data: seededData(company.id + 'ebitda', 12, 30, 100) },
     { label: 'EMPLOYEES', value: company.employees.toLocaleString(), trend: 'down' as const, color: '#e74c3c', data: employeeData },
     { label: 'FOUNDED', value: String(company.founded), trend: null, color: '#a855f7', data: [] },
@@ -121,14 +121,14 @@ export default function CompanyProfilePage() {
                 <p className="text-sm text-white/40 mb-1">{company.services[0]}</p>
                 <div className="flex flex-wrap items-center gap-x-4 text-sm text-white/30">
                   <span className="flex items-center gap-1"><MapPin className="w-3.5 h-3.5" />{company.city}, {company.country}</span>
-                  {company.website && <a href={`https://${company.website}`} target="_blank" rel="noreferrer" className="flex items-center gap-1 text-[#4fc487] hover:underline"><Globe className="w-3.5 h-3.5" />{company.website}</a>}
+                  {company.website && <a href={`https://${company.website}`} target="_blank" rel="noreferrer" className="flex items-center gap-1 text-[#0763d8] hover:underline"><Globe className="w-3.5 h-3.5" />{company.website}</a>}
                 </div>
                 {/* Tags */}
                 <div className="flex flex-wrap gap-1.5 mt-2">
                   {(company.typeTags || company.competencies || []).map(tag => (
                     <span key={tag} className="text-[10px] px-2.5 py-1 rounded-full font-semibold uppercase tracking-wider bg-white/[0.06] text-white/50 border border-white/[0.08]">{tag}</span>
                   ))}
-                  <span className="text-[10px] px-2.5 py-1 rounded-full font-semibold uppercase tracking-wider bg-[#4fc487]/10 text-[#4fc487] border border-[#4fc487]/20">Est. {company.founded}</span>
+                  <span className="text-[10px] px-2.5 py-1 rounded-full font-semibold uppercase tracking-wider bg-[#0763d8]/10 text-[#0763d8] border border-[#0763d8]/20">Est. {company.founded}</span>
                 </div>
               </div>
               {/* Right: Actions */}
@@ -143,8 +143,8 @@ export default function CompanyProfilePage() {
                   {isClientOrMarketer && (
                     <>
                       <Button variant="outline" size="sm" onClick={() => setIsFavourited(!isFavourited)}
-                        className={`gap-1 rounded-full text-xs ${isFavourited ? 'border-[#4fc487] text-[#4fc487] bg-[#4fc487]/10' : 'border-white/20 text-white/60 hover:bg-white/10'}`}>
-                        <Heart className={`w-3 h-3 ${isFavourited ? 'fill-[#4fc487]' : ''}`} />{isFavourited ? 'Favourited' : 'Favourite'}
+                        className={`gap-1 rounded-full text-xs ${isFavourited ? 'border-[#0763d8] text-[#0763d8] bg-[#0763d8]/10' : 'border-white/20 text-white/60 hover:bg-white/10'}`}>
+                        <Heart className={`w-3 h-3 ${isFavourited ? 'fill-[#0763d8]' : ''}`} />{isFavourited ? 'Favourited' : 'Favourite'}
                       </Button>
                       <Button variant="outline" size="sm" className="gap-1 border-white/20 text-white/60 hover:bg-white/10 rounded-full text-xs">
                         <Bookmark className="w-3 h-3" />Add to List
@@ -164,7 +164,7 @@ export default function CompanyProfilePage() {
               {PROFILE_TABS.map(tab => (
                 <button key={tab.id} onClick={() => setActiveTab(tab.id)}
                   className={`py-3 px-4 text-sm font-medium border-b-[3px] transition-colors whitespace-nowrap ${
-                    activeTab === tab.id ? 'border-[#4fc487] text-[#4fc487]' : 'border-transparent text-white/40 hover:text-white/70'
+                    activeTab === tab.id ? 'border-[#0763d8] text-[#0763d8]' : 'border-transparent text-white/40 hover:text-white/70'
                   }`}>
                   {tab.label}
                 </button>
@@ -194,7 +194,7 @@ export default function CompanyProfilePage() {
                     <h2 className="text-base font-bold mb-4 text-white">Similar Agencies</h2>
                     <div className="flex gap-4 overflow-x-auto pb-2 scrollbar-hide">
                       {similarAgencies.map(a => (
-                        <Link key={a.id} href={`/directory/${a.id}`} className="min-w-[150px] bg-white/[0.03] border border-white/[0.06] rounded-xl p-4 hover:border-[#4fc487]/30 transition-all text-center flex flex-col items-center">
+                        <Link key={a.id} href={`/directory/${a.id}`} className="min-w-[150px] bg-white/[0.03] border border-white/[0.06] rounded-xl p-4 hover:border-[#0763d8]/30 transition-all text-center flex flex-col items-center">
                           <div className="w-14 h-14 bg-white rounded-lg border border-white/[0.1] flex items-center justify-center mb-2 overflow-hidden">
                             <img src={a.logo} alt={a.name} className="w-full h-full object-contain p-1" />
                           </div>
@@ -221,7 +221,7 @@ export default function CompanyProfilePage() {
                   <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
                     {company.contactsByDept.map(dept => (
                       <div key={dept.department} className="glass-card p-5">
-                        <h3 className="font-bold text-xs text-[#4fc487] uppercase tracking-wider mb-4 border-b border-white/[0.06] pb-3">{dept.department}</h3>
+                        <h3 className="font-bold text-xs text-[#0763d8] uppercase tracking-wider mb-4 border-b border-white/[0.06] pb-3">{dept.department}</h3>
                         <div className="space-y-4">
                           {dept.contacts.map(c => (
                             <div key={c.name} className="flex items-start gap-3">
@@ -229,7 +229,7 @@ export default function CompanyProfilePage() {
                               <div className="min-w-0">
                                 <p className="text-sm font-bold text-white">{c.name}</p>
                                 <p className="text-xs text-white/30">{c.role}</p>
-                                {c.email && <a href={`mailto:${c.email}`} className="text-xs text-[#4fc487] hover:underline">{c.email}</a>}
+                                {c.email && <a href={`mailto:${c.email}`} className="text-xs text-[#0763d8] hover:underline">{c.email}</a>}
                               </div>
                             </div>
                           ))}
@@ -243,7 +243,7 @@ export default function CompanyProfilePage() {
                       <div key={p.id} className="glass-card p-4 text-center">
                         <div className="w-16 h-16 rounded-full bg-white/[0.06] mx-auto mb-3 overflow-hidden"><img src={p.photo} alt={p.name} className="w-full h-full object-cover" /></div>
                         <h3 className="text-sm font-bold text-white mb-0.5">{p.name}</h3>
-                        <p className="text-xs text-[#4fc487]">{p.role}</p>
+                        <p className="text-xs text-[#0763d8]">{p.role}</p>
                       </div>
                     ))}
                   </div>
@@ -264,7 +264,7 @@ export default function CompanyProfilePage() {
                         <p className="text-2xl font-bold text-white">{card.value}</p>
                         <p className="text-[10px] uppercase tracking-wider text-white/30 font-semibold mb-1">{card.label}</p>
                         <div className="flex items-center gap-1 mt-2">
-                          {card.trend === 'up' ? <TrendingUp className="w-4 h-4 text-[#4fc487]" /> : card.trend === 'down' ? <TrendingDown className="w-4 h-4 text-red-400" /> : null}
+                          {card.trend === 'up' ? <TrendingUp className="w-4 h-4 text-[#0763d8]" /> : card.trend === 'down' ? <TrendingDown className="w-4 h-4 text-red-400" /> : null}
                           <span className="text-xs text-white/50">vs last year</span>
                         </div>
                       </div>
@@ -277,7 +277,7 @@ export default function CompanyProfilePage() {
                     {company.clients.map((client, i) => {
                       const sector = company.clientIndustries?.[i % (company.clientIndustries?.length || 1)] || null
                       return (
-                        <div key={client} className="bg-white/[0.03] border border-white/[0.06] rounded-xl p-4 hover:border-[#4fc487]/20 transition-all">
+                        <div key={client} className="bg-white/[0.03] border border-white/[0.06] rounded-xl p-4 hover:border-[#0763d8]/20 transition-all">
                           <div className="w-10 h-10 bg-white/[0.06] rounded-lg flex items-center justify-center mb-3 text-xs font-bold text-white/30">{client.split(' ').map(w => w[0]).join('').substring(0, 2).toUpperCase()}</div>
                           <p className="text-sm font-bold text-white mb-1">{client}</p>
                           {sector && <span className="text-[10px] bg-white/[0.06] text-white/30 px-2 py-0.5 rounded-full">{sector}</span>}
@@ -294,7 +294,7 @@ export default function CompanyProfilePage() {
               <div className="space-y-6">
                 <section className="glass-card p-6">
                   <h2 className="text-base font-bold mb-3 text-white">Services</h2>
-                  <div className="flex flex-wrap gap-2 mb-5">{company.services.map(s => <Badge key={s} className="bg-[#4fc487]/10 text-[#4fc487] border-[#4fc487]/20 rounded-full">{s}</Badge>)}</div>
+                  <div className="flex flex-wrap gap-2 mb-5">{company.services.map(s => <Badge key={s} className="bg-[#0763d8]/10 text-[#0763d8] border-[#0763d8]/20 rounded-full">{s}</Badge>)}</div>
                 </section>
                 <section className="glass-card p-6">
                   <h2 className="text-base font-bold mb-3 text-white">Sectors</h2>
@@ -331,7 +331,7 @@ export default function CompanyProfilePage() {
                       <div key={p.id} className="glass-card p-4 text-center">
                         <div className="w-16 h-16 rounded-full bg-white/[0.06] mx-auto mb-3 overflow-hidden"><img src={p.photo} alt={p.name} className="w-full h-full object-cover" /></div>
                         <h3 className="text-sm font-bold text-white mb-0.5">{p.name}</h3>
-                        <p className="text-xs text-[#4fc487]">{p.role}</p>
+                        <p className="text-xs text-[#0763d8]">{p.role}</p>
                       </div>
                     ))}
                   </div>
@@ -385,7 +385,7 @@ export default function CompanyProfilePage() {
                   {campaignsList.length > 0 ? (
                     <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
                       {campaignsList.slice(0, 6).map(c => (
-                        <div key={c.id} className="glass-card overflow-hidden hover:border-[#4fc487]/30 transition-all group">
+                        <div key={c.id} className="glass-card overflow-hidden hover:border-[#0763d8]/30 transition-all group">
                           <div className="aspect-video bg-[#0a0c18] overflow-hidden">
                             <img src={c.thumbnail} alt={c.title} className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300 opacity-90" />
                           </div>

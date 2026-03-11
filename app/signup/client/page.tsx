@@ -62,8 +62,8 @@ export default function ClientSignupPage() {
             {STEPS.map((step, i) => (
               <div key={step.label} className="flex items-center gap-2">
                 <div className={`w-8 h-8 rounded-full flex items-center justify-center text-sm font-bold transition-colors ${
-                  i < currentStep ? 'bg-[#4fc487] text-white' :
-                  i === currentStep ? 'bg-[#4fc487]/20 text-[#4fc487] border border-[#4fc487]/40' :
+                  i < currentStep ? 'bg-[#0763d8] text-white' :
+                  i === currentStep ? 'bg-[#0763d8]/20 text-[#0763d8] border border-[#0763d8]/40' :
                   'bg-white/[0.06] text-white/30'
                 }`}>
                   {i < currentStep ? <Check className="w-4 h-4" /> : i + 1}
@@ -81,8 +81,8 @@ export default function ClientSignupPage() {
             {currentStep === 0 && (
               <div className="space-y-5">
                 <div className="flex items-center gap-3 mb-6">
-                  <div className="w-10 h-10 bg-[#4fc487]/10 rounded-xl flex items-center justify-center">
-                    <Briefcase className="w-5 h-5 text-[#4fc487]" />
+                  <div className="w-10 h-10 bg-[#0763d8]/10 rounded-xl flex items-center justify-center">
+                    <Briefcase className="w-5 h-5 text-[#0763d8]" />
                   </div>
                   <div>
                     <h2 className="text-xl font-bold text-white">Company Information</h2>
@@ -184,7 +184,7 @@ export default function ClientSignupPage() {
                     <button key={interest} onClick={() => toggleInterest(interest)}
                       className={`text-left px-4 py-3 rounded-xl text-sm transition-all ${
                         formData.interests.includes(interest)
-                          ? 'bg-[#4fc487]/15 text-[#4fc487] border border-[#4fc487]/30'
+                          ? 'bg-[#0763d8]/15 text-[#0763d8] border border-[#0763d8]/30'
                           : 'bg-white/[0.04] text-white/60 border border-white/[0.08] hover:border-white/20'
                       }`}
                     >
@@ -215,12 +215,12 @@ export default function ClientSignupPage() {
               )}
               {currentStep < STEPS.length - 1 ? (
                 <Button onClick={() => setCurrentStep(currentStep + 1)}
-                  className="bg-[#4fc487] hover:bg-[#45b078] text-white rounded-full">
+                  className="bg-[#0763d8] hover:bg-[#0655b3] text-white rounded-full">
                   Next <ChevronRight className="w-4 h-4 ml-1" />
                 </Button>
               ) : (
                 <Button onClick={handleSubmit}
-                  className="bg-[#4fc487] hover:bg-[#45b078] text-white rounded-full">
+                  className="bg-[#0763d8] hover:bg-[#0655b3] text-white rounded-full">
                   Submit Registration <Check className="w-4 h-4 ml-1" />
                 </Button>
               )}

@@ -55,11 +55,11 @@ export default function ConsultantDetailPage({ params }: { params: Promise<{ id:
             <div className="space-y-6">
               <div className="bg-white rounded-xl p-6 shadow-sm">
                 <h3 className="font-bold text-[#1a1a1a] mb-4">Contact</h3>
-                <Button className="w-full bg-[#4fc487] hover:bg-[#45b078] text-white gap-2">
+                <Button className="w-full bg-[#0763d8] hover:bg-[#0655b3] text-white gap-2">
                   <Mail className="w-4 h-4" /> Get in Touch
                 </Button>
                 {consultant.website && (
-                  <a href={`https://${consultant.website}`} target="_blank" rel="noopener noreferrer" className="flex items-center gap-1.5 text-[#4fc487] hover:underline text-sm mt-3">
+                  <a href={`https://${consultant.website}`} target="_blank" rel="noopener noreferrer" className="flex items-center gap-1.5 text-[#0763d8] hover:underline text-sm mt-3">
                     <Globe className="w-4 h-4" />{consultant.website}
                   </a>
                 )}

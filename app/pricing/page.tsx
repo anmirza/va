@@ -29,7 +29,7 @@ const plans = [
     price: '€49',
     period: '/month',
     description: 'Ideal for growing agencies looking to increase visibility.',
-    color: '#4fc487',
+    color: '#0763d8',
     highlight: true,
     cta: 'Start Free Trial',
     ctaHref: '/signup/agency',
@@ -85,10 +85,10 @@ export default function PricingPage() {
         <div className="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8 py-16">
           <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
             {plans.map(plan => (
-              <div key={plan.name} className={`relative rounded-2xl p-6 flex flex-col ${plan.highlight ? 'bg-[#2e3843] text-white ring-2 ring-[#4fc487] shadow-lg' : 'bg-white shadow-sm'}`}>
+              <div key={plan.name} className={`relative rounded-2xl p-6 flex flex-col ${plan.highlight ? 'bg-[#2e3843] text-white ring-2 ring-[#0763d8] shadow-lg' : 'bg-white shadow-sm'}`}>
                 {plan.highlight && (
                   <div className="absolute -top-3 left-1/2 -translate-x-1/2">
-                    <span className="bg-[#4fc487] text-white text-xs font-bold px-4 py-1 rounded-full">Most Popular</span>
+                    <span className="bg-[#0763d8] text-white text-xs font-bold px-4 py-1 rounded-full">Most Popular</span>
                   </div>
                 )}
                 <div className="mb-6">
@@ -104,7 +104,7 @@ export default function PricingPage() {
                   <div className="space-y-2.5">
                     {plan.features.map(f => (
                       <div key={f} className="flex items-start gap-2.5 text-sm">
-                        <Check className={`w-4 h-4 mt-0.5 shrink-0 ${plan.highlight ? 'text-[#4fc487]' : 'text-[#4fc487]'}`} />
+                        <Check className={`w-4 h-4 mt-0.5 shrink-0 ${plan.highlight ? 'text-[#0763d8]' : 'text-[#0763d8]'}`} />
                         <span className={plan.highlight ? 'text-white/90' : 'text-[#444]'}>{f}</span>
                       </div>
                     ))}
@@ -121,7 +121,7 @@ export default function PricingPage() {
                   <Button
                     className={`w-full font-medium ${
                       plan.ctaStyle === 'filled'
-                        ? 'bg-[#4fc487] hover:bg-[#45b078] text-white'
+                        ? 'bg-[#0763d8] hover:bg-[#0655b3] text-white'
                         : plan.ctaStyle === 'yellow'
                         ? 'bg-[#f5d742] hover:bg-[#e6c93c] text-[#1a1a1a]'
                         : 'border-2 border-[#d8dce2] bg-transparent text-[#1a1a1a] hover:bg-[#eef0f3]'

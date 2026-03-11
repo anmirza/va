@@ -114,10 +114,10 @@ export default function SignupPage() {
                     <button
                       key={role.id}
                       onClick={() => handleRoleSelect(role)}
-                      className="w-full glass-card p-6 flex items-start gap-4 hover:border-[#4fc487]/40 transition-all text-left"
+                      className="w-full glass-card p-6 flex items-start gap-4 hover:border-[#0763d8]/40 transition-all text-left"
                     >
-                      <div className="w-12 h-12 bg-[#4fc487]/10 rounded-xl flex items-center justify-center shrink-0">
-                        <Icon className="w-6 h-6 text-[#4fc487]" />
+                      <div className="w-12 h-12 bg-[#0763d8]/10 rounded-xl flex items-center justify-center shrink-0">
+                        <Icon className="w-6 h-6 text-[#0763d8]" />
                       </div>
                       <div>
                         <p className="font-bold text-white mb-1">{role.title}</p>
@@ -129,7 +129,7 @@ export default function SignupPage() {
               </div>
               <p className="text-center text-sm text-white/40 mt-6">
                 Already have an account?{' '}
-                <Link href="/login" className="text-[#4fc487] hover:underline">Sign in</Link>
+                <Link href="/login" className="text-[#0763d8] hover:underline">Sign in</Link>
               </p>
             </div>
           ) : (
@@ -143,7 +143,7 @@ export default function SignupPage() {
               <div className="mb-6">
                 <h2 className="text-2xl font-bold text-white mb-1">Create your account</h2>
                 <p className="text-sm text-white/40">
-                  Signing up as <span className="font-medium text-[#4fc487]">{selectedRole?.title}</span>
+                  Signing up as <span className="font-medium text-[#0763d8]">{selectedRole?.title}</span>
                 </p>
               </div>
               <form onSubmit={handleSubmit} className="space-y-4">
@@ -197,7 +197,7 @@ export default function SignupPage() {
                 )}
                 <Button
                   type="submit"
-                  className="w-full h-11 bg-[#4fc487] hover:bg-[#45b078] text-white rounded-xl"
+                  className="w-full h-11 bg-[#0763d8] hover:bg-[#0655b3] text-white rounded-xl"
                   disabled={isLoading}
                 >
                   {isLoading ? 'Creating account...' : 'Create Account'}

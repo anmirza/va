@@ -97,10 +97,10 @@ function ProductionContent() {
                   </div>
                 </div>
                 <div className="p-5">
-                  <h3 className="font-bold text-foreground mb-3 group-hover:text-[#4fc487] transition-colors">{company.name}</h3>
+                  <h3 className="font-bold text-foreground mb-3 group-hover:text-[#0763d8] transition-colors">{company.name}</h3>
                   <div className="space-y-1.5 text-sm text-muted-foreground mb-3">
-                    <div className="flex items-center gap-2"><MapPin className="w-4 h-4 text-[#4fc487]" />{company.city}, {company.country}</div>
-                    <div className="flex items-center gap-2"><Users className="w-4 h-4 text-[#4fc487]" />{company.employees} team members</div>
+                    <div className="flex items-center gap-2"><MapPin className="w-4 h-4 text-[#0763d8]" />{company.city}, {company.country}</div>
+                    <div className="flex items-center gap-2"><Users className="w-4 h-4 text-[#0763d8]" />{company.employees} team members</div>
                   </div>
                   <div className="flex flex-wrap gap-1">
                     {company.specialties.slice(0, 3).map(s => (
@@ -115,7 +115,7 @@ function ProductionContent() {
           {filtered.length === 0 && (
             <div className="text-center py-20 text-muted-foreground">
               <p className="text-lg font-medium mb-2">No production companies found.</p>
-              <button onClick={() => { setQuery(''); setSpecialty('All') }} className="text-sm text-[#4fc487] hover:underline">Clear filters</button>
+              <button onClick={() => { setQuery(''); setSpecialty('All') }} className="text-sm text-[#0763d8] hover:underline">Clear filters</button>
             </div>
           )}
         </div>

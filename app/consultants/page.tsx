@@ -88,8 +88,8 @@ function ConsultantsContent() {
               <Link key={consultant.id} href={`/consultants/${consultant.id}`} className="group bg-white rounded-xl shadow-sm p-6 hover:shadow-md transition-shadow flex gap-5">
                 <img src={consultant.photo} alt={consultant.name} className="w-20 h-20 rounded-xl object-cover shrink-0" />
                 <div className="flex-1 min-w-0">
-                  <h3 className="font-bold text-[#1a1a1a] group-hover:text-[#4fc487] transition-colors">{consultant.name}</h3>
-                  <p className="text-sm text-[#4fc487] mb-1">{consultant.firm}</p>
+                  <h3 className="font-bold text-[#1a1a1a] group-hover:text-[#0763d8] transition-colors">{consultant.name}</h3>
+                  <p className="text-sm text-[#0763d8] mb-1">{consultant.firm}</p>
                   <div className="flex items-center gap-1 text-sm text-[#666] mb-3">
                     <MapPin className="w-3.5 h-3.5" />{consultant.city}, {consultant.country}
                   </div>
@@ -106,7 +106,7 @@ function ConsultantsContent() {
           {filtered.length === 0 && (
             <div className="text-center py-20 text-[#666]">
               <p className="text-lg font-medium mb-2">No consultants found.</p>
-              <button onClick={() => { setQuery(''); setExpertise('All') }} className="text-sm text-[#4fc487] hover:underline">Clear filters</button>
+              <button onClick={() => { setQuery(''); setExpertise('All') }} className="text-sm text-[#0763d8] hover:underline">Clear filters</button>
             </div>
           )}
         </div>

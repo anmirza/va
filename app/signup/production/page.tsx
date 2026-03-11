@@ -15,16 +15,17 @@ const STEPS = [
   { id: 1, label: 'General Info' },
   { id: 2, label: 'Organisation' },
   { id: 3, label: 'Address' },
-  { id: 4, label: 'Contacts' },
-  { id: 5, label: 'Social Media' },
-  { id: 6, label: 'Turnover & Clients' },
-  { id: 7, label: 'Competencies' },
-  { id: 8, label: 'Sectors' },
-  { id: 9, label: 'Post-Production' },
-  { id: 10, label: 'People & Directors' },
-  { id: 11, label: 'Awards & CSR' },
-  { id: 12, label: 'About & AI' },
-  { id: 13, label: 'Attachments' },
+  { id: 4, label: 'About' },
+  { id: 5, label: 'Contacts' },
+  { id: 6, label: 'Social Media' },
+  { id: 7, label: 'Turnover & Clients' },
+  { id: 8, label: 'Competencies' },
+  { id: 9, label: 'Sectors' },
+  { id: 10, label: 'Post-Production' },
+  { id: 11, label: 'People & Directors' },
+  { id: 12, label: 'Awards & CSR' },
+  { id: 13, label: 'Governance & AI' },
+  { id: 14, label: 'Attachments' },
 ]
 
 const EMPLOYEE_RANGES = ['1 to 10', '11 to 50', '51 to 100', '101 to 250', '251 to 400', '401 +']
@@ -79,6 +80,7 @@ export default function ProductionSignupPage() {
   const [employees, setEmployees] = useState('')
   const [companyLevel, setCompanyLevel] = useState('')
   const [parentCompany, setParentCompany] = useState('')
+  const [category, setCategory] = useState('')
   const [currency, setCurrency] = useState('Euro - EUR')
   const [tradeOrganizations, setTradeOrganizations] = useState('')
 
@@ -89,8 +91,8 @@ export default function ProductionSignupPage() {
   const [city, setCity] = useState('')
   const [country, setCountry] = useState('')
 
-  // Step 4 — Contacts
-  const [contacts, setContacts] = useState(
+  // Step 5 — Contacts
+  const [contacts, setContacts] = useState<{ role: string; firstName: string; lastName: string; linkedin: string; telephone: string; mobile: string; email: string }[]>(
     CONTACT_ROLES.map(role => ({ role, firstName: '', lastName: '', linkedin: '', telephone: '', mobile: '', email: '' }))
   )
 
@@ -112,13 +114,15 @@ export default function ProductionSignupPage() {
   const [financials, setFinancials] = useState<Record<string, string>>({})
   const [clients, setClients] = useState([{ name: '', industry: '', activities: '', year: '', turnover: '', incidence: '', exclusivity: false }])
   const [workedWithClient, setWorkedWithClient] = useState<boolean | null>(null)
+  const [clientPitch, setClientPitch] = useState([{ division: '', activities: '', year: '', turnover: '', incidence: '' }])
+  const [clientDuration, setClientDuration] = useState('')
 
   // Step 7 — Competencies
   const [competencies, setCompetencies] = useState<Record<string, string>>({})
   const [capabilityAllocation, setCapabilityAllocation] = useState<Record<string, string>>({})
 
   // Step 8 — Sectors
-  const [selectedSectors, setSelectedSectors] = useState<Record<string, boolean>>({})
+  const [sectorPercentages, setSectorPercentages] = useState<Record<string, string>>({})
 
   // Step 9 — Post-Production
   const [hasInHousePost, setHasInHousePost] = useState<boolean | null>(null)
@@ -180,13 +184,13 @@ export default function ProductionSignupPage() {
     await new Promise(r => setTimeout(r, 1500))
     const profile = {
       businessName, dunsNumber, vatNumber, legalForm, companyRegNumber, yearEstablished,
-      employees, companyLevel, parentCompany, currency, tradeOrganizations,
+      employees, companyLevel, parentCompany, category, currency, tradeOrganizations,
       countryCoverage, address, postcode, city, country,
       contacts,
       website, twitter, facebook, linkedin, instagram, tiktok,
-      financials, clients, workedWithClient,
+      financials, clients, workedWithClient, clientPitch, clientDuration,
       competencies, capabilityAllocation,
-      selectedSectors,
+      sectorPercentages,
       hasInHousePost, postServices, outsourcedPartners, subcontracts, outsourcedActivities,
       people, permanentEmployees, freelancers, directors, investments,
       awards, csr,
@@ -233,9 +237,9 @@ export default function ProductionSignupPage() {
               <div key={s.id} className="flex items-center flex-shrink-0">
                 <button
                   onClick={() => step > s.id && setStep(s.id)}
-                  className={`flex items-center gap-1.5 px-2.5 py-2 rounded-lg text-xs font-medium transition-colors ${s.id === step ? 'bg-[#4fc487] text-white' : s.id < step ? 'text-[#4fc487] cursor-pointer hover:bg-white/[0.06]' : 'text-white/30 cursor-default'}`}
+                  className={`flex items-center gap-1.5 px-2.5 py-2 rounded-lg text-xs font-medium transition-colors ${s.id === step ? 'bg-[#0763d8] text-white' : s.id < step ? 'text-[#0763d8] cursor-pointer hover:bg-white/[0.06]' : 'text-white/30 cursor-default'}`}
                 >
-                  <span className={`w-5 h-5 rounded-full flex items-center justify-center text-xs font-bold flex-shrink-0 ${s.id < step ? 'bg-[#4fc487] text-white' : s.id === step ? 'bg-white text-[#02030E]' : 'bg-white/[0.08] text-white/30'}`}>
+                  <span className={`w-5 h-5 rounded-full flex items-center justify-center text-xs font-bold flex-shrink-0 ${s.id < step ? 'bg-[#0763d8] text-white' : s.id === step ? 'bg-white text-[#02030E]' : 'bg-white/[0.08] text-white/30'}`}>
                     {s.id < step ? <Check className="w-3 h-3" /> : s.id}
                   </span>
                   <span className="hidden md:inline">{s.label}</span>
@@ -245,7 +249,7 @@ export default function ProductionSignupPage() {
             ))}
           </div>
           <div className="mt-3 h-1.5 bg-white/[0.06] rounded-full">
-            <div className="h-full bg-[#4fc487] rounded-full transition-all duration-500" style={{ width: `${((step - 1) / (STEPS.length - 1)) * 100}%` }} />
+            <div className="h-full bg-[#0763d8] rounded-full transition-all duration-500" style={{ width: `${((step - 1) / (STEPS.length - 1)) * 100}%` }} />
           </div>
         </div>
 
@@ -283,7 +287,7 @@ export default function ProductionSignupPage() {
             <div>
               <StepHeader icon="🏗️" title="Organisation & Structure" subtitle="Your company's size and corporate position" />
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-5">
-                <FormField label="Number of Employees" required>
+                <FormField label="# of Employees" required>
                   <select value={employees} onChange={e => setEmployees(e.target.value)} className={selectCls}>
                     <option value="">Select range</option>
                     {EMPLOYEE_RANGES.map(r => <option key={r}>{r}</option>)}
@@ -298,12 +302,15 @@ export default function ProductionSignupPage() {
                 <FormField label="Parent Company Name">
                   <Input value={parentCompany} onChange={e => setParentCompany(e.target.value)} placeholder="If part of a group" />
                 </FormField>
-                <FormField label="Currency">
+                <FormField label="Category">
+                  <Input value={category} onChange={e => setCategory(e.target.value)} placeholder="e.g. Production Company" />
+                </FormField>
+                <FormField label="Agency Currency">
                   <select value={currency} onChange={e => setCurrency(e.target.value)} className={selectCls}>
                     {CURRENCIES.map(c => <option key={c}>{c}</option>)}
                   </select>
                 </FormField>
-                <FormField label="Trade Organisations" className="sm:col-span-2">
+                <FormField label="Trade Organizations">
                   <Input value={tradeOrganizations} onChange={e => setTradeOrganizations(e.target.value)} placeholder="e.g. APA, AICP, TPN" />
                 </FormField>
               </div>
@@ -337,21 +344,60 @@ export default function ProductionSignupPage() {
             </div>
           )}
 
-          {/* STEP 4 — Contacts */}
+          {/* STEP 4 — About */}
           {step === 4 && (
             <div>
+              <StepHeader icon="✍️" title="About" subtitle="Describe your company and network" />
+              <div className="space-y-6">
+                <FormField label="About Your Production House">
+                  <textarea value={about} onChange={e => setAbout(e.target.value)} rows={4} className={textareaCls} placeholder="A brief overview of your company..." />
+                </FormField>
+                <FormField label="Philosophy & Competitive Advantages">
+                  <textarea value={philosophy} onChange={e => setPhilosophy(e.target.value)} rows={3} className={textareaCls} placeholder="What makes you different?" />
+                </FormField>
+                <FormField label="Network Description">
+                  <textarea value={networkDescription} onChange={e => setNetworkDescription(e.target.value)} rows={2} className={textareaCls} placeholder="Your production network..." />
+                </FormField>
+                <FormField label="Local Representation">
+                  <textarea value={localRepresentation} onChange={e => setLocalRepresentation(e.target.value)} rows={2} className={textareaCls} placeholder="Local offices or representatives..." />
+                </FormField>
+              </div>
+            </div>
+          )}
+
+          {/* STEP 5 — Contacts */}
+          {step === 5 && (
+            <div>
               <StepHeader icon="👤" title="Contact Details" subtitle="Key people at your production house" />
+              {/* Key Contacts */}
+              <div className="flex items-center justify-between mb-4">
+                <p className="text-xs font-bold text-white/60 uppercase tracking-widest">Key Contacts</p>
+                <Button type="button" variant="outline" onClick={() => setContacts(p => [...p, { role: 'Additional Contact', firstName: '', lastName: '', email: '', linkedin: '', telephone: '', mobile: '' }])} className="text-xs h-8 px-3">
+                  <Plus className="w-3 h-3 mr-1" /> Add Contact
+                </Button>
+              </div>
               <div className="space-y-8">
                 {contacts.map((contact, idx) => (
-                  <div key={contact.role} className="border border-white/[0.1] rounded-xl p-5">
-                    <p className="text-sm font-bold text-white/70 mb-4 uppercase tracking-wide">{contact.role}</p>
+                  <div key={idx} className="border border-white/[0.1] rounded-xl p-5">
+                    <div className="flex items-center justify-between mb-4">
+                      {idx >= CONTACT_ROLES.length ? (
+                        <Input value={contact.role} onChange={e => setContacts(p => p.map((c, i) => i === idx ? { ...c, role: e.target.value } : c))} placeholder="Role Name" className="max-w-[200px] h-8 text-sm font-bold bg-transparent border-b border-white/20 rounded-none px-0 text-white/70 uppercase tracking-wide focus-visible:ring-0 focus-visible:border-white/50" />
+                      ) : (
+                        <p className="text-sm font-bold text-white/70 uppercase tracking-wide">{contact.role}</p>
+                      )}
+                      {idx >= CONTACT_ROLES.length && (
+                        <button onClick={() => setContacts(p => p.filter((_, i) => i !== idx))} className="text-red-400 hover:text-red-500 transition-colors">
+                          <Trash2 className="w-4 h-4" />
+                        </button>
+                      )}
+                    </div>
                     <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-                      <FormField label="First Name"><Input value={contact.firstName} onChange={e => updateContact(idx, 'firstName', e.target.value)} placeholder="First name" /></FormField>
-                      <FormField label="Last Name"><Input value={contact.lastName} onChange={e => updateContact(idx, 'lastName', e.target.value)} placeholder="Last name" /></FormField>
-                      <FormField label="LinkedIn URL"><Input value={contact.linkedin} onChange={e => updateContact(idx, 'linkedin', e.target.value)} placeholder="linkedin.com/in/..." /></FormField>
-                      <FormField label="Email"><Input type="email" value={contact.email} onChange={e => updateContact(idx, 'email', e.target.value)} placeholder="email@company.com" /></FormField>
-                      <FormField label="Telephone"><Input value={contact.telephone} onChange={e => updateContact(idx, 'telephone', e.target.value)} placeholder="+44 20 ..." /></FormField>
-                      <FormField label="Mobile"><Input value={contact.mobile} onChange={e => updateContact(idx, 'mobile', e.target.value)} placeholder="+44 7..." /></FormField>
+                      <FormField label="First Name"><Input value={contact.firstName} onChange={e => setContacts(p => p.map((c, i) => i === idx ? { ...c, firstName: e.target.value } : c))} placeholder="First name" /></FormField>
+                      <FormField label="Last Name"><Input value={contact.lastName} onChange={e => setContacts(p => p.map((c, i) => i === idx ? { ...c, lastName: e.target.value } : c))} placeholder="Last name" /></FormField>
+                      <FormField label="LinkedIn URL"><Input value={contact.linkedin} onChange={e => setContacts(p => p.map((c, i) => i === idx ? { ...c, linkedin: e.target.value } : c))} placeholder="linkedin.com/in/..." /></FormField>
+                      <FormField label="Email"><Input type="email" value={contact.email} onChange={e => setContacts(p => p.map((c, i) => i === idx ? { ...c, email: e.target.value } : c))} placeholder="email@company.com" /></FormField>
+                      <FormField label="Telephone"><Input value={contact.telephone} onChange={e => setContacts(p => p.map((c, i) => i === idx ? { ...c, telephone: e.target.value } : c))} placeholder="+44 20 ..." /></FormField>
+                      <FormField label="Mobile"><Input value={contact.mobile} onChange={e => setContacts(p => p.map((c, i) => i === idx ? { ...c, mobile: e.target.value } : c))} placeholder="+44 7..." /></FormField>
                     </div>
                   </div>
                 ))}
@@ -359,8 +405,8 @@ export default function ProductionSignupPage() {
             </div>
           )}
 
-          {/* STEP 5 — Social Media */}
-          {step === 5 && (
+          {/* STEP 6 — Social Media */}
+          {step === 6 && (
             <div>
               <StepHeader icon="🔗" title="Social Media & Online Presence" subtitle="Add your official profiles and website" />
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-5">
@@ -384,8 +430,8 @@ export default function ProductionSignupPage() {
             </div>
           )}
 
-          {/* STEP 6 — Turnover & Clients */}
-          {step === 6 && (
+          {/* STEP 7 — Turnover & Clients */}
+          {step === 7 && (
             <div>
               <StepHeader icon="💰" title="Turnover & Clients" subtitle="Financial data in EUR — Annual Revenue and EBITDA per region and year" />
               <p className="text-xs text-[#999] mb-6">Please provide revenue in euros using full numeric format (e.g. 12345678)</p>
@@ -410,7 +456,7 @@ export default function ProductionSignupPage() {
                                 placeholder="0"
                                 value={financials[`${year}_${region}_revenue`] || ''}
                                 onChange={e => updateFinancials(year, region, 'revenue', e.target.value)}
-                                className="w-full text-center text-xs border border-white/[0.12] rounded px-2 py-1.5 bg-white/[0.04] text-white focus:outline-none focus:ring-1 focus:ring-[#4fc487]"
+                                className="w-full text-center text-xs border border-white/[0.12] rounded px-2 py-1.5 bg-white/[0.04] text-white focus:outline-none focus:ring-1 focus:ring-[#0763d8]"
                               />
                             </td>
                           ))}
@@ -424,7 +470,7 @@ export default function ProductionSignupPage() {
                                 placeholder="0"
                                 value={financials[`${year}_${region}_ebita`] || ''}
                                 onChange={e => updateFinancials(year, region, 'ebita', e.target.value)}
-                                className="w-full text-center text-xs border border-white/[0.12] rounded px-2 py-1.5 bg-white/[0.04] text-white focus:outline-none focus:ring-1 focus:ring-[#4fc487]"
+                                className="w-full text-center text-xs border border-white/[0.12] rounded px-2 py-1.5 bg-white/[0.04] text-white focus:outline-none focus:ring-1 focus:ring-[#0763d8]"
                               />
                             </td>
                           ))}
@@ -473,7 +519,7 @@ export default function ProductionSignupPage() {
                         ))}
                         <FormField label="Exclusivity">
                           <label className="flex items-center gap-2 mt-2 cursor-pointer">
-                            <input type="checkbox" checked={client.exclusivity} onChange={e => setClients(p => p.map((c, idx) => idx === i ? { ...c, exclusivity: e.target.checked } : c))} className="w-4 h-4 accent-[#4fc487]" />
+                            <input type="checkbox" checked={client.exclusivity} onChange={e => setClients(p => p.map((c, idx) => idx === i ? { ...c, exclusivity: e.target.checked } : c))} className="w-4 h-4 accent-[#0763d8]" />
                             <span className="text-sm">Yes</span>
                           </label>
                         </FormField>
@@ -486,29 +532,53 @@ export default function ProductionSignupPage() {
               {/* Pitch client check */}
               <div className="border border-white/[0.1] rounded-xl p-5 bg-yellow-500/[0.06]">
                 <p className="text-sm font-bold text-white/80 mb-1">Pitch Process — Client Conflict Check</p>
-                <p className="text-xs text-white/50 mb-4">Complete this only if responding to a specific pitch process.</p>
+                <p className="text-xs text-white/50 mb-4 flex items-center gap-2">
+                  <span className="w-4 h-4 rounded-full bg-yellow-500/20 text-yellow-500 flex items-center justify-center text-[10px] font-bold">i</span>
+                  Note: Please complete the section below only upon receipt of this Request for Information (RFI) during a pitch process.
+                </p>
                 <p className="text-sm text-white/60 mb-3">Is your company currently working or has previously worked with the client?</p>
-                <div className="flex gap-4">
+                <div className="flex gap-4 mb-5">
                   {[true, false].map(v => (
                     <label key={String(v)} className="flex items-center gap-2 cursor-pointer">
-                      <input type="radio" checked={workedWithClient === v} onChange={() => setWorkedWithClient(v)} className="w-4 h-4 accent-[#4fc487]" />
+                      <input type="radio" checked={workedWithClient === v} onChange={() => setWorkedWithClient(v)} className="w-4 h-4 accent-[#0763d8]" />
                       <span className="text-sm">{v ? 'Yes' : 'No'}</span>
                     </label>
                   ))}
                 </div>
+                
+                {workedWithClient === true && (
+                  <div className="pt-5 border-t border-white/[0.06] space-y-4">
+                    <p className="text-xs font-bold text-white/60 uppercase tracking-widest">Client Engagement Details</p>
+                    <div className="space-y-3">
+                      {clientPitch.map((pitch, idx) => (
+                        <div key={idx} className="grid grid-cols-2 sm:grid-cols-5 gap-3 border border-white/[0.06] bg-white/[0.02] p-3 rounded-xl">
+                          <FormField label="Division"><Input value={pitch.division} onChange={e => { const p = [...clientPitch]; p[idx].division = e.target.value; setClientPitch(p) }} placeholder="Client Division" className="text-xs" /></FormField>
+                          <FormField label="Activities"><Input value={pitch.activities} onChange={e => { const p = [...clientPitch]; p[idx].activities = e.target.value; setClientPitch(p) }} placeholder="Principal Activities" className="text-xs" /></FormField>
+                          <FormField label="Year"><Input value={pitch.year} onChange={e => { const p = [...clientPitch]; p[idx].year = e.target.value; setClientPitch(p) }} placeholder="Year" className="text-xs" /></FormField>
+                          <FormField label="Turnover"><Input value={pitch.turnover} onChange={e => { const p = [...clientPitch]; p[idx].turnover = e.target.value; setClientPitch(p) }} placeholder="Turnover (EUR)" className="text-xs" /></FormField>
+                          <FormField label="Incidence"><Input value={pitch.incidence} onChange={e => { const p = [...clientPitch]; p[idx].incidence = e.target.value; setClientPitch(p) }} placeholder="% incidence" className="text-xs" /></FormField>
+                        </div>
+                      ))}
+                      <button onClick={() => setClientPitch(prev => [...prev, { division: '', activities: '', year: '', turnover: '', incidence: '' }])} className="text-xs text-yellow-500 hover:text-yellow-400 font-medium">+ Add row</button>
+                    </div>
+                    <FormField label="Duration of Engagement with the Client" className="pt-2">
+                      <Input value={clientDuration} onChange={e => setClientDuration(e.target.value)} placeholder="e.g. 3 years" />
+                    </FormField>
+                  </div>
+                )}
               </div>
             </div>
           )}
 
-          {/* STEP 7 — Competencies */}
-          {step === 7 && (
+          {/* STEP 8 — Competencies */}
+          {step === 8 && (
             <div>
               <StepHeader icon="🎯" title="Knowledge & Competencies" subtitle="Select your production capabilities and allocate percentages by service area" />
 
               <div className="mb-8">
                 <div className="flex items-center justify-between mb-3">
                   <p className="text-sm font-bold text-white/80">Service Area Allocation <span className="text-white/50 font-normal">(% past 3 years)</span></p>
-                  <span className={`text-sm font-bold ${allocationTotal > 100 ? 'text-red-500' : allocationTotal === 100 ? 'text-[#4fc487]' : 'text-white/50'}`}>
+                  <span className={`text-sm font-bold ${allocationTotal > 100 ? 'text-red-500' : allocationTotal === 100 ? 'text-[#0763d8]' : 'text-white/50'}`}>
                     Total: {allocationTotal.toFixed(0)}%
                   </span>
                 </div>
@@ -517,7 +587,7 @@ export default function ProductionSignupPage() {
                     <div key={area} className="flex items-center gap-3 bg-white/[0.04] rounded-lg px-4 py-2.5">
                       <span className="text-sm text-white/60 flex-1">{area}</span>
                       <div className="flex items-center gap-1">
-                        <input type="number" min={0} max={100} value={capabilityAllocation[area] || ''} onChange={e => setCapabilityAllocation(prev => ({ ...prev, [area]: e.target.value }))} className="w-16 text-sm text-center border border-white/[0.12] rounded-lg py-1 bg-white/[0.04] text-white focus:outline-none focus:ring-2 focus:ring-[#4fc487]" placeholder="0" />
+                        <input type="number" min={0} max={100} value={capabilityAllocation[area] || ''} onChange={e => setCapabilityAllocation(prev => ({ ...prev, [area]: e.target.value }))} className="w-16 text-sm text-center border border-white/[0.12] rounded-lg py-1 bg-white/[0.04] text-white focus:outline-none focus:ring-2 focus:ring-[#0763d8]" placeholder="0" />
                         <span className="text-sm text-white/40">%</span>
                       </div>
                     </div>
@@ -533,7 +603,7 @@ export default function ProductionSignupPage() {
                     </p>
                     <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-2">
                       {group.items.map(skill => (
-                        <div key={skill} className={`flex items-center gap-2 p-2.5 rounded-xl border transition-all text-xs ${competencies[skill] ? 'bg-[#4fc487]/10 border-[#4fc487]/30 text-[#4fc487]' : 'bg-white/[0.03] border-white/[0.1]'}`}>
+                        <div key={skill} className={`flex items-center gap-2 p-2.5 rounded-xl border transition-all text-xs ${competencies[skill] ? 'bg-[#0763d8]/10 border-[#0763d8]/30 text-[#0763d8]' : 'bg-white/[0.03] border-white/[0.1]'}`}>
                           <span className="flex-1 truncate" title={skill}>{skill}</span>
                           <div className="flex items-center gap-1 shrink-0">
                             <input type="number" min={0} max={100} value={competencies[skill] || ''} onChange={e => setCompetencies(prev => ({ ...prev, [skill]: e.target.value }))} className="w-14 text-xs text-center bg-white/[0.04] border border-white/[0.08] text-white rounded-lg py-1" placeholder="0" />
@@ -548,24 +618,26 @@ export default function ProductionSignupPage() {
             </div>
           )}
 
-          {/* STEP 8 — Sectors */}
-          {step === 8 && (
+          {/* STEP 9 — Sectors */}
+          {step === 9 && (
             <div>
-              <StepHeader icon="🏷️" title="Industry Sectors" subtitle="Select all sectors you have expertise in" />
-              <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3">
+              <StepHeader icon="🏷️" title="Industry Sectors" subtitle="Allocate percentage of expertise across sectors" />
+              <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-2">
                 {SECTORS.map(sector => (
-                  <label key={sector} className={`flex items-center gap-3 p-3.5 rounded-xl border cursor-pointer transition-all ${selectedSectors[sector] ? 'bg-[#4fc487]/10 border-[#4fc487]' : 'bg-white/[0.03] border-white/[0.1] hover:border-white/[0.2]'}`}>
-                    <input type="checkbox" checked={!!selectedSectors[sector]} onChange={() => setSelectedSectors(prev => ({ ...prev, [sector]: !prev[sector] }))} className="w-4 h-4 accent-[#4fc487]" />
-                    <span className="text-sm font-medium text-white/70">{sector}</span>
-                  </label>
+                  <div key={sector} className={`flex items-center gap-2 p-2.5 rounded-xl border transition-all text-sm ${sectorPercentages[sector] ? 'bg-[#0763d8]/10 border-[#0763d8]/30 text-[#0763d8]' : 'bg-white/[0.03] border-white/[0.1] text-white/70'}`}>
+                    <span className="flex-1 truncate" title={sector}>{sector}</span>
+                    <div className="flex items-center gap-2 shrink-0">
+                      <input type="number" min={0} max={100} value={sectorPercentages[sector] || ''} onChange={e => setSectorPercentages(prev => ({ ...prev, [sector]: e.target.value }))} className="w-16 text-sm text-center bg-white/[0.04] border border-white/[0.12] text-white rounded-lg py-1 focus:border-[#0763d8] outline-none" placeholder="0" />
+                      <span className="text-sm text-white/40">%</span>
+                    </div>
+                  </div>
                 ))}
               </div>
-              <p className="text-xs text-[#999] mt-4">{Object.values(selectedSectors).filter(Boolean).length} sector(s) selected</p>
             </div>
           )}
 
-          {/* STEP 9 — Post-Production & Activities */}
-          {step === 9 && (
+          {/* STEP 10 — Post-Production & Activities */}
+          {step === 10 && (
             <div>
               <StepHeader icon="🎞️" title="Post-Production & Outsourcing" subtitle="Describe your post-production capabilities and any outsourced activities" />
 
@@ -574,7 +646,7 @@ export default function ProductionSignupPage() {
                 <div className="flex gap-6 mb-4">
                   {[true, false].map(v => (
                     <label key={String(v)} className="flex items-center gap-2 cursor-pointer">
-                      <input type="radio" checked={hasInHousePost === v} onChange={() => setHasInHousePost(v)} className="w-4 h-4 accent-[#4fc487]" />
+                      <input type="radio" checked={hasInHousePost === v} onChange={() => setHasInHousePost(v)} className="w-4 h-4 accent-[#0763d8]" />
                       <span className="text-sm">{v ? 'Yes' : 'No'}</span>
                     </label>
                   ))}
@@ -601,13 +673,13 @@ export default function ProductionSignupPage() {
                         <FormField label="Location"><Input value={p.location} onChange={e => setOutsourcedPartners(prev => prev.map((x, idx) => idx === i ? { ...x, location: e.target.value } : x))} placeholder="City, Country" /></FormField>
                         <FormField label="Audio">
                           <label className="flex items-center gap-2 mt-2 cursor-pointer">
-                            <input type="checkbox" checked={p.audio} onChange={e => setOutsourcedPartners(prev => prev.map((x, idx) => idx === i ? { ...x, audio: e.target.checked } : x))} className="w-4 h-4 accent-[#4fc487]" />
+                            <input type="checkbox" checked={p.audio} onChange={e => setOutsourcedPartners(prev => prev.map((x, idx) => idx === i ? { ...x, audio: e.target.checked } : x))} className="w-4 h-4 accent-[#0763d8]" />
                             <span className="text-sm">Yes</span>
                           </label>
                         </FormField>
                         <FormField label="Video">
                           <label className="flex items-center gap-2 mt-2 cursor-pointer">
-                            <input type="checkbox" checked={p.video} onChange={e => setOutsourcedPartners(prev => prev.map((x, idx) => idx === i ? { ...x, video: e.target.checked } : x))} className="w-4 h-4 accent-[#4fc487]" />
+                            <input type="checkbox" checked={p.video} onChange={e => setOutsourcedPartners(prev => prev.map((x, idx) => idx === i ? { ...x, video: e.target.checked } : x))} className="w-4 h-4 accent-[#0763d8]" />
                             <span className="text-sm">Yes</span>
                           </label>
                         </FormField>
@@ -622,7 +694,7 @@ export default function ProductionSignupPage() {
                 <div className="flex gap-6 mb-4">
                   {[true, false].map(v => (
                     <label key={String(v)} className="flex items-center gap-2 cursor-pointer">
-                      <input type="radio" checked={subcontracts === v} onChange={() => setSubcontracts(v)} className="w-4 h-4 accent-[#4fc487]" />
+                      <input type="radio" checked={subcontracts === v} onChange={() => setSubcontracts(v)} className="w-4 h-4 accent-[#0763d8]" />
                       <span className="text-sm">{v ? 'Yes' : 'No'}</span>
                     </label>
                   ))}
@@ -648,8 +720,8 @@ export default function ProductionSignupPage() {
             </div>
           )}
 
-          {/* STEP 10 — People & Directors */}
-          {step === 10 && (
+          {/* STEP 11 — People & Directors */}
+          {step === 11 && (
             <div>
               <StepHeader icon="👥" title="People, Directors & Investments" subtitle="Your team structure, key directors and investment allocations" />
 
@@ -679,7 +751,7 @@ export default function ProductionSignupPage() {
                           <td className="px-4 py-2 text-sm text-white/70">{row.role}</td>
                           {['employees', 'freelancers', 'salary'].map(field => (
                             <td key={field} className="px-2 py-1.5">
-                              <input type="number" placeholder="0" value={(row as Record<string, string>)[field] || ''} onChange={e => setPeople(p => p.map((r, idx) => idx === i ? { ...r, [field]: e.target.value } : r))} className="w-full text-center text-xs border border-white/[0.12] rounded px-2 py-1.5 bg-white/[0.04] text-white focus:outline-none focus:ring-1 focus:ring-[#4fc487]" />
+                              <input type="number" placeholder="0" value={(row as Record<string, string>)[field] || ''} onChange={e => setPeople(p => p.map((r, idx) => idx === i ? { ...r, [field]: e.target.value } : r))} className="w-full text-center text-xs border border-white/[0.12] rounded px-2 py-1.5 bg-white/[0.04] text-white focus:outline-none focus:ring-1 focus:ring-[#0763d8]" />
                             </td>
                           ))}
                         </tr>
@@ -715,7 +787,7 @@ export default function ProductionSignupPage() {
                           </td>
                           {['exclusivity', 'priority', 'occasional'].map(field => (
                             <td key={field} className="px-3 py-1.5 text-center">
-                              <input type="checkbox" checked={(d as any)[field] || false} onChange={e => setDirectors(p => p.map((r, idx) => idx === i ? { ...r, [field]: e.target.checked } : r))} className="w-4 h-4 accent-[#4fc487]" />
+                              <input type="checkbox" checked={(d as any)[field] || false} onChange={e => setDirectors(p => p.map((r, idx) => idx === i ? { ...r, [field]: e.target.checked } : r))} className="w-4 h-4 accent-[#0763d8]" />
                             </td>
                           ))}
                           <td className="px-2">
@@ -735,7 +807,7 @@ export default function ProductionSignupPage() {
                     <div key={item} className="flex items-center gap-3 bg-white/[0.04] rounded-lg px-4 py-2.5">
                       <span className="text-sm text-white/60 flex-1">{item}</span>
                       <div className="flex items-center gap-1">
-                        <input type="number" min={0} max={100} value={investments[item] || ''} onChange={e => setInvestments(prev => ({ ...prev, [item]: e.target.value }))} className="w-16 text-sm text-center border border-white/[0.12] rounded-lg py-1 bg-white/[0.04] text-white focus:outline-none focus:ring-2 focus:ring-[#4fc487]" placeholder="0" />
+                        <input type="number" min={0} max={100} value={investments[item] || ''} onChange={e => setInvestments(prev => ({ ...prev, [item]: e.target.value }))} className="w-16 text-sm text-center border border-white/[0.12] rounded-lg py-1 bg-white/[0.04] text-white focus:outline-none focus:ring-2 focus:ring-[#0763d8]" placeholder="0" />
                         <span className="text-sm text-white/40">%</span>
                       </div>
                     </div>
@@ -745,8 +817,8 @@ export default function ProductionSignupPage() {
             </div>
           )}
 
-          {/* STEP 11 — Awards & CSR */}
-          {step === 11 && (
+          {/* STEP 12 — Awards & CSR */}
+          {step === 12 && (
             <div>
               <StepHeader icon="🏆" title="Awards & Social Responsibility" subtitle="List your award wins and answer CSR questions" />
 
@@ -765,11 +837,11 @@ export default function ProductionSignupPage() {
                       {awards.map((award, i) => (
                         <tr key={i} className={i % 2 === 0 ? 'bg-white/[0.03]' : 'bg-white/[0.06]'}>
                           <td className="px-2 py-1.5">
-                            <input value={award.festival} onChange={e => setAwards(p => p.map((a, idx) => idx === i ? { ...a, festival: e.target.value } : a))} className="w-full text-xs border border-white/[0.12] rounded px-2 py-1.5 bg-white/[0.04] text-white focus:outline-none focus:ring-1 focus:ring-[#4fc487]" placeholder="Festival" />
+                            <input value={award.festival} onChange={e => setAwards(p => p.map((a, idx) => idx === i ? { ...a, festival: e.target.value } : a))} className="w-full text-xs border border-white/[0.12] rounded px-2 py-1.5 bg-white/[0.04] text-white focus:outline-none focus:ring-1 focus:ring-[#0763d8]" placeholder="Festival" />
                           </td>
                           {['distinction', 'category', 'year', 'ad', 'brand'].map(field => (
                             <td key={field} className="px-2 py-1.5">
-                              <input value={(award as Record<string, string>)[field] || ''} onChange={e => setAwards(p => p.map((a, idx) => idx === i ? { ...a, [field]: e.target.value } : a))} className="w-full text-xs border border-white/[0.12] rounded px-2 py-1.5 bg-white/[0.04] text-white focus:outline-none focus:ring-1 focus:ring-[#4fc487]" placeholder="—" />
+                              <input value={(award as Record<string, string>)[field] || ''} onChange={e => setAwards(p => p.map((a, idx) => idx === i ? { ...a, [field]: e.target.value } : a))} className="w-full text-xs border border-white/[0.12] rounded px-2 py-1.5 bg-white/[0.04] text-white focus:outline-none focus:ring-1 focus:ring-[#0763d8]" placeholder="—" />
                             </td>
                           ))}
                           <td className="px-2">
@@ -780,7 +852,7 @@ export default function ProductionSignupPage() {
                     </tbody>
                   </table>
                 </div>
-                <button onClick={() => setAwards(prev => [...prev, { festival: '', distinction: '', category: '', year: '', ad: '', brand: '' }])} className="text-xs text-[#4fc487] hover:bg-[#4fc487]/10 px-3 py-1.5 rounded-lg border border-[#4fc487]/30 transition-colors inline-block mt-3">+ Add Award</button>
+                <button onClick={() => setAwards(prev => [...prev, { festival: '', distinction: '', category: '', year: '', ad: '', brand: '' }])} className="text-xs text-[#0763d8] hover:bg-[#0763d8]/10 px-3 py-1.5 rounded-lg border border-[#0763d8]/30 transition-colors inline-block mt-3">+ Add Award</button>
               </div>
 
               <div>
@@ -794,7 +866,7 @@ export default function ProductionSignupPage() {
                         <div className="flex gap-4 shrink-0">
                           {[true, false].map(v => (
                             <label key={String(v)} className="flex items-center gap-1 cursor-pointer">
-                              <input type="radio" checked={csr[q.id] === v} onChange={() => setCsr(p => ({ ...p, [q.id]: v }))} className="w-3.5 h-3.5 accent-[#4fc487]" />
+                              <input type="radio" checked={csr[q.id] === v} onChange={() => setCsr(p => ({ ...p, [q.id]: v }))} className="w-3.5 h-3.5 accent-[#0763d8]" />
                               <span className="text-xs text-white/50">{v ? 'Yes' : 'No'}</span>
                             </label>
                           ))}
@@ -804,7 +876,7 @@ export default function ProductionSignupPage() {
                         <div className="ml-12 mt-2 grid grid-cols-2 sm:grid-cols-3 gap-2">
                           {CSR_IMPACT_AREAS.map(area => (
                             <label key={area} className="flex items-center gap-2 bg-white/[0.04] rounded-lg p-2 cursor-pointer hover:bg-white/[0.08] transition border border-white/[0.1]">
-                              <input type="checkbox" checked={!!csr[`impact-${area}`]} onChange={e => setCsr(p => ({ ...p, [`impact-${area}`]: e.target.checked }))} className="w-3.5 h-3.5 accent-[#4fc487]" />
+                              <input type="checkbox" checked={!!csr[`impact-${area}`]} onChange={e => setCsr(p => ({ ...p, [`impact-${area}`]: e.target.checked }))} className="w-3.5 h-3.5 accent-[#0763d8]" />
                               <span className="text-xs text-white/50">{area}</span>
                             </label>
                           ))}
@@ -817,25 +889,12 @@ export default function ProductionSignupPage() {
             </div>
           )}
 
-          {/* STEP 12 — About & AI */}
-          {step === 12 && (
+          {/* STEP 13 — Governance & AI */}
+          {step === 13 && (
             <div>
-              <StepHeader icon="✍️" title="About, Governance & AI" subtitle="Describe your company, governance model, and AI approach" />
+              <StepHeader icon="🏛️" title="Governance & AI" subtitle="Describe your governance model and AI approach" />
               <div className="space-y-6">
-                <FormField label="About Your Production House">
-                  <textarea value={about} onChange={e => setAbout(e.target.value)} rows={4} className={textareaCls} placeholder="A brief overview of your company..." />
-                </FormField>
-                <FormField label="Philosophy & Competitive Advantages">
-                  <textarea value={philosophy} onChange={e => setPhilosophy(e.target.value)} rows={3} className={textareaCls} placeholder="What makes you different?" />
-                </FormField>
-                <FormField label="Network Description">
-                  <textarea value={networkDescription} onChange={e => setNetworkDescription(e.target.value)} rows={2} className={textareaCls} placeholder="Your production network..." />
-                </FormField>
-                <FormField label="Local Representation">
-                  <textarea value={localRepresentation} onChange={e => setLocalRepresentation(e.target.value)} rows={2} className={textareaCls} placeholder="Local offices or representatives..." />
-                </FormField>
-
-                <div className="border-t border-white/[0.06] pt-6">
+                <div>
                   <p className="text-sm font-bold text-white/80 mb-4">Governance & Scope of Work</p>
                   <div className="space-y-4">
                     <FormField label="Kindly detail the control and quality assurance systems established within your designated Creative Network for the purpose of monitoring and managing performance and Service Level Agreements (SLAs).">
@@ -863,7 +922,7 @@ export default function ProductionSignupPage() {
                     <div className="flex gap-6">
                       {[true, false].map(v => (
                         <label key={String(v)} className="flex items-center gap-2 cursor-pointer">
-                          <input type="radio" checked={activityOutOfCountry === v} onChange={() => setActivityOutOfCountry(v)} className="w-4 h-4 accent-[#4fc487]" />
+                          <input type="radio" checked={activityOutOfCountry === v} onChange={() => setActivityOutOfCountry(v)} className="w-4 h-4 accent-[#0763d8]" />
                           <span className="text-sm">{v ? 'Yes' : 'No'}</span>
                         </label>
                       ))}
@@ -895,8 +954,8 @@ export default function ProductionSignupPage() {
             </div>
           )}
 
-          {/* STEP 13 — Attachments */}
-          {step === 13 && (
+          {/* STEP 14 — Attachments */}
+          {step === 14 && (
             <div>
               <StepHeader icon="📎" title="Attachments" subtitle="Upload required documents and presentation" />
               <div className="space-y-6">
@@ -919,7 +978,7 @@ export default function ProductionSignupPage() {
 
                 <div className="border-t border-white/[0.06] pt-6">
                   <p className="text-sm font-bold text-white/80 mb-2">Presentation Request</p>
-                  <p className="text-xs text-white/40 mb-3">Please provide a presentation (.pdf or .ppt file) summarizing the following items and questions:</p>
+                  <p className="text-xs text-white/40 mb-3">Please provide a presentation (.pdf file) summarizing the following items and questions:</p>
                   <p className="text-xs text-white/30 mb-4">At this stage we would like to see key agency capabilities and credentials before moving to a full pitch. Please use this opportunity to show off your agencies, your expertise and your achievements.</p>
                   <div className="bg-white/[0.03] rounded-xl p-4 mb-4">
                     <p className="text-xs font-semibold text-white/60 mb-2">Your presentation should include the following:</p>
@@ -931,9 +990,9 @@ export default function ProductionSignupPage() {
                     </ul>
                   </div>
                   <label className="flex items-center gap-3 px-4 py-3 bg-white/[0.04] border border-dashed border-white/[0.12] rounded-xl cursor-pointer hover:bg-white/[0.06] transition">
-                    <Upload className="w-5 h-5 text-[#4fc487]" />
-                    <span className="text-sm text-white/50">Upload Presentation (.pdf or .ppt)</span>
-                    <input type="file" accept=".pdf,.ppt,.pptx" className="hidden" />
+                    <Upload className="w-5 h-5 text-[#0763d8]" />
+                    <span className="text-sm text-white/50">Upload Presentation (.pdf)</span>
+                    <input type="file" accept=".pdf" className="hidden" />
                   </label>
                 </div>
               </div>
@@ -961,12 +1020,12 @@ export default function ProductionSignupPage() {
             {step < STEPS.length ? (
               <>
                 <Button variant="ghost" className="text-white/40 hover:text-white" onClick={() => setStep(s => s + 1)}>Skip for now</Button>
-                <Button onClick={() => setStep(s => s + 1)} disabled={!canProceed()} className="bg-[#4fc487] hover:bg-[#45b078] text-white px-6">
+                <Button onClick={() => setStep(s => s + 1)} disabled={!canProceed()} className="bg-[#0763d8] hover:bg-[#0655b3] text-white px-6">
                   Continue <ChevronRight className="w-4 h-4 ml-1" />
                 </Button>
               </>
             ) : (
-              <Button onClick={handleSubmit} disabled={isSubmitting} className="bg-[#4fc487] hover:bg-[#45b078] text-white px-8">
+              <Button onClick={handleSubmit} disabled={isSubmitting} className="bg-[#0763d8] hover:bg-[#0655b3] text-white px-8">
                 {isSubmitting ? (
                   <span className="flex items-center gap-2">
                     <svg className="animate-spin w-4 h-4" viewBox="0 0 24 24" fill="none"><circle cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4" className="opacity-25" /><path d="M4 12a8 8 0 018-8" stroke="currentColor" strokeWidth="4" className="opacity-75" /></svg>
@@ -1009,5 +1068,5 @@ function FormField({ label, required, children, className }: { label: string; re
   )
 }
 
-const selectCls = 'w-full border border-white/[0.12] rounded-xl px-3 py-2.5 text-sm bg-white/[0.06] text-white focus:outline-none focus:ring-2 focus:ring-[#4fc487] [&_option]:bg-[#1a1d2e] [&_option]:text-white'
-const textareaCls = 'w-full border border-white/[0.12] rounded-2xl px-3 py-2.5 text-sm bg-white/[0.06] text-white focus:outline-none focus:ring-2 focus:ring-[#4fc487] resize-none'
+const selectCls = 'w-full border border-white/[0.12] rounded-xl px-3 py-2.5 text-sm bg-white/[0.06] text-white focus:outline-none focus:ring-2 focus:ring-[#0763d8] [&_option]:bg-[#1a1d2e] [&_option]:text-white'
+const textareaCls = 'w-full border border-white/[0.12] rounded-2xl px-3 py-2.5 text-sm bg-white/[0.06] text-white focus:outline-none focus:ring-2 focus:ring-[#0763d8] resize-none'
