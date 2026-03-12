@@ -42,7 +42,7 @@ function SettingsContent() {
     <div className="min-h-screen bg-background flex flex-col">
       <Header />
       <main className="flex-1">
-        <div className="bg-[#2e3843] px-4 sm:px-6 lg:px-8 py-10">
+        <div className="bg-[#0C0D17] px-4 sm:px-6 lg:px-8 py-10">
           <div className="max-w-4xl mx-auto">
             <Link href="/dashboard" className="text-sm text-white/60 hover:text-white mb-2 block">← Dashboard</Link>
             <h1 className="text-2xl font-bold text-white">Account Settings</h1>

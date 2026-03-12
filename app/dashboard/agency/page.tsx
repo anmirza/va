@@ -9,7 +9,7 @@ import { campaigns } from '@/lib/mock-data'
 import {
   Building2, Edit, Plus, Film, Eye, Award,
   MapPin, Globe, Phone, Mail, Linkedin, Twitter, Instagram,
-  Users, Briefcase, CheckSquare, Save, X, ChevronRight,
+  Users, Briefcase, CheckSquare, Save, X, ChevronRight, TrendingUp,
 } from 'lucide-react'
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
