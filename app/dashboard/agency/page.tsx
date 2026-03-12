@@ -7,7 +7,7 @@ import { AuthGuard } from '@/components/auth-guard'
 import { Header } from '@/components/header'
 import { campaigns } from '@/lib/mock-data'
 import {
-  Building2, Edit, Plus, BarChart3, Film, Eye, Award, TrendingUp,
+  Building2, Edit, Plus, Film, Eye, Award,
   MapPin, Globe, Phone, Mail, Linkedin, Twitter, Instagram,
   Users, Briefcase, CheckSquare, Save, X, ChevronRight,
 } from 'lucide-react'
@@ -77,7 +77,7 @@ function SectionCard({ title, icon: Icon, children }: { title: string; icon: Rea
 
 function AgencyDashContent() {
   const { user } = useAuth()
-  const [activeTab, setActiveTab] = useState<'overview' | 'edit' | 'work' | 'analytics'>('overview')
+  const [activeTab, setActiveTab] = useState<'overview' | 'edit' | 'work'>('overview')
   const [profile, setProfile] = useState<AgencyProfile | null>(null)
   const [editDraft, setEditDraft] = useState<Partial<AgencyProfile>>({})
   const [saved, setSaved] = useState(false)
@@ -118,7 +118,6 @@ function AgencyDashContent() {
     { id: 'overview', label: 'Overview', icon: Building2 },
     { id: 'edit', label: 'Edit Profile', icon: Edit },
     { id: 'work', label: 'Work', icon: Film },
-    { id: 'analytics', label: 'Analytics', icon: BarChart3 },
   ] as const
 
   return (
@@ -536,34 +535,6 @@ function AgencyDashContent() {
             </div>
           )}
 
-          {/* ── Analytics Tab ── */}
-          {activeTab === 'analytics' && (
-            <div className="bg-card border border-border rounded-xl p-6 shadow-sm">
-              <div className="flex items-center gap-2 mb-6">
-                <TrendingUp className="w-5 h-5 text-[#0763d8]" />
-                <h2 className="font-bold text-foreground">Profile Analytics</h2>
-              </div>
-              <div className="grid grid-cols-2 sm:grid-cols-4 gap-4 mb-8">
-                {[
-                  { label: 'Profile Views', value: '1,284', change: '+12%' },
-                  { label: 'Work Views', value: '3,451', change: '+8%' },
-                  { label: 'Followers', value: '47', change: '+5' },
-                  { label: 'Contact Clicks', value: '23', change: '+3' },
-                ].map(stat => (
-                  <div key={stat.label} className="bg-muted border border-border rounded-xl p-4 text-center">
-                    <p className="text-2xl font-bold text-foreground mb-1">{stat.value}</p>
-                    <p className="text-xs text-muted-foreground mb-1">{stat.label}</p>
-                    <p className="text-xs text-[#0763d8] font-medium">{stat.change} this month</p>
-                  </div>
-                ))}
-              </div>
-              <div className="border border-[#f5d742] bg-[#f5d742]/10 rounded-xl p-4 text-center">
-                <p className="text-sm font-medium text-[#a87e00] mb-1">Unlock Full Analytics</p>
-                <p className="text-xs text-muted-foreground mb-3">Upgrade to Pro to see detailed traffic sources, engagement metrics, and more.</p>
-                <Link href="/pricing"><Button className="bg-[#f5d742] hover:bg-[#e6c93c] text-foreground text-sm">View Plans</Button></Link>
-              </div>
-            </div>
-          )}
         </div>
       </main>
     </div>

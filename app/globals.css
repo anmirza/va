@@ -277,6 +277,24 @@
 .light-mode main {
   background: #f5f6fa !important;
 }
+/* Creative Library hero: light background and dark text in light mode so title is visible */
+.light-mode div[class*="bg-\\[\\#2e3843\\]"] {
+  background: #d8dce2 !important;
+}
+.light-mode div[class*="bg-\\[\\#2e3843\\]"] h1,
+.light-mode div[class*="bg-\\[\\#2e3843\\]"] h2,
+.light-mode div[class*="bg-\\[\\#2e3843\\]"] p,
+.light-mode div[class*="bg-\\[\\#2e3843\\]"] span,
+.light-mode div[class*="bg-\\[\\#2e3843\\]"] a {
+  color: #1a1a2e !important;
+}
+.light-mode div[class*="bg-\\[\\#2e3843\\]"] a:hover {
+  color: #0763d8 !important;
+}
+.light-mode div[class*="bg-\\[\\#2e3843\\]"] span[class*="text-white\\/"] {
+  color: #555 !important;
+}
+
 /* Make hero text dark */
 .light-mode h1[class*="text-white"],
 .light-mode h2[class*="text-white"] {
