@@ -856,11 +856,23 @@ export default function AgencySignupPage() {
                 ))}
               </div>
               <div className="space-y-5">
-                <FormField label="Strategic Development Orientation">
-                  <textarea value={strategicDev} onChange={e => setStrategicDev(e.target.value)} rows={3} className={textareaCls} placeholder="Present your strategic development plan..." />
+                <FormField label="1.1 Could you please present your strategic development">
+                  <textarea
+                    value={strategicDev}
+                    onChange={e => setStrategicDev(e.target.value)}
+                    rows={3}
+                    className={textareaCls}
+                    placeholder="Write your answer (NOTE column) for request 1.1 here..."
+                  />
                 </FormField>
-                <FormField label="Activity Outside Your Location">
-                  <textarea value={activityOutside} onChange={e => setActivityOutside(e.target.value)} rows={2} className={textareaCls} placeholder="International presence..." />
+                <FormField label="1.2 Do you have any activity out of your Country / City?">
+                  <textarea
+                    value={activityOutside}
+                    onChange={e => setActivityOutside(e.target.value)}
+                    rows={2}
+                    className={textareaCls}
+                    placeholder="Write your answer (NOTE column) for request 1.2 here..."
+                  />
                 </FormField>
               </div>
               <div className="border-t border-white/[0.06] pt-5 space-y-3 mt-6 mb-6">
