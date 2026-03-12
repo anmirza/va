@@ -87,7 +87,16 @@ export default function AgencySignupPage() {
   const [talentEntries, setTalentEntries] = useState([{ role: '', name: '', linkedin: '' }])
 
   // Step 7 — Awards & Infos
-  const [awards, setAwards] = useState([{ name: '', distinction: '', category: '', year: '', ad: '', brand: '' }])
+  const [awards, setAwards] = useState(
+    AGENCY_AWARDS.map(name => ({
+      name,
+      distinction: '',
+      category: '',
+      year: '',
+      ad: '',
+      brand: '',
+    })),
+  )
   const [aiAnswers, setAiAnswers] = useState<Record<string, string>>({})
   const [srAnswers, setSrAnswers] = useState<Record<string, string>>({})
 

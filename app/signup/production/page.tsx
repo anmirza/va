@@ -139,7 +139,16 @@ export default function ProductionSignupPage() {
   const [investments, setInvestments] = useState<Record<string, string>>({})
 
   // Step 11 — Awards & CSR
-  const [awards, setAwards] = useState([{ festival: '', distinction: '', category: '', year: '', ad: '', brand: '' }])
+  const [awards, setAwards] = useState(
+    AWARD_FESTIVALS.filter(f => f !== 'Other').map(festival => ({
+      festival,
+      distinction: '',
+      category: '',
+      year: '',
+      ad: '',
+      brand: '',
+    })),
+  )
   const [csr, setCsr] = useState<Record<string, boolean | null>>({})
 
   // Step 12 — About & AI
