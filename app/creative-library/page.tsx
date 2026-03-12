@@ -56,7 +56,7 @@ function CreativeLibraryContent() {
     <div className="min-h-screen bg-[#02030E] flex flex-col">
       <Header />
       <main className="flex-1">
-        <div className="bg-[#2e3843] px-4 sm:px-6 lg:px-8 py-16">
+        <div className="bg-[#02030E] px-4 sm:px-6 lg:px-8 py-16">
           <div className="max-w-5xl mx-auto text-center">
             <div className="flex items-center gap-2 mb-4 text-sm justify-start">
               <Link href="/" className="text-white/60 hover:text-white">Home</Link>
