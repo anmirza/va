@@ -1,6 +1,6 @@
 'use client'
 
-import { useState } from 'react'
+import { useState, useEffect, useRef } from 'react'
 import Link from 'next/link'
 import { useRouter } from 'next/navigation'
 import { ChevronRight, ChevronLeft, Check, Building2, Plus, Trash2 } from 'lucide-react'
@@ -48,6 +48,8 @@ export default function AgencySignupPage() {
     AGENCY_CONTACT_ROLES.map(role => ({ role, firstName: '', lastName: '', linkedin: '', telephone: '', mobile: '', email: '' }))
   )
   const [socialMedia, setSocialMedia] = useState<Record<string, string>>({})
+  const lastContactRef = useRef<HTMLDivElement | null>(null)
+  const [shouldScrollToNewContact, setShouldScrollToNewContact] = useState(false)
 
   // Step 3 — Turnover & Clients
   const turnoverYears = getTurnoverYears()
@@ -59,12 +61,14 @@ export default function AgencySignupPage() {
 
   // Step 4 — Knowledge & Competencies
   const [competencies, setCompetencies] = useState<Record<string, string>>({})
-  const [capabilityAllocation, setCapabilityAllocation] = useState<Record<string, string>>({})
   const [marketPositioning, setMarketPositioning] = useState('')
   const [mainCapability, setMainCapability] = useState('')
   const [secondaryCapability, setSecondaryCapability] = useState('')
   const [additionalCapability, setAdditionalCapability] = useState('')
   const [sectorPercentages, setSectorPercentages] = useState<Record<string, string>>({})
+  const [outsourcedActivities, setOutsourcedActivities] = useState<
+    { activity: string; description: string; contractualValue: string }[]
+  >([{ activity: '', description: '', contractualValue: '' }])
 
   // Step 5 — Governance & SOW
   const [about, setAbout] = useState('')
@@ -117,7 +121,7 @@ export default function AgencySignupPage() {
       countryCoverage, address, postcode, city, country, contacts, socialMedia,
       revenue, clients, workedWithClient, clientPitch, clientDuration, competencies, capabilityAllocation, marketPositioning,
       mainCapability, secondaryCapability, additionalCapability, sectorPercentages,
-      about, philosophy, networkDescription, localRepresentation,
+      about, philosophy, networkDescription, localRepresentation, outsourcedActivities,
       governanceQA, governanceData, governanceGlobal, governanceAdditional, outsources,
       peopleCounts: finalPeopleCounts, talentEntries, awards, aiAnswers, srAnswers,
       investments, strategicDev, activityOutside,
@@ -133,7 +137,12 @@ export default function AgencySignupPage() {
     setContacts(prev => prev.map((c, i) => i === idx ? { ...c, [field]: value } : c))
   }
 
-  const allocationTotal = Object.values(capabilityAllocation).reduce((sum, v) => sum + (parseFloat(v) || 0), 0)
+  useEffect(() => {
+    if (shouldScrollToNewContact && lastContactRef.current) {
+      lastContactRef.current.scrollIntoView({ behavior: 'smooth', block: 'start' })
+      setShouldScrollToNewContact(false)
+    }
+  }, [shouldScrollToNewContact, contacts.length])
 
   return (
     <div className="min-h-screen bg-[#02030E] flex flex-col">
@@ -241,44 +250,43 @@ export default function AgencySignupPage() {
             </div>
           )}
 
-          {/* STEP 2 — Contacts */}
+          {/* STEP 2 — Contacts (no address here, only people + social) */}
           {step === 2 && (
             <div>
-              <StepHeader icon="📞" title="Contacts" subtitle="Address, key contacts, and social media" />
-              {/* Address */}
-              <div className="grid grid-cols-1 sm:grid-cols-2 gap-5 mb-8">
-                <FormField label="Country Coverage" className="sm:col-span-2">
-                  <select value={countryCoverage} onChange={e => setCountryCoverage(e.target.value)} className={selectCls}>
-                    <option value="">Select coverage</option>
-                    {COUNTRY_COVERAGE.map(c => <option key={c}>{c}</option>)}
-                  </select>
-                </FormField>
-                <FormField label="Street Address" className="sm:col-span-2">
-                  <Input value={address} onChange={e => setAddress(e.target.value)} placeholder="Street address" className={inputCls} />
-                </FormField>
-                <FormField label="City" required>
-                  <Input value={city} onChange={e => setCity(e.target.value)} placeholder="City" className={inputCls} />
-                </FormField>
-                <FormField label="Postcode">
-                  <Input value={postcode} onChange={e => setPostcode(e.target.value)} placeholder="Postcode / ZIP" className={inputCls} />
-                </FormField>
-                <FormField label="Country" required>
-                  <select value={country} onChange={e => setCountry(e.target.value)} className={selectCls}>
-                    <option value="">Select country</option>
-                    {COUNTRIES.map(c => <option key={c}>{c}</option>)}
-                  </select>
-                </FormField>
-              </div>
+              <StepHeader icon="📞" title="Contacts" subtitle="Key contacts and social media" />
               {/* Key Contacts */}
               <div className="flex items-center justify-between mb-4">
                 <p className="text-xs font-bold text-white/60 uppercase tracking-widest">Key Contacts</p>
-                <Button type="button" variant="outline" onClick={() => setContacts(p => [...p, { role: 'Additional Contact', firstName: '', lastName: '', email: '', linkedin: '', telephone: '', mobile: '' }])} className="text-xs h-8 px-3">
+                <Button
+                  type="button"
+                  variant="outline"
+                  onClick={() => {
+                    setContacts(p => [
+                      ...p,
+                      {
+                        role: 'Additional Contact',
+                        firstName: '',
+                        lastName: '',
+                        email: '',
+                        linkedin: '',
+                        telephone: '',
+                        mobile: '',
+                      },
+                    ])
+                    setShouldScrollToNewContact(true)
+                  }}
+                  className="text-xs h-8 px-3"
+                >
                   <Plus className="w-3 h-3 mr-1" /> Add Contact
                 </Button>
               </div>
               <div className="space-y-4 mb-8">
                 {contacts.map((contact, idx) => (
-                  <div key={idx} className="bg-white/[0.03] border border-white/[0.06] rounded-xl p-5">
+                  <div
+                    key={idx}
+                    ref={idx === contacts.length - 1 ? lastContactRef : null}
+                    className="bg-white/[0.03] border border-white/[0.06] rounded-xl p-5"
+                  >
                     <div className="flex items-center justify-between mb-4">
                       {idx >= AGENCY_CONTACT_ROLES.length ? (
                         <Input value={contact.role} onChange={e => updateContact(idx, 'role', e.target.value)} placeholder="Role Name" className="max-w-[200px] h-8 text-sm font-bold bg-transparent border-b border-white/20 rounded-none px-0 text-[#0763d8] uppercase tracking-wide focus-visible:ring-0 focus-visible:border-[#0763d8]" />
@@ -321,11 +329,85 @@ export default function AgencySignupPage() {
             </div>
           )}
 
-          {/* STEP 3 — Turnover & Clients */}
+          {/* STEP 3 — Registered Office Address + Turnover & Clients */}
           {step === 3 && (
             <div>
-              <StepHeader icon="💰" title="Turnover & Clients" subtitle={`Revenue data (auto-updated: ${turnoverYears[0]}–${turnoverYears[4]})`} />
-              <p className="text-xs text-white/30 mb-4">Revenue in EUR. Years auto-update annually.</p>
+              <StepHeader
+                icon="📍"
+                title="Registered Office Address"
+                subtitle="Official address and geographic coverage, followed by turnover information"
+              />
+              {/* Registered Office Address (mirrors production signup flow) */}
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-5 mb-10">
+                <FormField label="Country Coverage" className="sm:col-span-2">
+                  <select value={countryCoverage} onChange={e => setCountryCoverage(e.target.value)} className={selectCls}>
+                    <option value="">Select coverage</option>
+                    {COUNTRY_COVERAGE.map(c => <option key={c}>{c}</option>)}
+                  </select>
+                </FormField>
+                <FormField label="Street Address" className="sm:col-span-2">
+                  <Input value={address} onChange={e => setAddress(e.target.value)} placeholder="Street address" className={inputCls} />
+                </FormField>
+                <FormField label="City" required>
+                  <Input value={city} onChange={e => setCity(e.target.value)} placeholder="City" className={inputCls} />
+                </FormField>
+                <FormField label="Postcode">
+                  <Input value={postcode} onChange={e => setPostcode(e.target.value)} placeholder="Postcode / ZIP" className={inputCls} />
+                </FormField>
+                <FormField label="Country" required>
+                  <select value={country} onChange={e => setCountry(e.target.value)} className={selectCls}>
+                    <option value="">Select country</option>
+                    {COUNTRIES.map(c => <option key={c}>{c}</option>)}
+                  </select>
+                </FormField>
+              </div>
+
+              {/* About (to match RFI Excel order) */}
+              <div className="space-y-5 mb-8">
+                <FormField label="About Your Agency">
+                  <textarea
+                    value={about}
+                    onChange={e => setAbout(e.target.value)}
+                    rows={3}
+                    className={textareaCls}
+                    placeholder="Brief overview..."
+                  />
+                </FormField>
+                <FormField label="Philosophy & Competitive Advantages">
+                  <textarea
+                    value={philosophy}
+                    onChange={e => setPhilosophy(e.target.value)}
+                    rows={3}
+                    className={textareaCls}
+                    placeholder="What makes you different?"
+                  />
+                </FormField>
+                <FormField label="Network Description">
+                  <textarea
+                    value={networkDescription}
+                    onChange={e => setNetworkDescription(e.target.value)}
+                    rows={2}
+                    className={textareaCls}
+                    placeholder="Your agency network..."
+                  />
+                </FormField>
+                <FormField label="Local Representation">
+                  <textarea
+                    value={localRepresentation}
+                    onChange={e => setLocalRepresentation(e.target.value)}
+                    rows={2}
+                    className={textareaCls}
+                    placeholder="Local offices..."
+                  />
+                </FormField>
+              </div>
+
+              {/* Turnover & Clients */}
+              <div className="border-t border-white/[0.06] pt-6 mt-2">
+                <div className="flex items-center justify-between mb-2">
+                  <p className="text-sm font-semibold text-white/80">Turnover &amp; Clients</p>
+                  <p className="text-xs text-white/30">Revenue in EUR · auto-updated years</p>
+                </div>
               <div className="overflow-x-auto mb-8">
                 <table className="w-full text-xs">
                   <thead>
@@ -412,6 +494,7 @@ export default function AgencySignupPage() {
                   </div>
                 )}
               </div>
+            </div>
 
             </div>
           )}
@@ -433,34 +516,25 @@ export default function AgencySignupPage() {
                   </div>
                 ))}
               </div>
-              {/* Capabilities */}
+              {/* Market Positioning — capabilities (from Excel: main / secondary / additional) */}
               <p className="text-xs font-bold text-white/60 uppercase tracking-widest mb-3">Capabilities</p>
               <div className="grid grid-cols-1 sm:grid-cols-3 gap-3 mb-8">
                 {['Main', 'Secondary', 'Additional'].map((level, i) => (
                   <FormField key={level} label={`${level} Capability`}>
-                    <select value={[mainCapability, secondaryCapability, additionalCapability][i]}
-                      onChange={e => [setMainCapability, setSecondaryCapability, setAdditionalCapability][i](e.target.value)} className={selectCls}>
+                    <select
+                      value={[mainCapability, secondaryCapability, additionalCapability][i]}
+                      onChange={e => [setMainCapability, setSecondaryCapability, setAdditionalCapability][i](e.target.value)}
+                      className={selectCls}
+                    >
                       <option value="">Select</option>
-                      {CAPABILITY_AREAS.map(a => <option key={a}>{a}</option>)}
+                      {CAPABILITY_AREAS.map(a => (
+                        <option key={a}>{a}</option>
+                      ))}
                     </select>
                   </FormField>
                 ))}
               </div>
-              {/* Service allocation */}
-              <p className="text-xs font-bold text-white/60 uppercase tracking-widest mb-3">Service Allocation <span className={`ml-2 ${allocationTotal > 100 ? 'text-red-400' : allocationTotal === 100 ? 'text-[#0763d8]' : ''}`}>({allocationTotal}%)</span></p>
-              <div className="grid grid-cols-1 sm:grid-cols-2 gap-2 mb-8">
-                {CAPABILITY_AREAS.map(area => (
-                  <div key={area} className="flex items-center gap-3 bg-white/[0.03] rounded-xl px-4 py-2.5">
-                    <span className="text-xs text-white/50 flex-1">{area}</span>
-                    <div className="flex items-center gap-1">
-                      <input type="number" min={0} max={100} value={capabilityAllocation[area] || ''}
-                        onChange={e => setCapabilityAllocation(prev => ({ ...prev, [area]: e.target.value }))}
-                        className="w-14 text-xs text-center bg-white/[0.04] border border-white/[0.08] text-white rounded-lg py-1" placeholder="0" />
-                      <span className="text-xs text-white/30">%</span>
-                    </div>
-                  </div>
-                ))}
-              </div>
+
               {/* Service allocations (percentages) */}
               <div className="space-y-6">
                 {AGENCY_SERVICE_GROUPS.map(group => (
@@ -472,10 +546,29 @@ export default function AgencySignupPage() {
                     </p>
                     <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-2">
                       {group.items.map(skill => (
-                        <div key={skill} className={`flex items-center gap-2 p-2.5 rounded-xl border transition-all text-xs ${competencies[skill] ? 'bg-[#0763d8]/10 border-[#0763d8]/30 text-[#0763d8]' : 'bg-white/[0.03] border-white/[0.06] text-white/50'}`}>
-                          <span className="flex-1 truncate" title={skill}>{skill}</span>
+                        <div
+                          key={skill}
+                          className={`flex items-center gap-2 p-2.5 rounded-xl border transition-all text-xs ${
+                            competencies[skill]
+                              ? 'bg-[#0763d8]/10 border-[#0763d8]/30 text-[#0763d8]'
+                              : 'bg-white/[0.03] border-white/[0.06] text-white/50'
+                          }`}
+                        >
+                          <span className="flex-1 truncate" title={skill}>
+                            {skill}
+                          </span>
                           <div className="flex items-center gap-1 shrink-0">
-                            <input type="number" min={0} max={100} value={competencies[skill] || ''} onChange={e => setCompetencies(prev => ({ ...prev, [skill]: e.target.value }))} className="w-14 text-xs text-center bg-white/[0.04] border border-white/[0.08] text-white rounded-lg py-1" placeholder="0" />
+                            <input
+                              type="number"
+                              min={0}
+                              max={100}
+                              value={competencies[skill] || ''}
+                              onChange={e =>
+                                setCompetencies(prev => ({ ...prev, [skill]: e.target.value }))
+                              }
+                              className="w-14 text-xs text-center bg-white/[0.04] border border-white/[0.08] text-white rounded-lg py-1"
+                              placeholder="0"
+                            />
                             <span className="text-xs text-white/30">%</span>
                           </div>
                         </div>
@@ -483,6 +576,113 @@ export default function AgencySignupPage() {
                     </div>
                   </div>
                 ))}
+              </div>
+
+              {/* Activities — outsourced services (from RFI Activities section) */}
+              <div className="border-t border-white/[0.08] pt-6 mt-10 space-y-4">
+                <p className="text-xs font-bold text-white/60 uppercase tracking-widest">
+                  Activities
+                </p>
+                <label className="flex items-center gap-3 text-sm text-white/70">
+                  <input
+                    type="checkbox"
+                    checked={outsources}
+                    onChange={e => setOutsources(e.target.checked)}
+                    className="w-4 h-4 accent-[#0763d8]"
+                  />
+                  <span>
+                    Please indicate if your company subcontract activities or some phase of services
+                  </span>
+                </label>
+
+                {outsources && (
+                  <div className="space-y-3">
+                    <p className="text-xs text-white/40">
+                      If <span className="font-semibold text-white/70">Yes</span>, please fill in the
+                      table below:
+                    </p>
+                    <div className="overflow-x-auto">
+                      <table className="w-full text-xs border-collapse min-w-[540px]">
+                        <thead>
+                          <tr className="bg-white/[0.04] text-white/80">
+                            <th className="px-3 py-2 text-left font-medium">Activities outsourced</th>
+                            <th className="px-3 py-2 text-left font-medium">Detailed description</th>
+                            <th className="px-3 py-2 text-left font-medium">% Contractual value</th>
+                          </tr>
+                        </thead>
+                        <tbody>
+                          {outsourcedActivities.map((row, idx) => (
+                            <tr key={idx} className="border-b border-white/[0.06] last:border-0">
+                              <td className="px-3 py-2 align-top">
+                                <Input
+                                  value={row.activity}
+                                  onChange={e =>
+                                    setOutsourcedActivities(prev => {
+                                      const next = [...prev]
+                                      next[idx] = { ...next[idx], activity: e.target.value }
+                                      return next
+                                    })
+                                  }
+                                  placeholder="e.g. Media buying, print production…"
+                                  className={inputCls + ' h-8 text-xs'}
+                                />
+                              </td>
+                              <td className="px-3 py-2 align-top">
+                                <Input
+                                  value={row.description}
+                                  onChange={e =>
+                                    setOutsourcedActivities(prev => {
+                                      const next = [...prev]
+                                      next[idx] = { ...next[idx], description: e.target.value }
+                                      return next
+                                    })
+                                  }
+                                  placeholder="Describe the scope of the outsourced activity"
+                                  className={inputCls + ' h-8 text-xs'}
+                                />
+                              </td>
+                              <td className="px-3 py-2 align-top w-32">
+                                <div className="flex items-center gap-1">
+                                  <input
+                                    type="number"
+                                    min={0}
+                                    max={100}
+                                    value={row.contractualValue}
+                                    onChange={e =>
+                                      setOutsourcedActivities(prev => {
+                                        const next = [...prev]
+                                        next[idx] = {
+                                          ...next[idx],
+                                          contractualValue: e.target.value,
+                                        }
+                                        return next
+                                      })
+                                    }
+                                    className="w-16 bg-white/[0.04] border border-white/[0.08] text-white text-xs rounded-lg px-2 py-1 text-right focus:border-[#0763d8] outline-none"
+                                    placeholder="0"
+                                  />
+                                  <span className="text-white/40 text-xs">%</span>
+                                </div>
+                              </td>
+                            </tr>
+                          ))}
+                        </tbody>
+                      </table>
+                    </div>
+                    <button
+                      type="button"
+                      onClick={() =>
+                        setOutsourcedActivities(prev => [
+                          ...prev,
+                          { activity: '', description: '', contractualValue: '' },
+                        ])
+                      }
+                      className="text-xs text-[#0763d8] hover:text-[#0655b3]"
+                    >
+                      + Add activity
+                    </button>
+                  </div>
+                )}
               </div>
             </div>
           )}
@@ -492,24 +692,12 @@ export default function AgencySignupPage() {
             <div>
               <StepHeader icon="📋" title="Governance & SOW" subtitle="About, governance, and outsourcing activities" />
               <div className="space-y-5">
-                <FormField label="About Your Agency"><textarea value={about} onChange={e => setAbout(e.target.value)} rows={3} className={textareaCls} placeholder="Brief overview..." /></FormField>
-                <FormField label="Philosophy & Competitive Advantages"><textarea value={philosophy} onChange={e => setPhilosophy(e.target.value)} rows={3} className={textareaCls} placeholder="What makes you different?" /></FormField>
-                <FormField label="Network Description"><textarea value={networkDescription} onChange={e => setNetworkDescription(e.target.value)} rows={2} className={textareaCls} placeholder="Your agency network..." /></FormField>
-                <FormField label="Local Representation"><textarea value={localRepresentation} onChange={e => setLocalRepresentation(e.target.value)} rows={2} className={textareaCls} placeholder="Local offices..." /></FormField>
                 <div className="border-t border-white/[0.06] pt-5">
                   <p className="text-xs font-bold text-white/60 uppercase tracking-widest mb-4">Governance</p>
                   <FormField label={GOVERNANCE_QUESTIONS[0]}><textarea value={governanceQA} onChange={e => setGovernanceQA(e.target.value)} rows={2} className={textareaCls} /></FormField>
                   <FormField label={GOVERNANCE_QUESTIONS[1]} className="mt-4"><textarea value={governanceData} onChange={e => setGovernanceData(e.target.value)} rows={2} className={textareaCls} /></FormField>
                   <FormField label={GOVERNANCE_QUESTIONS[2]} className="mt-4"><textarea value={governanceGlobal} onChange={e => setGovernanceGlobal(e.target.value)} rows={2} className={textareaCls} /></FormField>
                   <FormField label={GOVERNANCE_QUESTIONS[3]} className="mt-4"><textarea value={governanceAdditional} onChange={e => setGovernanceAdditional(e.target.value)} rows={2} className={textareaCls} /></FormField>
-                </div>
-                <div className="border-t border-white/[0.06] pt-5">
-                  <label className="flex items-center gap-3 cursor-pointer">
-                    <input type="checkbox" checked={outsources} onChange={e => setOutsources(e.target.checked)} className="w-4 h-4 accent-[#0763d8]" />
-                    <span className="text-sm text-white/60">
-                      Please indicate if your company subcontract activities or some phase of services
-                    </span>
-                  </label>
                 </div>
               </div>
             </div>
