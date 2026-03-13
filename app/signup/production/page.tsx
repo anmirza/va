@@ -645,13 +645,20 @@ export default function ProductionSignupPage() {
             </div>
           )}
 
-          {/* STEP 10 — Post-Production & Activities */}
+          {/* STEP 10 — Post Production & Activities */}
           {step === 10 && (
             <div>
-              <StepHeader icon="🎞️" title="Post-Production & Outsourcing" subtitle="Describe your post-production capabilities and any outsourced activities" />
+              <StepHeader
+                icon="🎞️"
+                title="Post Production"
+                subtitle="Please indicate whether you have an in-house post-production department and, if outsourced, which companies you usually collaborate with."
+              />
 
               <div className="mb-8 border border-white/[0.1] rounded-xl p-6">
-                <p className="text-sm font-bold text-white/80 mb-3">Do you have an in-house post-production department?</p>
+                <p className="text-sm font-bold text-white/80 mb-3">
+                  Please; indicate whether you have an in-house post-production department. If so,
+                  which services does it cover (editing, color grading, VFX, sound design, etc.)?
+                </p>
                 <div className="flex gap-6 mb-4">
                   {[true, false].map(v => (
                     <label key={String(v)} className="flex items-center gap-2 cursor-pointer">
@@ -661,8 +668,14 @@ export default function ProductionSignupPage() {
                   ))}
                 </div>
                 {hasInHousePost && (
-                  <FormField label="Which services does it cover?">
-                    <textarea value={postServices} onChange={e => setPostServices(e.target.value)} rows={2} className={textareaCls} placeholder="Editing, colour grading, VFX, sound design, etc." />
+                  <FormField label="Which services does it cover (editing, color grading, VFX, sound design, etc.)?">
+                    <textarea
+                      value={postServices}
+                      onChange={e => setPostServices(e.target.value)}
+                      rows={2}
+                      className={textareaCls}
+                      placeholder="Editing, color grading, VFX, sound design, etc."
+                    />
                   </FormField>
                 )}
               </div>
@@ -670,7 +683,9 @@ export default function ProductionSignupPage() {
               {hasInHousePost === false && (
                 <div className="mb-8">
                   <div className="flex items-center justify-between mb-3">
-                    <p className="text-sm font-bold text-white/80">Outsourced Post-Production Partners</p>
+                    <p className="text-sm font-bold text-white/80">
+                      If outsourced, which companies do you usually collaborate with?
+                    </p>
                     <Button type="button" variant="outline" onClick={() => setOutsourcedPartners(p => [...p, { name: '', location: '', audio: false, video: false }])} className="text-xs h-8 px-3">
                       <Plus className="w-3 h-3 mr-1" /> Add Partner
                     </Button>
@@ -811,16 +826,61 @@ export default function ProductionSignupPage() {
 
               <div>
                 <p className="text-sm font-bold text-white/80 mb-3">Investments (% of Turnover)</p>
-                <div className="grid grid-cols-2 sm:grid-cols-3 gap-3">
+                <div className="grid grid-cols-2 sm:grid-cols-3 gap-3 mb-6">
                   {INVESTMENT_ITEMS.map(item => (
-                    <div key={item} className="flex items-center gap-3 bg-white/[0.04] rounded-lg px-4 py-2.5">
+                    <div
+                      key={item}
+                      className="flex items-center gap-3 bg-white/[0.04] rounded-lg px-4 py-2.5"
+                    >
                       <span className="text-sm text-white/60 flex-1">{item}</span>
                       <div className="flex items-center gap-1">
-                        <input type="number" min={0} max={100} value={investments[item] || ''} onChange={e => setInvestments(prev => ({ ...prev, [item]: e.target.value }))} className="w-16 text-sm text-center border border-white/[0.12] rounded-lg py-1 bg-white/[0.04] text-white focus:outline-none focus:ring-2 focus:ring-[#0763d8]" placeholder="0" />
+                        <input
+                          type="number"
+                          min={0}
+                          max={100}
+                          value={investments[item] || ''}
+                          onChange={e =>
+                            setInvestments(prev => ({ ...prev, [item]: e.target.value }))
+                          }
+                          className="w-16 text-sm text-center border border-white/[0.12] rounded-lg py-1 bg-white/[0.04] text-white focus:outline-none focus:ring-2 focus:ring-[#0763d8]"
+                          placeholder="0"
+                        />
                         <span className="text-sm text-white/40">%</span>
                       </div>
                     </div>
                   ))}
+                </div>
+
+                <div className="space-y-4">
+                  <p className="text-xs font-bold text-white/60 uppercase tracking-widest">
+                    RIF. / Requests
+                  </p>
+                  <FormField label="1.1 Could you please present your strategic development">
+                    <textarea
+                      value={strategicOrientation}
+                      onChange={e => setStrategicOrientation(e.target.value)}
+                      rows={3}
+                      className={textareaCls}
+                      placeholder="Write your answer (NOTE column) for request 1.1 here..."
+                    />
+                  </FormField>
+                  <FormField label="1.2 Do you have any activity out of your Country / City?">
+                    <textarea
+                      value={activityOutOfCountry === null ? '' : activityOutOfCountry ? 'Yes' : 'No'}
+                      onChange={e =>
+                        setActivityOutOfCountry(
+                          e.target.value.trim().toLowerCase().startsWith('y')
+                            ? true
+                            : e.target.value.trim().toLowerCase().startsWith('n')
+                            ? false
+                            : null,
+                        )
+                      }
+                      rows={2}
+                      className={textareaCls}
+                      placeholder="Write your answer (NOTE column) for request 1.2 here..."
+                    />
+                  </FormField>
                 </div>
               </div>
             </div>
