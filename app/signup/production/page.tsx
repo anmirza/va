@@ -6,6 +6,7 @@ import { useRouter } from 'next/navigation'
 import { ChevronRight, ChevronLeft, Check, Film, Plus, Trash2, Upload } from 'lucide-react'
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
+import { VaLogo } from '@/components/va-logo'
 import { SOCIAL_RESPONSIBILITY_QUESTIONS, CSR_IMPACT_AREAS, ATTACHMENTS_REQUESTED } from '@/lib/rfi-data'
 import { getTurnoverYears } from '@/lib/turnover-utils'
 
@@ -231,7 +232,7 @@ export default function ProductionSignupPage() {
     <div className="min-h-screen bg-[#02030E] flex flex-col">
       {/* Header */}
       <header className="bg-[#02030E]/95 backdrop-blur-md border-b border-white/[0.06] px-6 py-4 flex items-center justify-between sticky top-0 z-50">
-        <Link href="/" className="text-xl font-bold text-white">VA</Link>
+        <Link href="/" className="text-white hover:text-white/90 transition-colors"><VaLogo width={62} height={39} /></Link>
         <div className="flex items-center gap-3">
           <span className="text-xs text-white/40">Step {step} of {STEPS.length}</span>
           <Link href="/login" className="text-sm text-white/50 hover:text-white">Already listed? <span className="font-semibold text-white">Sign in</span></Link>

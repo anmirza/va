@@ -6,6 +6,7 @@ import { useRouter } from 'next/navigation'
 import { ChevronRight, ChevronLeft, Check, Briefcase } from 'lucide-react'
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
+import { VaLogo } from '@/components/va-logo'
 import { COUNTRIES, EMPLOYEE_SIZES } from '@/lib/rfi-data'
 
 const STEPS = [
@@ -51,7 +52,7 @@ export default function ClientSignupPage() {
   return (
     <div className="min-h-screen bg-[#02030E] flex flex-col">
       <header className="bg-[#02030E]/95 backdrop-blur-md border-b border-white/[0.06] px-6 py-4 flex items-center justify-between">
-        <Link href="/" className="text-xl font-bold text-white">VA</Link>
+        <Link href="/" className="text-white hover:text-white/90 transition-colors"><VaLogo width={62} height={39} /></Link>
         <Link href="/login" className="text-sm text-white/60 hover:text-white">Already registered? Sign in</Link>
       </header>
 

@@ -4,6 +4,12 @@ import Link from 'next/link'
 import { Company } from '@/lib/mock-data'
 import { MapPin, Users, Handshake, Award } from 'lucide-react'
 import { getCampaignsByAgency } from '@/lib/mock-data'
+import {
+  COVER_ASPECT_CLASS,
+  CARD_LOGO_BOX_WIDTH_PERCENT,
+  CARD_LOGO_BOX_MIN_WIDTH_PX,
+  CARD_LOGO_BOX_MAX_WIDTH_PX,
+} from '@/lib/cover-logo-spec'
 
 interface CompanyCardProps {
   company: Company
@@ -26,26 +32,33 @@ export function CompanyCard({ company }: CompanyCardProps) {
 
   return (
     <Link href={`/directory/${company.id}`}>
-      <div className="group glass-card overflow-hidden cursor-pointer transition-all duration-300 hover:border-[#0763d8]/30 hover:shadow-lg hover:shadow-[#0763d8]/5">
-        {/* Top branding/image area */}
+      <div className="group glass-card overflow-hidden cursor-pointer transition-all duration-300 hover:border-[#0763d8]/30 hover:shadow-xl hover:shadow-[#0763d8]/8">
+        {/* Top branding/image area — cover + logo same dimension, frosted integration */}
         <div
-          className="relative h-32 sm:h-36 bg-cover bg-center"
+          className={`relative w-full ${COVER_ASPECT_CLASS} bg-cover bg-center overflow-hidden`}
           style={{ backgroundImage: `url(${company.coverImage})` }}
         >
-          <div className="absolute inset-0 bg-gradient-to-t from-[#02030E] to-transparent" />
-          <div className="absolute inset-0 flex items-center justify-center p-4">
+          <div className="absolute inset-0 bg-gradient-to-b from-black/20 via-transparent to-[#02030E]/60" />
+          <div
+            className="absolute inset-y-0 left-1/2 -translate-x-1/2 flex items-center justify-center px-3 sm:px-4"
+            style={{
+              width: `${CARD_LOGO_BOX_WIDTH_PERCENT}%`,
+              minWidth: `${CARD_LOGO_BOX_MIN_WIDTH_PX}px`,
+              maxWidth: `${CARD_LOGO_BOX_MAX_WIDTH_PX}px`,
+            }}
+          >
             {company.logo ? (
-              <div className="bg-[#02030E]/80 backdrop-blur-md border border-white/[0.08] px-5 py-3 rounded-2xl flex items-center justify-center max-w-full">
+              <div className="cover-logo-block h-full w-full flex items-center justify-center p-4 sm:p-5">
                 <img
                   src={company.logo}
                   alt={`${company.name} logo`}
-                  className="h-10 sm:h-12 w-auto object-contain"
+                  className="max-h-[85%] w-auto max-w-[85%] object-contain"
                 />
               </div>
             ) : (
-              <div className="bg-[#02030E]/80 backdrop-blur-md border border-white/[0.1] px-4 py-2 rounded-xl text-center max-w-full">
-                <p className="font-bold shadow-sm text-sm truncate badge-text-main">{company.name}</p>
-                <p className="text-xs shadow-sm truncate badge-text-sub">{company.tagline}</p>
+              <div className="cover-logo-block h-full w-full flex flex-col items-center justify-center p-4 sm:p-5 text-center">
+                <p className="font-bold text-[#0f111a] text-base sm:text-lg truncate w-full tracking-tight">{company.name}</p>
+                {company.tagline && <p className="text-xs sm:text-sm text-[#0f111a]/70 truncate w-full mt-1">{company.tagline}</p>}
               </div>
             )}
           </div>
@@ -53,7 +66,7 @@ export function CompanyCard({ company }: CompanyCardProps) {
 
         {/* Details section */}
         <div className="p-4 sm:p-5">
-          <h3 className="font-bold text-white text-lg mb-3">{company.name}</h3>
+          <h3 className="font-bold text-white text-lg mb-3 tracking-tight">{company.name}</h3>
 
           {/* Stats with icons */}
           <div className="space-y-2 mb-4">

@@ -2,6 +2,7 @@
 
 import Link from 'next/link'
 import { MapPin, Phone, Mail } from 'lucide-react'
+import { VaLogo } from '@/components/va-logo'
 
 export function Footer() {
   return (
@@ -10,11 +11,9 @@ export function Footer() {
         <div className="grid gap-10 md:grid-cols-[minmax(0,2.1fr)_minmax(0,2.1fr)_minmax(0,1.6fr)]">
           {/* Brand + services */}
           <div>
-            <img
-              src="/logos/va-consulting.svg"
-              alt="VA Consulting"
-              className="h-8 w-auto mb-6"
-            />
+            <Link href="/" className="inline-block text-white mb-6">
+              <VaLogo width={80} height={49} ariaLabel="VA" />
+            </Link>
             <h3 className="text-xs font-semibold tracking-[0.28em] text-white/60 uppercase mb-4">
               Services
             </h3>

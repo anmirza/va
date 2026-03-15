@@ -6,6 +6,7 @@ import { useRouter } from 'next/navigation'
 import { useAuth } from '@/lib/auth-context'
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
+import { VaLogo } from '@/components/va-logo'
 import { Eye, EyeOff, Mail, Lock } from 'lucide-react'
 
 export default function LoginPage() {
@@ -34,7 +35,7 @@ export default function LoginPage() {
     <div className="min-h-screen bg-[#eef0f3] flex flex-col">
       {/* Minimal header */}
       <header className="bg-[#2e3843] px-6 py-4 flex items-center justify-between">
-        <Link href="/" className="text-xl font-bold text-white">VA</Link>
+        <Link href="/" className="text-white hover:text-white/90 transition-colors"><VaLogo width={62} height={39} /></Link>
         <Link href="/signup" className="text-sm text-white/80 hover:text-white">
           No account? Sign up
         </Link>

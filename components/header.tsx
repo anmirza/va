@@ -5,6 +5,7 @@ import { useState, useRef, useEffect } from 'react'
 import { Menu, X, Search, ChevronDown, User, LayoutDashboard, LogOut, Building2, Users, Zap, Sun, Moon } from 'lucide-react'
 import { useAuth } from '@/lib/auth-context'
 import { useRouter } from 'next/navigation'
+import { VaLogo } from '@/components/va-logo'
 
 const directoryItems = [
   { label: 'Agencies', href: '/directory', icon: Building2 },
@@ -84,14 +85,10 @@ export function Header() {
   return (
     <header className="sticky top-0 z-50 bg-[#02030E] border-b border-white/[0.06] light-header">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        <div className="flex justify-between items-center h-14 lg:h-16">
-          {/* Logo */}
-          <Link href="/" className="flex flex-1 items-center shrink-0">
-            <img
-              src="/logos/va-consulting.svg"
-              alt="VA Consulting"
-              className="h-7 w-auto"
-            />
+        <div className="flex justify-between items-center h-16 lg:h-20">
+          {/* Logo — exact VA mark everywhere */}
+          <Link href="/" className="flex flex-1 items-center shrink-0 text-white hover:text-white/90 transition-colors">
+            <VaLogo width={96} height={60} ariaLabel="VA" />
           </Link>
 
           {/* Desktop Navigation — centrally aligned */}

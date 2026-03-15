@@ -157,16 +157,132 @@
     border: 1px solid rgba(255, 255, 255, 0.05);
     backdrop-filter: blur(12px);
     border-radius: 1rem;
+    transition: background 0.25s ease, border-color 0.25s ease, box-shadow 0.25s ease;
   }
   .glass-card:hover {
     background: rgba(2, 3, 14, 0.6);
     border-color: rgba(7, 99, 216, 0.25);
   }
 
+  /* Logo-on-cover block: premium frosted panel with clear visual hierarchy */
+  .cover-logo-block {
+    background: rgba(255, 255, 255, 0.92);
+    backdrop-filter: blur(16px);
+    -webkit-backdrop-filter: blur(16px);
+    border: 1px solid rgba(255, 255, 255, 0.4);
+    border-radius: 0.75rem;
+    box-shadow:
+      0 0 0 1px rgba(0, 0, 0, 0.04),
+      0 6px 28px rgba(0, 0, 0, 0.14),
+      inset 0 1px 0 rgba(255, 255, 255, 0.7);
+    transition: box-shadow 0.3s ease, transform 0.25s ease, border-color 0.25s ease;
+  }
+  .group:hover .cover-logo-block {
+    box-shadow:
+      0 0 0 1px rgba(7, 99, 216, 0.08),
+      0 10px 40px rgba(0, 0, 0, 0.18),
+      0 0 24px rgba(7, 99, 216, 0.06),
+      inset 0 1px 0 rgba(255, 255, 255, 0.8);
+    border-color: rgba(255, 255, 255, 0.5);
+  }
+  /* Logo image inside block: crisp and prominent */
+  .cover-logo-block img {
+    filter: drop-shadow(0 1px 2px rgba(0, 0, 0, 0.06));
+    object-fit: contain;
+  }
+
+  /* Cover hero entrance animation */
+  @keyframes cover-enter {
+    from {
+      opacity: 0;
+      transform: translateY(20px) scale(1.02);
+    }
+    to {
+      opacity: 1;
+      transform: translateY(0) scale(1);
+    }
+  }
+  .cover-hero {
+    animation: cover-enter 0.7s ease-out forwards;
+  }
+
+  /* Stat cards subtle staggered animation */
+  @keyframes stat-fade-up {
+    from {
+      opacity: 0;
+      transform: translateY(10px);
+    }
+    to {
+      opacity: 1;
+      transform: translateY(0);
+    }
+  }
+  .stat-card-animate {
+    opacity: 0;
+    animation: stat-fade-up 0.5s ease-out forwards;
+  }
+  .stat-card-animate[data-index="0"] { animation-delay: 0.05s; }
+  .stat-card-animate[data-index="1"] { animation-delay: 0.1s; }
+  .stat-card-animate[data-index="2"] { animation-delay: 0.15s; }
+  .stat-card-animate[data-index="3"] { animation-delay: 0.2s; }
+  .stat-card-animate[data-index="4"] { animation-delay: 0.25s; }
+
   /* Glow accent utility */
   .glow-accent {
     box-shadow: 0 0 20px rgba(7, 99, 216, 0.15), 0 0 60px rgba(7, 99, 216, 0.05);
   }
+
+  /* Generic hover lift utility for cards */
+  .hover-lift {
+    transition: transform 0.25s ease, box-shadow 0.25s ease, border-color 0.25s ease, background 0.25s ease;
+  }
+  .hover-lift:hover {
+    transform: translateY(-3px);
+    box-shadow: 0 14px 40px rgba(0, 0, 0, 0.4);
+    background: rgba(2, 3, 14, 0.8);
+    border-color: rgba(7, 99, 216, 0.35);
+  }
+
+  /* Glass panel — stronger frosted block for hero strips and key sections */
+  .glass-panel {
+    background: rgba(2, 3, 14, 0.5);
+    backdrop-filter: blur(16px);
+    -webkit-backdrop-filter: blur(16px);
+    border: 1px solid rgba(255, 255, 255, 0.06);
+    border-radius: 1rem;
+    box-shadow: 0 4px 24px rgba(0, 0, 0, 0.2);
+    transition: border-color 0.25s ease, box-shadow 0.25s ease;
+  }
+  .glass-panel:hover {
+    border-color: rgba(255, 255, 255, 0.1);
+    box-shadow: 0 8px 32px rgba(0, 0, 0, 0.25);
+  }
+
+  /* Tab pill hover */
+  .tab-pill {
+    transition: color 0.2s ease, border-color 0.2s ease, background 0.2s ease;
+  }
+  .tab-pill:hover {
+    background: rgba(255, 255, 255, 0.04);
+  }
+
+  /* Overview section entrance */
+  @keyframes overview-fade-in {
+    from {
+      opacity: 0;
+      transform: translateY(12px);
+    }
+    to {
+      opacity: 1;
+      transform: translateY(0);
+    }
+  }
+  .overview-enter {
+    animation: overview-fade-in 0.5s ease-out forwards;
+  }
+  .overview-enter-delay-1 { animation-delay: 0.08s; opacity: 0; }
+  .overview-enter-delay-2 { animation-delay: 0.16s; opacity: 0; }
+  .overview-enter-delay-3 { animation-delay: 0.24s; opacity: 0; }
 }
 
 /* ═══ Light Mode Override ═══ */
@@ -269,6 +385,16 @@
 .badge-text-sub,
 .light-mode .glass-card .badge-text-sub {
   color: rgba(255, 255, 255, 0.7) !important;
+}
+/* Cover logo block in light mode */
+.light-mode .cover-logo-block {
+  background: rgba(255, 255, 255, 0.96) !important;
+  border: 1px solid rgba(0, 0, 0, 0.06) !important;
+  box-shadow: 0 2px 0 rgba(255, 255, 255, 0.8), 0 6px 24px rgba(0, 0, 0, 0.1), inset 0 1px 0 rgba(255, 255, 255, 1) !important;
+}
+.light-mode .group:hover .cover-logo-block {
+  box-shadow: 0 2px 0 rgba(255, 255, 255, 0.9), 0 10px 32px rgba(0, 0, 0, 0.12), 0 0 20px rgba(7, 99, 216, 0.06), inset 0 1px 0 rgba(255, 255, 255, 1) !important;
+  border-color: rgba(7, 99, 216, 0.12) !important;
 }
 
 /* ── Hero Section / Homepage ── */

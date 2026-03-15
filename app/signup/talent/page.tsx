@@ -5,6 +5,7 @@ import Link from 'next/link'
 import { useRouter } from 'next/navigation'
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
+import { VaLogo } from '@/components/va-logo'
 import { Check, ChevronRight } from 'lucide-react'
 
 const EXPERTISE_OPTIONS = [
@@ -52,7 +53,7 @@ export default function TalentSignupPage() {
   return (
     <div className="min-h-screen bg-[#eef0f3] flex flex-col">
       <header className="bg-[#2e3843] px-6 py-4">
-        <Link href="/" className="text-xl font-bold text-white">VA</Link>
+        <Link href="/" className="text-white hover:text-white/90 transition-colors"><VaLogo width={62} height={39} /></Link>
       </header>
 
       <div className="flex-1 px-4 py-10">

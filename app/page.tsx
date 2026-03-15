@@ -10,6 +10,7 @@ import { Badge } from '@/components/ui/badge'
 import { Button } from '@/components/ui/button'
 import { companies, campaigns, news } from '@/lib/mock-data'
 import HeroSearch from '@/components/hero-search'
+import { VaLogo } from '@/components/va-logo'
 import { ArrowRight } from 'lucide-react'
 
 const disciplines = [
@@ -54,9 +55,9 @@ export default function Home() {
               The Creative Intelligence Platform
             </span>
 
-            <h1 className="text-5xl sm:text-6xl lg:text-7xl font-extrabold text-white tracking-tight mb-4 leading-none">
-              VA
-            </h1>
+            <div className="mb-4 flex justify-center">
+              <VaLogo width={158} height={99} className="text-white" />
+            </div>
             <p className="text-white/50 text-base sm:text-lg max-w-xl mb-10">
               Connecting brands with the world&apos;s best advertising agencies, production companies, and creative talent.
             </p>

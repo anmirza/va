@@ -6,6 +6,7 @@ import { useRouter } from 'next/navigation'
 import { useAuth } from '@/lib/auth-context'
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
+import { VaLogo } from '@/components/va-logo'
 import { Building2, Film, User, Eye, EyeOff, Briefcase } from 'lucide-react'
 
 const roles = [
@@ -93,7 +94,7 @@ export default function SignupPage() {
   return (
     <div className="min-h-screen bg-[#02030E] flex flex-col">
       <header className="bg-[#02030E]/95 backdrop-blur-md border-b border-white/[0.06] px-6 py-4 flex items-center justify-between">
-        <Link href="/" className="text-xl font-bold text-white">VA</Link>
+        <Link href="/" className="text-white hover:text-white/90 transition-colors"><VaLogo width={62} height={39} /></Link>
         <Link href="/login" className="text-sm text-white/60 hover:text-white transition-colors">
           Already have an account? Sign in
         </Link>
@@ -103,47 +104,47 @@ export default function SignupPage() {
         <div className="w-full max-w-lg">
           {step === 'role' ? (
             <div>
-              <div className="text-center mb-8">
-                <h1 className="text-3xl font-bold text-white mb-2">Join the Network</h1>
-                <p className="text-white/40">Register as a Client or as a Vendor</p>
+              <div className="text-center mb-10">
+                <h1 className="text-3xl sm:text-4xl font-bold text-white mb-2 tracking-tight">Join the Network</h1>
+                <p className="text-white/50 text-sm sm:text-base">Register as a Client or as a Vendor</p>
               </div>
-              <div className="space-y-4">
+              <div className="space-y-3">
                 {roles.map(role => {
                   const Icon = role.icon
                   return (
                     <button
                       key={role.id}
                       onClick={() => handleRoleSelect(role)}
-                      className="w-full glass-card p-6 flex items-start gap-4 hover:border-[#0763d8]/40 transition-all text-left"
+                      className="w-full glass-card p-5 sm:p-6 flex items-start gap-4 hover:border-[#0763d8]/40 hover:shadow-lg hover:shadow-[#0763d8]/10 transition-all duration-200 text-left rounded-xl"
                     >
-                      <div className="w-12 h-12 bg-[#0763d8]/10 rounded-xl flex items-center justify-center shrink-0">
-                        <Icon className="w-6 h-6 text-[#0763d8]" />
+                      <div className="w-11 h-11 sm:w-12 sm:h-12 bg-[#0763d8]/15 rounded-xl flex items-center justify-center shrink-0 border border-[#0763d8]/20">
+                        <Icon className="w-5 h-5 sm:w-6 sm:h-6 text-[#0763d8]" />
                       </div>
-                      <div>
-                        <p className="font-bold text-white mb-1">{role.title}</p>
-                        <p className="text-sm text-white/40">{role.description}</p>
+                      <div className="flex-1 min-w-0 pt-0.5">
+                        <p className="font-semibold text-white mb-1">{role.title}</p>
+                        <p className="text-sm text-white/50 leading-snug">{role.description}</p>
                       </div>
                     </button>
                   )
                 })}
               </div>
-              <p className="text-center text-sm text-white/40 mt-6">
+              <p className="text-center text-sm text-white/50 mt-8">
                 Already have an account?{' '}
-                <Link href="/login" className="text-[#0763d8] hover:underline">Sign in</Link>
+                <Link href="/login" className="text-[#0763d8] hover:text-[#3b8aff] transition-colors font-medium">Sign in</Link>
               </p>
             </div>
           ) : (
-            <div className="glass-card p-8">
+            <div className="glass-card p-6 sm:p-8 rounded-2xl">
               <button
                 onClick={() => setStep('role')}
-                className="text-sm text-white/40 hover:text-white mb-6 flex items-center gap-1"
+                className="text-sm text-white/50 hover:text-white mb-6 flex items-center gap-1 transition-colors"
               >
                 ← Back
               </button>
               <div className="mb-6">
-                <h2 className="text-2xl font-bold text-white mb-1">Create your account</h2>
-                <p className="text-sm text-white/40">
-                  Signing up as <span className="font-medium text-[#0763d8]">{selectedRole?.title}</span>
+                <h2 className="text-2xl font-bold text-white mb-1 tracking-tight">Create your account</h2>
+                <p className="text-sm text-white/50">
+                  Signing up as <span className="font-semibold text-[#0763d8]">{selectedRole?.title}</span>
                 </p>
               </div>
               <form onSubmit={handleSubmit} className="space-y-4">

@@ -4,6 +4,7 @@ import { useState, useEffect, useRef } from 'react'
 import Link from 'next/link'
 import { useRouter } from 'next/navigation'
 import { ChevronRight, ChevronLeft, Check, Building2, Plus, Trash2 } from 'lucide-react'
+import { VaLogo } from '@/components/va-logo'
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
 import {
@@ -157,7 +158,7 @@ export default function AgencySignupPage() {
     <div className="min-h-screen bg-[#02030E] flex flex-col">
       {/* Header */}
       <header className="bg-[#02030E]/95 backdrop-blur-md border-b border-white/[0.06] px-6 py-4 flex items-center justify-between sticky top-0 z-50">
-        <Link href="/" className="text-xl font-bold text-white">VA</Link>
+        <Link href="/" className="text-white hover:text-white/90 transition-colors"><VaLogo width={62} height={39} /></Link>
         <div className="flex items-center gap-3">
           <span className="text-xs text-white/30">Step {step} of {REGISTRATION_STEPS.length}</span>
           <Link href="/login" className="text-sm text-white/50 hover:text-white">Already listed? Sign in</Link>
