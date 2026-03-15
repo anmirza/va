@@ -6,8 +6,11 @@ export interface User {
   id: string
   email: string
   name: string
-  role: 'agency_owner' | 'talent' | 'marketer' | 'admin' | 'client' | 'production'
+  accountType?: 'vendor' | 'client'
+  role: 'agency_owner' | 'talent' | 'marketer' | 'admin' | 'client' | 'production' | 'vendor'
+  tier?: 'free' | 'paid'
   status?: 'pending_review' | 'active'
+  companyIds?: string[]
   companyId?: string
   talentId?: string
   avatar?: string
@@ -2098,15 +2101,20 @@ export const mockUsers: User[] = [
     id: 'user-01',
     email: 'demo@requisti.com',
     name: 'Demo User',
-    role: 'agency_owner',
+    accountType: 'vendor',
+    role: 'vendor',
+    status: 'active',
     companyId: 'wk-01',
+    companyIds: ['wk-01'],
     avatar: 'https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?w=100&q=80',
   },
   {
     id: 'user-02',
     email: 'talent@requisti.com',
     name: 'Jane Smith',
+    accountType: 'vendor',
     role: 'talent',
+    status: 'active',
     talentId: 'talent-01',
     avatar: 'https://images.unsplash.com/photo-1494790108377-be9c29b29330?w=100&q=80',
   },
@@ -2114,14 +2122,20 @@ export const mockUsers: User[] = [
     id: 'user-03',
     email: 'brand@requisti.com',
     name: 'Brand Manager',
-    role: 'marketer',
+    accountType: 'client',
+    role: 'client',
+    tier: 'paid',
+    status: 'active',
     avatar: 'https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=100&q=80',
   },
   {
     id: 'user-04',
     email: 'client@requisti.com',
     name: 'Client User',
+    accountType: 'client',
     role: 'client',
+    tier: 'free',
+    status: 'active',
     avatar: 'https://images.unsplash.com/photo-1535713875002-d1d0cf377fde?w=100&q=80',
   },
 ]

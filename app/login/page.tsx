@@ -2,7 +2,7 @@
 
 import { useState } from 'react'
 import Link from 'next/link'
-import { useRouter } from 'next/navigation'
+import { useRouter, useSearchParams } from 'next/navigation'
 import { useAuth } from '@/lib/auth-context'
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
@@ -12,6 +12,7 @@ import { Eye, EyeOff, Mail, Lock } from 'lucide-react'
 export default function LoginPage() {
   const { login } = useAuth()
   const router = useRouter()
+  const searchParams = useSearchParams()
   const [email, setEmail] = useState('')
   const [password, setPassword] = useState('')
   const [showPassword, setShowPassword] = useState(false)
@@ -25,7 +26,8 @@ export default function LoginPage() {
     const result = await login(email, password)
     setIsLoading(false)
     if (result.success) {
-      router.push('/dashboard')
+      const redirect = searchParams.get('redirect')
+      router.push(redirect || '/dashboard')
     } else {
       setError(result.error || 'Login failed')
     }

@@ -9,20 +9,26 @@ export function AuthGuard({ children }: { children: React.ReactNode }) {
   const router = useRouter()
 
   useEffect(() => {
-    if (!isLoading && !user) {
+    if (isLoading) return
+    if (!user) {
       router.replace('/login')
+      return
+    }
+    // User is logged in but hasn't classified yet
+    if (!user.accountType) {
+      router.replace('/signup/classify')
     }
   }, [user, isLoading, router])
 
   if (isLoading) {
     return (
-      <div className="min-h-screen bg-[#eef0f3] flex items-center justify-center">
+      <div className="min-h-screen bg-[#02030E] flex items-center justify-center">
         <div className="w-8 h-8 border-4 border-[#0763d8] border-t-transparent rounded-full animate-spin" />
       </div>
     )
   }
 
-  if (!user) return null
+  if (!user || !user.accountType) return null
 
   return <>{children}</>
 }

@@ -19,6 +19,7 @@ import {
   TrendingUp, TrendingDown, Trophy,
   Bookmark, ArrowUpRight, ArrowDownRight, Heart,
   Play, Zap, BarChart2, Activity, ChevronRight, Star,
+  Lock, ShieldAlert,
 } from 'lucide-react'
 import { useParams } from 'next/navigation'
 import { useAuth } from '@/lib/auth-context'
@@ -111,8 +112,23 @@ export default function CompanyProfilePage() {
     pct: Math.round(60 + seededData(company.id + s + i, 1, 0, 38)[0]),
   }))
 
-  // Client-only favouriting (Client or Marketer)
-  const isClientOrMarketer = user?.role === 'client' || user?.role === 'marketer'
+  // Access control
+  const isVendor = user?.accountType === 'vendor'
+  const isClient = user?.accountType === 'client'
+  const isOwnCompany = user?.companyIds?.includes(id) || user?.companyId === id
+  const isFreeTier = isClient && user?.tier === 'free'
+  // Vendors see full data for their own companies; locked tabs for competitors
+  // Free-tier clients see overview + contacts only
+  const LOCKED_TABS_VENDOR = ['turnover', 'competencies', 'governance', 'people', 'awards', 'add-on']
+  const LOCKED_TABS_FREE   = ['turnover', 'competencies', 'governance', 'people', 'awards', 'add-on']
+  const isTabLocked = (tabId: string) => {
+    if (isVendor && !isOwnCompany) return LOCKED_TABS_VENDOR.includes(tabId)
+    if (isFreeTier) return LOCKED_TABS_FREE.includes(tabId)
+    return false
+  }
+
+  // Client-only favouriting
+  const isClientOrMarketer = isClient || user?.role === 'marketer'
 
   return (
     <div className="min-h-screen bg-[#02030E] flex flex-col">
@@ -182,23 +198,58 @@ export default function CompanyProfilePage() {
           </div>
         </div>
 
+        {/* ═══════ COMPETITOR BANNER (vendors viewing other companies) ═══════ */}
+        {isVendor && !isOwnCompany && (
+          <div className="bg-amber-500/10 border-b border-amber-500/20 px-4 sm:px-6 lg:px-8 py-2.5">
+            <div className="max-w-7xl mx-auto flex items-center gap-3">
+              <ShieldAlert className="w-4 h-4 text-amber-400 shrink-0" />
+              <p className="text-xs text-amber-300/80">
+                You are viewing a competitor profile — detailed information is restricted to protect confidentiality. Only Overview and Contacts are visible.
+              </p>
+            </div>
+          </div>
+        )}
+
+        {/* ═══════ FREE TIER BANNER ═══════ */}
+        {isFreeTier && (
+          <div className="bg-[#0763d8]/10 border-b border-[#0763d8]/20 px-4 sm:px-6 lg:px-8 py-2.5">
+            <div className="max-w-7xl mx-auto flex items-center justify-between gap-3">
+              <div className="flex items-center gap-3">
+                <Lock className="w-4 h-4 text-[#0763d8] shrink-0" />
+                <p className="text-xs text-white/60">
+                  You are on the Free plan — some sections are restricted.{' '}
+                  <Link href="/pricing" className="text-[#0763d8] hover:underline font-medium">Upgrade to Pro</Link>{' '}
+                  for full access to financials, governance, people and more.
+                </p>
+              </div>
+            </div>
+          </div>
+        )}
+
         {/* ═══════ 8-TAB BAR (glass) ═══════ */}
         <div className="sticky top-14 lg:top-16 z-40 glass-panel border-t-0 border-x-0 rounded-none border-b border-white/[0.08] bg-[#02030E]/80 backdrop-blur-xl">
           <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
             <div className="flex gap-0 overflow-x-auto scrollbar-hide">
-              {PROFILE_TABS.map(tab => (
-                <button
-                  key={tab.id}
-                  onClick={() => setActiveTab(tab.id)}
-                  className={`tab-pill py-3 px-4 text-sm font-medium border-b-[3px] whitespace-nowrap rounded-t-lg ${
-                    activeTab === tab.id
-                      ? 'border-[#0763d8] text-[#0763d8] bg-[#0763d8]/5'
-                      : 'border-transparent text-white/40 hover:text-white/70'
-                  }`}
-                >
-                  {tab.label}
-                </button>
-              ))}
+              {PROFILE_TABS.map(tab => {
+                const locked = isTabLocked(tab.id)
+                return (
+                  <button
+                    key={tab.id}
+                    onClick={() => !locked && setActiveTab(tab.id)}
+                    disabled={locked}
+                    className={`tab-pill py-3 px-4 text-sm font-medium border-b-[3px] whitespace-nowrap rounded-t-lg flex items-center gap-1.5 ${
+                      locked
+                        ? 'border-transparent text-white/20 cursor-not-allowed'
+                        : activeTab === tab.id
+                          ? 'border-[#0763d8] text-[#0763d8] bg-[#0763d8]/5'
+                          : 'border-transparent text-white/40 hover:text-white/70'
+                    }`}
+                  >
+                    {locked && <Lock className="w-3 h-3" />}
+                    {tab.label}
+                  </button>
+                )
+              })}
             </div>
           </div>
         </div>
@@ -207,8 +258,32 @@ export default function CompanyProfilePage() {
         <div className="px-4 sm:px-6 lg:px-8 py-6">
           <div className="max-w-7xl mx-auto">
 
+            {/* ════ LOCKED STATE — shown when active tab is gated ════ */}
+            {isTabLocked(activeTab) && (
+              <div className="flex flex-col items-center justify-center py-24 text-center">
+                <div className="w-16 h-16 rounded-2xl bg-white/[0.04] border border-white/[0.08] flex items-center justify-center mb-5">
+                  <Lock className="w-7 h-7 text-white/20" />
+                </div>
+                <h3 className="text-lg font-bold text-white mb-2">
+                  {isVendor && !isOwnCompany ? 'Competitor Profile Restricted' : 'Upgrade Required'}
+                </h3>
+                <p className="text-white/40 text-sm max-w-sm mb-6">
+                  {isVendor && !isOwnCompany
+                    ? 'Detailed information from competitor profiles is not accessible on the platform to protect confidentiality.'
+                    : 'This section is available on the Pro plan. Upgrade to access financials, governance data, people profiles, awards, and more.'}
+                </p>
+                {isFreeTier && (
+                  <Link href="/pricing">
+                    <Button className="bg-[#0763d8] hover:bg-[#0655b3] text-white rounded-xl px-8">
+                      Upgrade to Pro
+                    </Button>
+                  </Link>
+                )}
+              </div>
+            )}
+
             {/* ════ OVERVIEW ════ */}
-            {activeTab === 'overview' && (
+            {!isTabLocked(activeTab) && activeTab === 'overview' && (
               <div className="space-y-5 relative">
 
                 {/* Ambient glow blobs — decorative depth layer */}
@@ -586,7 +661,7 @@ export default function CompanyProfilePage() {
             )}
 
             {/* ════ CONTACTS ════ */}
-            {activeTab === 'contacts' && (
+            {!isTabLocked(activeTab) && activeTab === 'contacts' && (
               <div className="space-y-5 relative">
                 <div className="pointer-events-none absolute -top-20 left-1/3 w-96 h-96 rounded-full bg-[#0763d8]/[0.04] blur-[120px]"/>
                 <div className="flex items-center gap-2 mb-1 overview-enter">
@@ -640,7 +715,7 @@ export default function CompanyProfilePage() {
             )}
 
             {/* ════ TURNOVER & CLIENTS ════ */}
-            {activeTab === 'turnover' && (
+            {!isTabLocked(activeTab) && activeTab === 'turnover' && (
               <div className="space-y-5 relative">
                 <div className="pointer-events-none absolute -top-20 right-1/4 w-96 h-96 rounded-full bg-[#6366f1]/[0.04] blur-[120px]"/>
                 {/* KPI strip */}
@@ -720,7 +795,7 @@ export default function CompanyProfilePage() {
             )}
 
             {/* ════ COMPETENCIES ════ */}
-            {activeTab === 'competencies' && (
+            {!isTabLocked(activeTab) && activeTab === 'competencies' && (
               <div className="space-y-5 relative">
                 <div className="pointer-events-none absolute -top-20 left-1/4 w-96 h-96 rounded-full bg-[#8b5cf6]/[0.04] blur-[120px]"/>
 
@@ -798,7 +873,7 @@ export default function CompanyProfilePage() {
             )}
 
             {/* ════ GOVERNANCE ════ */}
-            {activeTab === 'governance' && (
+            {!isTabLocked(activeTab) && activeTab === 'governance' && (
               <div className="space-y-5 relative">
                 <div className="pointer-events-none absolute -top-20 right-1/3 w-96 h-96 rounded-full bg-[#0763d8]/[0.04] blur-[120px]"/>
                 <div className="grid grid-cols-1 lg:grid-cols-3 gap-5 overview-enter">
@@ -855,7 +930,7 @@ export default function CompanyProfilePage() {
             )}
 
             {/* ════ PEOPLE & TALENT ════ */}
-            {activeTab === 'people' && (
+            {!isTabLocked(activeTab) && activeTab === 'people' && (
               <div className="space-y-5 relative">
                 <div className="pointer-events-none absolute -top-20 left-1/4 w-96 h-96 rounded-full bg-[#0763d8]/[0.04] blur-[120px]"/>
                 <div className="flex items-center gap-2 overview-enter">
@@ -891,7 +966,7 @@ export default function CompanyProfilePage() {
             )}
 
             {/* ════ AWARDS ════ */}
-            {activeTab === 'awards' && (
+            {!isTabLocked(activeTab) && activeTab === 'awards' && (
               <div className="space-y-5 relative">
                 <div className="pointer-events-none absolute -top-20 right-1/3 w-96 h-96 rounded-full bg-[#f59e0b]/[0.04] blur-[130px]"/>
                 <div className="flex items-center justify-between overview-enter">
@@ -934,7 +1009,7 @@ export default function CompanyProfilePage() {
             )}
 
             {/* ════ ADD-ON ════ */}
-            {activeTab === 'add-on' && (
+            {!isTabLocked(activeTab) && activeTab === 'add-on' && (
               <div className="space-y-5 relative">
                 <div className="pointer-events-none absolute -top-20 left-1/3 w-96 h-96 rounded-full bg-[#0763d8]/[0.04] blur-[120px]"/>
 

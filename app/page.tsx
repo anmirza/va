@@ -56,7 +56,7 @@ export default function Home() {
             </span>
 
             <div className="mb-4 flex justify-center">
-              <VaLogo width={158} height={99} className="text-white" />
+              <VaLogo width={316} height={198} className="text-white" />
             </div>
             <p className="text-white/50 text-base sm:text-lg max-w-xl mb-10">
               Connecting brands with the world&apos;s best advertising agencies, production companies, and creative talent.

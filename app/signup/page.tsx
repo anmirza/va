@@ -7,45 +7,27 @@ import { useAuth } from '@/lib/auth-context'
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
 import { VaLogo } from '@/components/va-logo'
-import { Building2, Film, User, Eye, EyeOff, Briefcase } from 'lucide-react'
+import { Eye, EyeOff } from 'lucide-react'
 
-const roles = [
-  {
-    id: 'agency_owner' as const,
-    icon: Building2,
-    title: 'Advertising Agency',
-    description: 'Full-service, digital, ATL, BTL or specialist agency — showcase your work and attract new clients',
-    nextPath: '/signup/agency',
-  },
-  {
-    id: 'production' as const,
-    icon: Film,
-    title: 'Production House',
-    description: 'Film, animation or content production company — get discovered by agencies and brands worldwide',
-    nextPath: '/signup/production',
-  },
-  {
-    id: 'client' as const,
-    icon: Briefcase,
-    title: 'Client',
-    description: 'Get greater visibility into agency data, manage your network, and access the creative intelligence platform',
-    nextPath: '/signup/client',
-  },
-  // Creative Professional hidden per client feedback — can be re-enabled later
-  // {
-  //   id: 'talent' as const,
-  //   icon: User,
-  //   title: 'Creative Professional',
-  //   description: 'Build your talent profile and get discovered by top agencies',
-  //   nextPath: '/signup/talent',
-  // },
+const BLOCKED_DOMAINS = [
+  'gmail.com', 'yahoo.com', 'hotmail.com', 'outlook.com', 'aol.com',
+  'icloud.com', 'mail.com', 'protonmail.com', 'zoho.com', 'yandex.com',
+  'live.com', 'msn.com', 'me.com', 'mac.com', 'gmx.com',
 ]
+
+function validateEmail(email: string): string | null {
+  const domain = email.split('@')[1]?.toLowerCase()
+  if (!domain) return 'Please enter a valid email'
+  if (BLOCKED_DOMAINS.includes(domain)) {
+    return 'Please use a corporate email address. Personal email domains (Gmail, Yahoo, etc.) are not accepted.'
+  }
+  return null
+}
 
 export default function SignupPage() {
   const { signup } = useAuth()
   const router = useRouter()
-  const [step, setStep] = useState<'role' | 'details'>('role')
-  const [selectedRole, setSelectedRole] = useState<typeof roles[0] | null>(null)
+
   const [name, setName] = useState('')
   const [email, setEmail] = useState('')
   const [password, setPassword] = useState('')
@@ -53,162 +35,118 @@ export default function SignupPage() {
   const [error, setError] = useState('')
   const [isLoading, setIsLoading] = useState(false)
 
-  // Corporate email validation — block personal email domains
-  const BLOCKED_DOMAINS = ['gmail.com', 'yahoo.com', 'hotmail.com', 'outlook.com', 'aol.com', 'icloud.com', 'mail.com', 'protonmail.com', 'zoho.com', 'yandex.com', 'live.com', 'msn.com', 'me.com', 'mac.com', 'gmx.com']
-
-  const handleRoleSelect = (role: typeof roles[0]) => {
-    setSelectedRole(role)
-    setStep('details')
-  }
-
-  const validateEmail = (email: string): string | null => {
-    const domain = email.split('@')[1]?.toLowerCase()
-    if (!domain) return 'Please enter a valid email'
-    if (BLOCKED_DOMAINS.includes(domain)) {
-      return 'Please use a corporate email address. Personal email domains are not allowed.'
-    }
-    return null
-  }
-
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
-    if (!selectedRole) return
-
     const emailError = validateEmail(email)
-    if (emailError) {
-      setError(emailError)
-      return
-    }
+    if (emailError) { setError(emailError); return }
+    if (password.length < 8) { setError('Password must be at least 8 characters.'); return }
 
     setError('')
     setIsLoading(true)
-    const result = await signup({ name, email, password, role: selectedRole.id })
+    const result = await signup({ name, email, password })
     setIsLoading(false)
+
     if (result.success) {
-      router.push(selectedRole.nextPath)
+      router.push('/signup/classify')
     } else {
-      setError(result.error || 'Signup failed')
+      setError(result.error || 'Signup failed. Please try again.')
     }
   }
 
   return (
     <div className="min-h-screen bg-[#02030E] flex flex-col">
       <header className="bg-[#02030E]/95 backdrop-blur-md border-b border-white/[0.06] px-6 py-4 flex items-center justify-between">
-        <Link href="/" className="text-white hover:text-white/90 transition-colors"><VaLogo width={62} height={39} /></Link>
+        <Link href="/" className="text-white hover:text-white/90 transition-colors">
+          <VaLogo width={62} height={39} />
+        </Link>
         <Link href="/login" className="text-sm text-white/60 hover:text-white transition-colors">
           Already have an account? Sign in
         </Link>
       </header>
 
       <div className="flex-1 flex items-center justify-center px-4 py-16">
-        <div className="w-full max-w-lg">
-          {step === 'role' ? (
-            <div>
-              <div className="text-center mb-10">
-                <h1 className="text-3xl sm:text-4xl font-bold text-white mb-2 tracking-tight">Join the Network</h1>
-                <p className="text-white/50 text-sm sm:text-base">Register as a Client or as a Vendor</p>
+        <div className="w-full max-w-md">
+          <div className="text-center mb-8">
+            <h1 className="text-3xl sm:text-4xl font-bold text-white mb-2 tracking-tight">Create your account</h1>
+            <p className="text-white/50 text-sm sm:text-base">Join the network with your company email</p>
+          </div>
+
+          <div className="glass-card p-6 sm:p-8 rounded-2xl">
+            <form onSubmit={handleSubmit} className="space-y-5">
+              <div>
+                <label className="block text-sm font-medium text-white/70 mb-1.5">Full Name</label>
+                <Input
+                  value={name}
+                  onChange={e => setName(e.target.value)}
+                  placeholder="Your name"
+                  className="h-11 bg-white/[0.06] border-white/[0.12] text-white placeholder:text-white/30 rounded-xl"
+                  required
+                />
               </div>
-              <div className="space-y-3">
-                {roles.map(role => {
-                  const Icon = role.icon
-                  return (
-                    <button
-                      key={role.id}
-                      onClick={() => handleRoleSelect(role)}
-                      className="w-full glass-card p-5 sm:p-6 flex items-start gap-4 hover:border-[#0763d8]/40 hover:shadow-lg hover:shadow-[#0763d8]/10 transition-all duration-200 text-left rounded-xl"
-                    >
-                      <div className="w-11 h-11 sm:w-12 sm:h-12 bg-[#0763d8]/15 rounded-xl flex items-center justify-center shrink-0 border border-[#0763d8]/20">
-                        <Icon className="w-5 h-5 sm:w-6 sm:h-6 text-[#0763d8]" />
-                      </div>
-                      <div className="flex-1 min-w-0 pt-0.5">
-                        <p className="font-semibold text-white mb-1">{role.title}</p>
-                        <p className="text-sm text-white/50 leading-snug">{role.description}</p>
-                      </div>
-                    </button>
-                  )
-                })}
+
+              <div>
+                <label className="block text-sm font-medium text-white/70 mb-1.5">Corporate Email</label>
+                <Input
+                  type="email"
+                  value={email}
+                  onChange={e => setEmail(e.target.value)}
+                  placeholder="you@company.com"
+                  className="h-11 bg-white/[0.06] border-white/[0.12] text-white placeholder:text-white/30 rounded-xl"
+                  required
+                />
+                <p className="text-xs text-white/30 mt-1.5">
+                  Personal email domains (Gmail, Yahoo, etc.) are not accepted
+                </p>
               </div>
-              <p className="text-center text-sm text-white/50 mt-8">
-                Already have an account?{' '}
-                <Link href="/login" className="text-[#0763d8] hover:text-[#3b8aff] transition-colors font-medium">Sign in</Link>
-              </p>
-            </div>
-          ) : (
-            <div className="glass-card p-6 sm:p-8 rounded-2xl">
-              <button
-                onClick={() => setStep('role')}
-                className="text-sm text-white/50 hover:text-white mb-6 flex items-center gap-1 transition-colors"
+
+              <div>
+                <label className="block text-sm font-medium text-white/70 mb-1.5">Password</label>
+                <div className="relative">
+                  <Input
+                    type={showPassword ? 'text' : 'password'}
+                    value={password}
+                    onChange={e => setPassword(e.target.value)}
+                    placeholder="Min 8 characters"
+                    className="h-11 bg-white/[0.06] border-white/[0.12] text-white placeholder:text-white/30 pr-10 rounded-xl"
+                    minLength={8}
+                    required
+                  />
+                  <button
+                    type="button"
+                    onClick={() => setShowPassword(!showPassword)}
+                    className="absolute right-3 top-1/2 -translate-y-1/2 text-white/40 hover:text-white/60 transition-colors"
+                  >
+                    {showPassword ? <EyeOff className="w-4 h-4" /> : <Eye className="w-4 h-4" />}
+                  </button>
+                </div>
+              </div>
+
+              {error && (
+                <div className="bg-red-400/10 border border-red-400/20 rounded-xl p-3 text-sm text-red-400">
+                  {error}
+                </div>
+              )}
+
+              <Button
+                type="submit"
+                className="w-full h-11 bg-[#0763d8] hover:bg-[#0655b3] text-white rounded-xl font-medium"
+                disabled={isLoading}
               >
-                ← Back
-              </button>
-              <div className="mb-6">
-                <h2 className="text-2xl font-bold text-white mb-1 tracking-tight">Create your account</h2>
-                <p className="text-sm text-white/50">
-                  Signing up as <span className="font-semibold text-[#0763d8]">{selectedRole?.title}</span>
-                </p>
-              </div>
-              <form onSubmit={handleSubmit} className="space-y-4">
-                <div>
-                  <label className="block text-sm font-medium text-white/70 mb-1.5">Full Name</label>
-                  <Input
-                    value={name}
-                    onChange={e => setName(e.target.value)}
-                    placeholder="Your name"
-                    className="h-11 bg-white/[0.06] border-white/[0.12] text-white placeholder:text-white/30 rounded-xl"
-                    required
-                  />
-                </div>
-                <div>
-                  <label className="block text-sm font-medium text-white/70 mb-1.5">Corporate Email</label>
-                  <Input
-                    type="email"
-                    value={email}
-                    onChange={e => setEmail(e.target.value)}
-                    placeholder="you@company.com"
-                    className="h-11 bg-white/[0.06] border-white/[0.12] text-white placeholder:text-white/30 rounded-xl"
-                    required
-                  />
-                  <p className="text-xs text-white/30 mt-1">Personal email addresses (Gmail, Yahoo, etc.) are not accepted</p>
-                </div>
-                <div>
-                  <label className="block text-sm font-medium text-white/70 mb-1.5">Password</label>
-                  <div className="relative">
-                    <Input
-                      type={showPassword ? 'text' : 'password'}
-                      value={password}
-                      onChange={e => setPassword(e.target.value)}
-                      placeholder="Min 8 characters"
-                      className="h-11 bg-white/[0.06] border-white/[0.12] text-white placeholder:text-white/30 pr-10 rounded-xl"
-                      minLength={8}
-                      required
-                    />
-                    <button
-                      type="button"
-                      onClick={() => setShowPassword(!showPassword)}
-                      className="absolute right-3 top-1/2 -translate-y-1/2 text-white/40"
-                    >
-                      {showPassword ? <EyeOff className="w-4 h-4" /> : <Eye className="w-4 h-4" />}
-                    </button>
-                  </div>
-                </div>
-                {error && (
-                  <div className="bg-red-400/10 border border-red-400/20 rounded-xl p-3 text-sm text-red-400">
-                    {error}
-                  </div>
-                )}
-                <Button
-                  type="submit"
-                  className="w-full h-11 bg-[#0763d8] hover:bg-[#0655b3] text-white rounded-xl"
-                  disabled={isLoading}
-                >
-                  {isLoading ? 'Creating account...' : 'Create Account'}
-                </Button>
-                <p className="text-xs text-white/30 text-center">
-                  By signing up you agree to our Terms of Service and Privacy Policy
-                </p>
-              </form>
-            </div>
-          )}
+                {isLoading ? 'Creating account…' : 'Continue'}
+              </Button>
+
+              <p className="text-xs text-white/30 text-center">
+                By signing up you agree to our Terms of Service and Privacy Policy
+              </p>
+            </form>
+          </div>
+
+          <p className="text-center text-sm text-white/50 mt-6">
+            Already have an account?{' '}
+            <Link href="/login" className="text-[#0763d8] hover:text-[#3b8aff] transition-colors font-medium">
+              Sign in
+            </Link>
+          </p>
         </div>
       </div>
     </div>

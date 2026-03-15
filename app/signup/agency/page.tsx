@@ -349,7 +349,12 @@ export default function AgencySignupPage() {
                 ))}
               </div>
               {/* Social Media */}
-              <p className="text-xs font-bold text-white/60 uppercase tracking-widest mb-4">Social Media</p>
+              <div className="border-t border-white/[0.08] pt-6">
+                <h3 className="text-sm font-semibold text-white/80 mb-4 flex items-center gap-2">
+                  <span className="w-1 h-4 bg-[#0763d8] rounded-full" aria-hidden />
+                  Social Media
+                </h3>
+              </div>
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                 {SOCIAL_MEDIA_FIELDS.map(field => (
                   <FormField key={field.key} label={field.label}>
