@@ -203,58 +203,79 @@ export default function AgencySignupPage() {
         {/* Step content */}
         <div className="glass-card p-8">
 
-          {/* STEP 1 — General Information */}
+          {/* STEP 1 — General Information & Organisation & Structure */}
           {step === 1 && (
             <div>
               <StepHeader icon="🏢" title="General Information" subtitle="Legal identity, Organisation & Structure" />
-              <div className="grid grid-cols-1 sm:grid-cols-2 gap-5">
-                <FormField label="Registered Business Name" required>
-                  <Input value={businessName} onChange={e => setBusinessName(e.target.value)} placeholder="e.g. Acme Agency Ltd." className={inputCls} />
-                </FormField>
-                <FormField label="D-U-N-S® Number">
-                  <Input value={dunsNumber} onChange={e => setDunsNumber(e.target.value)} placeholder="9-digit number" className={inputCls} />
-                </FormField>
-                <FormField label="VAT Registration Number">
-                  <Input value={vatNumber} onChange={e => setVatNumber(e.target.value)} placeholder="e.g. GB123456789" className={inputCls} />
-                </FormField>
-                <FormField label="Legal Form">
-                  <Input value={legalForm} onChange={e => setLegalForm(e.target.value)} placeholder="e.g. Ltd, GmbH, S.A.S." className={inputCls} />
-                </FormField>
-                <FormField label="Company Registration Number">
-                  <Input value={companyRegNumber} onChange={e => setCompanyRegNumber(e.target.value)} placeholder="Companies House number" className={inputCls} />
-                </FormField>
-                <FormField label="Year Established">
-                  <Input type="number" value={yearEstablished} onChange={e => setYearEstablished(e.target.value)} placeholder="e.g. 2005" min={1800} max={2026} className={inputCls} />
-                </FormField>
-                <FormField label="# of Employees" required>
-                  <select value={employees} onChange={e => setEmployees(e.target.value)} className={selectCls}>
-                    <option value="">Select range</option>
-                    {EMPLOYEE_SIZES.map(r => <option key={r}>{r}</option>)}
-                  </select>
-                </FormField>
-                <FormField label="Company Level">
-                  <select value={companyLevel} onChange={e => setCompanyLevel(e.target.value)} className={selectCls}>
-                    <option value="">Select level</option>
-                    {COMPANY_LEVELS.map(l => <option key={l}>{l}</option>)}
-                  </select>
-                </FormField>
-                <FormField label="Parent Company Name">
-                  <Input value={parentCompany} onChange={e => setParentCompany(e.target.value)} placeholder="If part of a group" className={inputCls} />
-                </FormField>
-                <FormField label="Category" required>
-                  <select value={category} onChange={e => setCategory(e.target.value)} className={selectCls}>
-                    <option value="">Select category</option>
-                    {AGENCY_CATEGORIES.map(c => <option key={c}>{c}</option>)}
-                  </select>
-                </FormField>
-                <FormField label="Agency Currency">
-                  <select value={currency} onChange={e => setCurrency(e.target.value)} className={selectCls}>
-                    {TOP_CURRENCIES.map(c => <option key={c}>{c}</option>)}
-                  </select>
-                </FormField>
-                <FormField label="Trade Organizations">
-                  <Input value={tradeOrganizations} onChange={e => setTradeOrganizations(e.target.value)} placeholder="e.g. IPA, ISBA, EACA" className={inputCls} />
-                </FormField>
+
+              {/* Section: General Information (Legal identity) */}
+              <div className="mb-8">
+                <h3 className="text-sm font-semibold text-white/80 mb-4 flex items-center gap-2">
+                  <span className="w-1 h-4 bg-[#0763d8] rounded-full" aria-hidden />
+                  Legal identity
+                </h3>
+                <div className="grid grid-cols-1 sm:grid-cols-2 gap-5">
+                  <FormField label="Registered Business Name" required>
+                    <Input value={businessName} onChange={e => setBusinessName(e.target.value)} placeholder="e.g. Acme Agency Ltd." className={inputCls} />
+                  </FormField>
+                  <FormField label="D-U-N-S® Number">
+                    <Input value={dunsNumber} onChange={e => setDunsNumber(e.target.value)} placeholder="9-digit number" className={inputCls} />
+                  </FormField>
+                  <FormField label="VAT Registration Number">
+                    <Input value={vatNumber} onChange={e => setVatNumber(e.target.value)} placeholder="e.g. GB123456789" className={inputCls} />
+                  </FormField>
+                  <FormField label="Legal Form">
+                    <Input value={legalForm} onChange={e => setLegalForm(e.target.value)} placeholder="e.g. Ltd, GmbH, S.A.S." className={inputCls} />
+                  </FormField>
+                  <FormField label="Company Registration Number">
+                    <Input value={companyRegNumber} onChange={e => setCompanyRegNumber(e.target.value)} placeholder="Companies House number" className={inputCls} />
+                  </FormField>
+                  <FormField label="Year Established">
+                    <Input type="number" value={yearEstablished} onChange={e => setYearEstablished(e.target.value)} placeholder="e.g. 2005" min={1800} max={2026} className={inputCls} />
+                  </FormField>
+                </div>
+              </div>
+
+              {/* Section divider */}
+              <div className="border-t border-white/[0.08] my-8" aria-hidden />
+
+              {/* Section: Organisation & Structure */}
+              <div>
+                <h3 className="text-sm font-semibold text-white/80 mb-4 flex items-center gap-2">
+                  <span className="w-1 h-4 bg-[#0763d8] rounded-full" aria-hidden />
+                  Organisation & Structure
+                </h3>
+                <div className="grid grid-cols-1 sm:grid-cols-2 gap-5">
+                  <FormField label="# of Employees" required>
+                    <select value={employees} onChange={e => setEmployees(e.target.value)} className={selectCls}>
+                      <option value="">Select range</option>
+                      {EMPLOYEE_SIZES.map(r => <option key={r}>{r}</option>)}
+                    </select>
+                  </FormField>
+                  <FormField label="Company Level">
+                    <select value={companyLevel} onChange={e => setCompanyLevel(e.target.value)} className={selectCls}>
+                      <option value="">Select level</option>
+                      {COMPANY_LEVELS.map(l => <option key={l}>{l}</option>)}
+                    </select>
+                  </FormField>
+                  <FormField label="Parent Company Name">
+                    <Input value={parentCompany} onChange={e => setParentCompany(e.target.value)} placeholder="If part of a group" className={inputCls} />
+                  </FormField>
+                  <FormField label="Category" required>
+                    <select value={category} onChange={e => setCategory(e.target.value)} className={selectCls}>
+                      <option value="">Select category</option>
+                      {AGENCY_CATEGORIES.map(c => <option key={c}>{c}</option>)}
+                    </select>
+                  </FormField>
+                  <FormField label="Agency Currency">
+                    <select value={currency} onChange={e => setCurrency(e.target.value)} className={selectCls}>
+                      {TOP_CURRENCIES.map(c => <option key={c}>{c}</option>)}
+                    </select>
+                  </FormField>
+                  <FormField label="Trade Organizations">
+                    <Input value={tradeOrganizations} onChange={e => setTradeOrganizations(e.target.value)} placeholder="e.g. IPA, ISBA, EACA" className={inputCls} />
+                  </FormField>
+                </div>
               </div>
             </div>
           )}
