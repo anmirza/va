@@ -320,8 +320,8 @@ export const CSR_IMPACT_AREAS = [
 // ── AI Questions ───────────────────────────────────────────────────────────
 export const AI_QUESTIONS = [
   'Does your company propose specific services and/or tool(s) and/or app(s) you\'d like to mention?',
-  'Which AI tools are your agencies currently utilising?',
-  'Are there any AI implementations your agencies anticipate adopting in the foreseeable future?',
+  'Which AI tools are your Agencies currently utilising?',
+  'Are there any AI implementations your Agencies anticipate adopting in the foreseeable future?',
   'Please describe the benefits that the utilisation of AI can deliver, providing specific case examples.',
   'Please elaborate on the ethical aspects of AI usage, specifically describing your compliance with ethical standards and privacy protection principles.',
   'Kindly describe your approach to the mitigation of risks associated with AI use.',

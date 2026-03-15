@@ -7,7 +7,7 @@ import { ChevronRight, ChevronLeft, Check, Film, Plus, Trash2, Upload } from 'lu
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
 import { VaLogo } from '@/components/va-logo'
-import { SOCIAL_RESPONSIBILITY_QUESTIONS, CSR_IMPACT_AREAS, ATTACHMENTS_REQUESTED } from '@/lib/rfi-data'
+import { SOCIAL_RESPONSIBILITY_QUESTIONS, CSR_IMPACT_AREAS, ATTACHMENTS_REQUESTED, AI_QUESTIONS } from '@/lib/rfi-data'
 import { getTurnoverYears } from '@/lib/turnover-utils'
 
 // ── Step definitions ──────────────────────────────────────────────────────────
@@ -159,11 +159,7 @@ export default function ProductionSignupPage() {
   const [localRepresentation, setLocalRepresentation] = useState('')
   const [governance, setGovernance] = useState({ quality: '', clientData: '', globalLocal: '', additional: '' })
   const [specificServices, setSpecificServices] = useState('')
-  const [aiCurrentTools, setAiCurrentTools] = useState('')
-  const [aiFuture, setAiFuture] = useState('')
-  const [aiBenefits, setAiBenefits] = useState('')
-  const [aiEthics, setAiEthics] = useState('')
-  const [aiRisk, setAiRisk] = useState('')
+  const [aiAnswers, setAiAnswers] = useState<Record<string, string>>({})
   const [strategicOrientation, setStrategicOrientation] = useState('')
   const [activityOutOfCountry, setActivityOutOfCountry] = useState<boolean | null>(null)
 
@@ -205,7 +201,7 @@ export default function ProductionSignupPage() {
       people, permanentEmployees, freelancers, directors, investments,
       awards, csr,
       about, philosophy, networkDescription, localRepresentation, governance,
-      specificServices, aiCurrentTools, aiFuture, aiBenefits, aiEthics, aiRisk,
+      specificServices, aiAnswers,
       strategicOrientation, activityOutOfCountry,
       submittedAt: new Date().toISOString(),
     }
@@ -1000,24 +996,26 @@ export default function ProductionSignupPage() {
                   </div>
                 </div>
 
-                <div className="border-t border-white/[0.06] pt-6">
-                  <p className="text-sm font-bold text-white/80 mb-4">AI Usage</p>
+                {/* ── Divider ── */}
+                <div className="border-t border-white/[0.08] my-8" aria-hidden />
+
+                {/* AI Usage */}
+                <div>
+                  <h3 className="text-sm font-semibold text-white/80 mb-5 flex items-center gap-2">
+                    <span className="w-1 h-4 bg-[#0763d8] rounded-full" aria-hidden />
+                    AI Usage
+                  </h3>
                   <div className="space-y-4">
-                    <FormField label="Which AI tools are you currently using?">
-                      <textarea value={aiCurrentTools} onChange={e => setAiCurrentTools(e.target.value)} rows={2} className={textareaCls} placeholder="e.g. ChatGPT, Runway ML, Adobe Firefly..." />
-                    </FormField>
-                    <FormField label="AI implementations you anticipate adopting">
-                      <textarea value={aiFuture} onChange={e => setAiFuture(e.target.value)} rows={2} className={textareaCls} placeholder="Future AI plans..." />
-                    </FormField>
-                    <FormField label="Benefits AI delivers — with case examples">
-                      <textarea value={aiBenefits} onChange={e => setAiBenefits(e.target.value)} rows={2} className={textareaCls} placeholder="Concrete examples of AI-driven impact..." />
-                    </FormField>
-                    <FormField label="Ethical aspects & privacy compliance">
-                      <textarea value={aiEthics} onChange={e => setAiEthics(e.target.value)} rows={2} className={textareaCls} placeholder="How you ensure ethical and privacy-compliant AI use..." />
-                    </FormField>
-                    <FormField label="Approach to mitigating AI risks">
-                      <textarea value={aiRisk} onChange={e => setAiRisk(e.target.value)} rows={2} className={textareaCls} placeholder="Risk management processes..." />
-                    </FormField>
+                    {AI_QUESTIONS.map((q, i) => (
+                      <FormField key={i} label={q}>
+                        <textarea
+                          value={aiAnswers[`ai-${i}`] || ''}
+                          onChange={e => setAiAnswers(prev => ({ ...prev, [`ai-${i}`]: e.target.value }))}
+                          rows={2}
+                          className={textareaCls}
+                        />
+                      </FormField>
+                    ))}
                   </div>
                 </div>
               </div>

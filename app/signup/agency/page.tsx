@@ -360,83 +360,105 @@ export default function AgencySignupPage() {
             </div>
           )}
 
-          {/* STEP 3 — Registered Office Address + Turnover & Clients */}
+          {/* STEP 3 — Registered Office Address + About + Turnover & Clients */}
           {step === 3 && (
             <div>
               <StepHeader
                 icon="📍"
-                title="Registered Office Address"
-                subtitle="Official address and geographic coverage, followed by turnover information"
+                title="Location & Profile"
+                subtitle="Registered address, agency overview, and financial information"
               />
-              {/* Registered Office Address (mirrors production signup flow) */}
-              <div className="grid grid-cols-1 sm:grid-cols-2 gap-5 mb-10">
-                <FormField label="Country Coverage" className="sm:col-span-2">
-                  <select value={countryCoverage} onChange={e => setCountryCoverage(e.target.value)} className={selectCls}>
-                    <option value="">Select coverage</option>
-                    {COUNTRY_COVERAGE.map(c => <option key={c}>{c}</option>)}
-                  </select>
-                </FormField>
-                <FormField label="Street Address" className="sm:col-span-2">
-                  <Input value={address} onChange={e => setAddress(e.target.value)} placeholder="Street address" className={inputCls} />
-                </FormField>
-                <FormField label="City" required>
-                  <Input value={city} onChange={e => setCity(e.target.value)} placeholder="City" className={inputCls} />
-                </FormField>
-                <FormField label="Postcode">
-                  <Input value={postcode} onChange={e => setPostcode(e.target.value)} placeholder="Postcode / ZIP" className={inputCls} />
-                </FormField>
-                <FormField label="Country" required>
-                  <select value={country} onChange={e => setCountry(e.target.value)} className={selectCls}>
-                    <option value="">Select country</option>
-                    {COUNTRIES.map(c => <option key={c}>{c}</option>)}
-                  </select>
-                </FormField>
+
+              {/* ── Section 1: Registered Office Address ── */}
+              <div className="mb-2">
+                <h3 className="text-sm font-semibold text-white/80 mb-4 flex items-center gap-2">
+                  <span className="w-1 h-4 bg-[#0763d8] rounded-full" aria-hidden />
+                  Registered Office Address
+                </h3>
+                <div className="grid grid-cols-1 sm:grid-cols-2 gap-5">
+                  <FormField label="Country Coverage" className="sm:col-span-2">
+                    <select value={countryCoverage} onChange={e => setCountryCoverage(e.target.value)} className={selectCls}>
+                      <option value="">Select coverage</option>
+                      {COUNTRY_COVERAGE.map(c => <option key={c}>{c}</option>)}
+                    </select>
+                  </FormField>
+                  <FormField label="Street Address" className="sm:col-span-2">
+                    <Input value={address} onChange={e => setAddress(e.target.value)} placeholder="Street address" className={inputCls} />
+                  </FormField>
+                  <FormField label="City" required>
+                    <Input value={city} onChange={e => setCity(e.target.value)} placeholder="City" className={inputCls} />
+                  </FormField>
+                  <FormField label="Postcode">
+                    <Input value={postcode} onChange={e => setPostcode(e.target.value)} placeholder="Postcode / ZIP" className={inputCls} />
+                  </FormField>
+                  <FormField label="Country" required>
+                    <select value={country} onChange={e => setCountry(e.target.value)} className={selectCls}>
+                      <option value="">Select country</option>
+                      {COUNTRIES.map(c => <option key={c}>{c}</option>)}
+                    </select>
+                  </FormField>
+                </div>
               </div>
 
-              {/* About (to match RFI Excel order) */}
-              <div className="space-y-5 mb-8">
-                <FormField label="About Your Agency">
-                  <textarea
-                    value={about}
-                    onChange={e => setAbout(e.target.value)}
-                    rows={3}
-                    className={textareaCls}
-                    placeholder="Brief overview..."
-                  />
-                </FormField>
-                <FormField label="Philosophy & Competitive Advantages">
-                  <textarea
-                    value={philosophy}
-                    onChange={e => setPhilosophy(e.target.value)}
-                    rows={3}
-                    className={textareaCls}
-                    placeholder="What makes you different?"
-                  />
-                </FormField>
-                <FormField label="Network Description">
-                  <textarea
-                    value={networkDescription}
-                    onChange={e => setNetworkDescription(e.target.value)}
-                    rows={2}
-                    className={textareaCls}
-                    placeholder="Your agency network..."
-                  />
-                </FormField>
-                <FormField label="Local Representation">
-                  <textarea
-                    value={localRepresentation}
-                    onChange={e => setLocalRepresentation(e.target.value)}
-                    rows={2}
-                    className={textareaCls}
-                    placeholder="Local offices..."
-                  />
-                </FormField>
+              {/* ── Divider ── */}
+              <div className="border-t border-white/[0.08] my-8" aria-hidden />
+
+              {/* ── Section 2: About ── */}
+              <div className="mb-2">
+                <h3 className="text-sm font-semibold text-white/80 mb-4 flex items-center gap-2">
+                  <span className="w-1 h-4 bg-[#0763d8] rounded-full" aria-hidden />
+                  About Your Agency
+                </h3>
+                <div className="space-y-5">
+                  <FormField label="Agency Overview">
+                    <textarea
+                      value={about}
+                      onChange={e => setAbout(e.target.value)}
+                      rows={3}
+                      className={textareaCls}
+                      placeholder="Brief overview..."
+                    />
+                  </FormField>
+                  <FormField label="Philosophy & Competitive Advantages">
+                    <textarea
+                      value={philosophy}
+                      onChange={e => setPhilosophy(e.target.value)}
+                      rows={3}
+                      className={textareaCls}
+                      placeholder="What makes you different?"
+                    />
+                  </FormField>
+                  <FormField label="Network Description">
+                    <textarea
+                      value={networkDescription}
+                      onChange={e => setNetworkDescription(e.target.value)}
+                      rows={2}
+                      className={textareaCls}
+                      placeholder="Your agency network..."
+                    />
+                  </FormField>
+                  <FormField label="Local Representation">
+                    <textarea
+                      value={localRepresentation}
+                      onChange={e => setLocalRepresentation(e.target.value)}
+                      rows={2}
+                      className={textareaCls}
+                      placeholder="Local offices..."
+                    />
+                  </FormField>
+                </div>
               </div>
 
-              {/* Turnover & Clients */}
-              <div className="border-t border-white/[0.06] pt-6 mt-2">
-                <div className="flex items-center justify-between mb-2">
-                  <p className="text-sm font-semibold text-white/80">Turnover &amp; Clients</p>
+              {/* ── Divider ── */}
+              <div className="border-t border-white/[0.08] my-8" aria-hidden />
+
+              {/* ── Section 3: Turnover & Clients ── */}
+              <div>
+                <div className="flex items-center justify-between mb-5">
+                  <h3 className="text-sm font-semibold text-white/80 flex items-center gap-2">
+                    <span className="w-1 h-4 bg-[#0763d8] rounded-full" aria-hidden />
+                    Turnover &amp; Clients
+                  </h3>
                   <p className="text-xs text-white/30">Revenue in EUR · auto-updated years</p>
                 </div>
               <div className="overflow-x-auto mb-8">
@@ -846,9 +868,17 @@ export default function AgencySignupPage() {
                   </div>
                 ))}
               </div>
-              <button onClick={() => setAwards(prev => [...prev, { name: '', distinction: '', category: '', year: '', ad: '', brand: '' }])} className="text-xs text-[#0763d8] hover:bg-[#0763d8]/10 px-3 py-1.5 rounded-lg border border-[#0763d8]/30 transition-colors inline-block mb-8">+ Add Award</button>
-              <div className="border-t border-white/[0.06] pt-5 space-y-4 mb-8">
-                <p className="text-xs font-bold text-white/60 uppercase tracking-widest mb-2">AI Usage</p>
+              <button onClick={() => setAwards(prev => [...prev, { name: '', distinction: '', category: '', year: '', ad: '', brand: '' }])} className="text-xs text-[#0763d8] hover:bg-[#0763d8]/10 px-3 py-1.5 rounded-lg border border-[#0763d8]/30 transition-colors inline-block">+ Add Award</button>
+
+              {/* ── Divider ── */}
+              <div className="border-t border-white/[0.08] my-8" aria-hidden />
+
+              {/* AI Usage */}
+              <div className="space-y-4">
+                <h3 className="text-sm font-semibold text-white/80 mb-4 flex items-center gap-2">
+                  <span className="w-1 h-4 bg-[#0763d8] rounded-full" aria-hidden />
+                  AI Usage
+                </h3>
                 {AI_QUESTIONS.map((q, i) => (
                   <FormField key={i} label={q}>
                     <textarea value={aiAnswers[`ai-${i}`] || ''} onChange={e => setAiAnswers(prev => ({ ...prev, [`ai-${i}`]: e.target.value }))} rows={2} className={textareaCls} />
@@ -862,71 +892,107 @@ export default function AgencySignupPage() {
           {/* STEP 8 — Add-On */}
           {step === 8 && (
             <div>
-              <StepHeader icon="📎" title="Add-On" subtitle="Investments, attachments, and strategic development" />
-              <p className="text-xs font-bold text-white/60 uppercase tracking-widest mb-4">% of Turnover Invested</p>
-              <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 mb-8">
-                {INVESTMENT_CATEGORIES.map(cat => (
-                  <div key={cat} className="flex items-center gap-3 bg-white/[0.03] rounded-xl px-4 py-2.5">
-                    <span className="text-xs text-white/50 flex-1">{cat}</span>
-                    <div className="flex items-center gap-1">
-                      <input type="number" min={0} max={100} value={investments[cat] || ''}
-                        onChange={e => setInvestments(prev => ({ ...prev, [cat]: e.target.value }))}
-                        className="w-14 text-xs text-center bg-white/[0.04] border border-white/[0.08] text-white rounded-lg py-1" placeholder="0" />
-                      <span className="text-xs text-white/30">%</span>
-                    </div>
-                  </div>
-                ))}
-              </div>
-              <div className="space-y-5">
-                <FormField label="1.1 Could you please present your strategic development">
-                  <textarea
-                    value={strategicDev}
-                    onChange={e => setStrategicDev(e.target.value)}
-                    rows={3}
-                    className={textareaCls}
-                    placeholder="Write your answer (NOTE column) for request 1.1 here..."
-                  />
-                </FormField>
-                <FormField label="1.2 Do you have any activity out of your Country / City?">
-                  <textarea
-                    value={activityOutside}
-                    onChange={e => setActivityOutside(e.target.value)}
-                    rows={2}
-                    className={textareaCls}
-                    placeholder="Write your answer (NOTE column) for request 1.2 here..."
-                  />
-                </FormField>
-              </div>
-              <div className="border-t border-white/[0.06] pt-5 space-y-3 mt-6 mb-6">
-                <p className="text-xs font-bold text-white/60 uppercase tracking-widest mb-2">Social Responsibility</p>
-                {SOCIAL_RESPONSIBILITY_QUESTIONS.map((q) => (
-                  <div key={q.id}>
-                    <div className="flex items-start gap-3 bg-white/[0.03] rounded-xl p-3">
-                      <span className="text-xs text-white/40 font-mono w-8 flex-shrink-0">{q.id}</span>
-                      <span className="text-xs text-white/50 flex-1">{q.text}</span>
-                      <select value={srAnswers[`sr-${q.id}`] || ''} onChange={e => setSrAnswers(prev => ({ ...prev, [`sr-${q.id}`]: e.target.value }))}
-                        className="bg-white/[0.04] border border-white/[0.08] text-white text-xs rounded-lg px-2 py-1">
-                        <option value="">—</option>
-                        <option value="yes">Yes</option>
-                        <option value="no">No</option>
-                      </select>
-                    </div>
-                    {q.id === '1.6' && (
-                      <div className="ml-11 mt-2 grid grid-cols-2 sm:grid-cols-3 gap-2">
-                        {CSR_IMPACT_AREAS.map(area => (
-                          <label key={area} className="flex items-center gap-2 bg-white/[0.02] rounded-lg p-2 cursor-pointer hover:bg-white/[0.04] transition">
-                            <input type="checkbox" checked={!!srAnswers[`impact-${area}`]} onChange={e => setSrAnswers(prev => ({ ...prev, [`impact-${area}`]: e.target.checked ? 'yes' : '' }))}
-                              className="w-3.5 h-3.5 rounded border-white/20 bg-white/[0.06] accent-[#0763d8]" />
-                            <span className="text-xs text-white/60">{area}</span>
-                          </label>
-                        ))}
+              <StepHeader icon="📎" title="Add-On" subtitle="Investments, strategic development, social responsibility, and attachments" />
+
+              {/* ── Section 1: % of Turnover Invested ── */}
+              <div>
+                <h3 className="text-sm font-semibold text-white/80 mb-4 flex items-center gap-2">
+                  <span className="w-1 h-4 bg-[#0763d8] rounded-full" aria-hidden />
+                  % of Turnover Invested
+                </h3>
+                <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                  {INVESTMENT_CATEGORIES.map(cat => (
+                    <div key={cat} className="flex items-center gap-3 bg-white/[0.03] rounded-xl px-4 py-2.5">
+                      <span className="text-xs text-white/50 flex-1">{cat}</span>
+                      <div className="flex items-center gap-1">
+                        <input type="number" min={0} max={100} value={investments[cat] || ''}
+                          onChange={e => setInvestments(prev => ({ ...prev, [cat]: e.target.value }))}
+                          className="w-14 text-xs text-center bg-white/[0.04] border border-white/[0.08] text-white rounded-lg py-1" placeholder="0" />
+                        <span className="text-xs text-white/30">%</span>
                       </div>
-                    )}
-                  </div>
-                ))}
+                    </div>
+                  ))}
+                </div>
               </div>
-              <div className="border-t border-white/[0.06] pt-5 mt-6">
-                <p className="text-xs font-bold text-white/60 uppercase tracking-widest mb-4">Attachments Requested</p>
+
+              {/* ── Divider ── */}
+              <div className="border-t border-white/[0.08] my-8" aria-hidden />
+
+              {/* ── Section 2: Strategic Development ── */}
+              <div>
+                <h3 className="text-sm font-semibold text-white/80 mb-4 flex items-center gap-2">
+                  <span className="w-1 h-4 bg-[#0763d8] rounded-full" aria-hidden />
+                  Strategic Development
+                </h3>
+                <div className="space-y-5">
+                  <FormField label="1.1 Could you please present your strategic development">
+                    <textarea
+                      value={strategicDev}
+                      onChange={e => setStrategicDev(e.target.value)}
+                      rows={3}
+                      className={textareaCls}
+                      placeholder="Write your answer (NOTE column) for request 1.1 here..."
+                    />
+                  </FormField>
+                  <FormField label="1.2 Do you have any activity out of your Country / City?">
+                    <textarea
+                      value={activityOutside}
+                      onChange={e => setActivityOutside(e.target.value)}
+                      rows={2}
+                      className={textareaCls}
+                      placeholder="Write your answer (NOTE column) for request 1.2 here..."
+                    />
+                  </FormField>
+                </div>
+              </div>
+
+              {/* ── Divider ── */}
+              <div className="border-t border-white/[0.08] my-8" aria-hidden />
+
+              {/* ── Section 3: Social Responsibility ── */}
+              <div>
+                <h3 className="text-sm font-semibold text-white/80 mb-4 flex items-center gap-2">
+                  <span className="w-1 h-4 bg-[#0763d8] rounded-full" aria-hidden />
+                  Social Responsibility
+                </h3>
+                <div className="space-y-3">
+                  {SOCIAL_RESPONSIBILITY_QUESTIONS.map((q) => (
+                    <div key={q.id}>
+                      <div className="flex items-start gap-3 bg-white/[0.03] rounded-xl p-3">
+                        <span className="text-xs text-white/40 font-mono w-8 flex-shrink-0">{q.id}</span>
+                        <span className="text-xs text-white/50 flex-1">{q.text}</span>
+                        <select value={srAnswers[`sr-${q.id}`] || ''} onChange={e => setSrAnswers(prev => ({ ...prev, [`sr-${q.id}`]: e.target.value }))}
+                          className="bg-white/[0.04] border border-white/[0.08] text-white text-xs rounded-lg px-2 py-1">
+                          <option value="">—</option>
+                          <option value="yes">Yes</option>
+                          <option value="no">No</option>
+                        </select>
+                      </div>
+                      {q.id === '1.6' && (
+                        <div className="ml-11 mt-2 grid grid-cols-2 sm:grid-cols-3 gap-2">
+                          {CSR_IMPACT_AREAS.map(area => (
+                            <label key={area} className="flex items-center gap-2 bg-white/[0.02] rounded-lg p-2 cursor-pointer hover:bg-white/[0.04] transition">
+                              <input type="checkbox" checked={!!srAnswers[`impact-${area}`]} onChange={e => setSrAnswers(prev => ({ ...prev, [`impact-${area}`]: e.target.checked ? 'yes' : '' }))}
+                                className="w-3.5 h-3.5 rounded border-white/20 bg-white/[0.06] accent-[#0763d8]" />
+                              <span className="text-xs text-white/60">{area}</span>
+                            </label>
+                          ))}
+                        </div>
+                      )}
+                    </div>
+                  ))}
+                </div>
+              </div>
+
+              {/* ── Divider ── */}
+              <div className="border-t border-white/[0.08] my-8" aria-hidden />
+
+              {/* ── Section 4: Attachments Requested ── */}
+              <div>
+                <h3 className="text-sm font-semibold text-white/80 mb-4 flex items-center gap-2">
+                  <span className="w-1 h-4 bg-[#0763d8] rounded-full" aria-hidden />
+                  Attachments Requested
+                </h3>
                 <div className="space-y-3 mb-6">
                   {ATTACHMENTS_REQUESTED.map(att => (
                     <div key={att.id} className="flex items-center gap-4 bg-white/[0.03] rounded-xl px-4 py-3">
