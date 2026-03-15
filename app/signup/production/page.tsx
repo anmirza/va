@@ -21,12 +21,11 @@ const STEPS = [
   { id: 6, label: 'Social Media' },
   { id: 7, label: 'Turnover & Clients' },
   { id: 8, label: 'Competencies' },
-  { id: 9, label: 'Sectors' },
-  { id: 10, label: 'Post-Production' },
-  { id: 11, label: 'People & Directors' },
-  { id: 12, label: 'Awards & CSR' },
-  { id: 13, label: 'Governance & AI' },
-  { id: 14, label: 'Attachments' },
+  { id: 9, label: 'Post-Production' },
+  { id: 10, label: 'People & Directors' },
+  { id: 11, label: 'Awards & CSR' },
+  { id: 12, label: 'Governance & AI' },
+  { id: 13, label: 'Attachments' },
 ]
 
 const EMPLOYEE_RANGES = ['1 to 10', '11 to 50', '51 to 100', '101 to 250', '251 to 400', '401 +']
@@ -45,13 +44,6 @@ const SECTORS = [
 ]
 
 const AWARD_FESTIVALS = ['AICP', 'Ciclope Festival', 'British Arrows', 'Shots', 'Clio Awards', 'D&AD', 'The One Show', 'Creative Circle', 'APA Show', 'YDA', 'VES', 'LIA', 'Other']
-
-const CAPABILITY_AREAS = [
-  'Strategic & Consulting', 'Creative & Content', 'Audio / Visual Production',
-  'PR & Events', 'Above the Line', 'Below the Line', 'Digital Marketing',
-  'Social Media & Influencer Marketing', 'Technology & Digital', 'Analytics & Reporting',
-  'Email & Content Marketing', 'Trade Marketing', 'Retail', 'Media',
-]
 
 // CSR_QUESTIONS now imported from '@/lib/rfi-data' as SOCIAL_RESPONSIBILITY_QUESTIONS
 
@@ -120,7 +112,6 @@ export default function ProductionSignupPage() {
 
   // Step 7 — Competencies
   const [competencies, setCompetencies] = useState<Record<string, string>>({})
-  const [capabilityAllocation, setCapabilityAllocation] = useState<Record<string, string>>({})
 
   // Step 8 — Sectors
   const [sectorPercentages, setSectorPercentages] = useState<Record<string, string>>({})
@@ -183,8 +174,6 @@ export default function ProductionSignupPage() {
     }))
   }
 
-  const allocationTotal = Object.values(capabilityAllocation).reduce((sum, v) => sum + (parseFloat(v) || 0), 0)
-
   const handleSubmit = async () => {
     setIsSubmitting(true)
     await new Promise(r => setTimeout(r, 1500))
@@ -195,7 +184,7 @@ export default function ProductionSignupPage() {
       contacts,
       website, twitter, facebook, linkedin, instagram, tiktok,
       financials, clients, workedWithClient, clientPitch, clientDuration,
-      competencies, capabilityAllocation,
+      competencies,
       sectorPercentages,
       hasInHousePost, postServices, outsourcedPartners, subcontracts, outsourcedActivities,
       people, permanentEmployees, freelancers, directors, investments,
@@ -579,21 +568,21 @@ export default function ProductionSignupPage() {
           {/* STEP 8 — Competencies */}
           {step === 8 && (
             <div>
-              <StepHeader icon="🎯" title="Knowledge & Competencies" subtitle="Select your production capabilities and allocate percentages by service area" />
+              <StepHeader icon="🎯" title="Knowledge & Competencies" subtitle="Select your communication areas and production capabilities by percentage" />
 
+              {/* Communication Areas */}
               <div className="mb-8">
-                <div className="flex items-center justify-between mb-3">
-                  <p className="text-sm font-bold text-white/80">Service Area Allocation <span className="text-white/50 font-normal">(% past 3 years)</span></p>
-                  <span className={`text-sm font-bold ${allocationTotal > 100 ? 'text-red-500' : allocationTotal === 100 ? 'text-[#0763d8]' : 'text-white/50'}`}>
-                    Total: {allocationTotal.toFixed(0)}%
-                  </span>
-                </div>
-                <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
-                  {CAPABILITY_AREAS.map(area => (
-                    <div key={area} className="flex items-center gap-3 bg-white/[0.04] rounded-lg px-4 py-2.5">
-                      <span className="text-sm text-white/60 flex-1">{area}</span>
-                      <div className="flex items-center gap-1">
-                        <input type="number" min={0} max={100} value={capabilityAllocation[area] || ''} onChange={e => setCapabilityAllocation(prev => ({ ...prev, [area]: e.target.value }))} className="w-16 text-sm text-center border border-white/[0.12] rounded-lg py-1 bg-white/[0.04] text-white focus:outline-none focus:ring-2 focus:ring-[#0763d8]" placeholder="0" />
+                <p className="text-xs font-bold text-white/50 uppercase tracking-widest mb-3 flex items-center gap-2">
+                  <span className="flex-1 h-px bg-white/[0.08]" />
+                  Communication Areas
+                  <span className="flex-1 h-px bg-white/[0.08]" />
+                </p>
+                <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-2">
+                  {SECTORS.map(area => (
+                    <div key={area} className={`flex items-center gap-2 p-2.5 rounded-xl border transition-all text-sm ${sectorPercentages[area] ? 'bg-[#0763d8]/10 border-[#0763d8]/30 text-[#0763d8]' : 'bg-white/[0.03] border-white/[0.1] text-white/70'}`}>
+                      <span className="flex-1 truncate" title={area}>{area}</span>
+                      <div className="flex items-center gap-2 shrink-0">
+                        <input type="number" min={0} max={100} value={sectorPercentages[area] || ''} onChange={e => setSectorPercentages(prev => ({ ...prev, [area]: e.target.value }))} className="w-16 text-sm text-center bg-white/[0.04] border border-white/[0.12] text-white rounded-lg py-1 focus:border-[#0763d8] outline-none" placeholder="0" />
                         <span className="text-sm text-white/40">%</span>
                       </div>
                     </div>
@@ -625,25 +614,8 @@ export default function ProductionSignupPage() {
           )}
 
           {/* STEP 9 — Sectors */}
+          {/* STEP 9 — Post Production & Activities */}
           {step === 9 && (
-            <div>
-              <StepHeader icon="🏷️" title="Industry Sectors" subtitle="Allocate percentage of expertise across sectors" />
-              <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-2">
-                {SECTORS.map(sector => (
-                  <div key={sector} className={`flex items-center gap-2 p-2.5 rounded-xl border transition-all text-sm ${sectorPercentages[sector] ? 'bg-[#0763d8]/10 border-[#0763d8]/30 text-[#0763d8]' : 'bg-white/[0.03] border-white/[0.1] text-white/70'}`}>
-                    <span className="flex-1 truncate" title={sector}>{sector}</span>
-                    <div className="flex items-center gap-2 shrink-0">
-                      <input type="number" min={0} max={100} value={sectorPercentages[sector] || ''} onChange={e => setSectorPercentages(prev => ({ ...prev, [sector]: e.target.value }))} className="w-16 text-sm text-center bg-white/[0.04] border border-white/[0.12] text-white rounded-lg py-1 focus:border-[#0763d8] outline-none" placeholder="0" />
-                      <span className="text-sm text-white/40">%</span>
-                    </div>
-                  </div>
-                ))}
-              </div>
-            </div>
-          )}
-
-          {/* STEP 10 — Post Production & Activities */}
-          {step === 10 && (
             <div>
               <StepHeader
                 icon="🎞️"
@@ -741,8 +713,8 @@ export default function ProductionSignupPage() {
             </div>
           )}
 
-          {/* STEP 11 — People & Directors */}
-          {step === 11 && (
+          {/* STEP 10 — People & Directors */}
+          {step === 10 && (
             <div>
               <StepHeader icon="👥" title="People, Directors & Investments" subtitle="Your team structure, key directors and investment allocations" />
 
@@ -821,8 +793,11 @@ export default function ProductionSignupPage() {
                 </div>
               </div>
 
-              <div>
-                <p className="text-sm font-bold text-white/80 mb-3">Investments (% of Turnover)</p>
+              <div className="border-t border-white/[0.08] pt-6">
+                <h3 className="text-sm font-semibold text-white/80 mb-4 flex items-center gap-2">
+                  <span className="w-1 h-4 bg-[#0763d8] rounded-full" aria-hidden />
+                  Investments (% of Turnover)
+                </h3>
                 <div className="grid grid-cols-2 sm:grid-cols-3 gap-3 mb-6">
                   {INVESTMENT_ITEMS.map(item => (
                     <div
@@ -848,10 +823,11 @@ export default function ProductionSignupPage() {
                   ))}
                 </div>
 
-                <div className="space-y-4">
-                  <p className="text-xs font-bold text-white/60 uppercase tracking-widest">
+                <div className="border-t border-white/[0.08] pt-6 space-y-4">
+                  <h3 className="text-sm font-semibold text-white/80 mb-2 flex items-center gap-2">
+                    <span className="w-1 h-4 bg-[#0763d8] rounded-full" aria-hidden />
                     RIF. / Requests
-                  </p>
+                  </h3>
                   <FormField label="1.1 Could you please present your strategic development">
                     <textarea
                       value={strategicOrientation}
@@ -883,8 +859,8 @@ export default function ProductionSignupPage() {
             </div>
           )}
 
-          {/* STEP 12 — Awards & CSR */}
-          {step === 12 && (
+          {/* STEP 11 — Awards & CSR */}
+          {step === 11 && (
             <div>
               <StepHeader icon="🏆" title="Awards & Social Responsibility" subtitle="List your award wins and answer CSR questions" />
 
@@ -921,8 +897,11 @@ export default function ProductionSignupPage() {
                 <button onClick={() => setAwards(prev => [...prev, { festival: '', distinction: '', category: '', year: '', ad: '', brand: '' }])} className="text-xs text-[#0763d8] hover:bg-[#0763d8]/10 px-3 py-1.5 rounded-lg border border-[#0763d8]/30 transition-colors inline-block mt-3">+ Add Award</button>
               </div>
 
-              <div>
-                <p className="text-sm font-bold text-white/80 mb-4">Social Responsibility</p>
+              <div className="border-t border-white/[0.08] pt-6">
+                <h3 className="text-sm font-semibold text-white/80 mb-4 flex items-center gap-2">
+                  <span className="w-1 h-4 bg-[#0763d8] rounded-full" aria-hidden />
+                  Social Responsibility
+                </h3>
                 <div className="space-y-3">
                   {SOCIAL_RESPONSIBILITY_QUESTIONS.map(q => (
                     <div key={q.id}>
@@ -955,8 +934,8 @@ export default function ProductionSignupPage() {
             </div>
           )}
 
-          {/* STEP 13 — Governance & AI */}
-          {step === 13 && (
+          {/* STEP 12 — Governance & AI */}
+          {step === 12 && (
             <div>
               <StepHeader icon="🏛️" title="Governance & AI" subtitle="Describe your governance model and AI approach" />
               <div className="space-y-6">
@@ -1022,8 +1001,8 @@ export default function ProductionSignupPage() {
             </div>
           )}
 
-          {/* STEP 14 — Attachments */}
-          {step === 14 && (
+          {/* STEP 13 — Attachments */}
+          {step === 13 && (
             <div>
               <StepHeader icon="📎" title="Attachments" subtitle="Upload required documents and presentation" />
               <div className="space-y-6">
