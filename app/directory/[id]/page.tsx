@@ -25,9 +25,8 @@ import { useParams } from 'next/navigation'
 import { useAuth } from '@/lib/auth-context'
 import {
   COVER_ASPECT_CLASS,
-  PROFILE_LOGO_BOX_WIDTH_PERCENT,
-  PROFILE_LOGO_BOX_MIN_WIDTH_PX,
-  PROFILE_LOGO_BOX_MAX_WIDTH_PX,
+  PROFILE_LOGO_SQUARE_SIZE,
+  PROFILE_CONTENT_PAD_TOP,
 } from '@/lib/cover-logo-spec'
 
 /* ──────────── mock data generators ──────────── */
@@ -135,29 +134,27 @@ export default function CompanyProfilePage() {
       <Header />
       <main className="flex-1">
 
-        {/* ═══════ COVER + LOGO (same dimension, frosted integration) ═══════ */}
+        {/* ═══════ COVER + square logo straddling cover / header strip ═══════ */}
         <div className="relative w-full cover-hero">
-          <div
-            className={`relative w-full ${COVER_ASPECT_CLASS} bg-cover bg-center overflow-hidden`}
-            style={{ backgroundImage: `url(${company.coverImage})` }}
-          >
-            <div className="absolute inset-0 bg-gradient-to-b from-black/25 via-transparent to-[#02030E]/70" />
+          <div className="relative w-full">
             <div
-              className="absolute inset-y-0 left-1/2 -translate-x-1/2 flex items-center justify-center px-4"
-              style={{
-                width: `${PROFILE_LOGO_BOX_WIDTH_PERCENT}%`,
-                minWidth: `${PROFILE_LOGO_BOX_MIN_WIDTH_PX}px`,
-                maxWidth: `${PROFILE_LOGO_BOX_MAX_WIDTH_PX}px`,
-              }}
+              className={`relative w-full ${COVER_ASPECT_CLASS} bg-cover bg-center overflow-hidden`}
+              style={{ backgroundImage: `url(${company.coverImage})` }}
             >
-              <div className="cover-logo-block h-full w-full flex items-center justify-center p-5 sm:p-6">
-                <img src={company.logo} alt={company.name} className="max-h-[85%] w-auto max-w-[85%] object-contain" />
+              <div className="absolute inset-0 bg-gradient-to-b from-black/25 via-transparent to-[#02030E]/70" />
+            </div>
+            <div
+              className="absolute bottom-0 left-1/2 z-10 flex -translate-x-1/2 translate-y-1/2 items-center justify-center"
+              style={{ width: PROFILE_LOGO_SQUARE_SIZE, height: PROFILE_LOGO_SQUARE_SIZE }}
+            >
+              <div className="cover-logo-block h-full w-full flex items-center justify-center p-3 sm:p-4">
+                <img src={company.logo} alt={company.name} className="max-h-[90%] w-auto max-w-[90%] object-contain" />
               </div>
             </div>
           </div>
 
           {/* Profile info below cover — glass strip */}
-          <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pt-6 pb-4">
+          <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pb-4" style={{ paddingTop: PROFILE_CONTENT_PAD_TOP }}>
             <div className="glass-panel flex flex-wrap gap-4 items-start justify-between p-5 sm:p-6">
               <div className="flex-1 min-w-0">
                 <h1 className="text-xl sm:text-2xl font-bold text-white uppercase tracking-tight">{company.name}</h1>

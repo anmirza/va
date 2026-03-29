@@ -6,9 +6,8 @@ import { MapPin, Users, Handshake, Award } from 'lucide-react'
 import { getCampaignsByAgency } from '@/lib/mock-data'
 import {
   COVER_ASPECT_CLASS,
-  CARD_LOGO_BOX_WIDTH_PERCENT,
-  CARD_LOGO_BOX_MIN_WIDTH_PX,
-  CARD_LOGO_BOX_MAX_WIDTH_PX,
+  CARD_LOGO_SQUARE_SIZE,
+  CARD_CONTENT_PAD_TOP,
 } from '@/lib/cover-logo-spec'
 
 interface CompanyCardProps {
@@ -32,40 +31,40 @@ export function CompanyCard({ company }: CompanyCardProps) {
 
   return (
     <Link href={`/directory/${company.id}`}>
-      <div className="group glass-card overflow-hidden cursor-pointer transition-all duration-300 hover:border-[#0763d8]/30 hover:shadow-xl hover:shadow-[#0763d8]/8">
-        {/* Top branding/image area — cover + logo same dimension, frosted integration */}
-        <div
-          className={`relative w-full ${COVER_ASPECT_CLASS} bg-cover bg-center overflow-hidden`}
-          style={{ backgroundImage: `url(${company.coverImage})` }}
-        >
-          <div className="absolute inset-0 bg-gradient-to-b from-black/20 via-transparent to-[#02030E]/60" />
+      <div className="group glass-card overflow-visible cursor-pointer transition-all duration-300 hover:border-[#0763d8]/30 hover:shadow-xl hover:shadow-[#0763d8]/8 rounded-xl">
+        {/* Cover (clipped) + square logo straddling cover / body */}
+        <div className="relative w-full">
           <div
-            className="absolute inset-y-0 left-1/2 -translate-x-1/2 flex items-center justify-center px-3 sm:px-4"
-            style={{
-              width: `${CARD_LOGO_BOX_WIDTH_PERCENT}%`,
-              minWidth: `${CARD_LOGO_BOX_MIN_WIDTH_PX}px`,
-              maxWidth: `${CARD_LOGO_BOX_MAX_WIDTH_PX}px`,
-            }}
+            className={`relative w-full ${COVER_ASPECT_CLASS} bg-cover bg-center overflow-hidden rounded-t-xl`}
+            style={{ backgroundImage: `url(${company.coverImage})` }}
+          >
+            <div className="absolute inset-0 bg-gradient-to-b from-black/20 via-transparent to-[#02030E]/60" />
+          </div>
+          <div
+            className="absolute bottom-0 left-1/2 z-10 flex -translate-x-1/2 translate-y-1/2 items-center justify-center"
+            style={{ width: CARD_LOGO_SQUARE_SIZE, height: CARD_LOGO_SQUARE_SIZE }}
           >
             {company.logo ? (
-              <div className="cover-logo-block h-full w-full flex items-center justify-center p-4 sm:p-5">
+              <div className="cover-logo-block h-full w-full flex items-center justify-center p-2.5 sm:p-3">
                 <img
                   src={company.logo}
                   alt={`${company.name} logo`}
-                  className="max-h-[85%] w-auto max-w-[85%] object-contain"
+                  className="max-h-[90%] w-auto max-w-[90%] object-contain"
                 />
               </div>
             ) : (
-              <div className="cover-logo-block h-full w-full flex flex-col items-center justify-center p-4 sm:p-5 text-center">
-                <p className="font-bold text-[#0f111a] text-base sm:text-lg truncate w-full tracking-tight">{company.name}</p>
-                {company.tagline && <p className="text-xs sm:text-sm text-[#0f111a]/70 truncate w-full mt-1">{company.tagline}</p>}
+              <div className="cover-logo-block h-full w-full flex flex-col items-center justify-center px-2 py-2.5 sm:p-3 text-center min-h-0">
+                <p className="font-bold text-[#0f111a] text-xs sm:text-sm leading-tight line-clamp-3 w-full tracking-tight">{company.name}</p>
+                {company.tagline && (
+                  <p className="text-[10px] sm:text-xs text-[#0f111a]/70 line-clamp-2 w-full mt-1">{company.tagline}</p>
+                )}
               </div>
             )}
           </div>
         </div>
 
         {/* Details section */}
-        <div className="p-4 sm:p-5">
+        <div className="px-4 sm:px-5 pb-4 sm:pb-5 rounded-b-xl" style={{ paddingTop: CARD_CONTENT_PAD_TOP }}>
           <h3 className="font-bold text-white text-lg mb-3 tracking-tight">{company.name}</h3>
 
           {/* Stats with icons */}

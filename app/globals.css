@@ -164,13 +164,13 @@
     border-color: rgba(7, 99, 216, 0.25);
   }
 
-  /* Logo-on-cover block: premium frosted panel with clear visual hierarchy */
+  /* Logo-on-cover block: square frosted panel (straddles cover + content) */
   .cover-logo-block {
     background: rgba(255, 255, 255, 0.92);
     backdrop-filter: blur(16px);
     -webkit-backdrop-filter: blur(16px);
     border: 1px solid rgba(255, 255, 255, 0.4);
-    border-radius: 0.75rem;
+    border-radius: 0.125rem;
     box-shadow:
       0 0 0 1px rgba(0, 0, 0, 0.04),
       0 6px 28px rgba(0, 0, 0, 0.14),
