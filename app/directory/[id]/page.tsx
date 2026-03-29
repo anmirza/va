@@ -18,9 +18,10 @@ import {
   MapPin, Globe, Users, Linkedin, Twitter, Instagram,
   TrendingUp, TrendingDown, Trophy,
   Bookmark, ArrowUpRight, ArrowDownRight, Heart,
-  Play, Zap, BarChart2, Activity, ChevronRight, Star,
-  Lock, ShieldAlert,
+  Play, Zap, Handshake, Activity, ChevronRight, Star,
+  Lock, ShieldAlert, PieChart, Calendar,
 } from 'lucide-react'
+import type { LucideIcon } from 'lucide-react'
 import { useParams } from 'next/navigation'
 import { useAuth } from '@/lib/auth-context'
 import {
@@ -28,6 +29,8 @@ import {
   PROFILE_LOGO_SQUARE_SIZE,
   PROFILE_CONTENT_PAD_TOP,
 } from '@/lib/cover-logo-spec'
+import { useCompanyListing } from '@/hooks/use-company-listing'
+import { CompanyClientAvatar } from '@/components/company-client-avatar'
 
 /* ──────────── mock data generators ──────────── */
 function seededData(seed: string, len: number, min: number, max: number): number[] {
@@ -39,6 +42,94 @@ function seededData(seed: string, len: number, min: number, max: number): number
     out.push(min + (h / 2147483647) * (max - min))
   }
   return out
+}
+
+interface StatCardRow {
+  label: string
+  value: string
+  trend: 'up' | 'down' | null
+  color: string
+  data: number[]
+}
+
+const KPI_SLOT_ICON: Partial<Record<string, LucideIcon>> = {
+  EBITDA: PieChart,
+  EMPLOYEES: Users,
+  AWARDS: Trophy,
+  FOUNDED: Calendar,
+}
+
+/** Sparkline only for REVENUE; other KPIs use a square icon slot (no mini charts). */
+function StatCardKpiFooter({
+  card,
+  idx,
+  sparkVariant,
+}: {
+  card: StatCardRow
+  idx: number
+  sparkVariant: 'overview' | 'turnover'
+}) {
+  const vals = card.data
+  const hasSeries = vals.length > 0
+  if (card.label === 'REVENUE' && hasSeries) {
+    const min = Math.min(...vals)
+    const max = Math.max(...vals)
+    const range = max - min || 1
+    const yTop = sparkVariant === 'overview' ? 28 : 26
+    const yScale = sparkVariant === 'overview' ? 22 : 18
+    const sparkPath = vals
+      .map((v, i) => {
+        const x = (i / (vals.length - 1)) * 100
+        const y = yTop - ((v - min) / range) * yScale
+        return `${i === 0 ? 'M' : 'L'} ${x.toFixed(1)} ${y.toFixed(1)}`
+      })
+      .join(' ')
+    const areaPath = `M 0 32 L ${vals
+      .map((v, i) => {
+        const y = yTop - ((v - min) / range) * yScale
+        return `${((i / (vals.length - 1)) * 100).toFixed(1)},${y.toFixed(1)}`
+      })
+      .join(' L ')} L 100 32 Z`
+    const gradId = sparkVariant === 'overview' ? `kg${idx}` : `tg${idx}`
+    return (
+      <svg viewBox="0 0 100 32" preserveAspectRatio="none" className="w-full h-10 mt-auto">
+        <defs>
+          <linearGradient id={gradId} x1="0" x2="0" y1="0" y2="1">
+            <stop offset="0%" stopColor={card.color} stopOpacity="0.5" />
+            <stop offset="100%" stopColor={card.color} stopOpacity="0" />
+          </linearGradient>
+        </defs>
+        <path d={areaPath} fill={`url(#${gradId})`} />
+        <path
+          d={sparkPath}
+          fill="none"
+          stroke={card.color}
+          strokeWidth="1.8"
+          strokeLinecap="round"
+          strokeLinejoin="round"
+        />
+      </svg>
+    )
+  }
+
+  const Icon = KPI_SLOT_ICON[card.label]
+  if (!Icon) {
+    return <div className="mt-auto h-10" />
+  }
+  return (
+    <div className="mt-auto flex justify-end pt-1">
+      <div
+        className="w-10 h-10 rounded-md flex items-center justify-center shrink-0 border border-solid"
+        style={{
+          borderColor: `${card.color}40`,
+          background: `${card.color}18`,
+          boxShadow: `0 0 24px ${card.color}14`,
+        }}
+      >
+        <Icon className="w-[1.35rem] h-[1.35rem]" style={{ color: card.color }} strokeWidth={2} />
+      </div>
+    </div>
+  )
 }
 
 /* ──────────── 8 Profile Tabs (matching registration steps) ──────────── */
@@ -58,6 +149,7 @@ export default function CompanyProfilePage() {
   const id = params.id as string
   const company = getCompanyById(id)
   const { user } = useAuth()
+  const { agencyClients, sectors, loading: listingLoading } = useCompanyListing(id, company)
 
   const [activeTab, setActiveTab] = useState('overview')
   const [isFavourited, setIsFavourited] = useState(false)
@@ -98,12 +190,6 @@ export default function CompanyProfilePage() {
   ]
 
   const overviewStats = statCards.filter(c => ['REVENUE', 'EMPLOYEES', 'AWARDS'].includes(c.label))
-
-  // AdSpend history bars (seeded, 6 years)
-  const adspendYears = ['2019','2020','2021','2022','2023','2024']
-  const adspendDigital = seededData(company.id + 'adspd', 6, 20, 60)
-  const adspendTV      = seededData(company.id + 'adsptv', 6, 10, 40)
-  const adspendPrint   = seededData(company.id + 'adsppr', 6, 5, 20)
 
   // Expertise bars
   const expertiseItems = company.services.slice(0, 5).map((s, i) => ({
@@ -290,60 +376,40 @@ export default function CompanyProfilePage() {
 
                 {/* ── Row 1: KPI Strip ── */}
                 <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-5 gap-3 overview-enter">
-                  {statCards.map((card, idx) => {
-                    const vals = card.data
-                    const hasSeries = vals && vals.length > 0
-                    const min = hasSeries ? Math.min(...vals) : 0
-                    const max = hasSeries ? Math.max(...vals) : 1
-                    const range = max - min || 1
-                    const sparkPath = hasSeries
-                      ? vals.map((v, i) => {
-                          const x = (i / (vals.length - 1)) * 100
-                          const y = 28 - ((v - min) / range) * 22
-                          return `${i === 0 ? 'M' : 'L'} ${x.toFixed(1)} ${y.toFixed(1)}`
-                        }).join(' ')
-                      : ''
-                    const areaPath = hasSeries
-                      ? `M 0 32 L ${vals.map((v, i) => `${((i/(vals.length-1))*100).toFixed(1)},${(28-((v-min)/range)*22).toFixed(1)}`).join(' L ')} L 100 32 Z`
-                      : ''
-                    return (
-                      <div key={card.label}
-                        className="profile-kpi-card apple-glass p-4 flex flex-col gap-2 cursor-default"
-                        style={{ animationDelay: `${idx * 0.07}s` }}
-                      >
-                        <div className="flex items-start justify-between">
-                          <p className="text-[9px] font-bold tracking-[0.2em] text-white/35 uppercase">{card.label}</p>
-                          {card.trend && (
-                            <span className={`inline-flex items-center gap-0.5 rounded-full px-2 py-0.5 text-[9px] font-bold ${
+                  {statCards.map((card, idx) => (
+                    <div
+                      key={card.label}
+                      className="profile-kpi-card apple-glass p-4 flex flex-col gap-2 cursor-default"
+                      style={{ animationDelay: `${idx * 0.07}s` }}
+                    >
+                      <div className="flex items-start justify-between">
+                        <p className="text-[9px] font-bold tracking-[0.2em] text-white/35 uppercase">{card.label}</p>
+                        {card.trend && (
+                          <span
+                            className={`inline-flex items-center gap-0.5 rounded-full px-2 py-0.5 text-[9px] font-bold ${
                               card.trend === 'up' ? 'bg-emerald-500/15 text-emerald-400' : 'bg-red-500/15 text-red-400'
-                            }`}>
-                              {card.trend === 'up' ? <TrendingUp className="w-2.5 h-2.5"/> : <TrendingDown className="w-2.5 h-2.5"/>}
-                            </span>
-                          )}
-                        </div>
-                        <p className="text-[1.6rem] font-extrabold text-white tracking-tight leading-none" style={{ textShadow: `0 0 24px ${card.color}40` }}>{card.value}</p>
-                        {hasSeries ? (
-                          <svg viewBox="0 0 100 32" preserveAspectRatio="none" className="w-full h-10 mt-auto">
-                            <defs>
-                              <linearGradient id={`kg${idx}`} x1="0" x2="0" y1="0" y2="1">
-                                <stop offset="0%" stopColor={card.color} stopOpacity="0.5"/>
-                                <stop offset="100%" stopColor={card.color} stopOpacity="0"/>
-                              </linearGradient>
-                            </defs>
-                            <path d={areaPath} fill={`url(#kg${idx})`}/>
-                            <path d={sparkPath} fill="none" stroke={card.color} strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round"/>
-                          </svg>
-                        ) : (
-                          <div className="mt-auto h-10 flex items-end">
-                            <div className="w-full h-px rounded-full" style={{ background: `linear-gradient(to right, transparent, ${card.color}60, transparent)` }}/>
-                          </div>
+                            }`}
+                          >
+                            {card.trend === 'up' ? (
+                              <TrendingUp className="w-2.5 h-2.5" />
+                            ) : (
+                              <TrendingDown className="w-2.5 h-2.5" />
+                            )}
+                          </span>
                         )}
                       </div>
-                    )
-                  })}
+                      <p
+                        className="text-[1.6rem] font-extrabold text-white tracking-tight leading-none"
+                        style={{ textShadow: `0 0 24px ${card.color}40` }}
+                      >
+                        {card.value}
+                      </p>
+                      <StatCardKpiFooter card={card} idx={idx} sparkVariant="overview" />
+                    </div>
+                  ))}
                 </div>
 
-                {/* ── Row 2: About + Expertise  |  AdSpend chart ── */}
+                {/* ── Row 2: About + Expertise  |  Clients & sectors ── */}
                 <div className="grid grid-cols-1 lg:grid-cols-5 gap-5 overview-enter overview-enter-delay-1">
 
                   {/* About + Expertise column */}
@@ -361,7 +427,7 @@ export default function CompanyProfilePage() {
                           { label: 'Founded', value: String(company.founded) },
                           { label: 'Network',  value: company.network || 'Independent' },
                           { label: 'Employees', value: company.employees.toLocaleString() },
-                          { label: 'Clients',   value: String(company.clients.length) },
+                          { label: 'Clients',   value: String(agencyClients.length) },
                         ].map(m => (
                           <div key={m.label}>
                             <p className="text-[9px] font-bold text-white/25 uppercase tracking-[0.18em] mb-1">{m.label}</p>
@@ -401,65 +467,67 @@ export default function CompanyProfilePage() {
                     </div>
                   </div>
 
-                  {/* AdSpend bar chart */}
-                  <div className="lg:col-span-3 apple-glass p-6 flex flex-col">
-                    <div className="flex items-center justify-between mb-5">
+                  {/* Clients & sectors — real profile data instead of placeholder spend chart */}
+                  <div className="lg:col-span-3 apple-glass p-6 flex flex-col min-h-[200px]">
+                    <div className="flex items-center justify-between mb-4">
                       <div className="flex items-center gap-2">
-                        <BarChart2 className="w-4 h-4 text-[#0763d8]"/>
-                        <h2 className="text-[11px] font-bold text-white/70 uppercase tracking-[0.18em]">AdSpend History (M€)</h2>
+                        <Handshake className="w-4 h-4 text-[#0763d8]" />
+                        <h2 className="text-[11px] font-bold text-white/70 uppercase tracking-[0.18em]">
+                          Clients &amp; sectors
+                        </h2>
                       </div>
-                      <div className="flex items-center gap-3 text-[10px] text-white/35">
-                        <span className="flex items-center gap-1.5"><span className="w-2 h-2 rounded-full bg-[#0763d8] inline-block" style={{boxShadow:'0 0 5px #0763d880'}}/>Digital</span>
-                        <span className="flex items-center gap-1.5"><span className="w-2 h-2 rounded-full bg-[#6366f1] inline-block" style={{boxShadow:'0 0 5px #6366f180'}}/>TV</span>
-                        <span className="flex items-center gap-1.5"><span className="w-2 h-2 rounded-full bg-[#8b5cf6] inline-block" style={{boxShadow:'0 0 5px #8b5cf680'}}/>Print</span>
+                      <span className="text-[10px] text-white/35 bg-white/[0.04] px-2 py-0.5 rounded-full border border-white/[0.06]">
+                        {agencyClients.length} brand{agencyClients.length === 1 ? '' : 's'}
+                        {listingLoading ? ' · …' : ''}
+                      </span>
+                    </div>
+                    {agencyClients.length > 0 ? (
+                      <>
+                        <div className="grid grid-cols-2 sm:grid-cols-3 gap-3">
+                          {agencyClients.slice(0, 9).map(cl => {
+                            const sector = cl.industry || null
+                            return (
+                              <div
+                                key={cl.id}
+                                className="rounded-xl border border-white/[0.06] bg-white/[0.02] p-3 transition-colors hover:border-[#0763d8]/25"
+                              >
+                                <div className="mb-2">
+                                  <CompanyClientAvatar name={cl.name} logoUrl={cl.logoUrl} className="w-9 h-9 rounded-lg" />
+                                </div>
+                                <p className="text-xs font-bold text-white/90 line-clamp-2 leading-snug">{cl.name}</p>
+                                {sector && (
+                                  <span className="inline-block mt-1.5 text-[9px] text-white/35 bg-white/[0.04] px-1.5 py-0.5 rounded border border-white/[0.06] line-clamp-1">
+                                    {sector}
+                                  </span>
+                                )}
+                              </div>
+                            )
+                          })}
+                        </div>
+                        {sectors.length > 0 && (
+                          <div className="mt-5 pt-4 border-t border-white/[0.05]">
+                            <p className="text-[9px] font-bold text-white/25 uppercase tracking-[0.18em] mb-2">
+                              Sector focus
+                            </p>
+                            <div className="flex flex-wrap gap-2">
+                              {sectors.slice(0, 10).map(s => (
+                                <span
+                                  key={s}
+                                  className="px-2.5 py-1 rounded-full text-[11px] font-medium bg-[#0763d8]/[0.08] text-[#0763d8] border border-[#0763d8]/20"
+                                >
+                                  {s}
+                                </span>
+                              ))}
+                            </div>
+                          </div>
+                        )}
+                      </>
+                    ) : (
+                      <div className="flex flex-col items-center justify-center flex-1 py-10 text-center text-white/25">
+                        <Handshake className="w-8 h-8 mb-2 opacity-40" />
+                        <p className="text-[13px] text-white/40">No client brands listed yet.</p>
                       </div>
-                    </div>
-                    <div className="flex-1 w-full min-h-[160px]">
-                      {(() => {
-                        const allVals = adspendYears.map((_,i) => adspendDigital[i]+adspendTV[i]+adspendPrint[i])
-                        const totalMax = Math.max(...allVals)
-                        const bw = 13, gap = 3, gw = bw*3+gap*2, groupGap = 20
-                        const chartW = adspendYears.length*(gw+groupGap)-groupGap
-                        const chartH = 100
-                        return (
-                          <svg viewBox={`0 0 ${chartW} ${chartH+28}`} className="w-full h-full" preserveAspectRatio="xMidYMax meet">
-                            <defs>
-                              <linearGradient id="barGradD" x1="0" x2="0" y1="0" y2="1">
-                                <stop offset="0%" stopColor="#0763d8" stopOpacity="1"/>
-                                <stop offset="100%" stopColor="#0763d8" stopOpacity="0.5"/>
-                              </linearGradient>
-                              <linearGradient id="barGradT" x1="0" x2="0" y1="0" y2="1">
-                                <stop offset="0%" stopColor="#6366f1" stopOpacity="1"/>
-                                <stop offset="100%" stopColor="#6366f1" stopOpacity="0.5"/>
-                              </linearGradient>
-                              <linearGradient id="barGradP" x1="0" x2="0" y1="0" y2="1">
-                                <stop offset="0%" stopColor="#8b5cf6" stopOpacity="1"/>
-                                <stop offset="100%" stopColor="#8b5cf6" stopOpacity="0.5"/>
-                              </linearGradient>
-                            </defs>
-                            {/* grid lines */}
-                            {[0.25,0.5,0.75,1].map(t => (
-                              <line key={t} x1={0} x2={chartW} y1={chartH*(1-t)} y2={chartH*(1-t)}
-                                stroke="rgba(255,255,255,0.04)" strokeWidth="0.8"/>
-                            ))}
-                            {adspendYears.map((yr,i) => {
-                              const x = i*(gw+groupGap)
-                              const dH = Math.max(2,(adspendDigital[i]/totalMax)*chartH)
-                              const tH = Math.max(2,(adspendTV[i]/totalMax)*chartH)
-                              const pH = Math.max(2,(adspendPrint[i]/totalMax)*chartH)
-                              return (
-                                <g key={yr}>
-                                  <rect x={x} y={chartH-dH} width={bw} height={dH} rx="2.5" fill="url(#barGradD)"/>
-                                  <rect x={x+bw+gap} y={chartH-tH} width={bw} height={tH} rx="2.5" fill="url(#barGradT)"/>
-                                  <rect x={x+2*(bw+gap)} y={chartH-pH} width={bw} height={pH} rx="2.5" fill="url(#barGradP)"/>
-                                  <text x={x+gw/2} y={chartH+18} textAnchor="middle" fontSize="7.5" fill="rgba(255,255,255,0.25)">{yr}</text>
-                                </g>
-                              )
-                            })}
-                          </svg>
-                        )
-                      })()}
-                    </div>
+                    )}
                   </div>
                 </div>
 
@@ -579,21 +647,19 @@ export default function CompanyProfilePage() {
                 </div>
 
                 {/* ── Row 4: Client marquee ── */}
-                {company.clients.length > 0 && (
+                {agencyClients.length > 0 && (
                   <div className="apple-glass p-5 overflow-hidden overview-enter overview-enter-delay-3">
                     <div className="flex items-center gap-2 mb-4">
                       <Users className="w-3.5 h-3.5 text-[#0763d8]"/>
                       <h2 className="text-[11px] font-bold text-white/70 uppercase tracking-[0.18em]">Client Roster</h2>
-                      <span className="ml-2 text-[10px] text-white/25">{company.clients.length} clients · hover to pause</span>
+                      <span className="ml-2 text-[10px] text-white/25">{agencyClients.length} clients · hover to pause</span>
                     </div>
                     <div className="overflow-hidden">
                       <div className="marquee-inner gap-3">
-                        {[...company.clients, ...company.clients].map((cl, i) => (
-                          <div key={i} className="flex items-center gap-2.5 px-4 py-2.5 rounded-xl bg-white/[0.04] border border-white/[0.06] hover:border-[#0763d8]/30 hover:bg-[#0763d8]/[0.06] transition-all duration-200 flex-shrink-0 cursor-default group">
-                            <div className="w-7 h-7 rounded-lg bg-white/[0.08] border border-white/[0.08] flex items-center justify-center text-[10px] font-extrabold text-white/50 group-hover:text-[#0763d8] transition-colors">
-                              {cl.split(' ').map((w: string) => w[0]).join('').slice(0,2).toUpperCase()}
-                            </div>
-                            <span className="text-[11px] font-semibold text-white/55 group-hover:text-white/80 transition-colors whitespace-nowrap">{cl}</span>
+                        {[...agencyClients, ...agencyClients].map((cl, i) => (
+                          <div key={`${cl.id}-${i}`} className="flex items-center gap-2.5 px-4 py-2.5 rounded-xl bg-white/[0.04] border border-white/[0.06] hover:border-[#0763d8]/30 hover:bg-[#0763d8]/[0.06] transition-all duration-200 flex-shrink-0 cursor-default group">
+                            <CompanyClientAvatar name={cl.name} logoUrl={cl.logoUrl} className="w-7 h-7 rounded-lg shrink-0" />
+                            <span className="text-[11px] font-semibold text-white/55 group-hover:text-white/80 transition-colors whitespace-nowrap">{cl.name}</span>
                           </div>
                         ))}
                       </div>
@@ -623,7 +689,7 @@ export default function CompanyProfilePage() {
                         <h2 className="text-[11px] font-bold text-white/70 uppercase tracking-[0.18em]">Sectors</h2>
                       </div>
                       <div className="flex flex-wrap gap-1.5">
-                        {company.sectors.map(s => (
+                        {sectors.map(s => (
                           <span key={s} className="px-2.5 py-1 rounded-full text-[11px] font-medium bg-white/[0.03] text-white/45 border border-white/[0.07] hover:border-white/20 hover:text-white/70 hover:bg-white/[0.06] transition-all duration-200 cursor-default">{s}</span>
                         ))}
                       </div>
@@ -722,45 +788,40 @@ export default function CompanyProfilePage() {
                     <h2 className="text-[11px] font-bold text-white/60 uppercase tracking-[0.18em]">Financial Snapshot</h2>
                   </div>
                   <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-5 gap-3">
-                    {statCards.map((card, idx) => {
-                      const vals = card.data
-                      const hasSeries = vals && vals.length > 0
-                      const min = hasSeries ? Math.min(...vals) : 0
-                      const max = hasSeries ? Math.max(...vals) : 1
-                      const range = max - min || 1
-                      const sp = hasSeries ? vals.map((v,i)=>`${i===0?'M':'L'} ${((i/(vals.length-1))*100).toFixed(1)} ${(26-((v-min)/range)*18).toFixed(1)}`).join(' ') : ''
-                      const ap = hasSeries ? `M 0 32 L ${vals.map((v,i)=>`${((i/(vals.length-1))*100).toFixed(1)},${(26-((v-min)/range)*18).toFixed(1)}`).join(' L ')} L 100 32 Z` : ''
-                      return (
-                        <div key={card.label} className="apple-glass p-4 flex flex-col gap-2 cursor-default"
-                          style={{transition:'transform 0.3s,box-shadow 0.3s'}}
-                          onMouseEnter={e=>{const el=e.currentTarget as HTMLElement;el.style.transform='translateY(-2px)';el.style.boxShadow=`0 8px 32px rgba(0,0,0,0.3),0 0 0 1px ${card.color}20`}}
-                          onMouseLeave={e=>{const el=e.currentTarget as HTMLElement;el.style.transform='none';el.style.boxShadow=''}}>
-                          <div className="flex items-center justify-between">
-                            <p className="text-[9px] font-bold tracking-[0.2em] text-white/35 uppercase">{card.label}</p>
-                            {card.trend && (
-                              <span className={`text-[9px] font-bold px-1.5 py-0.5 rounded-full ${card.trend==='up'?'bg-emerald-500/15 text-emerald-400':'bg-red-500/15 text-red-400'}`}>
-                                {card.trend==='up'?'↑ YoY':'↓ YoY'}
-                              </span>
-                            )}
-                          </div>
-                          <p className="text-2xl font-extrabold text-white" style={{textShadow:`0 0 20px ${card.color}40`}}>{card.value}</p>
-                          {hasSeries ? (
-                            <svg viewBox="0 0 100 32" preserveAspectRatio="none" className="w-full h-10 mt-auto">
-                              <defs>
-                                <linearGradient id={`tg${idx}`} x1="0" x2="0" y1="0" y2="1">
-                                  <stop offset="0%" stopColor={card.color} stopOpacity="0.5"/>
-                                  <stop offset="100%" stopColor={card.color} stopOpacity="0"/>
-                                </linearGradient>
-                              </defs>
-                              <path d={ap} fill={`url(#tg${idx})`}/>
-                              <path d={sp} fill="none" stroke={card.color} strokeWidth="1.8" strokeLinecap="round"/>
-                            </svg>
-                          ) : (
-                            <div className="mt-auto h-px rounded-full" style={{background:`linear-gradient(to right,transparent,${card.color}60,transparent)`}}/>
+                    {statCards.map((card, idx) => (
+                      <div
+                        key={card.label}
+                        className="apple-glass p-4 flex flex-col gap-2 cursor-default"
+                        style={{ transition: 'transform 0.3s,box-shadow 0.3s' }}
+                        onMouseEnter={(e) => {
+                          const el = e.currentTarget as HTMLElement
+                          el.style.transform = 'translateY(-2px)'
+                          el.style.boxShadow = `0 8px 32px rgba(0,0,0,0.3),0 0 0 1px ${card.color}20`
+                        }}
+                        onMouseLeave={(e) => {
+                          const el = e.currentTarget as HTMLElement
+                          el.style.transform = 'none'
+                          el.style.boxShadow = ''
+                        }}
+                      >
+                        <div className="flex items-center justify-between">
+                          <p className="text-[9px] font-bold tracking-[0.2em] text-white/35 uppercase">{card.label}</p>
+                          {card.trend && (
+                            <span
+                              className={`text-[9px] font-bold px-1.5 py-0.5 rounded-full ${
+                                card.trend === 'up' ? 'bg-emerald-500/15 text-emerald-400' : 'bg-red-500/15 text-red-400'
+                              }`}
+                            >
+                              {card.trend === 'up' ? '↑ YoY' : '↓ YoY'}
+                            </span>
                           )}
                         </div>
-                      )
-                    })}
+                        <p className="text-2xl font-extrabold text-white" style={{ textShadow: `0 0 20px ${card.color}40` }}>
+                          {card.value}
+                        </p>
+                        <StatCardKpiFooter card={card} idx={idx} sparkVariant="turnover" />
+                      </div>
+                    ))}
                   </div>
                 </section>
 
@@ -768,20 +829,20 @@ export default function CompanyProfilePage() {
                 <section className="overview-enter overview-enter-delay-1">
                   <div className="flex items-center gap-2 mb-3">
                     <span className="w-1 h-4 rounded-full bg-[#6366f1]" style={{boxShadow:'0 0 8px #6366f180'}}/>
-                    <h2 className="text-[11px] font-bold text-white/60 uppercase tracking-[0.18em]">Clients <span className="text-white/25 font-medium">({company.clients.length})</span></h2>
+                    <h2 className="text-[11px] font-bold text-white/60 uppercase tracking-[0.18em]">Clients <span className="text-white/25 font-medium">({agencyClients.length})</span></h2>
                   </div>
                   <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-3">
-                    {company.clients.map((client, i) => {
-                      const sector = company.clientIndustries?.[i % (company.clientIndustries?.length || 1)] || null
+                    {agencyClients.map(cl => {
+                      const sector = cl.industry || null
                       return (
-                        <div key={client} className="apple-glass p-4 group"
+                        <div key={cl.id} className="apple-glass p-4 group"
                           style={{transition:'transform 0.25s,border-color 0.25s,box-shadow 0.25s'}}
                           onMouseEnter={e=>{const el=e.currentTarget as HTMLElement;el.style.transform='translateY(-2px)';el.style.borderColor='rgba(7,99,216,0.35)';el.style.boxShadow='0 8px 24px rgba(0,0,0,0.25)'}}
                           onMouseLeave={e=>{const el=e.currentTarget as HTMLElement;el.style.transform='none';el.style.borderColor='';el.style.boxShadow=''}}>
-                          <div className="w-9 h-9 rounded-lg flex items-center justify-center mb-3 text-[11px] font-extrabold text-[#0763d8] border border-[#0763d8]/20 group-hover:border-[#0763d8]/40 transition-colors" style={{background:'rgba(7,99,216,0.08)'}}>
-                            {client.split(' ').map((w: string)=>w[0]).join('').substring(0,2).toUpperCase()}
+                          <div className="mb-3">
+                            <CompanyClientAvatar name={cl.name} logoUrl={cl.logoUrl} className="w-9 h-9 rounded-lg" />
                           </div>
-                          <p className="text-sm font-bold text-white/90 mb-1">{client}</p>
+                          <p className="text-sm font-bold text-white/90 mb-1">{cl.name}</p>
                           {sector && <span className="text-[10px] bg-white/[0.05] text-white/35 px-2 py-0.5 rounded-full border border-white/[0.06]">{sector}</span>}
                         </div>
                       )
@@ -833,7 +894,7 @@ export default function CompanyProfilePage() {
                       <h2 className="text-[11px] font-bold text-white/60 uppercase tracking-[0.18em]">Sectors</h2>
                     </div>
                     <div className="grid grid-cols-2 gap-3">
-                      {company.sectors.map((s, i) => {
+                      {sectors.map((s, i) => {
                         const pct = Math.round(seededData(company.id + s, 1, 40, 95)[0])
                         return (
                           <div key={s} className="p-3 rounded-xl bg-white/[0.03] border border-white/[0.05] hover:border-[#8b5cf6]/25 hover:bg-[#8b5cf6]/[0.04] transition-all duration-200 group">

@@ -1,3 +1,5 @@
+import type { AgencyClient } from '@/lib/agency-client-types'
+
 // ============================================================
 // TYPES
 // ============================================================
@@ -33,6 +35,8 @@ export interface Company {
   about: string
   turnover?: string
   clients: string[]
+  /** Optional structured clients (or use listing API override). */
+  agencyClients?: AgencyClient[]
   awards: number
   offices?: string[]
   competencies?: string[]

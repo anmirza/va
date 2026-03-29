@@ -10,9 +10,11 @@ import {
   Building2, Edit, Plus, Film, Eye, Award,
   MapPin, Globe, Phone, Mail, Linkedin, Twitter, Instagram,
   Users, Briefcase, CheckSquare, Save, X, ChevronRight, TrendingUp,
+  BarChart3, Handshake,
 } from 'lucide-react'
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
+import { AgencyDirectoryListingEditor } from '@/components/agency-directory-listing-editor'
 
 interface AgencyProfile {
   businessName: string
@@ -77,7 +79,7 @@ function SectionCard({ title, icon: Icon, children }: { title: string; icon: Rea
 
 function AgencyDashContent() {
   const { user } = useAuth()
-  const [activeTab, setActiveTab] = useState<'overview' | 'edit' | 'work'>('overview')
+  const [activeTab, setActiveTab] = useState<'overview' | 'edit' | 'work' | 'listing'>('overview')
   const [profile, setProfile] = useState<AgencyProfile | null>(null)
   const [editDraft, setEditDraft] = useState<Partial<AgencyProfile>>({})
   const [saved, setSaved] = useState(false)
@@ -114,9 +116,12 @@ function AgencyDashContent() {
     setActiveTab('overview')
   }
 
+  const directoryCompanyId = user?.companyId ?? user?.companyIds?.[0]
+
   const TABS = [
     { id: 'overview', label: 'Overview', icon: Building2 },
     { id: 'edit', label: 'Edit Profile', icon: Edit },
+    { id: 'listing', label: 'Directory listing', icon: Handshake },
     { id: 'work', label: 'Work', icon: Film },
   ] as const
 
@@ -502,6 +507,29 @@ function AgencyDashContent() {
                   </Button>
                 </div>
               </div>
+            </div>
+          )}
+
+          {/* ── Directory listing (clients & sectors on public profile) ── */}
+          {activeTab === 'listing' && (
+            <div className="bg-card border border-border rounded-xl p-6 shadow-sm">
+              <div className="flex items-center gap-2 mb-6">
+                <Handshake className="w-5 h-5 text-[#0763d8]" />
+                <div>
+                  <h2 className="font-bold text-foreground text-lg">Clients &amp; sectors</h2>
+                  <p className="text-sm text-muted-foreground">
+                    Manage brands and sector tags shown on your agency&apos;s directory page.
+                  </p>
+                </div>
+              </div>
+              {directoryCompanyId ? (
+                <AgencyDirectoryListingEditor companyId={directoryCompanyId} />
+              ) : (
+                <p className="text-sm text-muted-foreground">
+                  Link a company to your vendor account to edit the directory listing. Complete agency registration or
+                  contact support to associate a profile.
+                </p>
+              )}
             </div>
           )}
 
