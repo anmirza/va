@@ -1,6 +1,6 @@
 'use client'
 
-import { useState } from 'react'
+import { Suspense, useState } from 'react'
 import Link from 'next/link'
 import { useRouter, useSearchParams } from 'next/navigation'
 import { useAuth } from '@/lib/auth-context'
@@ -9,7 +9,7 @@ import { Input } from '@/components/ui/input'
 import { VaLogo } from '@/components/va-logo'
 import { Eye, EyeOff, Mail, Lock } from 'lucide-react'
 
-export default function LoginPage() {
+function LoginContent() {
   const { login } = useAuth()
   const router = useRouter()
   const searchParams = useSearchParams()
@@ -129,5 +129,13 @@ export default function LoginPage() {
         </div>
       </div>
     </div>
+  )
+}
+
+export default function LoginPage() {
+  return (
+    <Suspense fallback={<div className="min-h-screen bg-[#eef0f3]" />}>
+      <LoginContent />
+    </Suspense>
   )
 }
