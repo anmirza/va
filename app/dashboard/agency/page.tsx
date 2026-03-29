@@ -10,7 +10,7 @@ import {
   Building2, Edit, Plus, Film, Eye, Award,
   MapPin, Globe, Phone, Mail, Linkedin, Twitter, Instagram,
   Users, Briefcase, CheckSquare, Save, X, ChevronRight, TrendingUp,
-  BarChart3, Handshake,
+  BarChart3, Handshake, Lock,
 } from 'lucide-react'
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
@@ -107,9 +107,16 @@ function AgencyDashContent() {
   const primaryContact = profile?.contacts?.find(c => c.email) ?? profile?.contacts?.[0]
 
   const handleSave = () => {
-    if (!editDraft) return
-    const updated = { ...profile, ...editDraft } as AgencyProfile
+    if (!editDraft || !profile) return
+    const updated = {
+      ...profile,
+      ...editDraft,
+      businessName: profile.businessName,
+      yearEstablished: profile.yearEstablished,
+      category: profile.category,
+    } as AgencyProfile
     setProfile(updated)
+    setEditDraft(updated)
     localStorage.setItem('va_agency_profile', JSON.stringify(updated))
     setSaved(true)
     setTimeout(() => setSaved(false), 2000)
@@ -367,18 +374,37 @@ function AgencyDashContent() {
               <div className="space-y-6">
                 <div className="bg-card border border-border rounded-xl p-6 shadow-sm">
                   <h2 className="font-bold text-foreground mb-5">Core Details</h2>
+                  <p className="text-xs text-muted-foreground mb-4 -mt-1">
+                    Fields marked with a lock are set at registration and cannot be changed here. Contact support if you
+                    need an update.
+                  </p>
                   <div className="space-y-4">
                     <div>
-                      <label className="block text-xs font-medium text-muted-foreground mb-1.5">Agency Name *</label>
-                      <Input value={editDraft.businessName || ''} onChange={e => setEditDraft(p => ({ ...p, businessName: e.target.value }))} className="h-10" placeholder="Registered company name" />
+                      <label className="flex items-center gap-1.5 text-xs font-medium text-muted-foreground mb-1.5">
+                        <Lock className="w-3 h-3 shrink-0" aria-hidden />
+                        Registered agency name
+                      </label>
+                      <div className="h-10 px-3 flex items-center rounded-md border border-border bg-muted/50 text-sm text-foreground">
+                        {profile?.businessName || editDraft.businessName || '—'}
+                      </div>
                     </div>
                     <div>
-                      <label className="block text-xs font-medium text-muted-foreground mb-1.5">Year Established</label>
-                      <Input value={editDraft.yearEstablished || ''} onChange={e => setEditDraft(p => ({ ...p, yearEstablished: e.target.value }))} className="h-10" placeholder="e.g. 2005" />
+                      <label className="flex items-center gap-1.5 text-xs font-medium text-muted-foreground mb-1.5">
+                        <Lock className="w-3 h-3 shrink-0" aria-hidden />
+                        Year established
+                      </label>
+                      <div className="h-10 px-3 flex items-center rounded-md border border-border bg-muted/50 text-sm text-foreground">
+                        {profile?.yearEstablished || editDraft.yearEstablished || '—'}
+                      </div>
                     </div>
                     <div>
-                      <label className="block text-xs font-medium text-muted-foreground mb-1.5">Agency Category</label>
-                      <Input value={editDraft.category || ''} onChange={e => setEditDraft(p => ({ ...p, category: e.target.value }))} className="h-10" placeholder="e.g. Full Service, Digital, ATL" />
+                      <label className="flex items-center gap-1.5 text-xs font-medium text-muted-foreground mb-1.5">
+                        <Lock className="w-3 h-3 shrink-0" aria-hidden />
+                        Agency category
+                      </label>
+                      <div className="h-10 px-3 flex items-center rounded-md border border-border bg-muted/50 text-sm text-foreground">
+                        {profile?.category || editDraft.category || '—'}
+                      </div>
                     </div>
                     <div>
                       <label className="block text-xs font-medium text-muted-foreground mb-1.5">Number of Employees</label>
