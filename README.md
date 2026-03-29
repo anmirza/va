@@ -8,7 +8,7 @@ A modern directory platform for marketing and communication professionals, inspi
 
 - Node.js 18+
 - npm
-
+--
 ### Installation
 
 ```bash
