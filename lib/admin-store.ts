@@ -279,6 +279,24 @@ export function createOrg(
   return org
 }
 
+export function updateOrg(
+  id: string,
+  data: { name: string; country?: string; description?: string; category?: string; profileData?: Record<string, unknown> },
+  adminId: string,
+): OrgRecord | null {
+  const orgs = getOrgs()
+  const idx = orgs.findIndex(o => o.id === id)
+  if (idx === -1) return null
+
+  orgs[idx] = {
+    ...orgs[idx],
+    ...data,
+  }
+  saveOrgs(orgs)
+  addActivity({ type: 'org_create', description: `Admin updated ${orgs[idx].type}: ${orgs[idx].name}` })
+  return orgs[idx]
+}
+
 export function removeOrg(id: string, adminId: string): boolean {
   const orgs = getOrgs()
   const idx = orgs.findIndex(o => o.id === id)
@@ -463,4 +481,51 @@ export function getAdminStats() {
     recentApprovals: regs.filter(r => r.status === 'approved').length,
     recentRejections: regs.filter(r => r.status === 'rejected').length,
   }
+}
+
+// ── Dummy Data Seeder ─────────────────────────────────────────────────────────
+
+export function seedDummyData() {
+  const dummyOrgs: OrgRecord[] = [
+    { id: `org-a1`, type: 'agency', name: 'Ogilvy UK', country: 'United Kingdom', status: 'active', createdAt: new Date(Date.now() - 30 * 86400000).toISOString(), memberCount: 15 },
+    { id: `org-a2`, type: 'agency', name: 'BBDO New York', country: 'United States', status: 'active', createdAt: new Date(Date.now() - 25 * 86400000).toISOString(), memberCount: 8 },
+    { id: `org-a3`, type: 'agency', name: 'Publicis Conseil', country: 'France', status: 'active', createdAt: new Date(Date.now() - 22 * 86400000).toISOString(), memberCount: 12 },
+    { id: `org-a4`, type: 'agency', name: 'Dentsu Inc.', country: 'Japan', status: 'active', createdAt: new Date(Date.now() - 15 * 86400000).toISOString(), memberCount: 5 },
+    { id: `org-p1`, type: 'production', name: 'Smuggler', country: 'United States', status: 'active', createdAt: new Date(Date.now() - 20 * 86400000).toISOString(), memberCount: 3 },
+    { id: `org-p2`, type: 'production', name: 'Iconoclast', country: 'France', status: 'active', createdAt: new Date(Date.now() - 18 * 86400000).toISOString(), memberCount: 4 },
+    { id: `org-p3`, type: 'production', name: 'Partizan', country: 'United Kingdom', status: 'active', createdAt: new Date(Date.now() - 10 * 86400000).toISOString(), memberCount: 2 },
+    { id: `org-p4`, type: 'production', name: 'MJZ', country: 'United States', status: 'active', createdAt: new Date(Date.now() - 5 * 86400000).toISOString(), memberCount: 7 },
+  ]
+  saveOrgs(dummyOrgs)
+
+  const pending: PendingRegistration[] = [
+    {
+      id: `reg-p1`, type: 'agency', companyName: 'TBWA\\Chiat\\Day', submittedByUserId: 'usr-demo1', submittedByName: 'Alice Chang', submittedByEmail: 'alice@tbwa.test', submittedAt: new Date(Date.now() - 2 * 86400000).toISOString(), status: 'pending',
+      profileData: { businessName: 'TBWA\\Chiat\\Day', country: 'United States', city: 'Los Angeles', employees: '401 +' }
+    },
+    {
+      id: `reg-p2`, type: 'production', companyName: 'Stink Films', submittedByUserId: 'usr-demo2', submittedByName: 'Bob Harris', submittedByEmail: 'bob@stink.test', submittedAt: new Date(Date.now() - 1 * 86400000).toISOString(), status: 'pending',
+      profileData: { businessName: 'Stink Films', country: 'United Kingdom', city: 'London', companyLevel: 'Worldwide Headquarter' }
+    },
+    {
+      id: `reg-p3`, type: 'agency', companyName: 'Wieden+Kennedy', submittedByUserId: 'usr-demo3', submittedByName: 'Carol Dan', submittedByEmail: 'carol@wk.test', submittedAt: new Date(Date.now() - 43200000).toISOString(), status: 'pending',
+      profileData: { businessName: 'Wieden+Kennedy', country: 'United States', city: 'Portland' }
+    },
+     {
+      id: `reg-p4`, type: 'production', companyName: 'Biscuit Filmworks', submittedByUserId: 'usr-demo4', submittedByName: 'Dave Miller', submittedByEmail: 'dave@biscuit.test', submittedAt: new Date(Date.now() - 21600000).toISOString(), status: 'pending',
+      profileData: { businessName: 'Biscuit Filmworks', country: 'United States', city: 'Los Angeles' }
+    }
+  ]
+  saveRegistrations(pending)
+
+  const logs: ActivityLogEntry[] = [
+    { id: 'act-1', type: 'signup', description: 'New production registration submitted: Biscuit Filmworks by Dave Miller', timestamp: new Date(Date.now() - 21600000).toISOString() },
+    { id: 'act-2', type: 'signup', description: 'New agency registration submitted: Wieden+Kennedy by Carol Dan', timestamp: new Date(Date.now() - 43200000).toISOString() },
+    { id: 'act-3', type: 'approval', description: 'Approved production: MJZ', timestamp: new Date(Date.now() - 5 * 86400000).toISOString() },
+    { id: 'act-4', type: 'rejection', description: 'Rejected agency: FakeAgency Ltd — Incomplete data', timestamp: new Date(Date.now() - 6 * 86400000).toISOString() },
+    { id: 'act-5', type: 'signup', description: 'New production registration submitted: Stink Films by Bob Harris', timestamp: new Date(Date.now() - 1 * 86400000).toISOString() },
+    { id: 'act-6', type: 'signup', description: 'New agency registration submitted: TBWA\\Chiat\\Day by Alice Chang', timestamp: new Date(Date.now() - 2 * 86400000).toISOString() },
+    { id: 'act-7', type: 'org_create', description: 'Admin created production: Partizan', timestamp: new Date(Date.now() - 10 * 86400000).toISOString() },
+  ]
+  localStorage.setItem(KEYS.activityLog, JSON.stringify(logs))
 }

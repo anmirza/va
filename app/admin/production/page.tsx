@@ -102,6 +102,11 @@ export default function ProductionAdminPage() {
                 </div>
               </div>
               <div className="flex items-center gap-2 shrink-0">
+                <Link href={`/admin/production/create?edit=${org.id}`}>
+                  <Button size="sm" variant="outline" className="h-8 border-white/[0.1] text-white/60 hover:text-white rounded-lg text-xs">
+                    Edit
+                  </Button>
+                </Link>
                 <button
                   onClick={() => handleRemove(org.id, org.name)}
                   className="p-2 rounded-lg text-white/30 hover:text-red-400 hover:bg-red-400/[0.08] transition-colors"
