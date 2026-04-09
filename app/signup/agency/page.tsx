@@ -91,7 +91,7 @@ export default function AgencySignupPage() {
   const [talentEntries, setTalentEntries] = useState([{ role: '', name: '', linkedin: '' }])
 
   // Step 7 — Awards & Infos
-  const [awards, setAwards] = useState(
+  const [awards, setAwards] = useState<{ name: string; distinction: string; category: string; year: string; ad: string; brand: string; }[]>(
     AGENCY_AWARDS.map(name => ({
       name,
       distinction: '',
@@ -132,7 +132,7 @@ export default function AgencySignupPage() {
       businessName, dunsNumber, vatNumber, legalForm, companyRegNumber, yearEstablished,
       employees, companyLevel, parentCompany, category, currency, tradeOrganizations,
       countryCoverage, address, postcode, city, country, contacts, socialMedia,
-      revenue, clients, workedWithClient, clientPitch, clientDuration, competencies, capabilityAllocation, marketPositioning,
+      revenue, clients, workedWithClient, clientPitch, clientDuration, competencies, marketPositioning,
       mainCapability, secondaryCapability, additionalCapability, sectorPercentages,
       about, philosophy, networkDescription, localRepresentation, outsourcedActivities,
       governanceQA, governanceData, governanceGlobal, governanceAdditional, outsources,

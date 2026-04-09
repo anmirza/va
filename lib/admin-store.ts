@@ -39,6 +39,7 @@ export interface OrgRecord {
   moderatorUserId?: string
   memberCount: number
   registrationId?: string // linked PendingRegistration id
+  profileData?: Record<string, unknown>
 }
 
 export interface Invitation {
@@ -255,7 +256,7 @@ export function getOrgsByType(type: OrgType): OrgRecord[] {
 }
 
 export function createOrg(
-  data: { name: string; type: OrgType; country?: string; description?: string; category?: string },
+  data: { name: string; type: OrgType; country?: string; description?: string; category?: string; profileData?: Record<string, unknown> },
   adminId: string,
 ): OrgRecord {
   const orgs = getOrgs()
@@ -270,6 +271,7 @@ export function createOrg(
     createdAt: new Date().toISOString(),
     createdByAdminId: adminId,
     memberCount: 0,
+    profileData: data.profileData,
   }
   orgs.unshift(org)
   saveOrgs(orgs)

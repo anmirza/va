@@ -8,7 +8,7 @@ import { Header } from '@/components/header'
 import {
   Film, Edit, Plus, Eye,
   MapPin, Globe, Phone, Mail, Linkedin, Twitter, Instagram,
-  Users, CheckSquare, Save, X, ChevronRight, Award, Camera,
+  Users, CheckSquare, Save, X, ChevronRight, Award, Camera, BarChart3, TrendingUp
 } from 'lucide-react'
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'

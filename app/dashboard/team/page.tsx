@@ -17,7 +17,7 @@ import {
 } from 'lucide-react'
 
 function TeamContent() {
-  const { user } = useAuth()
+  const { user, isModerator } = useAuth()
   const [members, setMembers] = useState<OrgMember[]>([])
   const [orgName, setOrgName] = useState('')
   const [inviteEmail, setInviteEmail] = useState('')
@@ -83,7 +83,7 @@ function TeamContent() {
     )
   }
 
-  if (!user.isModerator && user?.orgRole !== 'moderator') {
+  if (!isModerator && user?.orgRole !== 'moderator') {
     return (
       <div className="min-h-screen bg-[#02030E] flex flex-col">
         <Header />
