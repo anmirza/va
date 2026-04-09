@@ -9,13 +9,16 @@ export interface User {
   email: string
   name: string
   accountType?: 'vendor' | 'client'
-  role: 'agency_owner' | 'talent' | 'marketer' | 'admin' | 'client' | 'production' | 'vendor'
+  role: 'agency_owner' | 'talent' | 'marketer' | 'admin' | 'super_admin' | 'client' | 'production' | 'vendor' | 'moderator' | 'user'
   tier?: 'free' | 'paid'
-  status?: 'pending_review' | 'active'
+  status?: 'pending_review' | 'active' | 'pending_approval' | 'invited' | 'suspended'
   companyIds?: string[]
   companyId?: string
   talentId?: string
   avatar?: string
+  orgId?: string
+  orgRole?: 'moderator' | 'user'
+  inviteToken?: string
 }
 
 export interface Company {
@@ -2141,6 +2144,22 @@ export const mockUsers: User[] = [
     tier: 'free',
     status: 'active',
     avatar: 'https://images.unsplash.com/photo-1535713875002-d1d0cf377fde?w=100&q=80',
+  },
+  {
+    id: 'admin-01',
+    email: 'admin@va-consulting.com',
+    name: 'VA Admin',
+    role: 'admin',
+    status: 'active',
+    avatar: 'https://images.unsplash.com/photo-1560250097-0b93528c311a?w=100&q=80',
+  },
+  {
+    id: 'superadmin-01',
+    email: 'superadmin@va-consulting.com',
+    name: 'VA Super Admin',
+    role: 'super_admin',
+    status: 'active',
+    avatar: 'https://images.unsplash.com/photo-1519085360753-af0119f7cbe7?w=100&q=80',
   },
 ]
 

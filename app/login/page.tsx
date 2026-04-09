@@ -10,7 +10,7 @@ import { VaLogo } from '@/components/va-logo'
 import { Eye, EyeOff, Mail, Lock } from 'lucide-react'
 
 function LoginContent() {
-  const { login } = useAuth()
+  const { login, user } = useAuth()
   const router = useRouter()
   const searchParams = useSearchParams()
   const [email, setEmail] = useState('')
@@ -27,7 +27,19 @@ function LoginContent() {
     setIsLoading(false)
     if (result.success) {
       const redirect = searchParams.get('redirect')
-      router.push(redirect || '/dashboard')
+      if (redirect) {
+        router.push(redirect)
+        return
+      }
+      // Role-based redirect
+      const loggedInEmail = email.toLowerCase()
+      if (loggedInEmail === 'superadmin@va-consulting.com' || loggedInEmail === 'admin@va-consulting.com') {
+        router.push('/admin')
+      } else if (result.success) {
+        // Check role from the auth context after login
+        const roleFromEmail = loggedInEmail.includes('admin') ? 'admin' : 'user'
+        router.push('/dashboard')
+      }
     } else {
       setError(result.error || 'Login failed')
     }
@@ -57,8 +69,12 @@ function LoginContent() {
             {/* Demo credentials hint */}
             <div className="bg-[#eef0f3] rounded-lg p-3 mb-6 text-sm text-[#666]">
               <p className="font-medium text-[#1a1a1a] mb-1">Demo credentials</p>
-              <p>Email: <span className="font-mono text-[#2e3843]">demo@requisti.com</span></p>
-              <p>Password: <span className="font-mono text-[#2e3843]">password</span></p>
+              <div className="space-y-0.5 text-xs">
+                <p>Vendor: <span className="font-mono text-[#2e3843]">demo@requisti.com</span> / <span className="font-mono">password</span></p>
+                <p>Client: <span className="font-mono text-[#2e3843]">client@requisti.com</span> / <span className="font-mono">password</span></p>
+                <p className="text-[#0763d8] font-medium mt-1">Admin: <span className="font-mono text-[#2e3843]">admin@va-consulting.com</span> / <span className="font-mono">password</span></p>
+                <p className="text-amber-600 font-medium">Super Admin: <span className="font-mono text-[#2e3843]">superadmin@va-consulting.com</span> / <span className="font-mono">password</span></p>
+              </div>
             </div>
 
             <form onSubmit={handleSubmit} className="space-y-4">

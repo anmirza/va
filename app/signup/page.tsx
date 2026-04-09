@@ -2,7 +2,8 @@
 
 import { useState } from 'react'
 import Link from 'next/link'
-import { useRouter } from 'next/navigation'
+import { useRouter, useSearchParams } from 'next/navigation'
+import { Suspense } from 'react'
 import { useAuth } from '@/lib/auth-context'
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
@@ -24,9 +25,11 @@ function validateEmail(email: string): string | null {
   return null
 }
 
-export default function SignupPage() {
+function SignupContent() {
   const { signup } = useAuth()
   const router = useRouter()
+  const searchParams = useSearchParams()
+  const inviteToken = searchParams.get('token')
 
   const [name, setName] = useState('')
   const [email, setEmail] = useState('')
@@ -47,7 +50,12 @@ export default function SignupPage() {
     setIsLoading(false)
 
     if (result.success) {
-      router.push('/signup/classify')
+      if (inviteToken) {
+        // Invited user — go to accept-invite flow
+        router.push(`/signup/accept-invite?token=${inviteToken}`)
+      } else {
+        router.push('/signup/classify')
+      }
     } else {
       setError(result.error || 'Signup failed. Please try again.')
     }
@@ -67,6 +75,11 @@ export default function SignupPage() {
       <div className="flex-1 flex items-center justify-center px-4 py-16">
         <div className="w-full max-w-md">
           <div className="text-center mb-8">
+            {inviteToken && (
+              <div className="inline-flex items-center gap-2 px-3 py-1.5 rounded-full bg-[#0763d8]/10 border border-[#0763d8]/20 text-xs text-[#0763d8] font-medium mb-4">
+                You have been invited to join an organisation
+              </div>
+            )}
             <h1 className="text-3xl sm:text-4xl font-bold text-white mb-2 tracking-tight">Create your account</h1>
             <p className="text-white/50 text-sm sm:text-base">Join the network with your company email</p>
           </div>
@@ -150,5 +163,13 @@ export default function SignupPage() {
         </div>
       </div>
     </div>
+  )
+}
+
+export default function SignupPage() {
+  return (
+    <Suspense fallback={<div className="min-h-screen bg-[#02030E]" />}>
+      <SignupContent />
+    </Suspense>
   )
 }

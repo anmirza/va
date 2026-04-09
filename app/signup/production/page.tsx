@@ -9,6 +9,8 @@ import { Input } from '@/components/ui/input'
 import { VaLogo } from '@/components/va-logo'
 import { SOCIAL_RESPONSIBILITY_QUESTIONS, CSR_IMPACT_AREAS, ATTACHMENTS_REQUESTED, AI_QUESTIONS } from '@/lib/rfi-data'
 import { getTurnoverYears } from '@/lib/turnover-utils'
+import { useAuth } from '@/lib/auth-context'
+import { submitForApproval } from '@/lib/admin-store'
 
 // ── Step definitions ──────────────────────────────────────────────────────────
 
@@ -58,6 +60,7 @@ const INVESTMENT_ITEMS = ['IT Equipment', 'Innovation', 'Sustainable Development
 
 export default function ProductionSignupPage() {
   const router = useRouter()
+  const { user } = useAuth()
   const [step, setStep] = useState(1)
   const [isSubmitting, setIsSubmitting] = useState(false)
 
@@ -194,8 +197,17 @@ export default function ProductionSignupPage() {
       strategicOrientation, activityOutOfCountry,
       submittedAt: new Date().toISOString(),
     }
+    // Keep a local copy for the production dashboard edit view
     localStorage.setItem('va_production_profile', JSON.stringify(profile))
-    router.push('/dashboard/production?registered=true')
+    // Submit to the admin pending-approval queue
+    submitForApproval(
+      profile as Record<string, unknown>,
+      'production',
+      user?.id ?? 'unknown',
+      user?.name ?? 'Unknown',
+      user?.email ?? 'unknown@unknown.com',
+    )
+    router.push('/signup/production/submitted')
   }
 
   const PRODUCTION_COMPETENCIES = [

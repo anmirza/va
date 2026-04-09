@@ -7,6 +7,8 @@ import { ChevronRight, ChevronLeft, Check, Building2, Plus, Trash2 } from 'lucid
 import { VaLogo } from '@/components/va-logo'
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
+import { useAuth } from '@/lib/auth-context'
+import { submitForApproval } from '@/lib/admin-store'
 import {
   AGENCY_CATEGORIES, TOP_CURRENCIES, EMPLOYEE_SIZES, COMPANY_LEVELS,
   COUNTRY_COVERAGE, COUNTRIES, COMMUNICATION_AREAS, AGENCY_SERVICE_GROUPS,
@@ -22,6 +24,7 @@ import { getTurnoverYears, REVENUE_REGIONS } from '@/lib/turnover-utils'
 
 export default function AgencySignupPage() {
   const router = useRouter()
+  const { user } = useAuth()
   const [step, setStep] = useState(1)
   const [isSubmitting, setIsSubmitting] = useState(false)
 
@@ -137,8 +140,17 @@ export default function AgencySignupPage() {
       investments, strategicDev, activityOutside,
       submittedAt: new Date().toISOString(),
     }
+    // Keep a local copy for the agency dashboard edit view
     localStorage.setItem('va_agency_profile', JSON.stringify(profile))
-    router.push('/dashboard/agency?registered=true')
+    // Submit to the admin pending-approval queue
+    submitForApproval(
+      profile as Record<string, unknown>,
+      'agency',
+      user?.id ?? 'unknown',
+      user?.name ?? 'Unknown',
+      user?.email ?? 'unknown@unknown.com',
+    )
+    router.push('/signup/agency/submitted')
   }
 
   // ── UI helpers ──────────────────────────────────────────────────────────────

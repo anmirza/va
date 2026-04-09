@@ -2,21 +2,27 @@
 
 import React, { createContext, useContext, useState, useEffect, useCallback } from 'react'
 import { User, mockUsers } from './mock-data'
+import { acceptInvitation, getInvitationByToken, addMember } from './admin-store'
 
 interface AuthContextType {
   user: User | null
   isLoading: boolean
+  isAdmin: boolean
+  isSuperAdmin: boolean
+  isModerator: boolean
   login: (email: string, password: string) => Promise<{ success: boolean; error?: string }>
   signup: (data: SignupData) => Promise<{ success: boolean; error?: string }>
   logout: () => void
   setAccountType: (type: 'vendor' | 'client') => void
   addCompanyId: (id: string) => void
+  acceptInviteToken: (token: string) => Promise<{ success: boolean; orgId?: string; orgName?: string; error?: string }>
 }
 
 export interface SignupData {
   name: string
   email: string
   password: string
+  inviteToken?: string
 }
 
 const AuthContext = createContext<AuthContextType | null>(null)
@@ -25,13 +31,16 @@ const STORAGE_KEY = 'requisti_user'
 
 function persistUser(u: User) {
   localStorage.setItem(STORAGE_KEY, JSON.stringify(u))
-  // lightweight cookie so middleware can detect auth state
+  // lightweight cookies so middleware can detect auth state and role
   document.cookie = `requisti_auth=1; path=/; max-age=86400`
+  const role = u.role === 'super_admin' ? 'super_admin' : u.role === 'admin' ? 'admin' : 'user'
+  document.cookie = `requisti_role=${role}; path=/; max-age=86400`
 }
 
 function clearUser() {
   localStorage.removeItem(STORAGE_KEY)
   document.cookie = 'requisti_auth=; path=/; max-age=0'
+  document.cookie = 'requisti_role=; path=/; max-age=0'
 }
 
 export function AuthProvider({ children }: { children: React.ReactNode }) {
@@ -50,6 +59,10 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
       setIsLoading(false)
     }
   }, [])
+
+  const isAdmin = user?.role === 'admin' || user?.role === 'super_admin'
+  const isSuperAdmin = user?.role === 'super_admin'
+  const isModerator = user?.orgRole === 'moderator' || user?.role === 'admin' || user?.role === 'super_admin'
 
   const login = useCallback(async (email: string, _password: string) => {
     const found = mockUsers.find(u => u.email.toLowerCase() === email.toLowerCase())
@@ -81,7 +94,6 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     if (exists) {
       return { success: false, error: 'An account with this email already exists.' }
     }
-    // Create user without accountType — set after classification step
     const newUser: User = {
       id: `user-${Date.now()}`,
       email: data.email,
@@ -125,13 +137,46 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     })
   }, [])
 
+  const acceptInviteToken = useCallback(async (token: string) => {
+    if (!user) return { success: false, error: 'Not logged in' }
+    const invitation = getInvitationByToken(token)
+    if (!invitation) return { success: false, error: 'Invalid or expired invite link' }
+    if (invitation.status !== 'pending') return { success: false, error: 'This invite has already been used' }
+
+    // Accept the invitation in the store
+    acceptInvitation(token, user.id)
+
+    // Add member to the org
+    addMember(invitation.orgId, user.id, user.name, user.email, 'moderator')
+
+    // Update user with org info and moderator role
+    setUser(prev => {
+      if (!prev) return prev
+      const updated: User = {
+        ...prev,
+        accountType: 'vendor',
+        role: 'vendor',
+        orgId: invitation.orgId,
+        orgRole: 'moderator',
+        status: 'active',
+      }
+      persistUser(updated)
+      return updated
+    })
+
+    return { success: true, orgId: invitation.orgId, orgName: invitation.orgName }
+  }, [user])
+
   const logout = useCallback(() => {
     setUser(null)
     clearUser()
   }, [])
 
   return (
-    <AuthContext.Provider value={{ user, isLoading, login, signup, logout, setAccountType, addCompanyId }}>
+    <AuthContext.Provider value={{
+      user, isLoading, isAdmin, isSuperAdmin, isModerator,
+      login, signup, logout, setAccountType, addCompanyId, acceptInviteToken,
+    }}>
       {children}
     </AuthContext.Provider>
   )
