@@ -7,8 +7,9 @@ import { ChevronRight, ChevronLeft, Check, Building2, Plus, Trash2, Copy, Link a
 import { VaLogo } from '@/components/va-logo'
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
+import { useSearchParams } from 'next/navigation'
 import { useAuth } from '@/lib/auth-context'
-import { createOrg, createInvitation } from '@/lib/admin-store'
+import { createOrg, createInvitation, getOrgById, updateOrg } from '@/lib/admin-store'
 import {
   AGENCY_CATEGORIES, TOP_CURRENCIES, EMPLOYEE_SIZES, COMPANY_LEVELS,
   COUNTRY_COVERAGE, COUNTRIES, COMMUNICATION_AREAS, AGENCY_SERVICE_GROUPS,
@@ -24,7 +25,10 @@ import { getTurnoverYears, REVENUE_REGIONS } from '@/lib/turnover-utils'
 
 export default function AgencySignupPage() {
   const router = useRouter()
+  const searchParams = useSearchParams()
+  const editId = searchParams.get('edit')
   const { user } = useAuth()
+  const [isEditMode, setIsEditMode] = useState(false)
   const [step, setStep] = useState(1)
   const [isSubmitting, setIsSubmitting] = useState(false)
   const [orgCreated, setOrgCreated] = useState(false)
@@ -114,6 +118,64 @@ export default function AgencySignupPage() {
   const [strategicDev, setStrategicDev] = useState('')
   const [activityOutside, setActivityOutside] = useState('')
 
+  useEffect(() => {
+    if (editId) {
+      const org = getOrgById(editId)
+      if (org && org.profileData) {
+        setIsEditMode(true)
+        const p: any = org.profileData
+        setBusinessName(p.businessName || '')
+        setDunsNumber(p.dunsNumber || '')
+        setVatNumber(p.vatNumber || '')
+        setLegalForm(p.legalForm || '')
+        setCompanyRegNumber(p.companyRegNumber || '')
+        setYearEstablished(p.yearEstablished || '')
+        setEmployees(p.employees || '')
+        setCompanyLevel(p.companyLevel || '')
+        setParentCompany(p.parentCompany || '')
+        setCategory(p.category || '')
+        setCurrency(p.currency || 'Euro - EUR')
+        setTradeOrganizations(p.tradeOrganizations || '')
+        setCountryCoverage(p.countryCoverage || '')
+        setAddress(p.address || '')
+        setPostcode(p.postcode || '')
+        setCity(p.city || '')
+        setCountry(p.country || '')
+        if (p.contacts) setContacts(p.contacts)
+        if (p.socialMedia) setSocialMedia(p.socialMedia)
+        if (p.revenue) setRevenue(p.revenue)
+        if (p.clients) setClients(p.clients)
+        setWorkedWithClient(p.workedWithClient || '')
+        if (p.clientPitch) setClientPitch(p.clientPitch)
+        setClientDuration(p.clientDuration || '')
+        if (p.competencies) setCompetencies(p.competencies)
+        setMarketPositioning(p.marketPositioning || '')
+        setMainCapability(p.mainCapability || '')
+        setSecondaryCapability(p.secondaryCapability || '')
+        setAdditionalCapability(p.additionalCapability || '')
+        if (p.sectorPercentages) setSectorPercentages(p.sectorPercentages)
+        if (p.outsourcedActivities) setOutsourcedActivities(p.outsourcedActivities)
+        setAbout(p.about || '')
+        setPhilosophy(p.philosophy || '')
+        setNetworkDescription(p.networkDescription || '')
+        setLocalRepresentation(p.localRepresentation || '')
+        setGovernanceQA(p.governanceQA || '')
+        setGovernanceData(p.governanceData || '')
+        setGovernanceGlobal(p.governanceGlobal || '')
+        setGovernanceAdditional(p.governanceAdditional || '')
+        setOutsources(!!p.outsources)
+        if (p.peopleCounts) setPeopleCounts(p.peopleCounts)
+        if (p.talentEntries) setTalentEntries(p.talentEntries)
+        if (p.awards) setAwards(p.awards)
+        if (p.aiAnswers) setAiAnswers(p.aiAnswers)
+        if (p.srAnswers) setSrAnswers(p.srAnswers)
+        if (p.investments) setInvestments(p.investments)
+        setStrategicDev(p.strategicDev || '')
+        setActivityOutside(p.activityOutside || '')
+      }
+    }
+  }, [editId])
+
   // ── Navigation ──────────────────────────────────────────────────────────────
 
   const canProceed = () => {
@@ -146,6 +208,18 @@ export default function AgencySignupPage() {
       submittedAt: new Date().toISOString(),
     }
     
+    if (isEditMode && editId) {
+      updateOrg(editId, {
+        name: businessName,
+        country: country,
+        category: category,
+        description: about.substring(0, 200),
+        profileData: profile as Record<string, unknown>
+      }, user?.id ?? 'admin')
+      router.push('/admin/agencies')
+      return;
+    }
+
     const org = createOrg({
       name: businessName,
       country: country,
@@ -198,8 +272,8 @@ export default function AgencySignupPage() {
             <Building2 className="w-5 h-5 text-[#0763d8]" />
           </div>
           <div>
-            <h1 className="text-xl font-bold text-white">Create Agency</h1>
-            <p className="text-white/40 text-sm">Add a new agency profile to the directory</p>
+            <h1 className="text-xl font-bold text-white">{isEditMode ? 'Edit Agency Profile' : 'Create Agency'}</h1>
+            <p className="text-white/40 text-sm">{isEditMode ? 'Update existing agency details' : 'Add a new agency profile to the directory'}</p>
           </div>
         </div>
 
@@ -1096,10 +1170,10 @@ export default function AgencySignupPage() {
                 {isSubmitting ? (
                   <span className="flex items-center gap-2">
                     <svg className="animate-spin w-4 h-4" viewBox="0 0 24 24" fill="none"><circle cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4" className="opacity-25" /><path d="M4 12a8 8 0 018-8" stroke="currentColor" strokeWidth="4" className="opacity-75" /></svg>
-                    Creating...
+                    {isEditMode ? 'Updating...' : 'Creating...'}
                   </span>
                 ) : (
-                  <><Building2 className="w-4 h-4 mr-2" /> Create Agency Profile</>
+                  <><Building2 className="w-4 h-4 mr-2" /> {isEditMode ? 'Update Profile' : 'Create Agency'}</>
                 )}
               </Button>
             ) : null}

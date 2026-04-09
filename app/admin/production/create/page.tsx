@@ -1,16 +1,17 @@
 'use client'
 
-import React, { useState } from 'react'
+import React, { useState, useEffect } from 'react'
 import Link from 'next/link'
 import { useRouter } from 'next/navigation'
 import { ChevronRight, ChevronLeft, Check, Film, Plus, Trash2, Upload, Copy, Link as LinkIcon, ArrowLeft } from 'lucide-react'
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
 import { VaLogo } from '@/components/va-logo'
+import { useSearchParams } from 'next/navigation'
 import { SOCIAL_RESPONSIBILITY_QUESTIONS, CSR_IMPACT_AREAS, ATTACHMENTS_REQUESTED, AI_QUESTIONS } from '@/lib/rfi-data'
 import { getTurnoverYears } from '@/lib/turnover-utils'
 import { useAuth } from '@/lib/auth-context'
-import { createOrg, createInvitation } from '@/lib/admin-store'
+import { createOrg, createInvitation, getOrgById, updateOrg } from '@/lib/admin-store'
 
 // ── Step definitions ──────────────────────────────────────────────────────────
 
@@ -60,7 +61,10 @@ const INVESTMENT_ITEMS = ['IT Equipment', 'Innovation', 'Sustainable Development
 
 export default function ProductionSignupPage() {
   const router = useRouter()
+  const searchParams = useSearchParams()
+  const editId = searchParams.get('edit')
   const { user } = useAuth()
+  const [isEditMode, setIsEditMode] = useState(false)
   const [step, setStep] = useState(1)
   const [isSubmitting, setIsSubmitting] = useState(false)
   const [orgCreated, setOrgCreated] = useState(false)
@@ -162,6 +166,68 @@ export default function ProductionSignupPage() {
   const [strategicOrientation, setStrategicOrientation] = useState('')
   const [activityOutOfCountry, setActivityOutOfCountry] = useState<boolean | null>(null)
 
+  useEffect(() => {
+    if (editId) {
+      const org = getOrgById(editId)
+      if (org && org.profileData) {
+        setIsEditMode(true)
+        const p: any = org.profileData
+        setBusinessName(p.businessName || '')
+        setDunsNumber(p.dunsNumber || '')
+        setVatNumber(p.vatNumber || '')
+        setLegalForm(p.legalForm || '')
+        setCompanyRegNumber(p.companyRegNumber || '')
+        setYearEstablished(p.yearEstablished || '')
+        setEmployees(p.employees || '')
+        setCompanyLevel(p.companyLevel || '')
+        setParentCompany(p.parentCompany || '')
+        setCategory(p.category || '')
+        setCurrency(p.currency || 'Euro - EUR')
+        setTradeOrganizations(p.tradeOrganizations || '')
+        setCountryCoverage(p.countryCoverage || '')
+        setAddress(p.address || '')
+        setPostcode(p.postcode || '')
+        setCity(p.city || '')
+        setCountry(p.country || '')
+        if (p.contacts) setContacts(p.contacts)
+        setWebsite(p.website || '')
+        setTwitter(p.twitter || '')
+        setFacebook(p.facebook || '')
+        setLinkedin(p.linkedin || '')
+        setInstagram(p.instagram || '')
+        setTiktok(p.tiktok || '')
+        if (p.financials) setFinancials(p.financials)
+        if (p.clients) setClients(p.clients)
+        if (p.workedWithClient !== undefined) setWorkedWithClient(p.workedWithClient)
+        if (p.clientPitch) setClientPitch(p.clientPitch)
+        setClientDuration(p.clientDuration || '')
+        if (p.competencies) setCompetencies(p.competencies)
+        if (p.sectorPercentages) setSectorPercentages(p.sectorPercentages)
+        if (p.hasInHousePost !== undefined) setHasInHousePost(p.hasInHousePost)
+        setPostServices(p.postServices || '')
+        if (p.outsourcedPartners) setOutsourcedPartners(p.outsourcedPartners)
+        if (p.subcontracts !== undefined) setSubcontracts(p.subcontracts)
+        if (p.outsourcedActivities) setOutsourcedActivities(p.outsourcedActivities)
+        if (p.people) setPeople(p.people)
+        setPermanentEmployees(p.permanentEmployees || '')
+        setFreelancers(p.freelancers || '')
+        if (p.directors) setDirectors(p.directors)
+        if (p.investments) setInvestments(p.investments)
+        if (p.awards) setAwards(p.awards)
+        if (p.csr) setCsr(p.csr)
+        setAbout(p.about || '')
+        setPhilosophy(p.philosophy || '')
+        setNetworkDescription(p.networkDescription || '')
+        setLocalRepresentation(p.localRepresentation || '')
+        if (p.governance) setGovernance(p.governance)
+        setSpecificServices(p.specificServices || '')
+        if (p.aiAnswers) setAiAnswers(p.aiAnswers)
+        setStrategicOrientation(p.strategicOrientation || '')
+        if (p.activityOutOfCountry !== undefined) setActivityOutOfCountry(p.activityOutOfCountry)
+      }
+    }
+  }, [editId])
+
   // ── Helpers ─────────────────────────────────────────────────────────────────
 
   const canProceed = () => {
@@ -203,6 +269,18 @@ export default function ProductionSignupPage() {
       submittedAt: new Date().toISOString(),
     }
     
+    if (isEditMode && editId) {
+      updateOrg(editId, {
+        name: businessName,
+        country: country,
+        category: category,
+        description: about.substring(0, 200),
+        profileData: profile as Record<string, unknown>
+      }, user?.id ?? 'admin')
+      router.push('/admin/production')
+      return;
+    }
+
     const org = createOrg({
       name: businessName,
       country: country,
@@ -257,8 +335,8 @@ export default function ProductionSignupPage() {
             <Film className="w-5 h-5 text-[#7c3aed]" />
           </div>
           <div>
-            <h1 className="text-xl font-bold text-white">Create Production Company</h1>
-            <p className="text-white/40 text-sm">Add a new production house to the directory</p>
+            <h1 className="text-xl font-bold text-white">{isEditMode ? 'Edit Production Company' : 'Create Production Company'}</h1>
+            <p className="text-white/40 text-sm">{isEditMode ? 'Update existing production house details' : 'Add a new production house to the directory'}</p>
           </div>
         </div>
 
@@ -1111,10 +1189,10 @@ export default function ProductionSignupPage() {
                 {isSubmitting ? (
                   <span className="flex items-center gap-2">
                     <svg className="animate-spin w-4 h-4" viewBox="0 0 24 24" fill="none"><circle cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4" className="opacity-25" /><path d="M4 12a8 8 0 018-8" stroke="currentColor" strokeWidth="4" className="opacity-75" /></svg>
-                    Creating...
+                    {isEditMode ? 'Updating...' : 'Creating...'}
                   </span>
                 ) : (
-                  <><Film className="w-4 h-4 mr-2" /> Create Production Profile</>
+                  <><Film className="w-4 h-4 mr-2" /> {isEditMode ? 'Update Profile' : 'Create Production Profile'}</>
                 )}
               </Button>
             ) : null}
