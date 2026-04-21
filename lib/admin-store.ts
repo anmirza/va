@@ -8,8 +8,46 @@
 
 // ── Types ─────────────────────────────────────────────────────────────────────
 
-export type OrgType = 'agency' | 'production'
+export type OrgType = 'agency' | 'production' | string // Allow dynamic string for categories
 export type RegistrationStatus = 'pending' | 'approved' | 'rejected'
+
+export interface ClientCompany {
+  id: string
+  name: string
+  holding?: string
+  regionalHub?: string
+  region?: string
+  localCompany?: string
+  country?: string
+  createdAt: string
+  tokens: number
+  status: 'active' | 'suspended'
+}
+
+export interface ClientUser {
+  id: string
+  companyId: string
+  name: string
+  email: string
+  role: string
+  mobile?: string
+  createdAt: string
+  status: 'active' | 'suspended'
+}
+
+export interface VACategory {
+  id: string
+  name: string
+  iconSvg: string
+}
+
+export interface VAInternalUser {
+  id: string
+  name: string
+  email: string
+  role: 'super_admin' | 'admin' | 'analyst'
+  status: 'active' | 'suspended'
+}
 
 export interface PendingRegistration {
   id: string
@@ -40,6 +78,8 @@ export interface OrgRecord {
   memberCount: number
   registrationId?: string // linked PendingRegistration id
   profileData?: Record<string, unknown>
+  latestUpdateAt?: string // track when they last updated profile
+  lastFollowUpAt?: string // track when admin sent a follow-up
 }
 
 export interface Invitation {
@@ -83,6 +123,25 @@ const KEYS = {
   members: 'va_admin_members',
   disclaimer: 'va_admin_disclaimer',
   activityLog: 'va_admin_activity',
+  clientCompanies: 'va_client_companies',
+  clientUsers: 'va_client_users',
+  vaCategories: 'va_categories',
+  internalUsers: 'va_internal_users'
+}
+
+// ── Role Mock ─────────────────────────────────────────────────────────────────
+
+export function getCurrentInternalUserRole(): 'super_admin' | 'admin' | 'analyst' {
+  if (typeof window !== 'undefined') {
+    return (localStorage.getItem('va_current_role') as any) || 'admin'
+  }
+  return 'admin'
+}
+
+export function setCurrentInternalUserRole(role: 'super_admin' | 'admin' | 'analyst') {
+  if (typeof window !== 'undefined') {
+    localStorage.setItem('va_current_role', role)
+  }
 }
 
 // ── Default disclaimer text ───────────────────────────────────────────────────
@@ -311,6 +370,107 @@ export function getOrgById(id: string): OrgRecord | undefined {
   return getOrgs().find(o => o.id === id)
 }
 
+// ── Client Companies & Users ──────────────────────────────────────────────────
+
+function getClientCompanies(): ClientCompany[] {
+  try { return JSON.parse(localStorage.getItem(KEYS.clientCompanies) || '[]') } catch { return [] }
+}
+function saveClientCompanies(data: ClientCompany[]) {
+  localStorage.setItem(KEYS.clientCompanies, JSON.stringify(data))
+}
+
+export function getAllClientCompanies(): ClientCompany[] {
+  return getClientCompanies()
+}
+
+export function getClientCompanyById(id: string): ClientCompany | undefined {
+  return getClientCompanies().find(c => c.id === id)
+}
+
+export function createClientCompany(data: Omit<ClientCompany, 'id' | 'createdAt' | 'status'>): ClientCompany {
+  const comps = getClientCompanies()
+  const comp: ClientCompany = { ...data, id: `ccmp-${Date.now()}`, createdAt: new Date().toISOString(), status: 'active' }
+  comps.unshift(comp)
+  saveClientCompanies(comps)
+  addActivity({ type: 'org_create', description: `Added client company: ${comp.name}` })
+  return comp
+}
+
+export function updateClientCompanyTokens(id: string, newTokens: number): boolean {
+  const comps = getClientCompanies()
+  const idx = comps.findIndex(c => c.id === id)
+  if (idx === -1) return false
+  comps[idx].tokens = newTokens
+  saveClientCompanies(comps)
+  return true
+}
+
+export function deductClientToken(companyId: string): boolean {
+  const comps = getClientCompanies()
+  const idx = comps.findIndex(c => c.id === id)
+  if (idx === -1 || comps[idx].tokens <= 0) return false
+  comps[idx].tokens -= 1
+  saveClientCompanies(comps)
+  return true
+}
+
+function getClientUsers(): ClientUser[] {
+  try { return JSON.parse(localStorage.getItem(KEYS.clientUsers) || '[]') } catch { return [] }
+}
+function saveClientUsers(data: ClientUser[]) {
+  localStorage.setItem(KEYS.clientUsers, JSON.stringify(data))
+}
+
+export function getClientUsersByCompany(companyId: string): ClientUser[] {
+  return getClientUsers().filter(u => u.companyId === companyId)
+}
+
+export function createClientUser(data: Omit<ClientUser, 'id' | 'createdAt' | 'status'>): ClientUser {
+  const users = getClientUsers()
+  const user: ClientUser = { ...data, id: `cusr-${Date.now()}`, createdAt: new Date().toISOString(), status: 'active' }
+  users.unshift(user)
+  saveClientUsers(users)
+  addActivity({ type: 'invite', description: `Created client user: ${user.name}` })
+  return user
+}
+
+// ── Categories & Internal Users ──────────────────────────────────────────────
+
+export function getVACategories(): VACategory[] {
+  try {
+    const defaultCats = [
+      { id: 'cat-agency', name: 'Agency', iconSvg: '<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-building-2"><path d="M6 22V4a2 2 0 0 1 2-2h8a2 2 0 0 1 2 2v18Z"/><path d="M6 12H4a2 2 0 0 0-2 2v6a2 2 0 0 0 2 2h2"/><path d="M18 9h2a2 2 0 0 1 2 2v9a2 2 0 0 1-2 2h-2"/><path d="M10 6h4"/><path d="M10 10h4"/><path d="M10 14h4"/><path d="M10 18h4"/></svg>' },
+      { id: 'cat-production', name: 'Production', iconSvg: '<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-film"><rect width="18" height="18" x="3" y="3" rx="2"/><path d="M7 3v18"/><path d="M3 7.5h4"/><path d="M3 12h18"/><path d="M3 16.5h4"/><path d="M17 3v18"/><path d="M17 7.5h4"/><path d="M17 16.5h4"/></svg>' }
+    ]
+    const stored = localStorage.getItem(KEYS.vaCategories)
+    if (stored) return JSON.parse(stored)
+    return defaultCats
+  } catch { return [] }
+}
+
+export function saveVACategory(category: VACategory) {
+  const cats = getVACategories()
+  const existingIdx = cats.findIndex(c => c.id === category.id)
+  if (existingIdx > -1) {
+    cats[existingIdx] = category
+  } else {
+    cats.push(category)
+  }
+  localStorage.setItem(KEYS.vaCategories, JSON.stringify(cats))
+}
+
+export function getVAInternalUsers(): VAInternalUser[] {
+  try { return JSON.parse(localStorage.getItem(KEYS.internalUsers) || '[]') } catch { return [] }
+}
+
+export function createVAInternalUser(data: Omit<VAInternalUser, 'id' | 'status'>) {
+  const users = getVAInternalUsers()
+  const u: VAInternalUser = { ...data, id: `int-${Date.now()}`, status: 'active' }
+  users.unshift(u)
+  localStorage.setItem(KEYS.internalUsers, JSON.stringify(users))
+  return u
+}
+
 // ── Invitations ───────────────────────────────────────────────────────────────
 
 function getInvitations(): Invitation[] {
@@ -487,16 +647,30 @@ export function getAdminStats() {
 
 export function seedDummyData() {
   const dummyOrgs: OrgRecord[] = [
-    { id: `org-a1`, type: 'agency', name: 'Ogilvy UK', country: 'United Kingdom', status: 'active', createdAt: new Date(Date.now() - 30 * 86400000).toISOString(), memberCount: 15 },
-    { id: `org-a2`, type: 'agency', name: 'BBDO New York', country: 'United States', status: 'active', createdAt: new Date(Date.now() - 25 * 86400000).toISOString(), memberCount: 8 },
+    { id: `org-a1`, type: 'agency', name: 'Ogilvy UK', country: 'United Kingdom', status: 'active', createdAt: new Date(Date.now() - 30 * 86400000).toISOString(), memberCount: 15, latestUpdateAt: new Date(Date.now() - 200 * 86400000).toISOString() },
+    { id: `org-a2`, type: 'agency', name: 'BBDO New York', country: 'United States', status: 'active', createdAt: new Date(Date.now() - 25 * 86400000).toISOString(), memberCount: 8, latestUpdateAt: new Date().toISOString() },
     { id: `org-a3`, type: 'agency', name: 'Publicis Conseil', country: 'France', status: 'active', createdAt: new Date(Date.now() - 22 * 86400000).toISOString(), memberCount: 12 },
     { id: `org-a4`, type: 'agency', name: 'Dentsu Inc.', country: 'Japan', status: 'active', createdAt: new Date(Date.now() - 15 * 86400000).toISOString(), memberCount: 5 },
     { id: `org-p1`, type: 'production', name: 'Smuggler', country: 'United States', status: 'active', createdAt: new Date(Date.now() - 20 * 86400000).toISOString(), memberCount: 3 },
     { id: `org-p2`, type: 'production', name: 'Iconoclast', country: 'France', status: 'active', createdAt: new Date(Date.now() - 18 * 86400000).toISOString(), memberCount: 4 },
     { id: `org-p3`, type: 'production', name: 'Partizan', country: 'United Kingdom', status: 'active', createdAt: new Date(Date.now() - 10 * 86400000).toISOString(), memberCount: 2 },
-    { id: `org-p4`, type: 'production', name: 'MJZ', country: 'United States', status: 'active', createdAt: new Date(Date.now() - 5 * 86400000).toISOString(), memberCount: 7 },
+    { id: `org-p4`, type: 'production', name: 'MJZ', country: 'United States', status: 'active', createdAt: new Date(Date.now() - 5 * 86400000).toISOString(), memberCount: 7, latestUpdateAt: new Date(Date.now() - 200 * 86400000).toISOString() },
   ]
   saveOrgs(dummyOrgs)
+  
+  // Seed client companies
+  const dummyClients: ClientCompany[] = [
+    { id: 'ccmp-1', name: 'Coca-Cola', holding: 'The Coca-Cola Company', tokens: 0, status: 'active', createdAt: new Date().toISOString() },
+    { id: 'ccmp-2', name: 'Coca-Cola Italy', holding: 'The Coca-Cola Company', region: 'Europe', country: 'Italy', tokens: 12, status: 'active', createdAt: new Date().toISOString() }
+  ]
+  saveClientCompanies(dummyClients)
+
+  // Seed Va Internal users
+  const dummyVAUsers: VAInternalUser[] = [
+    { id: 'int-1', name: 'Super Admin', email: 'super@vaconsulting.com', role: 'super_admin', status: 'active' },
+    { id: 'int-2', name: 'Dirk Admin', email: 'dirk@vaconsulting.com', role: 'admin', status: 'active' }
+  ]
+  localStorage.setItem(KEYS.internalUsers, JSON.stringify(dummyVAUsers))
 
   const pending: PendingRegistration[] = [
     {

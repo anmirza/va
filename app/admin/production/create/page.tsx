@@ -325,7 +325,7 @@ export default function ProductionSignupPage() {
 
   return (
     <div className="min-h-screen flex flex-col">
-      <div className="flex-1 max-w-4xl max-w-5xl w-full px-4 pt-4 pb-10">
+      <div className="flex-1 max-w-5xl w-full mx-auto px-4 pt-4 pb-10">
         
         <Link href="/admin/production" className="inline-flex items-center gap-2 text-sm text-white/40 hover:text-white mb-6 transition-colors">
           <ArrowLeft className="w-4 h-4" /> Back to Production Companies

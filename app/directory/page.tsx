@@ -10,7 +10,9 @@ import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
 import { Badge } from '@/components/ui/badge'
 import { companies } from '@/lib/mock-data'
-import { Search, Grid3x3, List, ChevronLeft, ChevronRight, X } from 'lucide-react'
+import { Search, Grid3x3, List, ChevronLeft, ChevronRight, X, Lock } from 'lucide-react'
+import { useAuth } from '@/lib/auth-context'
+import { getClientCompanyById } from '@/lib/admin-store'
 
 const SERVICES = ['Advertising', 'Digital', 'Strategy', 'Design', 'Content', 'Media', 'Production', 'Technology']
 const SECTORS = ['Technology', 'Sports', 'Luxury', 'Automotive', 'Finance', 'Entertainment', 'Retail', 'Lifestyle']
@@ -27,6 +29,15 @@ function DirectoryContent() {
   const [viewMode, setViewMode] = useState<'grid' | 'list'>('grid')
   const [sortBy, setSortBy] = useState('name')
   const [currentPage, setCurrentPage] = useState(1)
+
+  const { user } = useAuth()
+  const isClient = user?.accountType === 'client'
+  let clientTokens: number | null = null
+  if (isClient && user?.companyId) {
+    const comp = getClientCompanyById(user.companyId)
+    if (comp) clientTokens = comp.tokens
+  }
+  const isLockedOut = isClient && user?.tier !== 'free' && clientTokens === 0
 
   // Sync active filter pill from URL competency param
   const competencyParam = params.get('competency')
@@ -115,6 +126,24 @@ function DirectoryContent() {
                     {city} <X className="w-3 h-3" />
                   </button>
                 ))}
+              </div>
+            )}
+            
+            {clientTokens !== null && (
+              <div className={`mt-6 px-4 py-3 rounded-xl border flex items-center justify-between ${
+                isLockedOut ? 'bg-red-500/10 border-red-500/20' : 'bg-emerald-500/10 border-emerald-500/20'
+              }`}>
+                <div className="flex items-center gap-3">
+                  <Lock className={`w-5 h-5 ${isLockedOut ? 'text-red-500' : 'text-emerald-500'}`} />
+                  <div>
+                     <p className={`font-semibold ${isLockedOut ? 'text-red-500' : 'text-emerald-400'}`}>
+                        {isLockedOut ? 'Credits Exhausted' : `${clientTokens} Credits Remaining`}
+                     </p>
+                     <p className="text-xs text-white/50">
+                        {isLockedOut ? 'You must purchase more credits to view full agency profiles and continue searching.' : 'Unlock full agency profiles, data insights, and reach out directly.'}
+                     </p>
+                  </div>
+                </div>
               </div>
             )}
           </div>
@@ -227,7 +256,15 @@ function DirectoryContent() {
                 </div>
               </div>
 
-              {paginatedCompanies.length > 0 ? (
+              {isLockedOut ? (
+                <div className="flex flex-col items-center justify-center py-24 text-center bg-card/20 rounded-2xl border border-border mt-12">
+                   <Lock className="w-12 h-12 text-red-500/50 mb-4" />
+                   <h3 className="text-xl font-bold text-white mb-2">Agency Directory Locked</h3>
+                   <p className="text-muted-foreground max-w-md bg-transparent">
+                     Your company has exhausted its Agency Search & Selection credits. To continue discovering and reaching out to agencies, please contact your account manager to replenish your tokens.
+                   </p>
+                </div>
+              ) : paginatedCompanies.length > 0 ? (
                 <>
                   {viewMode === 'grid' ? (
                     <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 mb-12">

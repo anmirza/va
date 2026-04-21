@@ -3,10 +3,10 @@
 import { useEffect, useState, useCallback } from 'react'
 import Link from 'next/link'
 import { useAuth } from '@/lib/auth-context'
-import { getOrgsByType, removeOrg, OrgRecord } from '@/lib/admin-store'
+import { getOrgsByType, removeOrg, OrgRecord, updateOrg } from '@/lib/admin-store'
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
-import { Building2, Plus, Search, Trash2, Users, MapPin, Calendar, CheckCircle2, Clock, AlertCircle } from 'lucide-react'
+import { Building2, Plus, Search, Trash2, Users, MapPin, Calendar, CheckCircle2, Clock, AlertCircle, Mail } from 'lucide-react'
 
 function OrgStatusBadge({ status }: { status: OrgRecord['status'] }) {
   const map: Record<string, string> = {
@@ -46,6 +46,13 @@ export default function AgenciesPage() {
     if (!confirm(`Are you sure you want to remove "${name}"? This action cannot be undone.`)) return
     removeOrg(id, user?.id ?? 'admin')
     load()
+  }
+
+  const handleFollowUp = (id: string, name: string) => {
+    // Mock follow-up action
+    alert(`Follow-up email triggered for ${name} to update their profile.`)
+    updateOrg(id, { profileData: {} }, user?.id ?? 'admin') // Just touching the org to simulate update/saving state if we had a dedicated field. Let's just say "sent".
+    // In a real app we'd trigger an email and update "lastFollowUpAt".
   }
 
   return (
@@ -106,11 +113,19 @@ export default function AgenciesPage() {
                   {org.category && <span>{org.category}</span>}
                   <span className="flex items-center gap-1"><Users className="w-3 h-3" />{org.memberCount} member{org.memberCount !== 1 ? 's' : ''}</span>
                   <span className="flex items-center gap-1"><Calendar className="w-3 h-3" />Added {formatDate(org.createdAt)}</span>
+                  <span className="flex items-center gap-1"><Clock className="w-3 h-3" />Updated: {org.latestUpdateAt ? formatDate(org.latestUpdateAt) : 'Never'}</span>
                 </div>
               </div>
 
               {/* Actions */}
               <div className="flex items-center gap-2 shrink-0">
+                <button
+                  onClick={() => handleFollowUp(org.id, org.name)}
+                  className="px-2 py-1.5 flex items-center gap-1.5 rounded-lg border border-[#0763d8]/20 bg-[#0763d8]/10 text-[#0763d8] hover:bg-[#0763d8]/20 transition-colors text-xs font-semibold"
+                  title="Send Profile Follow-up Request"
+                >
+                  <Mail className="w-3 h-3" /> Follow-up
+                </button>
                 <Link href={`/admin/agencies/create?edit=${org.id}`}>
                   <Button size="sm" variant="outline" className="h-8 border-white/[0.1] text-white/60 hover:text-white rounded-lg text-xs">
                     Edit

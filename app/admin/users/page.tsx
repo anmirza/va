@@ -2,7 +2,7 @@
 
 import { useEffect, useState } from 'react'
 import { mockUsers } from '@/lib/mock-data'
-import { Shield, Users, Crown, User } from 'lucide-react'
+import { Shield, Users, Crown, User, Search, Filter } from 'lucide-react'
 
 const ROLE_LABELS: Record<string, string> = {
   super_admin: 'Super Admin',
@@ -46,16 +46,64 @@ function formatDate(iso?: string) {
 }
 
 export default function UsersPage() {
+  const [query, setQuery] = useState('')
+  const [roleFilter, setRoleFilter] = useState('all')
+  const [accountTypeFilter, setAccountTypeFilter] = useState('all')
+
+  const filteredUsers = mockUsers.filter(u => {
+    if (query && !u.name.toLowerCase().includes(query.toLowerCase()) && !u.email.toLowerCase().includes(query.toLowerCase())) return false
+    if (roleFilter !== 'all' && u.role !== roleFilter) return false
+    if (accountTypeFilter !== 'all' && u.accountType !== accountTypeFilter) return false
+    return true
+  })
+
   return (
     <div className="max-w-5xl">
-      <div className="mb-6">
-        <h1 className="text-2xl font-bold text-white mb-1">Users</h1>
-        <p className="text-white/40 text-sm">View and manage all registered platform users.</p>
+      <div className="mb-6 flex flex-wrap items-start justify-between gap-4">
+        <div>
+          <h1 className="text-2xl font-bold text-white mb-1">Users</h1>
+          <p className="text-white/40 text-sm">View and manage all registered platform users.</p>
+        </div>
       </div>
 
-      <div className="glass-card rounded-2xl overflow-hidden">
+      <div className="glass-card rounded-2xl overflow-hidden mb-6">
+        <div className="flex flex-wrap items-center gap-4 px-5 py-4 border-b border-white/[0.06] bg-white/[0.01]">
+          <div className="relative flex-1 min-w-[200px]">
+            <Search className="w-4 h-4 absolute left-3 top-1/2 -translate-y-1/2 text-white/30" />
+            <input 
+              type="text"
+              placeholder="Search by name or email..."
+              value={query}
+              onChange={e => setQuery(e.target.value)}
+              className="w-full bg-black/20 border border-white/10 rounded-lg pl-9 pr-4 py-2 text-sm text-white placeholder:text-white/30 focus:border-white/30 outline-none transition-colors"
+            />
+          </div>
+          <div className="flex items-center gap-2">
+             <Filter className="w-4 h-4 text-white/30" />
+             <select 
+               value={accountTypeFilter}
+               onChange={e => setAccountTypeFilter(e.target.value)}
+               className="bg-black/20 border border-white/10 rounded-lg px-3 py-2 text-sm text-white outline-none cursor-pointer"
+             >
+               <option value="all">All Account Types</option>
+               <option value="vendor">Vendor</option>
+               <option value="client">Client</option>
+             </select>
+             <select 
+               value={roleFilter}
+               onChange={e => setRoleFilter(e.target.value)}
+               className="bg-black/20 border border-white/10 rounded-lg px-3 py-2 text-sm text-white outline-none cursor-pointer"
+             >
+               <option value="all">All Roles</option>
+               {Object.entries(ROLE_LABELS).map(([key, label]) => (
+                 <option key={key} value={key}>{label}</option>
+               ))}
+             </select>
+          </div>
+        </div>
+
         {/* Table header */}
-        <div className="hidden md:grid grid-cols-[1fr_160px_100px_120px] gap-4 px-5 py-3 border-b border-white/[0.06] text-xs font-medium text-white/30 uppercase tracking-widest">
+        <div className="hidden md:grid grid-cols-[1fr_160px_100px_120px] gap-4 px-5 py-3 border-b border-white/[0.06] text-xs font-medium text-white/30 uppercase tracking-widest bg-white/[0.01]">
           <span>User</span>
           <span>Account Type</span>
           <span>Status</span>
@@ -63,7 +111,7 @@ export default function UsersPage() {
         </div>
 
         <div className="divide-y divide-white/[0.04]">
-          {mockUsers.map(u => {
+          {filteredUsers.map(u => {
             const Icon = ROLE_ICONS[u.role] ?? User
             return (
               <div key={u.id} className="flex items-center gap-4 px-5 py-4 hover:bg-white/[0.02] transition-colors">
@@ -110,6 +158,11 @@ export default function UsersPage() {
               </div>
             )
           })}
+          {filteredUsers.length === 0 && (
+             <div className="px-5 py-8 text-center text-white/40 text-sm">
+                No users found matching your filters.
+             </div>
+          )}
         </div>
       </div>
 

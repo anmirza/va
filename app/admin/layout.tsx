@@ -16,14 +16,18 @@ const NAV = [
   { href: '/admin/pending', label: 'Pending Approvals', icon: Clock, badge: true },
   { href: '/admin/agencies', label: 'Agencies', icon: Building2 },
   { href: '/admin/production', label: 'Production Companies', icon: Film },
+  { href: '/admin/clients', label: 'Client Management', icon: Users, superAdminOnly: true },
   { href: '/admin/users', label: 'Users', icon: Users },
+  { href: '/admin/internal-users', label: 'Internal Staff', icon: Shield, superAdminOnly: true },
   { href: '/admin/disclaimer', label: 'Disclaimer Editor', icon: FileText },
+  { href: '/admin/settings', label: 'Settings & Categories', icon: Settings, superAdminOnly: true },
 ]
 
 export default function AdminLayout({ children }: { children: React.ReactNode }) {
   const { user, isAdmin, logout } = useAuth()
   const router = useRouter()
   const pathname = usePathname()
+  const [toggleSuperAdmin, setToggleSuperAdmin] = useState(false) // Demo toggle
   const [pendingCount, setPendingCount] = useState(0)
   const [sidebarOpen, setSidebarOpen] = useState(false)
 
@@ -43,6 +47,8 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
   }
 
   if (!isAdmin) return null
+  
+  const isCurrentlySuperAdmin = user?.role === 'super_admin' || toggleSuperAdmin
 
   const Sidebar = ({ mobile = false }: { mobile?: boolean }) => (
     <div className={`${mobile ? 'flex' : 'hidden lg:flex'} flex-col h-full`}>
@@ -60,6 +66,8 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
       {/* Nav */}
       <nav className="flex-1 p-3 space-y-0.5 overflow-y-auto">
         {NAV.map(item => {
+          if (item.superAdminOnly && !isCurrentlySuperAdmin) return null
+          
           const Icon = item.icon
           const active = isActive(item)
           const count = item.badge ? pendingCount : 0
@@ -99,8 +107,14 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
           )}
           <div className="flex-1 min-w-0">
             <p className="text-sm font-medium text-white truncate">{user?.name}</p>
-            <p className="text-xs text-white/30 capitalize">
-              {user?.role === 'super_admin' ? 'Super Admin' : 'Admin'}
+            <button 
+                onClick={() => setToggleSuperAdmin(!toggleSuperAdmin)}
+                className="text-xs text-emerald-400 hover:text-emerald-300 font-semibold text-left underline underline-offset-2 decoration-emerald-500/30"
+            >
+              Demo: Toggle to {isCurrentlySuperAdmin ? 'Admin' : 'Super Admin'}
+            </button>
+            <p className="text-[10px] text-white/30 uppercase tracking-wider mt-1">
+              {isCurrentlySuperAdmin ? 'Super Admin Mode' : 'Admin Mode'}
             </p>
           </div>
         </div>

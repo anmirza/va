@@ -31,6 +31,7 @@ import {
 } from '@/lib/cover-logo-spec'
 import { useCompanyListing } from '@/hooks/use-company-listing'
 import { CompanyClientAvatar } from '@/components/company-client-avatar'
+import { getClientCompanyById, deductClientToken } from '@/lib/admin-store'
 
 /* ──────────── mock data generators ──────────── */
 function seededData(seed: string, len: number, min: number, max: number): number[] {
@@ -153,6 +154,36 @@ export default function CompanyProfilePage() {
 
   const [activeTab, setActiveTab] = useState('overview')
   const [isFavourited, setIsFavourited] = useState(false)
+  const [clientTokens, setClientTokens] = useState<number | null>(null)
+  const [hasUnlocked, setHasUnlocked] = useState(false)
+
+  useEffect(() => {
+    if (user?.accountType === 'client' && user?.companyId) {
+      const comp = getClientCompanyById(user.companyId)
+      if (comp) {
+        setClientTokens(comp.tokens)
+      }
+      
+      // Check local storage if previously unlocked
+      const unlockedList = JSON.parse(localStorage.getItem(`unlocked_agencies_${user.id}`) || '[]')
+      if (unlockedList.includes(id)) {
+        setHasUnlocked(true)
+      }
+    }
+  }, [user, id])
+
+  const handleUnlockProfile = () => {
+    if (user?.companyId && clientTokens !== null && clientTokens > 0) {
+      const success = deductClientToken(user.companyId)
+      if (success) {
+        const unlockedList = JSON.parse(localStorage.getItem(`unlocked_agencies_${user.id}`) || '[]')
+        unlockedList.push(id)
+        localStorage.setItem(`unlocked_agencies_${user.id}`, JSON.stringify(unlockedList))
+        setClientTokens(clientTokens - 1)
+        setHasUnlocked(true)
+      }
+    }
+  }
 
   if (!company) {
     return (
@@ -202,13 +233,17 @@ export default function CompanyProfilePage() {
   const isClient = user?.accountType === 'client'
   const isOwnCompany = user?.companyIds?.includes(id) || user?.companyId === id
   const isFreeTier = isClient && user?.tier === 'free'
+  
+  // A client company pays for tokens to unlock profiles. If they haven't unlocked, they are treated like free tier.
+  const requiresTokenUnlock = isClient && !isFreeTier && !hasUnlocked
+
   // Vendors see full data for their own companies; locked tabs for competitors
-  // Free-tier clients see overview + contacts only
+  // Free-tier or locked clients see overview + contacts only
   const LOCKED_TABS_VENDOR = ['turnover', 'competencies', 'governance', 'people', 'awards', 'add-on']
   const LOCKED_TABS_FREE   = ['turnover', 'competencies', 'governance', 'people', 'awards', 'add-on']
   const isTabLocked = (tabId: string) => {
     if (isVendor && !isOwnCompany) return LOCKED_TABS_VENDOR.includes(tabId)
-    if (isFreeTier) return LOCKED_TABS_FREE.includes(tabId)
+    if (isFreeTier || requiresTokenUnlock) return LOCKED_TABS_FREE.includes(tabId)
     return false
   }
 
@@ -293,7 +328,7 @@ export default function CompanyProfilePage() {
           </div>
         )}
 
-        {/* ═══════ FREE TIER BANNER ═══════ */}
+        {/* ═══════ FREE TIER / TOKEN BANNER ═══════ */}
         {isFreeTier && (
           <div className="bg-[#0763d8]/10 border-b border-[#0763d8]/20 px-4 sm:px-6 lg:px-8 py-2.5">
             <div className="max-w-7xl mx-auto flex items-center justify-between gap-3">
@@ -305,6 +340,26 @@ export default function CompanyProfilePage() {
                   for full access to financials, governance, people and more.
                 </p>
               </div>
+            </div>
+          </div>
+        )}
+        
+        {requiresTokenUnlock && (
+          <div className="bg-emerald-500/10 border-b border-emerald-500/20 px-4 sm:px-6 lg:px-8 py-2.5">
+            <div className="max-w-7xl mx-auto flex items-center justify-between gap-3">
+              <div className="flex items-center gap-3">
+                <Lock className="w-4 h-4 text-emerald-500 shrink-0" />
+                <p className="text-xs text-white/60">
+                  This profile is currently locked. You have <strong className="text-emerald-400">{clientTokens} tokens</strong> remaining.
+                </p>
+              </div>
+              {clientTokens !== null && clientTokens > 0 ? (
+                <button onClick={handleUnlockProfile} className="text-xs bg-emerald-500 font-bold hover:bg-emerald-600 text-white px-3 py-1 rounded-md transition border-none cursor-pointer">
+                  Unlock Profile (1 Token)
+                </button>
+              ) : (
+                <p className="text-xs font-bold text-red-400">0 Tokens - Contact Admin to purchase more.</p>
+              )}
             </div>
           </div>
         )}
@@ -348,11 +403,13 @@ export default function CompanyProfilePage() {
                   <Lock className="w-7 h-7 text-white/20" />
                 </div>
                 <h3 className="text-lg font-bold text-white mb-2">
-                  {isVendor && !isOwnCompany ? 'Competitor Profile Restricted' : 'Upgrade Required'}
+                  {isVendor && !isOwnCompany ? 'Competitor Profile Restricted' : 
+                   requiresTokenUnlock ? 'Profile Locked' : 'Upgrade Required'}
                 </h3>
                 <p className="text-white/40 text-sm max-w-sm mb-6">
                   {isVendor && !isOwnCompany
                     ? 'Detailed information from competitor profiles is not accessible on the platform to protect confidentiality.'
+                    : requiresTokenUnlock ? 'To view deep performance analytics, financials, and company data, you must unlock this profile using one of your subscription tokens.'
                     : 'This section is available on the Pro plan. Upgrade to access financials, governance data, people profiles, awards, and more.'}
                 </p>
                 {isFreeTier && (
@@ -361,6 +418,19 @@ export default function CompanyProfilePage() {
                       Upgrade to Pro
                     </Button>
                   </Link>
+                )}
+                {requiresTokenUnlock && (
+                  <div className="flex flex-col items-center gap-3">
+                    {clientTokens !== null && clientTokens > 0 ? (
+                      <Button onClick={handleUnlockProfile} className="bg-emerald-500 hover:bg-emerald-600 text-white rounded-xl px-8 font-bold">
+                        Unlock Profile (-1 Token)
+                      </Button>
+                    ) : (
+                      <div className="bg-red-500/10 border border-red-500/20 px-6 py-3 rounded-lg text-red-500 max-w-md text-sm">
+                        You have exhausted your Agency Search & Selection credits. Please upgrade your package or contact support.
+                      </div>
+                    )}
+                  </div>
                 )}
               </div>
             )}

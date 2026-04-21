@@ -4,7 +4,7 @@ import { useEffect, useState } from 'react'
 import { useAuth } from '@/lib/auth-context'
 import { getDisclaimerContent, saveDisclaimerContent } from '@/lib/admin-store'
 import { Button } from '@/components/ui/button'
-import { FileText, Save, Check, Building2, Film, Eye, Edit2 } from 'lucide-react'
+import { FileText, Save, Check, Building2, Film, Eye, Edit2, Bold, Italic, List, Link as LinkIcon, Heading } from 'lucide-react'
 
 type Tab = 'agency' | 'production'
 
@@ -72,20 +72,27 @@ export default function DisclaimerPage() {
 
       <div className="glass-card rounded-2xl overflow-hidden">
         {/* Toolbar */}
-        <div className="flex items-center gap-3 px-5 py-3 border-b border-white/[0.06] bg-white/[0.02]">
-          <FileText className="w-4 h-4 text-[#0763d8]" />
-          <span className="text-sm font-medium text-white/70 flex-1">
+        <div className="flex flex-wrap items-center gap-2 px-5 py-3 border-b border-white/[0.06] bg-white/[0.02]">
+          <FileText className="w-4 h-4 text-[#0763d8] mr-2" />
+          <span className="text-sm font-medium text-white/70 flex-1 min-w-[200px]">
             {tab === 'agency' ? 'Agency Registration Disclaimer' : 'Production Company Registration Disclaimer'}
           </span>
-          <span className="text-xs text-white/30">{charCount} chars · {paraCount} paragraphs</span>
+          <div className="hidden sm:flex items-center gap-1 border-r border-white/10 pr-2 mr-2">
+            <button className="p-1.5 text-white/40 hover:text-white hover:bg-white/5 rounded transition-colors" title="Bold"><Bold className="w-4 h-4" /></button>
+            <button className="p-1.5 text-white/40 hover:text-white hover:bg-white/5 rounded transition-colors" title="Italic"><Italic className="w-4 h-4" /></button>
+            <button className="p-1.5 text-white/40 hover:text-white hover:bg-white/5 rounded transition-colors" title="Heading"><Heading className="w-4 h-4" /></button>
+            <button className="p-1.5 text-white/40 hover:text-white hover:bg-white/5 rounded transition-colors" title="Bullet List"><List className="w-4 h-4" /></button>
+            <button className="p-1.5 text-white/40 hover:text-white hover:bg-white/5 rounded transition-colors" title="Insert Link"><LinkIcon className="w-4 h-4" /></button>
+          </div>
+          <span className="text-xs text-white/30 mr-2 hidden md:inline">{charCount} chars · {paraCount} paragraphs</span>
           <button
             onClick={() => setPreview(!preview)}
             className={`flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-medium transition-colors ${
-              preview ? 'bg-[#0763d8]/20 text-[#0763d8]' : 'text-white/40 hover:text-white'
+              preview ? 'bg-[#0763d8]/20 text-[#0763d8]' : 'bg-white/5 text-white/40 hover:text-white hover:bg-white/10'
             }`}
           >
             {preview ? <Edit2 className="w-3 h-3" /> : <Eye className="w-3 h-3" />}
-            {preview ? 'Edit' : 'Preview'}
+            {preview ? 'Edit' : 'Preview Live'}
           </button>
         </div>
 
