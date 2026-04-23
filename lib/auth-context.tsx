@@ -10,12 +10,13 @@ interface AuthContextType {
   isAdmin: boolean
   isSuperAdmin: boolean
   isModerator: boolean
-  login: (email: string, password: string) => Promise<{ success: boolean; error?: string }>
+  login: (email: string, password: string) => Promise<{ success: boolean; error?: string; mustChangePassword?: boolean }>
   signup: (data: SignupData) => Promise<{ success: boolean; error?: string }>
   logout: () => void
   setAccountType: (type: 'vendor' | 'client') => void
   addCompanyId: (id: string) => void
   acceptInviteToken: (token: string) => Promise<{ success: boolean; orgId?: string; orgName?: string; error?: string }>
+  completeSetup: (data: { name: string; mobile: string }) => void
 }
 
 export interface SignupData {
@@ -35,6 +36,11 @@ function persistUser(u: User) {
   document.cookie = `requisti_auth=1; path=/; max-age=86400`
   const role = u.role === 'super_admin' ? 'super_admin' : u.role === 'admin' ? 'admin' : 'user'
   document.cookie = `requisti_role=${role}; path=/; max-age=86400`
+  if (u.mustChangePassword) {
+    document.cookie = `requisti_setup=1; path=/; max-age=86400`
+  } else {
+    document.cookie = `requisti_setup=; path=/; max-age=0`
+  }
 }
 
 function clearUser() {
@@ -69,7 +75,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     if (found) {
       setUser(found)
       persistUser(found)
-      return { success: true }
+      return { success: true, mustChangePassword: found.mustChangePassword }
     }
     // Allow demo login with any corporate email if password is "password"
     if (_password === 'password') {
@@ -81,10 +87,11 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
         role: 'client',
         tier: 'free',
         status: 'active',
+        mustChangePassword: true,
       }
       setUser(newUser)
       persistUser(newUser)
-      return { success: true }
+      return { success: true, mustChangePassword: true }
     }
     return { success: false, error: 'Invalid email or password. Try demo@requisti.com or use "password" as password.' }
   }, [])
@@ -167,6 +174,20 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     return { success: true, orgId: invitation.orgId, orgName: invitation.orgName }
   }, [user])
 
+  const completeSetup = useCallback((data: { name: string; mobile: string }) => {
+    setUser(prev => {
+      if (!prev) return prev
+      const updated: User = {
+        ...prev,
+        name: data.name,
+        mustChangePassword: false,
+        firstLoginComplete: true,
+      }
+      persistUser(updated)
+      return updated
+    })
+  }, [])
+
   const logout = useCallback(() => {
     setUser(null)
     clearUser()
@@ -175,7 +196,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
   return (
     <AuthContext.Provider value={{
       user, isLoading, isAdmin, isSuperAdmin, isModerator,
-      login, signup, logout, setAccountType, addCompanyId, acceptInviteToken,
+      login, signup, logout, setAccountType, addCompanyId, acceptInviteToken, completeSetup,
     }}>
       {children}
     </AuthContext.Provider>

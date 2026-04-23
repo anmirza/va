@@ -19,6 +19,8 @@ export interface User {
   orgId?: string
   orgRole?: 'moderator' | 'user'
   inviteToken?: string
+  mustChangePassword?: boolean
+  firstLoginComplete?: boolean
 }
 
 export interface Company {

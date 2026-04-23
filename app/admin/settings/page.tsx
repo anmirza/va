@@ -1,22 +1,27 @@
 'use client'
 
 import { useState, useEffect } from 'react'
-import { getVACategories, saveVACategory, VACategory } from '@/lib/admin-store'
-import { Plus, Save, Settings2, Trash2, FileText } from 'lucide-react'
+import { getVACategories, saveVACategory, deleteVACategory, VACategory, getRfiFields, saveRfiFields, RfiField, resetRfiToDefaults } from '@/lib/admin-store'
+import { Plus, Save, Settings2, Trash2, FileText, GripVertical, Check, AlertCircle } from 'lucide-react'
+
+const FIELD_TYPES = ['text', 'textarea', 'file', 'select', 'number', 'date', 'checkbox', 'table']
 
 export default function SettingsPage() {
   const [categories, setCategories] = useState<VACategory[]>([])
-  
-  // RFI Model state
-  const [rfiFields, setRfiFields] = useState<{id: string; label: string; type: string}[]>([
-    { id: 'f1', label: 'Company Overview', type: 'text' },
-    { id: 'f2', label: 'Financials (Last 3 Years)', type: 'file' },
-    { id: 'f3', label: 'DEI Policy', type: 'file' },
-  ])
+  const [rfiFields, setRfiFields] = useState<RfiField[]>([])
+  const [rfiSaved, setRfiSaved] = useState(false)
+  const [activeRfiCategoryId, setActiveRfiCategoryId] = useState('cat-agency')
+  const [catDeleteConfirm, setCatDeleteConfirm] = useState<string | null>(null)
 
   useEffect(() => {
     setCategories(getVACategories())
   }, [])
+
+  useEffect(() => {
+    setRfiFields(getRfiFields(activeRfiCategoryId))
+  }, [activeRfiCategoryId])
+
+  // ── Categories ──────────────────────────────────────────────────────────────
 
   const handleAddCategory = () => {
     const newCat = {
@@ -41,11 +46,62 @@ export default function SettingsPage() {
     }
   }
 
+  const handleDeleteCategory = (id: string) => {
+    if (catDeleteConfirm === id) {
+      deleteVACategory(id)
+      setCategories(prev => prev.filter(c => c.id !== id))
+      setCatDeleteConfirm(null)
+    } else {
+      setCatDeleteConfirm(id)
+      setTimeout(() => setCatDeleteConfirm(null), 3000)
+    }
+  }
+
+  // ── RFI Modeler ─────────────────────────────────────────────────────────────
+
+  const handleAddRfiField = () => {
+    const newField: RfiField = {
+      id: `rfi-${Date.now()}`,
+      label: '',
+      type: 'text',
+      required: false,
+      section: 'General',
+      visible: true,
+      order: rfiFields.length + 1
+    }
+    setRfiFields(prev => [...prev, newField])
+  }
+
+  const updateRfiField = (id: string, field: keyof RfiField, value: string | boolean) => {
+    setRfiFields(prev => prev.map(f => f.id === id ? { ...f, [field]: value } : f))
+  }
+
+  const removeRfiField = (id: string) => {
+    setRfiFields(prev => prev.filter(f => f.id !== id))
+  }
+
+  const handleSaveRfi = () => {
+    if (!activeRfiCategoryId) return
+    saveRfiFields(activeRfiCategoryId, rfiFields)
+    setRfiSaved(true)
+    setTimeout(() => setRfiSaved(false), 2500)
+  }
+
+  const moveRfiField = (idx: number, dir: -1 | 1) => {
+    const newIdx = idx + dir
+    if (newIdx < 0 || newIdx >= rfiFields.length) return
+    const updated = [...rfiFields]
+    const temp = updated[idx]
+    updated[idx] = updated[newIdx]
+    updated[newIdx] = temp
+    setRfiFields(updated)
+  }
+
   return (
     <div className="max-w-5xl space-y-8">
       <div>
         <h1 className="text-2xl font-bold text-white mb-2">Platform Settings</h1>
-        <p className="text-white/50 text-sm">Super Admin Only: Manage dynamic categories and RFI template configurations.</p>
+        <p className="text-white/50 text-sm">Super Admin Only: Manage dynamic categories, RFI template, and platform configuration.</p>
       </div>
 
       <div className="grid grid-cols-1 gap-6">
@@ -61,11 +117,11 @@ export default function SettingsPage() {
           </div>
           
           <div className="p-6 space-y-4">
-             {categories.map((cat, index) => (
+             {categories.map((cat) => (
                 <div key={cat.id} className="flex gap-4 items-start bg-white/[0.02] border border-white/[0.06] p-4 rounded-xl">
                     <div 
                       className="w-12 h-12 bg-white/5 border border-white/10 rounded-lg flex items-center justify-center shrink-0 [&>svg]:w-6 [&>svg]:h-6 [&>svg]:text-white/70"
-                      dangerouslySetInnerHTML={{ __html: cat.iconSvg }}
+                      dangerouslySetInnerHTML={{ __html: typeof cat.iconSvg === 'string' ? cat.iconSvg : '' }}
                     />
                     <div className="flex-1 space-y-3">
                        <div>
@@ -91,38 +147,168 @@ export default function SettingsPage() {
                        <button onClick={() => saveCategory(cat.id)} className="bg-emerald-500/10 text-emerald-500 hover:bg-emerald-500/20 p-2 rounded-lg transition-colors" title="Save">
                           <Save className="w-4 h-4" />
                        </button>
+                       <button
+                         onClick={() => handleDeleteCategory(cat.id)}
+                         className={`p-2 rounded-lg transition-colors ${catDeleteConfirm === cat.id ? 'bg-red-500/20 text-red-400' : 'hover:bg-red-500/10 text-white/30 hover:text-red-400'}`}
+                         title={catDeleteConfirm === cat.id ? 'Click again to confirm' : 'Delete category'}
+                       >
+                          {catDeleteConfirm === cat.id ? <AlertCircle className="w-4 h-4" /> : <Trash2 className="w-4 h-4" />}
+                       </button>
                     </div>
                 </div>
              ))}
+             {categories.length === 0 && (
+               <p className="text-center text-white/30 text-sm py-6">No categories configured. Add one to get started.</p>
+             )}
           </div>
         </div>
 
-        {/* Dynamic RFI Modeler Mockup */}
+        {/* Dynamic RFI Modeler — FUNCTIONAL */}
         <div className="glass-card rounded-2xl overflow-hidden">
           <div className="px-6 py-4 border-b border-white/[0.06] flex items-center justify-between">
             <h2 className="font-semibold text-white flex items-center gap-2">
               <FileText className="w-4 h-4 text-purple-500" /> RFI Structure Modeler
             </h2>
-            <div className="text-xs text-white/40 border border-white/10 px-2 py-1 rounded bg-white/5">Mockup</div>
+            <div className="flex items-center gap-2">
+              <span className="text-xs text-white/30">{rfiFields.length} fields</span>
+              <button
+                onClick={() => {
+                    if (confirm('Are you sure you want to reset this RFI to platform defaults? All custom changes will be lost.')) {
+                      resetRfiToDefaults(activeRfiCategoryId)
+                      setRfiFields(getRfiFields(activeRfiCategoryId))
+                    }
+                }}
+                className="text-xs text-white/40 hover:text-white/60 px-3 py-1.5 border border-white/10 rounded-lg mr-2"
+              >
+                Reset to Defaults
+              </button>
+              <button
+                onClick={handleSaveRfi}
+                className={`text-sm px-4 py-1.5 rounded-lg flex items-center gap-2 font-medium transition-all ${
+                  rfiSaved
+                    ? 'bg-emerald-500/20 text-emerald-400 border border-emerald-500/30'
+                    : 'bg-purple-500/10 text-purple-400 border border-purple-500/20 hover:bg-purple-500/20'
+                }`}
+              >
+                {rfiSaved ? <Check className="w-3.5 h-3.5" /> : <Save className="w-3.5 h-3.5" />}
+                {rfiSaved ? 'Saved!' : 'Save RFI'}
+              </button>
+            </div>
           </div>
           <div className="p-6">
-            <p className="text-sm text-white/50 mb-4">Define the standard RFI fields requested from organizations during onboarding.</p>
+            <p className="text-sm text-white/50 mb-4">Define the specific RFI fields requested from organizations based on their category.</p>
             
-            <div className="space-y-3 mb-4">
-              {rfiFields.map(f => (
-                <div key={f.id} className="flex gap-3 items-center bg-white/[0.02] border border-white/[0.06] p-3 rounded-xl">
-                   <div className="flex-1">
-                     <input value={f.label} disabled className="bg-transparent text-white text-sm w-full outline-none" />
-                   </div>
-                   <div className="shrink-0 bg-white/5 border border-white/10 px-2 py-1 rounded text-xs text-white/40 font-mono">
-                     Type: {f.type}
-                   </div>
-                   <button className="p-1.5 hover:bg-red-500/10 text-red-400 rounded-md transition-colors"><Trash2 className="w-4 h-4" /></button>
-                </div>
+            {/* Category Selector for RFI */}
+            <div className="flex gap-2 overflow-x-auto pb-4 mb-2 scrollbar-hide">
+              {categories.map((cat) => (
+                <button
+                  key={cat.id}
+                  onClick={() => setActiveRfiCategoryId(cat.id)}
+                  className={`px-4 py-2 rounded-xl text-xs font-bold whitespace-nowrap transition-all border ${
+                    activeRfiCategoryId === cat.id
+                      ? 'bg-[#0763d8] border-[#0763d8] text-white'
+                      : 'bg-white/5 border-white/10 text-white/40 hover:bg-white/10'
+                  }`}
+                >
+                  {cat.name}
+                </button>
               ))}
             </div>
+
+            <div className="space-y-3 mb-4">
+              {rfiFields.map((f, idx) => (
+                <div key={f.id} className="flex gap-3 items-start bg-white/[0.02] border border-white/[0.06] p-4 rounded-xl group hover:border-white/[0.12] transition-colors">
+                   {/* Reorder handle */}
+                   <div className="flex flex-col gap-0.5 shrink-0 pt-1">
+                     <button
+                       onClick={() => moveRfiField(idx, -1)}
+                       disabled={idx === 0}
+                       className="text-white/20 hover:text-white/60 disabled:opacity-20 transition-colors text-xs leading-none"
+                     >▲</button>
+                     <GripVertical className="w-4 h-4 text-white/15" />
+                     <button
+                       onClick={() => moveRfiField(idx, 1)}
+                       disabled={idx === rfiFields.length - 1}
+                       className="text-white/20 hover:text-white/60 disabled:opacity-20 transition-colors text-xs leading-none"
+                     >▼</button>
+                   </div>
+
+                   {/* Field config */}
+                   <div className="flex-1 grid grid-cols-1 sm:grid-cols-[1fr_140px_120px] gap-3">
+                     <div>
+                       <label className="text-[10px] uppercase font-bold tracking-wider text-white/40 mb-1 block">Field Label</label>
+                       <input
+                         value={f.label}
+                         onChange={e => updateRfiField(f.id, 'label', e.target.value)}
+                         placeholder="e.g. Company Overview"
+                         className="bg-black/20 border border-white/10 rounded-lg px-3 py-2 text-white text-sm w-full focus:border-purple-500/40 outline-none transition-colors"
+                       />
+                     </div>
+                     <div>
+                       <label className="text-[10px] uppercase font-bold tracking-wider text-white/40 mb-1 block">Type</label>
+                       <select
+                         value={f.type}
+                         onChange={e => updateRfiField(f.id, 'type', e.target.value)}
+                         className="bg-[#02030E] border border-white/10 rounded-lg px-3 py-2 text-white text-sm w-full cursor-pointer outline-none"
+                       >
+                         {FIELD_TYPES.map(t => <option key={t} value={t}>{t}</option>)}
+                       </select>
+                     </div>
+                     <div>
+                       <label className="text-[10px] uppercase font-bold tracking-wider text-white/40 mb-1 block">Section</label>
+                       <input
+                         value={f.section || ''}
+                         onChange={e => updateRfiField(f.id, 'section', e.target.value)}
+                         placeholder="General"
+                         className="bg-black/20 border border-white/10 rounded-lg px-3 py-2 text-white/70 text-sm w-full outline-none"
+                       />
+                     </div>
+                   </div>
+
+                   {/* Required toggle + Visibility + Delete */}
+                   <div className="flex flex-col gap-3 shrink-0 items-end">
+                     <div className="flex items-center gap-4">
+                       <label className="flex items-center gap-1.5 cursor-pointer select-none">
+                         <span className="text-[10px] uppercase font-bold tracking-wider text-white/40">Visible</span>
+                         <input
+                           type="checkbox"
+                           checked={f.visible !== false}
+                           onChange={e => updateRfiField(f.id, 'visible', e.target.checked as any)}
+                           className="w-4 h-4 accent-emerald-500 cursor-pointer"
+                         />
+                       </label>
+                       <label className="flex items-center gap-1.5 cursor-pointer select-none">
+                         <span className="text-[10px] uppercase font-bold tracking-wider text-white/40">Req</span>
+                         <input
+                           type="checkbox"
+                           checked={f.required}
+                           onChange={e => updateRfiField(f.id, 'required', e.target.checked)}
+                           className="w-4 h-4 accent-purple-500 cursor-pointer"
+                         />
+                       </label>
+                     </div>
+                     <button
+                       onClick={() => removeRfiField(f.id)}
+                       className="p-1.5 hover:bg-red-500/10 text-white/25 hover:text-red-400 rounded-md transition-colors"
+                     >
+                       <Trash2 className="w-4 h-4" />
+                     </button>
+                   </div>
+                </div>
+              ))}
+              {rfiFields.length === 0 && (
+                <div className="text-center py-8 text-white/30 text-sm">
+                  <FileText className="w-8 h-8 mx-auto mb-2 text-white/15" />
+                  <p>No RFI fields defined yet.</p>
+                  <p className="text-xs text-white/20 mt-1">Add fields below to build your RFI template.</p>
+                </div>
+              )}
+            </div>
             
-            <button className="text-sm border border-white/10 border-dashed hover:bg-white/5 text-white/60 px-4 py-2 w-full rounded-xl flex items-center justify-center gap-2 transition-colors">
+            <button
+              onClick={handleAddRfiField}
+              className="text-sm border border-white/10 border-dashed hover:bg-white/5 text-white/60 px-4 py-2.5 w-full rounded-xl flex items-center justify-center gap-2 transition-colors hover:border-purple-500/30 hover:text-purple-400"
+            >
               <Plus className="w-4 h-4" /> Add RFI Field
             </button>
           </div>

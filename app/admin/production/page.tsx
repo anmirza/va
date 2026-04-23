@@ -7,6 +7,7 @@ import { getOrgsByType, removeOrg, OrgRecord, updateOrg } from '@/lib/admin-stor
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
 import { Film, Plus, Search, Trash2, Users, MapPin, Calendar, CheckCircle2, Clock, AlertCircle, Mail } from 'lucide-react'
+import { CategoryIcon } from '@/components/category-icon'
 
 function OrgStatusBadge({ status }: { status: OrgRecord['status'] }) {
   const map: Record<string, string> = {
@@ -93,7 +94,7 @@ export default function ProductionAdminPage() {
           {filtered.map(org => (
             <div key={org.id} className="glass-card rounded-2xl p-5 flex items-center gap-4 group hover:border-white/20 transition-all">
               <div className="w-12 h-12 rounded-xl bg-[#7c3aed]/10 border border-[#7c3aed]/20 flex items-center justify-center shrink-0">
-                <Film className="w-6 h-6 text-[#7c3aed]" />
+                <CategoryIcon categoryName={org.category || 'Production'} defaultIcon={Film} className="w-6 h-6 text-[#7c3aed]" />
               </div>
               <div className="flex-1 min-w-0">
                 <div className="flex items-center gap-2 flex-wrap mb-1">

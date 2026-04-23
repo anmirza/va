@@ -281,7 +281,7 @@ export default function AgencySignupPage() {
         {step < 9 && (
           <>
         <div className="mb-10">
-          <div className="flex items-center gap-0 overflow-x-auto pb-2">
+          <div className="flex items-center gap-0 overflow-x-auto pb-4 scrollbar-hide">
             {REGISTRATION_STEPS.map((s, i) => (
               <div key={s.key} className="flex items-center flex-shrink-0">
                 <button

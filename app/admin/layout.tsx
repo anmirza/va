@@ -5,17 +5,17 @@ import Link from 'next/link'
 import { usePathname, useRouter } from 'next/navigation'
 import { useAuth } from '@/lib/auth-context'
 import { VaLogo } from '@/components/va-logo'
-import { getPendingCount } from '@/lib/admin-store'
+import { getPendingCount, getVACategories } from '@/lib/admin-store'
 import {
   LayoutDashboard, Clock, Building2, Film,
-  Users, FileText, Settings, LogOut, ChevronRight, Shield, Menu, X,
+  Users, FileText, Settings, LogOut, ChevronRight, Shield, Menu, X, Layers
 } from 'lucide-react'
 
-const NAV = [
+import { CategoryIcon } from '@/components/category-icon'
+
+const DEFAULT_NAV = [
   { href: '/admin', label: 'Dashboard', icon: LayoutDashboard, exact: true },
   { href: '/admin/pending', label: 'Pending Approvals', icon: Clock, badge: true },
-  { href: '/admin/agencies', label: 'Agencies', icon: Building2 },
-  { href: '/admin/production', label: 'Production Companies', icon: Film },
   { href: '/admin/clients', label: 'Client Management', icon: Users, superAdminOnly: true },
   { href: '/admin/users', label: 'Users', icon: Users },
   { href: '/admin/internal-users', label: 'Internal Staff', icon: Shield, superAdminOnly: true },
@@ -30,6 +30,22 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
   const [toggleSuperAdmin, setToggleSuperAdmin] = useState(false) // Demo toggle
   const [pendingCount, setPendingCount] = useState(0)
   const [sidebarOpen, setSidebarOpen] = useState(false)
+  const [dynamicNav, setDynamicNav] = useState<any[]>([])
+
+  useEffect(() => {
+    const cats = getVACategories()
+    const catNav = cats.map(c => ({
+      href: `/admin/listing/${c.id}`, // Generic listing page (needs to be created or use current ones)
+      label: c.name,
+      categoryName: c.name,
+      icon: c.id === 'cat-agency' ? Building2 : c.id === 'cat-production' ? Film : Layers
+    }))
+    
+    // Inject categories after Pending Approvals
+    const updated = [...DEFAULT_NAV]
+    updated.splice(2, 0, ...catNav)
+    setDynamicNav(updated)
+  }, [pathname])
 
   useEffect(() => {
     if (!isAdmin) {
@@ -41,7 +57,7 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
     setPendingCount(getPendingCount())
   }, [pathname])
 
-  const isActive = (item: typeof NAV[0]) => {
+  const isActive = (item: any) => {
     if (item.exact) return pathname === item.href
     return pathname.startsWith(item.href)
   }
@@ -65,7 +81,7 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
 
       {/* Nav */}
       <nav className="flex-1 p-3 space-y-0.5 overflow-y-auto">
-        {NAV.map(item => {
+        {dynamicNav.map(item => {
           if (item.superAdminOnly && !isCurrentlySuperAdmin) return null
           
           const Icon = item.icon
@@ -82,7 +98,7 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
                   : 'text-white/50 hover:text-white hover:bg-white/[0.06]'
               }`}
             >
-              <Icon className="w-4 h-4 shrink-0" />
+              <CategoryIcon categoryName={(item as any).categoryName} defaultIcon={item.icon} className="w-4 h-4 shrink-0" />
               <span className="flex-1">{item.label}</span>
               {count > 0 && (
                 <span className="px-1.5 py-0.5 text-[10px] font-bold bg-amber-500 text-white rounded-full min-w-[18px] text-center">

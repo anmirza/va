@@ -19,6 +19,12 @@ export function middleware(request: NextRequest) {
 
   const isAuthenticated = authCookie === '1'
   const isAdminRole = roleCookie === 'admin' || roleCookie === 'super_admin'
+  const needsSetup = request.cookies.get('requisti_setup')?.value === '1'
+
+  // If authenticated but needs setup, redirect to /setup-password
+  if (isAuthenticated && needsSetup && pathname !== '/setup-password' && !pathname.startsWith('/api')) {
+    return NextResponse.redirect(new URL('/setup-password', request.url))
+  }
 
   // Admin routes require admin role
   if (pathname.startsWith('/admin')) {

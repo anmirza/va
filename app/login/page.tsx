@@ -26,6 +26,10 @@ function LoginContent() {
     const result = await login(email, password)
     setIsLoading(false)
     if (result.success) {
+      if (result.mustChangePassword) {
+        router.push('/setup-password')
+        return
+      }
       const redirect = searchParams.get('redirect')
       if (redirect) {
         router.push(redirect)

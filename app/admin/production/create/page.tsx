@@ -344,7 +344,7 @@ export default function ProductionSignupPage() {
         {step < 14 && (
           <>
         <div className="mb-10">
-          <div className="flex items-center gap-0 overflow-x-auto pb-2">
+          <div className="flex items-center gap-0 overflow-x-auto pb-4 scrollbar-hide">
             {STEPS.map((s, i) => (
               <div key={s.id} className="flex items-center flex-shrink-0">
                 <button

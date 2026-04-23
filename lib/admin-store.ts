@@ -41,6 +41,16 @@ export interface VACategory {
   iconSvg: string
 }
 
+export interface RfiField {
+  id: string
+  label: string
+  type: 'text' | 'number' | 'date' | 'textarea' | 'checkbox' | 'select' | 'table' | 'file'
+  required: boolean
+  section?: string
+  order?: number
+  visible?: boolean
+}
+
 export interface VAInternalUser {
   id: string
   name: string
@@ -126,7 +136,8 @@ const KEYS = {
   clientCompanies: 'va_client_companies',
   clientUsers: 'va_client_users',
   vaCategories: 'va_categories',
-  internalUsers: 'va_internal_users'
+  internalUsers: 'va_internal_users',
+  rfiFieldsMap: 'va_rfi_fields_map'
 }
 
 // ── Role Mock ─────────────────────────────────────────────────────────────────
@@ -207,30 +218,7 @@ function saveRegistrations(data: PendingRegistration[]) {
   localStorage.setItem(KEYS.registrations, JSON.stringify(data))
 }
 
-export function submitForApproval(
-  profileData: Record<string, unknown>,
-  type: OrgType,
-  userId: string,
-  userName: string,
-  userEmail: string,
-): PendingRegistration {
-  const list = getRegistrations()
-  const entry: PendingRegistration = {
-    id: `reg-${Date.now()}`,
-    type,
-    companyName: String(profileData.businessName || 'Unnamed'),
-    submittedByUserId: userId,
-    submittedByName: userName,
-    submittedByEmail: userEmail,
-    submittedAt: new Date().toISOString(),
-    status: 'pending',
-    profileData,
-  }
-  list.unshift(entry)
-  saveRegistrations(list)
-  addActivity({ type: 'signup', description: `New ${type} registration submitted: ${entry.companyName} by ${userName}` })
-  return entry
-}
+
 
 export function getAllRegistrations(): PendingRegistration[] {
   return getRegistrations()
@@ -367,6 +355,7 @@ export function removeOrg(id: string, adminId: string): boolean {
 }
 
 export function getOrgById(id: string): OrgRecord | undefined {
+  if (!id) return undefined
   return getOrgs().find(o => o.id === id)
 }
 
@@ -396,6 +385,23 @@ export function createClientCompany(data: Omit<ClientCompany, 'id' | 'createdAt'
   return comp
 }
 
+export function submitForApproval(data: Omit<PendingRegistration, 'id' | 'submittedAt' | 'status'>): PendingRegistration {
+  const regs = getRegistrations()
+  const reg: PendingRegistration = {
+    ...data,
+    id: `reg-${Date.now()}`,
+    submittedAt: new Date().toISOString(),
+    status: 'pending'
+  }
+  regs.unshift(reg)
+  saveRegistrations(regs)
+  addActivity({
+    type: 'signup',
+    description: `New ${data.type} registration submitted: ${data.companyName} by ${data.submittedByName}`
+  })
+  return reg
+}
+
 export function updateClientCompanyTokens(id: string, newTokens: number): boolean {
   const comps = getClientCompanies()
   const idx = comps.findIndex(c => c.id === id)
@@ -407,7 +413,7 @@ export function updateClientCompanyTokens(id: string, newTokens: number): boolea
 
 export function deductClientToken(companyId: string): boolean {
   const comps = getClientCompanies()
-  const idx = comps.findIndex(c => c.id === id)
+  const idx = comps.findIndex(c => c.id === companyId)
   if (idx === -1 || comps[idx].tokens <= 0) return false
   comps[idx].tokens -= 1
   saveClientCompanies(comps)
@@ -448,6 +454,11 @@ export function getVACategories(): VACategory[] {
   } catch { return [] }
 }
 
+export function getVACategoryByName(name: string): VACategory | undefined {
+  if (!name) return undefined
+  return getVACategories().find(c => c.name.toLowerCase() === name.toLowerCase())
+}
+
 export function saveVACategory(category: VACategory) {
   const cats = getVACategories()
   const existingIdx = cats.findIndex(c => c.id === category.id)
@@ -457,6 +468,176 @@ export function saveVACategory(category: VACategory) {
     cats.push(category)
   }
   localStorage.setItem(KEYS.vaCategories, JSON.stringify(cats))
+}
+
+export function deleteVACategory(id: string) {
+  const cats = getVACategories().filter(c => c.id !== id)
+  localStorage.setItem(KEYS.vaCategories, JSON.stringify(cats))
+}
+
+// ── RFI Fields ────────────────────────────────────────────────────────────────
+
+// ── RFI Fields ────────────────────────────────────────────────────────────────
+
+const DEFAULT_AGENCY_RFI: RfiField[] = [
+  // Section: General Information
+  { id: 'rag-1', label: 'Registered Business Name', type: 'text', required: true, section: 'General Information', order: 1, visible: true },
+  { id: 'rag-2', label: 'D-U-N-S® Number', type: 'text', required: false, section: 'General Information', order: 2, visible: true },
+  { id: 'rag-3', label: 'VAT Registration Number', type: 'text', required: true, section: 'General Information', order: 3, visible: true },
+  { id: 'rag-4', label: 'Legal Form', type: 'text', required: true, section: 'General Information', order: 4, visible: true },
+  { id: 'rag-5', label: 'Company Registration Number', type: 'text', required: true, section: 'General Information', order: 5, visible: true },
+  { id: 'rag-6', label: 'Year Established', type: 'number', required: true, section: 'General Information', order: 6, visible: true },
+  
+  // Section: Organisation & Structure
+  { id: 'rag-7', label: '# of Employees', type: 'select', required: true, section: 'Organisation & Structure', order: 7, visible: true },
+  { id: 'rag-8', label: 'Company Level', type: 'select', required: true, section: 'Organisation & Structure', order: 8, visible: true },
+  { id: 'rag-9', label: 'Parent Company Name', type: 'text', required: false, section: 'Organisation & Structure', order: 9, visible: true },
+  { id: 'rag-10', label: 'Category', type: 'select', required: true, section: 'Organisation & Structure', order: 10, visible: true },
+  { id: 'rag-11', label: 'Agency Currency', type: 'select', required: true, section: 'Organisation & Structure', order: 11, visible: true },
+  { id: 'rag-12', label: 'Trade Organizations', type: 'text', required: false, section: 'Organisation & Structure', order: 12, visible: true },
+
+  // Section: Location & Address
+  { id: 'rag-13', label: 'Country Coverage', type: 'select', required: true, section: 'Location & Address', order: 13, visible: true },
+  { id: 'rag-14', label: 'Street Address', type: 'text', required: true, section: 'Location & Address', order: 14, visible: true },
+  { id: 'rag-15', label: 'City', type: 'text', required: true, section: 'Location & Address', order: 15, visible: true },
+  { id: 'rag-16', label: 'Postcode', type: 'text', required: true, section: 'Location & Address', order: 16, visible: true },
+  { id: 'rag-17', label: 'Country', type: 'select', required: true, section: 'Location & Address', order: 17, visible: true },
+
+  // Section: Contacts & Social
+  { id: 'rag-18', label: 'Key Contacts (Roles & Info)', type: 'table', required: true, section: 'Contacts & Social', order: 18, visible: true },
+  { id: 'rag-19', label: 'Social Media Profiles', type: 'table', required: false, section: 'Contacts & Social', order: 19, visible: true },
+
+  // Section: About & Positioning
+  { id: 'rag-20', label: 'Agency Overview', type: 'textarea', required: true, section: 'About & Positioning', order: 20, visible: true },
+  { id: 'rag-21', label: 'Philosophy & Competitive Advantages', type: 'textarea', required: false, section: 'About & Positioning', order: 21, visible: true },
+  { id: 'rag-22', label: 'Network Description', type: 'textarea', required: false, section: 'About & Positioning', order: 22, visible: true },
+  { id: 'rag-23', label: 'Local Representation', type: 'textarea', required: false, section: 'About & Positioning', order: 23, visible: true },
+
+  // Section: Turnover & Clients
+  { id: 'rag-24', label: 'Revenue & EBITA (Last 3 Years)', type: 'table', required: true, section: 'Turnover & Clients', order: 24, visible: true },
+  { id: 'rag-25', label: 'Main Clients List', type: 'table', required: true, section: 'Turnover & Clients', order: 25, visible: true },
+  { id: 'rag-26', label: 'Client Pitch History', type: 'table', required: false, section: 'Turnover & Clients', order: 26, visible: true },
+
+  // Section: Knowledge & Competencies
+  { id: 'rag-27', label: 'Communication Areas Expertise (%)', type: 'table', required: true, section: 'Knowledge & Competencies', order: 27, visible: true },
+  { id: 'rag-28', label: 'Capabilities (Main/Secondary/Additional)', type: 'table', required: true, section: 'Knowledge & Competencies', order: 28, visible: true },
+  { id: 'rag-29', label: 'Service Allocations (%)', type: 'table', required: true, section: 'Knowledge & Competencies', order: 29, visible: true },
+  { id: 'rag-30', label: 'Outsourced Activities', type: 'table', required: false, section: 'Knowledge & Competencies', order: 30, visible: true },
+
+  // Section: Governance & SOW
+  { id: 'rag-31', label: 'Quality Assurance Systems', type: 'textarea', required: false, section: 'Governance & SOW', order: 31, visible: true },
+  { id: 'rag-32', label: 'Data Management Protocols', type: 'textarea', required: false, section: 'Governance & SOW', order: 32, visible: true },
+  { id: 'rag-33', label: 'Global Brand Governance', type: 'textarea', required: false, section: 'Governance & SOW', order: 33, visible: true },
+
+  // Section: People & Talent
+  { id: 'rag-34', label: 'Headcounts (Employees/Freelancers)', type: 'table', required: true, section: 'People & Talent', order: 34, visible: true },
+  { id: 'rag-35', label: 'Key Talent Profiles', type: 'table', required: true, section: 'People & Talent', order: 35, visible: true },
+
+  // Section: Awards & Social Responsibility
+  { id: 'rag-36', label: 'Award History', type: 'table', required: false, section: 'Awards & Social Responsibility', order: 36, visible: true },
+  { id: 'rag-37', label: 'AI Strategy & Tools', type: 'textarea', required: false, section: 'Awards & Social Responsibility', order: 37, visible: true },
+  { id: 'rag-38', label: 'CSR Policies & Impact', type: 'table', required: false, section: 'Awards & Social Responsibility', order: 38, visible: true },
+
+  // Section: Add-On
+  { id: 'rag-39', label: 'Investment Areas', type: 'table', required: false, section: 'Add-On', order: 39, visible: true },
+  { id: 'rag-40', label: 'Strategic Development Goals', type: 'textarea', required: false, section: 'Add-On', order: 40, visible: true },
+
+  // Section: Attachments
+  { id: 'rag-41', label: 'Organisational Chart', type: 'file', required: true, section: 'Attachments', order: 41, visible: true },
+  { id: 'rag-42', label: 'Company Profile (Creds)', type: 'file', required: true, section: 'Attachments', order: 42, visible: true },
+]
+
+const DEFAULT_PRODUCTION_RFI: RfiField[] = [
+  // Section: General Information
+  { id: 'rpr-1', label: 'Registered Business Name', type: 'text', required: true, section: 'General Information', order: 1, visible: true },
+  { id: 'rpr-2', label: 'VAT Registration Number', type: 'text', required: true, section: 'General Information', order: 2, visible: true },
+  { id: 'rpr-3', label: 'Year Established', type: 'number', required: true, section: 'General Information', order: 3, visible: true },
+  
+  // Section: Organisation & Structure
+  { id: 'rpr-4', label: '# of Employees', type: 'select', required: true, section: 'Organisation & Structure', order: 4, visible: true },
+  { id: 'rpr-5', label: 'Production Category', type: 'select', required: true, section: 'Organisation & Structure', order: 5, visible: true },
+
+  // Section: Capabilities & Services
+  { id: 'rpr-6', label: 'Specialties', type: 'textarea', required: true, section: 'Capabilities & Services', order: 6, visible: true },
+  { id: 'rpr-7', label: 'Service Coverage (%)', type: 'table', required: true, section: 'Capabilities & Services', order: 7, visible: true },
+  { id: 'rpr-8', label: 'In-house Post-Production', type: 'checkbox', required: false, section: 'Capabilities & Services', order: 8, visible: true },
+
+  // Section: Talent & Roster
+  { id: 'rpr-9', label: 'Directors Roster', type: 'table', required: true, section: 'Talent & Roster', order: 9, visible: true },
+  { id: 'rpr-10', label: 'Executive Producer Profiles', type: 'table', required: true, section: 'Talent & Roster', order: 10, visible: true },
+
+  // Section: Awards & History
+  { id: 'rpr-11', label: 'Award History', type: 'table', required: false, section: 'Awards & History', order: 11, visible: true },
+
+  // Section: Compliance & Governance
+  { id: 'rpr-12', label: 'Insurance Certificates', type: 'file', required: true, section: 'Compliance & Governance', order: 12, visible: true },
+  { id: 'rpr-13', label: 'Quality Control Protocols', type: 'textarea', required: false, section: 'Compliance & Governance', order: 13, visible: true },
+  { id: 'rpr-14', label: 'CSR Policies', type: 'table', required: false, section: 'Compliance & Governance', order: 14, visible: true },
+]
+
+export function getRfiFields(categoryId?: string): RfiField[] {
+  if (typeof window === 'undefined') return []
+  try {
+    const mapStored = localStorage.getItem(KEYS.rfiFieldsMap)
+    const map: Record<string, RfiField[]> = mapStored ? JSON.parse(mapStored) : {}
+    
+    if (categoryId && map[categoryId]) {
+      return map[categoryId]
+    }
+    
+    // Legacy migration or defaults
+    if (!categoryId || categoryId === 'cat-agency') {
+      if (map['cat-agency']) return map['cat-agency']
+      // Check legacy single key
+      const legacy = localStorage.getItem('va_rfi_fields')
+      if (legacy) {
+        const fields = JSON.parse(legacy)
+        return fields
+      }
+      return DEFAULT_AGENCY_RFI
+    }
+    
+    if (categoryId === 'cat-production') {
+      return map['cat-production'] || DEFAULT_PRODUCTION_RFI
+    }
+    
+    return map[categoryId || ''] || []
+  } catch (e) {
+    console.error('Error loading RFI fields:', e)
+    return []
+  }
+}
+
+export function saveRfiFields(categoryId: string, fields: RfiField[]) {
+  if (typeof window === 'undefined') return
+  try {
+    const mapStored = localStorage.getItem(KEYS.rfiFieldsMap)
+    const map: Record<string, RfiField[]> = mapStored ? JSON.parse(mapStored) : {}
+    map[categoryId] = fields
+    localStorage.setItem(KEYS.rfiFieldsMap, JSON.stringify(map))
+  } catch (e) {
+    console.error('Error saving RFI fields:', e)
+  }
+}
+
+export function resetRfiToDefaults(categoryId: string) {
+  if (typeof window === 'undefined') return
+  try {
+    const mapStored = localStorage.getItem(KEYS.rfiFieldsMap)
+    const map: Record<string, RfiField[]> = mapStored ? JSON.parse(mapStored) : {}
+    
+    if (categoryId === 'cat-agency') {
+      map[categoryId] = DEFAULT_AGENCY_RFI
+    } else if (categoryId === 'cat-production') {
+      map[categoryId] = DEFAULT_PRODUCTION_RFI
+    } else {
+      map[categoryId] = []
+    }
+    
+    localStorage.setItem(KEYS.rfiFieldsMap, JSON.stringify(map))
+  } catch (e) {
+    console.error('Error resetting RFI fields:', e)
+  }
 }
 
 export function getVAInternalUsers(): VAInternalUser[] {

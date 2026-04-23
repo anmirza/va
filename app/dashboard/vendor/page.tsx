@@ -8,10 +8,11 @@ import { AuthGuard } from '@/components/auth-guard'
 import { Header } from '@/components/header'
 import { Button } from '@/components/ui/button'
 import { companies } from '@/lib/mock-data'
-import { getRegistrationsByUser, PendingRegistration } from '@/lib/admin-store'
+import { getRegistrationsByUser, PendingRegistration, getVACategories, VACategory } from '@/lib/admin-store'
+import { CategoryIcon } from '@/components/category-icon'
 import {
   Building2, Film, Plus, Settings, ExternalLink,
-  ChevronRight, Clock, CheckCircle2, AlertCircle, XCircle, Users, RefreshCw,
+  ChevronRight, Clock, CheckCircle2, AlertCircle, XCircle, Users, RefreshCw, Layers
 } from 'lucide-react'
 
 // ── Status helpers ────────────────────────────────────────────────────────────
@@ -35,16 +36,17 @@ function RegistrationStatusBadge({ status }: { status: PendingRegistration['stat
 
 function PendingCard({ reg }: { reg: PendingRegistration }) {
   const isAgency = reg.type === 'agency'
-  const color = isAgency ? '[#0763d8]' : '[#7c3aed]'
+  const isProduction = reg.type === 'production'
+  const color = isAgency ? '[#0763d8]' : isProduction ? '[#7c3aed]' : 'white'
   const Icon = isAgency ? Building2 : Film
 
   return (
-    <div className={`glass-card rounded-2xl overflow-hidden hover:border-${color}/30 transition-all`}>
-      <div className={`h-12 ${isAgency ? 'bg-[#0763d8]/5' : 'bg-[#7c3aed]/5'}`} />
+    <div className={`glass-card rounded-2xl overflow-hidden hover:border-white/20 transition-all`}>
+      <div className={`h-12 bg-white/5`} />
       <div className="p-4 -mt-3 relative">
         <div className="flex items-start gap-3 mb-3">
-          <div className={`w-12 h-12 rounded-xl ${isAgency ? 'bg-[#0763d8]/10 border-[#0763d8]/20' : 'bg-[#7c3aed]/10 border-[#7c3aed]/20'} border flex items-center justify-center shrink-0`}>
-            <Icon className={`w-5 h-5 ${isAgency ? 'text-[#0763d8]' : 'text-[#7c3aed]'}`} />
+          <div className={`w-12 h-12 rounded-xl bg-white/5 border border-white/10 flex items-center justify-center shrink-0`}>
+            <Icon className={`w-5 h-5 text-white/40`} />
           </div>
           <div className="flex-1 min-w-0">
             <p className="font-semibold text-white truncate">{reg.companyName}</p>
@@ -73,8 +75,8 @@ function PendingCard({ reg }: { reg: PendingRegistration }) {
         )}
 
         {reg.status === 'rejected' && (
-          <Link href={reg.type === 'agency' ? '/signup/agency/disclaimer' : '/signup/production/disclaimer'}>
-            <Button size="sm" className={`w-full ${isAgency ? 'bg-[#0763d8] hover:bg-[#0655b3]' : 'bg-[#7c3aed] hover:bg-[#6d28d9]'} text-white gap-1.5 text-xs`}>
+          <Link href={`/signup/register/${reg.type}`}>
+            <Button size="sm" className="w-full bg-red-500 hover:bg-red-600 text-white gap-1.5 text-xs">
               <RefreshCw className="w-3.5 h-3.5" /> Resubmit Application
             </Button>
           </Link>
@@ -82,7 +84,7 @@ function PendingCard({ reg }: { reg: PendingRegistration }) {
 
         {reg.status === 'approved' && (
           <Link href={reg.type === 'agency' ? '/dashboard/agency' : '/dashboard/production'}>
-            <Button size="sm" className={`w-full ${isAgency ? 'bg-[#0763d8] hover:bg-[#0655b3]' : 'bg-[#7c3aed] hover:bg-[#6d28d9]'} text-white gap-1.5 text-xs`}>
+            <Button size="sm" className="w-full bg-[#0763d8] hover:bg-[#0655b3] text-white gap-1.5 text-xs">
               <Settings className="w-3.5 h-3.5" /> Manage Profile
             </Button>
           </Link>
@@ -98,6 +100,7 @@ function VendorDashboardContent() {
   const { user, isModerator } = useAuth()
   const router = useRouter()
   const [pendingRegs, setPendingRegs] = useState<PendingRegistration[]>([])
+  const [categories, setCategories] = useState<VACategory[]>([])
 
   useEffect(() => {
     if (user && user.accountType !== 'vendor') {
@@ -109,13 +112,13 @@ function VendorDashboardContent() {
     if (user?.id) {
       setPendingRegs(getRegistrationsByUser(user.id))
     }
+    setCategories(getVACategories())
   }, [user?.id])
 
   const myCompanies = companies.filter(c =>
     user?.companyIds?.includes(c.id) || user?.companyId === c.id
   )
 
-  // Combine: pending registrations + actual company records
   const hasAnyRegistrations = pendingRegs.length > 0 || myCompanies.length > 0
 
   return (
@@ -145,14 +148,6 @@ function VendorDashboardContent() {
               </div>
             </div>
             <div className="flex items-center gap-2">
-              {isModerator && user?.orgId && (
-                <Link href="/dashboard/team">
-                  <Button variant="outline" size="sm" className="border-white/[0.12] text-white/70 hover:text-white gap-2">
-                    <Users className="w-4 h-4" />
-                    Manage Team
-                  </Button>
-                </Link>
-              )}
               <Link href="/dashboard/settings">
                 <Button variant="outline" size="sm" className="border-white/[0.12] text-white/70 hover:text-white gap-2">
                   <Settings className="w-4 h-4" />
@@ -183,7 +178,7 @@ function VendorDashboardContent() {
               </div>
             )}
 
-            {/* Existing active companies (from mock-data) */}
+            {/* Existing active companies */}
             {myCompanies.length > 0 && (
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 mb-6">
                 {myCompanies.map(company => (
@@ -242,33 +237,26 @@ function VendorDashboardContent() {
               </div>
             )}
 
-            {/* Add Company actions — route through disclaimer first */}
-            <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-              <Link href="/signup/agency/disclaimer">
-                <div className="group glass-card rounded-2xl p-5 flex items-center gap-4 hover:border-[#0763d8]/40 hover:shadow-lg hover:shadow-[#0763d8]/10 transition-all cursor-pointer">
-                  <div className="w-11 h-11 rounded-xl bg-[#0763d8]/10 border border-[#0763d8]/20 flex items-center justify-center shrink-0 group-hover:bg-[#0763d8]/20 transition-colors">
-                    <Building2 className="w-5 h-5 text-[#0763d8]" />
+            <div className="flex items-center gap-2 mb-4">
+              <Plus className="w-4 h-4 text-[#0763d8]" />
+              <h3 className="text-sm font-bold text-white uppercase tracking-wider">Add Organisation</h3>
+            </div>
+            
+            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
+              {categories.map(cat => (
+                <Link key={cat.id} href={`/signup/register/${cat.id}`}>
+                  <div className="group glass-card rounded-2xl p-5 flex items-center gap-4 hover:border-[#0763d8]/40 hover:shadow-lg hover:shadow-[#0763d8]/10 transition-all cursor-pointer h-full">
+                    <div className="w-11 h-11 rounded-xl bg-white/[0.05] border border-white/10 flex items-center justify-center shrink-0 group-hover:bg-[#0763d8]/10 group-hover:border-[#0763d8]/30 transition-colors">
+                      <CategoryIcon iconSvg={cat.iconSvg} className="w-5 h-5 text-white/40 group-hover:text-[#0763d8]" />
+                    </div>
+                    <div className="flex-1 min-w-0">
+                      <p className="font-semibold text-white group-hover:text-white transition-colors">Add {cat.name}</p>
+                      <p className="text-xs text-white/30 mt-0.5 line-clamp-1">Register a new {cat.name.toLowerCase()}</p>
+                    </div>
+                    <ChevronRight className="w-4 h-4 text-white/10 group-hover:text-[#0763d8] transition-colors" />
                   </div>
-                  <div className="flex-1 min-w-0">
-                    <p className="font-semibold text-white">Add Agency</p>
-                    <p className="text-xs text-white/40 mt-0.5">Register an advertising agency</p>
-                  </div>
-                  <Plus className="w-4 h-4 text-white/30 group-hover:text-[#0763d8] transition-colors" />
-                </div>
-              </Link>
-
-              <Link href="/signup/production/disclaimer">
-                <div className="group glass-card rounded-2xl p-5 flex items-center gap-4 hover:border-[#7c3aed]/40 hover:shadow-lg hover:shadow-[#7c3aed]/10 transition-all cursor-pointer">
-                  <div className="w-11 h-11 rounded-xl bg-[#7c3aed]/10 border border-[#7c3aed]/20 flex items-center justify-center shrink-0 group-hover:bg-[#7c3aed]/20 transition-colors">
-                    <Film className="w-5 h-5 text-[#7c3aed]" />
-                  </div>
-                  <div className="flex-1 min-w-0">
-                    <p className="font-semibold text-white">Add Production House</p>
-                    <p className="text-xs text-white/40 mt-0.5">Register a film or content production company</p>
-                  </div>
-                  <Plus className="w-4 h-4 text-white/30 group-hover:text-[#7c3aed] transition-colors" />
-                </div>
-              </Link>
+                </Link>
+              ))}
             </div>
           </section>
 

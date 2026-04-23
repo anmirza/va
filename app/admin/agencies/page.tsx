@@ -7,6 +7,7 @@ import { getOrgsByType, removeOrg, OrgRecord, updateOrg } from '@/lib/admin-stor
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
 import { Building2, Plus, Search, Trash2, Users, MapPin, Calendar, CheckCircle2, Clock, AlertCircle, Mail } from 'lucide-react'
+import { CategoryIcon } from '@/components/category-icon'
 
 function OrgStatusBadge({ status }: { status: OrgRecord['status'] }) {
   const map: Record<string, string> = {
@@ -99,7 +100,7 @@ export default function AgenciesPage() {
             <div key={org.id} className="glass-card rounded-2xl p-5 flex items-center gap-4 group hover:border-white/20 transition-all">
               {/* Avatar */}
               <div className="w-12 h-12 rounded-xl bg-[#0763d8]/10 border border-[#0763d8]/20 flex items-center justify-center shrink-0">
-                <Building2 className="w-6 h-6 text-[#0763d8]" />
+                <CategoryIcon categoryName={org.category || 'Agency'} defaultIcon={Building2} className="w-6 h-6 text-[#0763d8]" />
               </div>
 
               {/* Info */}
