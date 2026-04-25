@@ -2,7 +2,8 @@
 
 import { useState, useEffect } from 'react'
 import { useParams, useRouter } from 'next/navigation'
-import { getAllOrgs, OrgRecord, getVACategories } from '@/lib/admin-store'
+import type { OrgRecord } from '@/lib/admin-store'
+import { getAllOrgsFS, getVACategoriesFS } from '@/lib/admin-firestore'
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
 import { Search, Filter, Plus, MoreHorizontal, MapPin, Users, Calendar, ExternalLink } from 'lucide-react'
@@ -17,17 +18,18 @@ export default function GenericListingPage() {
   const [searchQuery, setSearchQuery] = useState('')
 
   useEffect(() => {
-    const allOrgs = getAllOrgs()
-    const filtered = allOrgs.filter(o => {
-      if (categoryId === 'cat-agency') return o.type === 'agency'
-      if (categoryId === 'cat-production') return o.type === 'production'
-      return o.type === categoryId
-    })
-    setOrgs(filtered)
-
-    const cats = getVACategories()
-    const cat = cats.find(c => c.id === categoryId)
-    setCategoryName(cat?.name || 'Organizations')
+    async function load() {
+      const [allOrgs, cats] = await Promise.all([getAllOrgsFS(), getVACategoriesFS()])
+      const filtered = allOrgs.filter(o => {
+        if (categoryId === 'cat-agency') return o.type === 'agency'
+        if (categoryId === 'cat-production') return o.type === 'production'
+        return o.type === categoryId
+      })
+      setOrgs(filtered)
+      const cat = cats.find(c => c.id === categoryId)
+      setCategoryName(cat?.name || 'Organizations')
+    }
+    load()
   }, [categoryId])
 
   const filteredOrgs = orgs.filter(o => 

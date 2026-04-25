@@ -339,6 +339,33 @@ export async function addClientCompanyTokensFS(companyId: string, tokensToAdd: n
   await updateDoc(doc(db, 'clientCompanies', companyId), { tokens: increment(tokensToAdd) })
 }
 
+export async function deductClientTokenFS(companyId: string): Promise<boolean> {
+  try {
+    const snap = await getDoc(doc(db, 'clientCompanies', companyId))
+    if (!snap.exists()) return false
+    const data = snap.data() as ClientCompany
+    const remaining = (data.tokens ?? 0) - (data.tokensUsed ?? 0)
+    if (remaining <= 0) return false
+    await updateDoc(doc(db, 'clientCompanies', companyId), { tokensUsed: increment(1) })
+    return true
+  } catch {
+    return false
+  }
+}
+
+export async function getClientCompanyByUserIdFS(userId: string): Promise<ClientCompany | null> {
+  try {
+    // First get the user's companyId from the users collection
+    const userSnap = await getDoc(doc(db, 'users', userId))
+    if (!userSnap.exists()) return null
+    const companyId = userSnap.data().companyId as string | undefined
+    if (!companyId) return null
+    return getClientCompanyByIdFS(companyId)
+  } catch {
+    return null
+  }
+}
+
 // ── Client Users ──────────────────────────────────────────────────────────────
 
 export async function getClientUsersByCompanyFS(companyId: string): Promise<ClientUser[]> {

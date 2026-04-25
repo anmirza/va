@@ -2,7 +2,7 @@
 
 import { useState, useEffect } from 'react'
 import { useParams, useRouter } from 'next/navigation'
-import { getRfiFields, createOrg, getVACategories } from '@/lib/admin-store'
+import { getRfiFieldsFS, createOrgFS, getVACategoriesFS } from '@/lib/admin-firestore'
 import { DynamicRfiForm } from '@/components/dynamic-rfi-form'
 import { VaLogo } from '@/components/va-logo'
 import { useAuth } from '@/lib/auth-context'
@@ -19,23 +19,22 @@ export default function CreateOrgPage() {
   const [isSubmitting, setIsSubmitting] = useState(false)
 
   useEffect(() => {
-    const rfi = getRfiFields(categoryId)
-    setFields(rfi)
-    
-    const cats = getVACategories()
-    const cat = cats.find(c => c.id === categoryId)
-    setCategoryName(cat?.name || 'Organization')
+    async function load() {
+      const [rfi, cats] = await Promise.all([getRfiFieldsFS(categoryId), getVACategoriesFS()])
+      setFields(rfi)
+      const cat = cats.find(c => c.id === categoryId)
+      setCategoryName(cat?.name || 'Organization')
+    }
+    load()
   }, [categoryId])
 
   const handleSubmit = async (data: Record<string, any>) => {
     setIsSubmitting(true)
-    await new Promise(r => setTimeout(r, 1000))
-    
-    createOrg({
+    await createOrgFS({
       name: data['rag-1'] || data['rpr-1'] || data['businessName'] || 'New ' + categoryName,
       country: data['country'] || '',
       category: categoryName,
-      type: categoryId.includes('agency') ? 'agency' : categoryId.includes('production') ? 'production' : categoryId,
+      type: (categoryId.includes('agency') ? 'agency' : categoryId.includes('production') ? 'production' : categoryId) as any,
       profileData: { ...data, categoryId }
     }, user?.id || 'admin')
     

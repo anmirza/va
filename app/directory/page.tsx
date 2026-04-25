@@ -1,6 +1,6 @@
 'use client'
 
-import { useState, useMemo, Suspense } from 'react'
+import { useState, useMemo, Suspense, useEffect } from 'react'
 import Link from 'next/link'
 import { useSearchParams } from 'next/navigation'
 import { Header } from '@/components/header'
@@ -12,7 +12,7 @@ import { Badge } from '@/components/ui/badge'
 import { companies } from '@/lib/mock-data'
 import { Search, Grid3x3, List, ChevronLeft, ChevronRight, X, Lock } from 'lucide-react'
 import { useAuth } from '@/lib/auth-context'
-import { getClientCompanyById } from '@/lib/admin-store'
+import { getClientCompanyByUserIdFS } from '@/lib/admin-firestore'
 
 const SERVICES = ['Advertising', 'Digital', 'Strategy', 'Design', 'Content', 'Media', 'Production', 'Technology']
 const SECTORS = ['Technology', 'Sports', 'Luxury', 'Automotive', 'Finance', 'Entertainment', 'Retail', 'Lifestyle']
@@ -32,11 +32,16 @@ function DirectoryContent() {
 
   const { user } = useAuth()
   const isClient = user?.accountType === 'client'
-  let clientTokens: number | null = null
-  if (isClient && user?.companyId) {
-    const comp = getClientCompanyById(user.companyId)
-    if (comp) clientTokens = comp.tokens
-  }
+  const [clientTokens, setClientTokens] = useState<number | null>(null)
+
+  useEffect(() => {
+    if (isClient && user?.id) {
+      getClientCompanyByUserIdFS(user.id).then(comp => {
+        if (comp) setClientTokens((comp.tokens ?? 0) - (comp.tokensUsed ?? 0))
+      })
+    }
+  }, [isClient, user?.id])
+
   const isLockedOut = isClient && user?.tier !== 'free' && clientTokens === 0
 
   // Sync active filter pill from URL competency param

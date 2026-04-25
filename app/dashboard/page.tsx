@@ -26,6 +26,13 @@ function DashboardContent() {
     }
   }, [user, router])
 
+  // Clients get their own dedicated dashboard
+  useEffect(() => {
+    if (user?.role === 'client' || user?.accountType === 'client') {
+      router.replace('/dashboard/client')
+    }
+  }, [user, router])
+
   // Users who have not yet classified get sent to classify
   useEffect(() => {
     if (user && !user.accountType) {

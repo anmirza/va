@@ -6,6 +6,7 @@ import {
   createUserWithEmailAndPassword,
   signOut,
   onAuthStateChanged,
+  updatePassword,
   type AuthError,
 } from 'firebase/auth'
 import { doc, getDoc, setDoc, serverTimestamp } from 'firebase/firestore'
@@ -66,7 +67,7 @@ interface AuthContextType {
   setAccountType: (type: 'vendor' | 'client') => void
   addCompanyId: (id: string) => void
   acceptInviteToken: (token: string) => Promise<{ success: boolean; orgId?: string; orgName?: string; error?: string }>
-  completeSetup: (data: { name: string; mobile: string }) => void
+  completeSetup: (data: { name: string; mobile: string; region?: string; country?: string; newPassword?: string }) => Promise<{ success: boolean; error?: string }>
 }
 
 export interface SignupData {
@@ -222,14 +223,37 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     return { success: true, orgId: invitation.orgId, orgName: invitation.orgName }
   }, [user])
 
-  const completeSetup = useCallback((data: { name: string; mobile: string }) => {
-    setUser(prev => {
-      if (!prev) return prev
-      const updated: User = { ...prev, name: data.name, mustChangePassword: false, firstLoginComplete: true }
-      setCookies(updated)
-      saveUserProfile(prev.id, updated)
-      return updated
-    })
+  const completeSetup = useCallback(async (data: { name: string; mobile: string; region?: string; country?: string; newPassword?: string }): Promise<{ success: boolean; error?: string }> => {
+    try {
+      const firebaseUser = auth.currentUser
+      if (!firebaseUser) return { success: false, error: 'Not authenticated' }
+      // Change password in Firebase Auth if provided
+      if (data.newPassword) {
+        await updatePassword(firebaseUser, data.newPassword)
+      }
+      const updates: Partial<User> = {
+        name: data.name,
+        mustChangePassword: false,
+        firstLoginComplete: true,
+        ...(data.mobile ? { mobile: data.mobile } : {}),
+        ...(data.region ? { region: data.region } : {}),
+        ...(data.country ? { country: data.country } : {}),
+      }
+      setUser(prev => {
+        if (!prev) return prev
+        const updated: User = { ...prev, ...updates }
+        setCookies(updated)
+        saveUserProfile(prev.id, updated)
+        return updated
+      })
+      return { success: true }
+    } catch (err) {
+      const fbErr = err as AuthError
+      if (fbErr.code === 'auth/requires-recent-login') {
+        return { success: false, error: 'Session expired. Please log in again to change your password.' }
+      }
+      return { success: false, error: 'Failed to complete setup. Please try again.' }
+    }
   }, [])
 
   const logout = useCallback(() => {
