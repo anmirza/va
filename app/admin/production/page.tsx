@@ -3,9 +3,15 @@
 import { useEffect, useState, useCallback } from 'react'
 import Link from 'next/link'
 import { useAuth } from '@/lib/auth-context'
-import { getOrgsByType, removeOrg, OrgRecord, updateOrg } from '@/lib/admin-store'
+import { OrgRecord } from '@/lib/admin-store'
+import { getOrgsByTypeFS, removeOrgFS, updateOrgFS } from '@/lib/admin-firestore'
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
+import {
+  AlertDialog, AlertDialogAction, AlertDialogCancel, AlertDialogContent,
+  AlertDialogDescription, AlertDialogFooter, AlertDialogHeader, AlertDialogTitle,
+} from '@/components/ui/alert-dialog'
+import { toast } from 'sonner'
 import { Film, Plus, Search, Trash2, Users, MapPin, Calendar, CheckCircle2, Clock, AlertCircle, Mail } from 'lucide-react'
 import { CategoryIcon } from '@/components/category-icon'
 
@@ -34,28 +40,50 @@ export default function ProductionAdminPage() {
   const { user } = useAuth()
   const [orgs, setOrgs] = useState<OrgRecord[]>([])
   const [search, setSearch] = useState('')
+  const [isLoading, setIsLoading] = useState(true)
+  const [removeTarget, setRemoveTarget] = useState<{ id: string; name: string } | null>(null)
 
-  const load = useCallback(() => setOrgs(getOrgsByType('production')), [])
+  const load = useCallback(async () => {
+    setIsLoading(true)
+    const data = await getOrgsByTypeFS('production')
+    setOrgs(data)
+    setIsLoading(false)
+  }, [])
   useEffect(() => { load() }, [load])
 
   const filtered = orgs.filter(o =>
     !search || o.name.toLowerCase().includes(search.toLowerCase()) || (o.country ?? '').toLowerCase().includes(search.toLowerCase())
   )
 
-  const handleRemove = (id: string, name: string) => {
-    if (!confirm(`Are you sure you want to remove "${name}"? This action cannot be undone.`)) return
-    removeOrg(id, user?.id ?? 'admin')
+  const handleRemoveConfirm = async () => {
+    if (!removeTarget) return
+    await removeOrgFS(removeTarget.id, user?.id ?? 'admin')
+    toast.success(`"${removeTarget.name}" has been removed.`)
+    setRemoveTarget(null)
     load()
   }
 
-  const handleFollowUp = (id: string, name: string) => {
-    // Mock follow-up action
-    alert(`Follow-up email triggered for ${name} to update their profile.`)
-    updateOrg(id, { profileData: {} }, user?.id ?? 'admin') 
+  const handleFollowUp = async (id: string, name: string) => {
+    await updateOrgFS(id, { lastFollowUpAt: new Date().toISOString() }, user?.id ?? 'admin')
+    toast.success(`Follow-up logged for ${name}.`)
   }
 
   return (
     <div className="max-w-5xl">
+      <AlertDialog open={!!removeTarget} onOpenChange={open => !open && setRemoveTarget(null)}>
+        <AlertDialogContent className="bg-[#0a0b1a] border border-white/10">
+          <AlertDialogHeader>
+            <AlertDialogTitle className="text-white">Remove Production Company</AlertDialogTitle>
+            <AlertDialogDescription className="text-white/60">
+              Are you sure you want to remove &quot;{removeTarget?.name}&quot;? This action cannot be undone.
+            </AlertDialogDescription>
+          </AlertDialogHeader>
+          <AlertDialogFooter>
+            <AlertDialogCancel className="border-white/10 text-white/60 hover:text-white">Cancel</AlertDialogCancel>
+            <AlertDialogAction onClick={handleRemoveConfirm} className="bg-red-500 hover:bg-red-600 text-white">Remove</AlertDialogAction>
+          </AlertDialogFooter>
+        </AlertDialogContent>
+      </AlertDialog>
       <div className="flex items-start justify-between gap-4 mb-6 flex-wrap">
         <div>
           <h1 className="text-2xl font-bold text-white mb-1">Production Companies</h1>
@@ -123,7 +151,7 @@ export default function ProductionAdminPage() {
                   </Button>
                 </Link>
                 <button
-                  onClick={() => handleRemove(org.id, org.name)}
+                  onClick={() => setRemoveTarget({ id: org.id, name: org.name })}
                   className="p-2 rounded-lg text-white/30 hover:text-red-400 hover:bg-red-400/[0.08] transition-colors"
                   title="Remove"
                 >

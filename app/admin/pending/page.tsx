@@ -3,9 +3,8 @@
 import { useEffect, useState, useCallback } from 'react'
 import Link from 'next/link'
 import { useAuth } from '@/lib/auth-context'
-import {
-  getAllRegistrations, approveRegistration, PendingRegistration
-} from '@/lib/admin-store'
+import type { PendingRegistration } from '@/lib/admin-store'
+import { getAllRegistrationsFS, approveRegistrationFS } from '@/lib/admin-firestore'
 import { Input } from '@/components/ui/input'
 import {
   Building2, Film, Clock, CheckCircle2, XCircle,
@@ -31,7 +30,7 @@ function StatusBadge({ status }: { status: PendingRegistration['status'] }) {
   )
 }
 
-function TypeBadge({ type }: { type: 'agency' | 'production' }) {
+function TypeBadge({ type }: { type: string }) {
   return type === 'agency' ? (
     <span className="inline-flex items-center gap-1 px-2 py-0.5 rounded-md bg-[#0763d8]/10 text-[#0763d8] text-xs font-medium border border-[#0763d8]/20">
       <Building2 className="w-3 h-3" /> Agency
@@ -53,8 +52,9 @@ export default function PendingPage() {
   const [filter, setFilter] = useState<FilterTab>('pending')
   const [search, setSearch] = useState('')
 
-  const load = useCallback(() => {
-    setRegistrations(getAllRegistrations())
+  const load = useCallback(async () => {
+    const data = await getAllRegistrationsFS()
+    setRegistrations(data)
   }, [])
 
   useEffect(() => { load() }, [load])
@@ -68,8 +68,8 @@ export default function PendingPage() {
     return true
   })
 
-  const handleApprove = (id: string) => {
-    approveRegistration(id, user?.id ?? 'admin')
+  const handleApprove = async (id: string) => {
+    await approveRegistrationFS(id, user?.id ?? 'admin')
     load()
   }
 

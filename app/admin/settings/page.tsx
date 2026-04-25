@@ -1,7 +1,9 @@
 'use client'
 
 import { useState, useEffect } from 'react'
-import { getVACategories, saveVACategory, deleteVACategory, VACategory, getRfiFields, saveRfiFields, RfiField, resetRfiToDefaults } from '@/lib/admin-store'
+import { getVACategoriesFS, saveVACategoryFS, deleteVACategoryFS, getRfiFieldsFS, saveRfiFieldsFS } from '@/lib/admin-firestore'
+import type { VACategory, RfiField } from '@/lib/admin-store'
+import { toast } from 'sonner'
 import { Plus, Save, Settings2, Trash2, FileText, GripVertical, Check, AlertCircle } from 'lucide-react'
 
 const FIELD_TYPES = ['text', 'textarea', 'file', 'select', 'number', 'date', 'checkbox', 'table']
@@ -14,23 +16,23 @@ export default function SettingsPage() {
   const [catDeleteConfirm, setCatDeleteConfirm] = useState<string | null>(null)
 
   useEffect(() => {
-    setCategories(getVACategories())
+    getVACategoriesFS().then(setCategories)
   }, [])
 
   useEffect(() => {
-    setRfiFields(getRfiFields(activeRfiCategoryId))
+    getRfiFieldsFS(activeRfiCategoryId).then(setRfiFields)
   }, [activeRfiCategoryId])
 
   // ── Categories ──────────────────────────────────────────────────────────────
 
-  const handleAddCategory = () => {
+  const handleAddCategory = async () => {
     const newCat = {
       id: `cat-${Date.now()}`,
       name: 'New Category',
       iconSvg: '<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-square"><rect width="18" height="18" x="3" y="3" rx="2"/></svg>'
     }
-    setCategories([...categories, newCat])
-    saveVACategory(newCat)
+    await saveVACategoryFS(newCat)
+    setCategories(prev => [...prev, newCat])
   }
 
   const updateCategory = (id: string, field: keyof VACategory, value: string) => {
@@ -38,17 +40,17 @@ export default function SettingsPage() {
     setCategories(updated)
   }
   
-  const saveCategory = (id: string) => {
+  const saveCategory = async (id: string) => {
     const cat = categories.find(c => c.id === id)
     if (cat) {
-      saveVACategory(cat)
-      alert('Category saved')
+      await saveVACategoryFS(cat)
+      toast.success('Category saved')
     }
   }
 
-  const handleDeleteCategory = (id: string) => {
+  const handleDeleteCategory = async (id: string) => {
     if (catDeleteConfirm === id) {
-      deleteVACategory(id)
+      await deleteVACategoryFS(id)
       setCategories(prev => prev.filter(c => c.id !== id))
       setCatDeleteConfirm(null)
     } else {
@@ -80,9 +82,9 @@ export default function SettingsPage() {
     setRfiFields(prev => prev.filter(f => f.id !== id))
   }
 
-  const handleSaveRfi = () => {
+  const handleSaveRfi = async () => {
     if (!activeRfiCategoryId) return
-    saveRfiFields(activeRfiCategoryId, rfiFields)
+    await saveRfiFieldsFS(activeRfiCategoryId, rfiFields)
     setRfiSaved(true)
     setTimeout(() => setRfiSaved(false), 2500)
   }
@@ -172,15 +174,15 @@ export default function SettingsPage() {
             <div className="flex items-center gap-2">
               <span className="text-xs text-white/30">{rfiFields.length} fields</span>
               <button
-                onClick={() => {
-                    if (confirm('Are you sure you want to reset this RFI to platform defaults? All custom changes will be lost.')) {
-                      resetRfiToDefaults(activeRfiCategoryId)
-                      setRfiFields(getRfiFields(activeRfiCategoryId))
-                    }
+                onClick={async () => {
+                  if (confirm('Reset this RFI to empty? All custom changes will be lost.')) {
+                    await saveRfiFieldsFS(activeRfiCategoryId, [])
+                    setRfiFields([])
+                  }
                 }}
                 className="text-xs text-white/40 hover:text-white/60 px-3 py-1.5 border border-white/10 rounded-lg mr-2"
               >
-                Reset to Defaults
+                Clear All Fields
               </button>
               <button
                 onClick={handleSaveRfi}

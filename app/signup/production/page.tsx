@@ -2,7 +2,7 @@
 
 import { useRouter } from 'next/navigation'
 import { useEffect, useState } from 'react'
-import { getRfiFields, submitForApproval } from '@/lib/admin-store'
+import { getRfiFieldsFS, submitForApprovalFS } from '@/lib/admin-firestore'
 import { DynamicRfiForm } from '@/components/dynamic-rfi-form'
 import { VaLogo } from '@/components/va-logo'
 import { useAuth } from '@/lib/auth-context'
@@ -15,14 +15,14 @@ export default function ProductionSignupPage() {
   const [success, setSuccess] = useState(false)
 
   useEffect(() => {
-    setFields(getRfiFields('cat-production'))
+    getRfiFieldsFS('cat-production').then(setFields)
   }, [])
 
   const handleSubmit = async (data: Record<string, any>) => {
     setIsSubmitting(true)
     await new Promise(r => setTimeout(r, 1500))
     
-    submitForApproval({
+    await submitForApprovalFS({
       type: 'production',
       companyName: data['rpr-1'] || 'New Production House',
       submittedByUserId: user?.id || 'guest',

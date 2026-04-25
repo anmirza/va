@@ -9,7 +9,7 @@ import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
 import { useSearchParams } from 'next/navigation'
 import { useAuth } from '@/lib/auth-context'
-import { createOrg, createInvitation, getOrgById, updateOrg } from '@/lib/admin-store'
+import { createOrgFS, createInvitationFS, getOrgByIdFS, updateOrgFS } from '@/lib/admin-firestore'
 import {
   AGENCY_CATEGORIES, TOP_CURRENCIES, EMPLOYEE_SIZES, COMPANY_LEVELS,
   COUNTRY_COVERAGE, COUNTRIES, COMMUNICATION_AREAS, AGENCY_SERVICE_GROUPS,
@@ -120,10 +120,10 @@ export default function AgencySignupPage() {
 
   useEffect(() => {
     if (editId) {
-      const org = getOrgById(editId)
-      if (org && org.profileData) {
-        setIsEditMode(true)
-        const p: any = org.profileData
+      getOrgByIdFS(editId).then(org => {
+        if (org && org.profileData) {
+          setIsEditMode(true)
+          const p: any = org.profileData
         setBusinessName(p.businessName || '')
         setDunsNumber(p.dunsNumber || '')
         setVatNumber(p.vatNumber || '')
@@ -172,7 +172,8 @@ export default function AgencySignupPage() {
         if (p.investments) setInvestments(p.investments)
         setStrategicDev(p.strategicDev || '')
         setActivityOutside(p.activityOutside || '')
-      }
+        }
+      })
     }
   }, [editId])
 
@@ -209,7 +210,7 @@ export default function AgencySignupPage() {
     }
     
     if (isEditMode && editId) {
-      updateOrg(editId, {
+      await updateOrgFS(editId, {
         name: businessName,
         country: country,
         category: category,
@@ -220,7 +221,7 @@ export default function AgencySignupPage() {
       return;
     }
 
-    const org = createOrg({
+    const org = await createOrgFS({
       name: businessName,
       country: country,
       category: category,
@@ -235,8 +236,8 @@ export default function AgencySignupPage() {
     setStep(9)
   }
 
-  const handleGenerateInvite = () => {
-    const inv = createInvitation(orgId, businessName, 'agency', user?.id ?? 'admin', inviteEmail || undefined)
+  const handleGenerateInvite = async () => {
+    const inv = await createInvitationFS(orgId, businessName, 'agency', user?.id ?? 'admin', inviteEmail || undefined)
     const url = `${window.location.origin}/signup/accept-invite?token=${inv.token}`
     setInviteLink(url)
   }
@@ -261,7 +262,7 @@ export default function AgencySignupPage() {
   }, [shouldScrollToNewContact, contacts.length])
 
   return (
-    <div className="min-h-screen flex flex-col">
+    <div className="flex flex-col">
       <div className="flex-1 max-w-5xl w-full mx-auto px-4 pt-4 pb-10">
         
         <Link href="/admin/agencies" className="inline-flex items-center gap-2 text-sm text-white/40 hover:text-white mb-6 transition-colors">

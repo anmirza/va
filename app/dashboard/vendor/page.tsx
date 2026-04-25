@@ -8,7 +8,8 @@ import { AuthGuard } from '@/components/auth-guard'
 import { Header } from '@/components/header'
 import { Button } from '@/components/ui/button'
 import { companies } from '@/lib/mock-data'
-import { getRegistrationsByUser, PendingRegistration, getVACategories, VACategory } from '@/lib/admin-store'
+import type { PendingRegistration, VACategory } from '@/lib/admin-store'
+import { getRegistrationsByUserFS, getVACategoriesFS } from '@/lib/admin-firestore'
 import { CategoryIcon } from '@/components/category-icon'
 import {
   Building2, Film, Plus, Settings, ExternalLink,
@@ -110,9 +111,9 @@ function VendorDashboardContent() {
 
   useEffect(() => {
     if (user?.id) {
-      setPendingRegs(getRegistrationsByUser(user.id))
+      getRegistrationsByUserFS(user.id).then(setPendingRegs)
     }
-    setCategories(getVACategories())
+    getVACategoriesFS().then(setCategories)
   }, [user?.id])
 
   const myCompanies = companies.filter(c =>
@@ -247,7 +248,7 @@ function VendorDashboardContent() {
                 <Link key={cat.id} href={`/signup/register/${cat.id}`}>
                   <div className="group glass-card rounded-2xl p-5 flex items-center gap-4 hover:border-[#0763d8]/40 hover:shadow-lg hover:shadow-[#0763d8]/10 transition-all cursor-pointer h-full">
                     <div className="w-11 h-11 rounded-xl bg-white/[0.05] border border-white/10 flex items-center justify-center shrink-0 group-hover:bg-[#0763d8]/10 group-hover:border-[#0763d8]/30 transition-colors">
-                      <CategoryIcon iconSvg={cat.iconSvg} className="w-5 h-5 text-white/40 group-hover:text-[#0763d8]" />
+                      <CategoryIcon categoryName={cat.name} className="w-5 h-5 text-white/40 group-hover:text-[#0763d8]" />
                     </div>
                     <div className="flex-1 min-w-0">
                       <p className="font-semibold text-white group-hover:text-white transition-colors">Add {cat.name}</p>

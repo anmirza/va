@@ -11,7 +11,7 @@ import { useSearchParams } from 'next/navigation'
 import { SOCIAL_RESPONSIBILITY_QUESTIONS, CSR_IMPACT_AREAS, ATTACHMENTS_REQUESTED, AI_QUESTIONS } from '@/lib/rfi-data'
 import { getTurnoverYears } from '@/lib/turnover-utils'
 import { useAuth } from '@/lib/auth-context'
-import { createOrg, createInvitation, getOrgById, updateOrg } from '@/lib/admin-store'
+import { createOrgFS, createInvitationFS, getOrgByIdFS, updateOrgFS } from '@/lib/admin-firestore'
 
 // ── Step definitions ──────────────────────────────────────────────────────────
 
@@ -168,11 +168,11 @@ export default function ProductionSignupPage() {
 
   useEffect(() => {
     if (editId) {
-      const org = getOrgById(editId)
-      if (org && org.profileData) {
-        setIsEditMode(true)
-        const p: any = org.profileData
-        setBusinessName(p.businessName || '')
+      getOrgByIdFS(editId).then(org => {
+        if (org && org.profileData) {
+          setIsEditMode(true)
+          const p: any = org.profileData
+          setBusinessName(p.businessName || '')
         setDunsNumber(p.dunsNumber || '')
         setVatNumber(p.vatNumber || '')
         setLegalForm(p.legalForm || '')
@@ -223,8 +223,9 @@ export default function ProductionSignupPage() {
         setSpecificServices(p.specificServices || '')
         if (p.aiAnswers) setAiAnswers(p.aiAnswers)
         setStrategicOrientation(p.strategicOrientation || '')
-        if (p.activityOutOfCountry !== undefined) setActivityOutOfCountry(p.activityOutOfCountry)
-      }
+          if (p.activityOutOfCountry !== undefined) setActivityOutOfCountry(p.activityOutOfCountry)
+        }
+      })
     }
   }, [editId])
 
@@ -270,7 +271,7 @@ export default function ProductionSignupPage() {
     }
     
     if (isEditMode && editId) {
-      updateOrg(editId, {
+      await updateOrgFS(editId, {
         name: businessName,
         country: country,
         category: category,
@@ -281,7 +282,7 @@ export default function ProductionSignupPage() {
       return;
     }
 
-    const org = createOrg({
+    const org = await createOrgFS({
       name: businessName,
       country: country,
       category: category,
@@ -296,8 +297,8 @@ export default function ProductionSignupPage() {
     setStep(14)
   }
 
-  const handleGenerateInvite = () => {
-    const inv = createInvitation(orgId, businessName, 'production', user?.id ?? 'admin', inviteEmail || undefined)
+  const handleGenerateInvite = async () => {
+    const inv = await createInvitationFS(orgId, businessName, 'production', user?.id ?? 'admin', inviteEmail || undefined)
     const url = `${window.location.origin}/signup/accept-invite?token=${inv.token}`
     setInviteLink(url)
   }
@@ -324,7 +325,7 @@ export default function ProductionSignupPage() {
   ]
 
   return (
-    <div className="min-h-screen flex flex-col">
+    <div className="flex flex-col">
       <div className="flex-1 max-w-5xl w-full mx-auto px-4 pt-4 pb-10">
         
         <Link href="/admin/production" className="inline-flex items-center gap-2 text-sm text-white/40 hover:text-white mb-6 transition-colors">

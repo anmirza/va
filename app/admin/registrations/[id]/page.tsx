@@ -4,9 +4,8 @@ import { useEffect, useState } from 'react'
 import { useParams, useRouter } from 'next/navigation'
 import Link from 'next/link'
 import { useAuth } from '@/lib/auth-context'
-import {
-  getRegistrationById, approveRegistration, rejectRegistration, PendingRegistration,
-} from '@/lib/admin-store'
+import type { PendingRegistration } from '@/lib/admin-store'
+import { getRegistrationByIdFS, approveRegistrationFS, rejectRegistrationFS } from '@/lib/admin-firestore'
 import { REGISTRATION_STEPS } from '@/lib/rfi-data'
 import { Button } from '@/components/ui/button'
 import {
@@ -415,9 +414,10 @@ export default function RegistrationDetailPage() {
 
   useEffect(() => {
     if (id) {
-      const r = getRegistrationById(id)
-      if (!r) router.replace('/admin/pending')
-      else setReg(r)
+      getRegistrationByIdFS(id as string).then(r => {
+        if (!r) router.replace('/admin/pending')
+        else setReg(r)
+      })
     }
   }, [id, router])
 
@@ -433,14 +433,14 @@ export default function RegistrationDetailPage() {
   const StepRenderer = STEP_RENDERERS[step - 1]
   const totalSteps = REGISTRATION_STEPS.length
 
-  const handleApprove = () => {
-    approveRegistration(reg.id, user?.id ?? 'admin')
+  const handleApprove = async () => {
+    await approveRegistrationFS(reg.id, user?.id ?? 'admin')
     setReg(r => r ? { ...r, status: 'approved' } : r)
   }
 
-  const handleReject = () => {
+  const handleReject = async () => {
     if (!rejectReason.trim()) return
-    rejectRegistration(reg.id, rejectReason)
+    await rejectRegistrationFS(reg.id, user?.id ?? 'admin', rejectReason)
     setReg(r => r ? { ...r, status: 'rejected', rejectionReason: rejectReason } : r)
     setShowRejectDialog(false)
   }

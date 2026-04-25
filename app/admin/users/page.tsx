@@ -1,8 +1,9 @@
 'use client'
 
 import { useEffect, useState } from 'react'
-import { mockUsers } from '@/lib/mock-data'
-import { Shield, Users, Crown, User, Search, Filter } from 'lucide-react'
+import { getAllUsersFS } from '@/lib/admin-firestore'
+import type { User } from '@/lib/mock-data'
+import { Shield, Users, Crown, User as UserIcon, Search, Filter } from 'lucide-react'
 
 const ROLE_LABELS: Record<string, string> = {
   super_admin: 'Super Admin',
@@ -32,12 +33,12 @@ const ROLE_ICONS: Record<string, React.ElementType> = {
   super_admin: Crown,
   admin: Shield,
   moderator: Users,
-  vendor: User,
-  client: User,
-  talent: User,
-  agency_owner: User,
-  production: User,
-  user: User,
+  vendor: UserIcon,
+  client: UserIcon,
+  talent: UserIcon,
+  agency_owner: UserIcon,
+  production: UserIcon,
+  user: UserIcon,
 }
 
 function formatDate(iso?: string) {
@@ -46,12 +47,21 @@ function formatDate(iso?: string) {
 }
 
 export default function UsersPage() {
+  const [allUsers, setAllUsers] = useState<User[]>([])
   const [query, setQuery] = useState('')
   const [roleFilter, setRoleFilter] = useState('all')
   const [accountTypeFilter, setAccountTypeFilter] = useState('all')
+  const [isLoading, setIsLoading] = useState(true)
 
-  const filteredUsers = mockUsers.filter(u => {
-    if (query && !u.name.toLowerCase().includes(query.toLowerCase()) && !u.email.toLowerCase().includes(query.toLowerCase())) return false
+  useEffect(() => {
+    getAllUsersFS().then(data => {
+      setAllUsers(data as User[])
+      setIsLoading(false)
+    })
+  }, [])
+
+  const filteredUsers = allUsers.filter(u => {
+    if (query && !u.name?.toLowerCase().includes(query.toLowerCase()) && !u.email?.toLowerCase().includes(query.toLowerCase())) return false
     if (roleFilter !== 'all' && u.role !== roleFilter) return false
     if (accountTypeFilter !== 'all' && u.accountType !== accountTypeFilter) return false
     return true
@@ -112,7 +122,7 @@ export default function UsersPage() {
 
         <div className="divide-y divide-white/[0.04]">
           {filteredUsers.map(u => {
-            const Icon = ROLE_ICONS[u.role] ?? User
+            const Icon = ROLE_ICONS[u.role] ?? UserIcon
             return (
               <div key={u.id} className="flex items-center gap-4 px-5 py-4 hover:bg-white/[0.02] transition-colors">
                 <div className="md:grid md:grid-cols-[1fr_160px_100px_120px] md:gap-4 md:items-center flex-1 min-w-0">
@@ -167,7 +177,7 @@ export default function UsersPage() {
       </div>
 
       <p className="text-xs text-white/20 mt-4">
-        Showing {mockUsers.length} seed users. Live-registered users will also appear here once persisted to a database.
+        Showing {allUsers.length} registered users.
       </p>
     </div>
   )

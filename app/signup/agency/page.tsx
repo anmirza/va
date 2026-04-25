@@ -2,7 +2,7 @@
 
 import { useRouter } from 'next/navigation'
 import { useEffect, useState } from 'react'
-import { getRfiFields, submitForApproval } from '@/lib/admin-store'
+import { getRfiFieldsFS, submitForApprovalFS } from '@/lib/admin-firestore'
 import { DynamicRfiForm } from '@/components/dynamic-rfi-form'
 import { VaLogo } from '@/components/va-logo'
 import { useAuth } from '@/lib/auth-context'
@@ -15,14 +15,14 @@ export default function AgencySignupPage() {
   const [success, setSuccess] = useState(false)
 
   useEffect(() => {
-    setFields(getRfiFields('cat-agency'))
+    getRfiFieldsFS('cat-agency').then(setFields)
   }, [])
 
   const handleSubmit = async (data: Record<string, any>) => {
     setIsSubmitting(true)
     await new Promise(r => setTimeout(r, 1500))
     
-    submitForApproval({
+    await submitForApprovalFS({
       type: 'agency',
       companyName: data['rag-1'] || 'New Agency',
       submittedByUserId: user?.id || 'guest',

@@ -1,6 +1,7 @@
 import type { Metadata } from 'next'
 import { DM_Serif_Display, DM_Sans, IBM_Plex_Mono } from 'next/font/google'
 import { Analytics } from '@vercel/analytics/next'
+import { Toaster } from 'sonner'
 import { AuthProvider } from '@/lib/auth-context'
 import { FollowProvider } from '@/lib/follow-context'
 import './globals.css'
@@ -36,6 +37,7 @@ export default function RootLayout({
             {children}
           </FollowProvider>
         </AuthProvider>
+        <Toaster position="top-right" richColors />
         <Analytics />
       </body>
     </html>

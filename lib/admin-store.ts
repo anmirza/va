@@ -14,14 +14,22 @@ export type RegistrationStatus = 'pending' | 'approved' | 'rejected'
 export interface ClientCompany {
   id: string
   name: string
-  holding?: string
+  // Corporate hierarchy
+  holdingCompany?: string
   regionalHub?: string
   region?: string
   localCompany?: string
   country?: string
+  // Legacy field (kept for compatibility)
+  holding?: string
+  // Subscription
   createdAt: string
-  tokens: number
+  tokens: number            // total Agency Search & Selection credits purchased
+  tokensUsed: number        // credits consumed
+  packageSize: number       // agencies per package (6 or 12)
   status: 'active' | 'suspended'
+  createdByAdminId?: string
+  notes?: string
 }
 
 export interface ClientUser {
@@ -841,8 +849,8 @@ export function seedDummyData() {
   
   // Seed client companies
   const dummyClients: ClientCompany[] = [
-    { id: 'ccmp-1', name: 'Coca-Cola', holding: 'The Coca-Cola Company', tokens: 0, status: 'active', createdAt: new Date().toISOString() },
-    { id: 'ccmp-2', name: 'Coca-Cola Italy', holding: 'The Coca-Cola Company', region: 'Europe', country: 'Italy', tokens: 12, status: 'active', createdAt: new Date().toISOString() }
+    { id: 'ccmp-1', name: 'Coca-Cola', holding: 'The Coca-Cola Company', tokens: 0, tokensUsed: 0, packageSize: 6, status: 'active', createdAt: new Date().toISOString() },
+    { id: 'ccmp-2', name: 'Coca-Cola Italy', holding: 'The Coca-Cola Company', region: 'Europe', country: 'Italy', tokens: 12, tokensUsed: 3, packageSize: 6, status: 'active', createdAt: new Date().toISOString() }
   ]
   saveClientCompanies(dummyClients)
 
