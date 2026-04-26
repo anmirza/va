@@ -414,7 +414,7 @@ export function AgencyRfiForm({ mode, editId, onDone }: AgencyRfiFormProps) {
         {/* ── STEP 1 — General Information ── */}
         {step === 1 && (
           <div>
-            <StepHeader icon="🏢" title={stepLabels[0]?.label ?? 'General Information'} subtitle="Legal identity, Organisation & Structure" />
+            <StepHeader icon={stepLabels[0]?.icon ?? '🏢'} title={stepLabels[0]?.label ?? 'General Information'} subtitle={stepLabels[0]?.subtitle ?? 'Legal identity, Organisation & Structure'} />
             <div className="mb-8">
               <h3 className="text-sm font-semibold text-white/80 mb-4 flex items-center gap-2">
                 <span className="w-1 h-4 bg-[#0763d8] rounded-full" />Legal identity
@@ -483,7 +483,7 @@ export function AgencyRfiForm({ mode, editId, onDone }: AgencyRfiFormProps) {
         {/* ── STEP 2 — Contacts ── */}
         {step === 2 && (
           <div>
-            <StepHeader icon="📞" title={stepLabels[1]?.label ?? 'Contacts'} subtitle="Key contacts and social media" />
+            <StepHeader icon={stepLabels[1]?.icon ?? '📞'} title={stepLabels[1]?.label ?? 'Contacts'} subtitle={stepLabels[1]?.subtitle ?? 'Key contacts and social media'} />
             <div className="flex items-center justify-between mb-4">
               <p className="text-xs font-bold text-white/60 uppercase tracking-widest">Key Contacts</p>
               <Button type="button" variant="outline" onClick={() => {
@@ -537,7 +537,7 @@ export function AgencyRfiForm({ mode, editId, onDone }: AgencyRfiFormProps) {
         {/* ── STEP 3 — Location, About & Turnover ── */}
         {step === 3 && (
           <div>
-            <StepHeader icon="📍" title={stepLabels[2]?.label ?? 'Location & Profile'} subtitle="Registered address, agency overview, and financial information" />
+            <StepHeader icon={stepLabels[2]?.icon ?? '📍'} title={stepLabels[2]?.label ?? 'Location & Profile'} subtitle={stepLabels[2]?.subtitle ?? 'Registered address, agency overview, and financial information'} />
             <h3 className="text-sm font-semibold text-white/80 mb-4 flex items-center gap-2">
               <span className="w-1 h-4 bg-[#0763d8] rounded-full" />Registered Office Address
             </h3>
@@ -668,7 +668,7 @@ export function AgencyRfiForm({ mode, editId, onDone }: AgencyRfiFormProps) {
         {/* ── STEP 4 — Knowledge & Competencies ── */}
         {step === 4 && (
           <div>
-            <StepHeader icon="🎯" title={stepLabels[3]?.label ?? 'Knowledge & Competencies'} subtitle="Communication areas, capabilities, and service expertise" />
+            <StepHeader icon={stepLabels[3]?.icon ?? '🎯'} title={stepLabels[3]?.label ?? 'Knowledge & Competencies'} subtitle={stepLabels[3]?.subtitle ?? 'Communication areas, capabilities, and service expertise'} />
             <p className="text-xs font-bold text-white/60 uppercase tracking-widest mb-3">Communication Areas</p>
             <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-2 mb-8">
               {COMMUNICATION_AREAS.map(area => (
@@ -760,7 +760,7 @@ export function AgencyRfiForm({ mode, editId, onDone }: AgencyRfiFormProps) {
         {/* ── STEP 5 — Governance & SOW ── */}
         {step === 5 && (
           <div>
-            <StepHeader icon="📋" title={stepLabels[4]?.label ?? 'Governance & SOW'} subtitle="Governance questions and statements of work" />
+            <StepHeader icon={stepLabels[4]?.icon ?? '📋'} title={stepLabels[4]?.label ?? 'Governance & SOW'} subtitle={stepLabels[4]?.subtitle ?? 'Governance questions and statements of work'} />
             <div className="space-y-5">
               <div className="border-t border-white/[0.06] pt-5">
                 <p className="text-xs font-bold text-white/60 uppercase tracking-widest mb-4">Governance</p>
@@ -784,7 +784,7 @@ export function AgencyRfiForm({ mode, editId, onDone }: AgencyRfiFormProps) {
         {/* ── STEP 6 — People & Talent ── */}
         {step === 6 && (
           <div>
-            <StepHeader icon="👥" title={stepLabels[5]?.label ?? 'People & Talent'} subtitle="Staff headcount by department and primary talent" />
+            <StepHeader icon={stepLabels[5]?.icon ?? '👥'} title={stepLabels[5]?.label ?? 'People & Talent'} subtitle={stepLabels[5]?.subtitle ?? 'Staff headcount by department and primary talent'} />
             <p className="text-xs text-white/30 italic mb-4">Note: Complete Annual Salary column only upon receipt of RFI during a pitch process.</p>
             <div className="space-y-6">
               {AGENCY_PEOPLE_DEPARTMENTS.map(dept => (
@@ -852,7 +852,7 @@ export function AgencyRfiForm({ mode, editId, onDone }: AgencyRfiFormProps) {
         {/* ── STEP 7 — Awards & Infos ── */}
         {step === 7 && (
           <div>
-            <StepHeader icon="🏆" title={stepLabels[6]?.label ?? 'Awards & Infos'} subtitle="Awards, AI usage, and social responsibility" />
+            <StepHeader icon={stepLabels[6]?.icon ?? '🏆'} title={stepLabels[6]?.label ?? 'Awards & Infos'} subtitle={stepLabels[6]?.subtitle ?? 'Awards, AI usage, and social responsibility'} />
             <div className="space-y-4 mb-4">
               {awards.map((award, i) => (
                 <div key={i} className="grid grid-cols-1 sm:grid-cols-[1.5fr_1fr_1fr_80px_1fr_1fr_auto] gap-2 items-center bg-white/[0.02] p-3 rounded-xl border border-white/[0.04]">
@@ -888,7 +888,7 @@ export function AgencyRfiForm({ mode, editId, onDone }: AgencyRfiFormProps) {
         {/* ── STEP 8 — Add-On ── */}
         {step === 8 && (
           <div>
-            <StepHeader icon="📎" title={stepLabels[7]?.label ?? 'Add-On'} subtitle="Investments, strategic development, social responsibility, and attachments" />
+            <StepHeader icon={stepLabels[7]?.icon ?? '📎'} title={stepLabels[7]?.label ?? 'Add-On'} subtitle={stepLabels[7]?.subtitle ?? 'Investments, strategic development, social responsibility, and attachments'} />
             <h3 className="text-sm font-semibold text-white/80 mb-4 flex items-center gap-2">
               <span className="w-1 h-4 bg-[#0763d8] rounded-full" />% of Turnover Invested
             </h3>

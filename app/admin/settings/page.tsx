@@ -108,8 +108,33 @@ export default function SettingsPage() {
     toast.success('Step labels saved')
   }
 
-  const updateStepLabel = (idx: number, field: 'label' | 'shortLabel', value: string) => {
+  const updateStepLabel = (idx: number, field: 'label' | 'shortLabel' | 'subtitle' | 'icon', value: string) => {
     setStepLabels(prev => prev.map((s, i) => i === idx ? { ...s, [field]: value } : s))
+  }
+
+  const updateSubSection = (stepIdx: number, secIdx: number, value: string) => {
+    setStepLabels(prev => prev.map((s, i) => {
+      if (i !== stepIdx) return s
+      const subs = [...(s.subSections ?? [])]
+      subs[secIdx] = { ...subs[secIdx], label: value }
+      return { ...s, subSections: subs }
+    }))
+  }
+
+  const addSubSection = (stepIdx: number) => {
+    setStepLabels(prev => prev.map((s, i) => {
+      if (i !== stepIdx) return s
+      const subs = [...(s.subSections ?? []), { key: `sub-${Date.now()}`, label: 'New Sub-section' }]
+      return { ...s, subSections: subs }
+    }))
+  }
+
+  const removeSubSection = (stepIdx: number, secIdx: number) => {
+    setStepLabels(prev => prev.map((s, i) => {
+      if (i !== stepIdx) return s
+      const subs = (s.subSections ?? []).filter((_, j) => j !== secIdx)
+      return { ...s, subSections: subs }
+    }))
   }
 
   const moveRfiField = (idx: number, dir: -1 | 1) => {
@@ -282,30 +307,93 @@ export default function SettingsPage() {
                     {stepLabelsSaved ? 'Saved!' : 'Save Labels'}
                   </button>
                 </div>
-                <div className="space-y-2">
+                <div className="space-y-3">
                   {stepLabels.map((step, idx) => (
-                    <div key={step.key} className="flex items-center gap-4 bg-white/[0.02] border border-white/[0.06] p-3 rounded-xl">
-                      <span className="w-6 h-6 rounded-full bg-[#0763d8]/20 text-[#0763d8] text-xs font-bold flex items-center justify-center shrink-0">{idx + 1}</span>
-                      <span className="text-xs text-white/30 w-32 shrink-0 font-mono">{step.key}</span>
-                      <div className="flex-1 grid grid-cols-1 sm:grid-cols-2 gap-3">
+                    <details key={step.key} className="group/step bg-white/[0.02] border border-white/[0.06] rounded-xl overflow-hidden">
+                      <summary className="flex items-center gap-4 p-3 cursor-pointer list-none hover:bg-white/[0.03] transition-colors">
+                        <span className="w-6 h-6 rounded-full bg-[#0763d8]/20 text-[#0763d8] text-xs font-bold flex items-center justify-center shrink-0">{idx + 1}</span>
+                        <span className="text-xs text-white/30 w-32 shrink-0 font-mono hidden sm:block">{step.key}</span>
+                        <span className="flex-1 text-sm text-white font-medium truncate">{step.label || <span className="text-white/20 italic">Untitled</span>}</span>
+                        <span className="text-[10px] text-white/20 group-open/step:hidden">▼ expand</span>
+                        <span className="text-[10px] text-white/20 hidden group-open/step:inline">▲ collapse</span>
+                      </summary>
+
+                      <div className="px-4 pb-4 pt-2 border-t border-white/[0.04] space-y-4">
+                        {/* Row 1: label + shortLabel + icon */}
+                        <div className="grid grid-cols-1 sm:grid-cols-[1fr_160px_80px] gap-3">
+                          <div>
+                            <label className="text-[10px] text-white/30 uppercase tracking-wider mb-1 block">Full Label</label>
+                            <input
+                              value={step.label}
+                              onChange={e => updateStepLabel(idx, 'label', e.target.value)}
+                              className="w-full bg-black/20 border border-white/10 rounded-lg px-3 py-1.5 text-white text-sm focus:border-[#0763d8]/40 outline-none"
+                            />
+                          </div>
+                          <div>
+                            <label className="text-[10px] text-white/30 uppercase tracking-wider mb-1 block">Short Label</label>
+                            <input
+                              value={step.shortLabel}
+                              onChange={e => updateStepLabel(idx, 'shortLabel', e.target.value)}
+                              className="w-full bg-black/20 border border-white/10 rounded-lg px-3 py-1.5 text-white text-sm focus:border-[#0763d8]/40 outline-none"
+                            />
+                          </div>
+                          <div>
+                            <label className="text-[10px] text-white/30 uppercase tracking-wider mb-1 block">Icon (emoji)</label>
+                            <input
+                              value={step.icon ?? ''}
+                              onChange={e => updateStepLabel(idx, 'icon', e.target.value)}
+                              placeholder="🏢"
+                              className="w-full bg-black/20 border border-white/10 rounded-lg px-3 py-1.5 text-white text-center text-lg focus:border-[#0763d8]/40 outline-none"
+                            />
+                          </div>
+                        </div>
+
+                        {/* Row 2: subtitle */}
                         <div>
-                          <label className="text-[10px] text-white/30 uppercase tracking-wider mb-1 block">Full Label</label>
+                          <label className="text-[10px] text-white/30 uppercase tracking-wider mb-1 block">Subtitle (shown below step title)</label>
                           <input
-                            value={step.label}
-                            onChange={e => updateStepLabel(idx, 'label', e.target.value)}
-                            className="w-full bg-black/20 border border-white/10 rounded-lg px-3 py-1.5 text-white text-sm focus:border-[#0763d8]/40 outline-none"
+                            value={step.subtitle ?? ''}
+                            onChange={e => updateStepLabel(idx, 'subtitle', e.target.value)}
+                            placeholder="e.g. Legal identity, Organisation & Structure"
+                            className="w-full bg-black/20 border border-white/10 rounded-lg px-3 py-1.5 text-white/70 text-sm focus:border-[#0763d8]/40 outline-none"
                           />
                         </div>
+
+                        {/* Row 3: sub-sections */}
                         <div>
-                          <label className="text-[10px] text-white/30 uppercase tracking-wider mb-1 block">Short Label</label>
-                          <input
-                            value={step.shortLabel}
-                            onChange={e => updateStepLabel(idx, 'shortLabel', e.target.value)}
-                            className="w-full bg-black/20 border border-white/10 rounded-lg px-3 py-1.5 text-white text-sm focus:border-[#0763d8]/40 outline-none"
-                          />
+                          <div className="flex items-center justify-between mb-2">
+                            <label className="text-[10px] text-white/30 uppercase tracking-wider">Sub-section Headings</label>
+                            <button
+                              onClick={() => addSubSection(idx)}
+                              className="text-[10px] text-[#0763d8] hover:text-[#0655b3] flex items-center gap-1 border border-[#0763d8]/20 px-2 py-0.5 rounded-md"
+                            >
+                              <Plus className="w-3 h-3" /> Add
+                            </button>
+                          </div>
+                          {(step.subSections ?? []).length === 0 && (
+                            <p className="text-xs text-white/20 italic">No sub-sections. Click Add to create one.</p>
+                          )}
+                          <div className="space-y-1.5">
+                            {(step.subSections ?? []).map((sec, secIdx) => (
+                              <div key={sec.key} className="flex items-center gap-2">
+                                <span className="text-[10px] font-mono text-white/20 w-16 shrink-0 truncate">{sec.key}</span>
+                                <input
+                                  value={sec.label}
+                                  onChange={e => updateSubSection(idx, secIdx, e.target.value)}
+                                  className="flex-1 bg-black/20 border border-white/10 rounded-lg px-3 py-1 text-white/70 text-xs focus:border-[#0763d8]/40 outline-none"
+                                />
+                                <button
+                                  onClick={() => removeSubSection(idx, secIdx)}
+                                  className="p-1 text-white/20 hover:text-red-400 hover:bg-red-400/10 rounded transition-colors"
+                                >
+                                  <Trash2 className="w-3 h-3" />
+                                </button>
+                              </div>
+                            ))}
+                          </div>
                         </div>
                       </div>
-                    </div>
+                    </details>
                   ))}
                   {stepLabels.length === 0 && (
                     <div className="text-center py-8 text-white/30 text-sm">

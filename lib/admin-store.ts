@@ -53,6 +53,12 @@ export interface RfiStep {
   key: string
   label: string
   shortLabel: string
+  /** Subtitle shown below the step header title */
+  subtitle?: string
+  /** Emoji / icon shown beside the step title */
+  icon?: string
+  /** Editable sub-section headings within a step */
+  subSections?: { key: string; label: string }[]
 }
 
 export interface RfiField {

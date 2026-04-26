@@ -475,7 +475,7 @@ export function ProductionRfiForm({ mode, editId, onDone }: ProductionRfiFormPro
         {/* STEP 2 — Organisation */}
         {step === 2 && (
           <div>
-            <StepHeader icon="🏗️" title={stepLabels[1]?.label ?? 'Organisation'} subtitle="Your company's size and corporate position" />
+            <StepHeader icon={stepLabels[1]?.icon ?? '🏗️'} title={stepLabels[1]?.label ?? 'Organisation'} subtitle={stepLabels[1]?.subtitle ?? 'Your company\'s size and corporate position'} />
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-5">
               <FormField label="# of Employees" required>
                 <select value={employees} onChange={e => setEmployees(e.target.value)} className={selectCls}>
@@ -510,7 +510,7 @@ export function ProductionRfiForm({ mode, editId, onDone }: ProductionRfiFormPro
         {/* STEP 3 — Address */}
         {step === 3 && (
           <div>
-            <StepHeader icon="📍" title={stepLabels[2]?.label ?? 'Address'} subtitle="Official address and geographic coverage" />
+            <StepHeader icon={stepLabels[2]?.icon ?? '📍'} title={stepLabels[2]?.label ?? 'Address'} subtitle={stepLabels[2]?.subtitle ?? 'Official address and geographic coverage'} />
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-5">
               <FormField label="Country Coverage" className="sm:col-span-2">
                 <select value={countryCoverage} onChange={e => setCountryCoverage(e.target.value)} className={selectCls}>
@@ -537,7 +537,7 @@ export function ProductionRfiForm({ mode, editId, onDone }: ProductionRfiFormPro
         {/* STEP 4 — About */}
         {step === 4 && (
           <div>
-            <StepHeader icon="✍️" title={stepLabels[3]?.label ?? 'About'} subtitle="Describe your company and network" />
+            <StepHeader icon={stepLabels[3]?.icon ?? '✍️'} title={stepLabels[3]?.label ?? 'About'} subtitle={stepLabels[3]?.subtitle ?? 'Describe your company and network'} />
             <div className="space-y-6">
               <FormField label="About Your Production House">
                 <textarea value={about} onChange={e => setAbout(e.target.value)} rows={4} className={textareaCls} placeholder="A brief overview..." />
@@ -558,7 +558,7 @@ export function ProductionRfiForm({ mode, editId, onDone }: ProductionRfiFormPro
         {/* STEP 5 — Contacts */}
         {step === 5 && (
           <div>
-            <StepHeader icon="👤" title={stepLabels[4]?.label ?? 'Contacts'} subtitle="Key people at your production house" />
+            <StepHeader icon={stepLabels[4]?.icon ?? '👤'} title={stepLabels[4]?.label ?? 'Contacts'} subtitle={stepLabels[4]?.subtitle ?? 'Key people at your production house'} />
             <div className="flex items-center justify-between mb-4">
               <p className="text-xs font-bold text-white/60 uppercase tracking-widest">Key Contacts</p>
               <Button type="button" variant="outline" onClick={() => setContacts(p => [...p, { role: 'Additional Contact', firstName: '', lastName: '', email: '', linkedin: '', telephone: '', mobile: '' }])} className="text-xs h-8 px-3">
@@ -597,7 +597,7 @@ export function ProductionRfiForm({ mode, editId, onDone }: ProductionRfiFormPro
         {/* STEP 6 — Social Media */}
         {step === 6 && (
           <div>
-            <StepHeader icon="🔗" title={stepLabels[5]?.label ?? 'Social Media'} subtitle="Add your official profiles and website" />
+            <StepHeader icon={stepLabels[5]?.icon ?? '🔗'} title={stepLabels[5]?.label ?? 'Social Media'} subtitle={stepLabels[5]?.subtitle ?? 'Add your official profiles and website'} />
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-5">
               {[
                 { label: 'Official Website', val: website, set: setWebsite, ph: 'https://production.com' },
@@ -622,7 +622,7 @@ export function ProductionRfiForm({ mode, editId, onDone }: ProductionRfiFormPro
         {/* STEP 7 — Turnover & Clients */}
         {step === 7 && (
           <div>
-            <StepHeader icon="💰" title={stepLabels[6]?.label ?? 'Turnover & Clients'} subtitle="Financial data in EUR — Annual Revenue and EBITDA per region and year" />
+            <StepHeader icon={stepLabels[6]?.icon ?? '💰'} title={stepLabels[6]?.label ?? 'Turnover & Clients'} subtitle={stepLabels[6]?.subtitle ?? 'Financial data in EUR — Annual Revenue and EBITDA per region and year'} />
             <div className="overflow-x-auto mb-10">
               <table className="w-full text-sm border-collapse min-w-[700px]">
                 <thead>
@@ -734,7 +734,7 @@ export function ProductionRfiForm({ mode, editId, onDone }: ProductionRfiFormPro
         {/* STEP 8 — Competencies */}
         {step === 8 && (
           <div>
-            <StepHeader icon="🎯" title={stepLabels[7]?.label ?? 'Competencies'} subtitle="Select your communication areas and production capabilities by percentage" />
+            <StepHeader icon={stepLabels[7]?.icon ?? '🎯'} title={stepLabels[7]?.label ?? 'Competencies'} subtitle={stepLabels[7]?.subtitle ?? 'Select your communication areas and production capabilities by percentage'} />
             <div className="mb-8">
               <p className="text-xs font-bold text-white/50 uppercase tracking-widest mb-3">Communication Areas / Sectors</p>
               <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-2">
@@ -773,7 +773,7 @@ export function ProductionRfiForm({ mode, editId, onDone }: ProductionRfiFormPro
         {/* STEP 9 — Post-Production */}
         {step === 9 && (
           <div>
-            <StepHeader icon="🎞️" title={stepLabels[8]?.label ?? 'Post-Production'} subtitle="In-house post-production department and outsourced collaborators" />
+            <StepHeader icon={stepLabels[8]?.icon ?? '🎞️'} title={stepLabels[8]?.label ?? 'Post-Production'} subtitle={stepLabels[8]?.subtitle ?? 'In-house post-production department and outsourced collaborators'} />
             <div className="mb-8 border border-white/[0.1] rounded-xl p-6">
               <p className="text-sm font-bold text-white/80 mb-3">Do you have an in-house post-production department?</p>
               <div className="flex gap-6 mb-4">
@@ -844,7 +844,7 @@ export function ProductionRfiForm({ mode, editId, onDone }: ProductionRfiFormPro
         {/* STEP 10 — People & Directors */}
         {step === 10 && (
           <div>
-            <StepHeader icon="👥" title={stepLabels[9]?.label ?? 'People & Directors'} subtitle="Your team structure, key directors, and investment allocations" />
+            <StepHeader icon={stepLabels[9]?.icon ?? '👥'} title={stepLabels[9]?.label ?? 'People & Directors'} subtitle={stepLabels[9]?.subtitle ?? 'Your team structure, key directors, and investment allocations'} />
             <div className="mb-8">
               <p className="text-sm font-bold text-white/80 mb-4">Team Structure</p>
               <div className="flex gap-5 mb-5">
@@ -956,7 +956,7 @@ export function ProductionRfiForm({ mode, editId, onDone }: ProductionRfiFormPro
         {/* STEP 11 — Awards & CSR */}
         {step === 11 && (
           <div>
-            <StepHeader icon="🏆" title={stepLabels[10]?.label ?? 'Awards & CSR'} subtitle="List your award wins and answer CSR questions" />
+            <StepHeader icon={stepLabels[10]?.icon ?? '🏆'} title={stepLabels[10]?.label ?? 'Awards & CSR'} subtitle={stepLabels[10]?.subtitle ?? 'List your award wins and answer CSR questions'} />
             <div className="mb-10">
               <p className="text-sm font-bold text-white/80 mb-4">Award Wins</p>
               <div className="overflow-x-auto">
@@ -1022,7 +1022,7 @@ export function ProductionRfiForm({ mode, editId, onDone }: ProductionRfiFormPro
         {/* STEP 12 — Governance & AI */}
         {step === 12 && (
           <div>
-            <StepHeader icon="🏛️" title={stepLabels[11]?.label ?? 'Governance & AI'} subtitle="Describe your governance model and AI approach" />
+            <StepHeader icon={stepLabels[11]?.icon ?? '🏛️'} title={stepLabels[11]?.label ?? 'Governance & AI'} subtitle={stepLabels[11]?.subtitle ?? 'Describe your governance model and AI approach'} />
             <div className="space-y-6">
               <div>
                 <p className="text-sm font-bold text-white/80 mb-4">Governance & Scope of Work</p>
@@ -1060,7 +1060,7 @@ export function ProductionRfiForm({ mode, editId, onDone }: ProductionRfiFormPro
         {/* STEP 13 — Attachments */}
         {step === 13 && (
           <div>
-            <StepHeader icon="📎" title={stepLabels[12]?.label ?? 'Attachments'} subtitle="Upload required documents and presentation" />
+            <StepHeader icon={stepLabels[12]?.icon ?? '📎'} title={stepLabels[12]?.label ?? 'Attachments'} subtitle={stepLabels[12]?.subtitle ?? 'Upload required documents and presentation'} />
             <div className="space-y-6">
               <div>
                 <p className="text-sm font-bold text-white/80 mb-4">Attachments Requested</p>

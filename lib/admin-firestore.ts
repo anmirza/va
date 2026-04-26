@@ -223,6 +223,19 @@ export async function removeOrgFS(id: string, adminId: string): Promise<void> {
   await addActivity({ type: 'org_remove', description: `Removed org ${id}` })
 }
 
+export async function deleteOrgFS(id: string, adminId: string): Promise<void> {
+  await deleteDoc(doc(db, 'organisations', id))
+  await addActivity({ type: 'org_remove', description: `Permanently deleted org ${id}` })
+}
+
+// ── Users — status management ─────────────────────────────────────────────────
+
+export async function updateUserStatusFS(userId: string, status: 'active' | 'suspended'): Promise<void> {
+  await updateDoc(doc(db, 'users', userId), { status })
+  // Also update clientUsers if present
+  try { await updateDoc(doc(db, 'clientUsers', userId), { status }) } catch { /* ignore */ }
+}
+
 // ── Invitations ───────────────────────────────────────────────────────────────
 
 export async function createInvitationFS(
