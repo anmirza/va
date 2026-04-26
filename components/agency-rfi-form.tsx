@@ -429,24 +429,36 @@ export function AgencyRfiForm({ mode, editId, onDone }: AgencyRfiFormProps) {
                 <span className="w-1 h-4 bg-[#0763d8] rounded-full" />Legal identity
               </h3>
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-5">
-                <FormField label="Registered Business Name" required>
-                  <Input value={businessName} onChange={e => setBusinessName(e.target.value)} placeholder="e.g. Acme Agency Ltd." className={inputCls} />
-                </FormField>
-                <FormField label="D-U-N-S® Number">
-                  <Input value={dunsNumber} onChange={e => setDunsNumber(e.target.value)} placeholder="9-digit number" className={inputCls} />
-                </FormField>
-                <FormField label="VAT Registration Number">
-                  <Input value={vatNumber} onChange={e => setVatNumber(e.target.value)} placeholder="e.g. GB123456789" className={inputCls} />
-                </FormField>
-                <FormField label="Legal Form">
-                  <Input value={legalForm} onChange={e => setLegalForm(e.target.value)} placeholder="e.g. Ltd, GmbH, S.A.S." className={inputCls} />
-                </FormField>
-                <FormField label="Company Registration Number">
-                  <Input value={companyRegNumber} onChange={e => setCompanyRegNumber(e.target.value)} placeholder="Companies House number" className={inputCls} />
-                </FormField>
-                <FormField label="Year Established">
-                  <Input type="number" value={yearEstablished} onChange={e => setYearEstablished(e.target.value)} placeholder="e.g. 2005" className={inputCls} />
-                </FormField>
+                {schema.isVisible('businessName') && (
+                  <FormField label={schema.getLabel('businessName', 'Registered Business Name')} required={schema.isRequired('businessName', true)}>
+                    <Input value={businessName} onChange={e => setBusinessName(e.target.value)} placeholder={schema.getPlaceholder('businessName', 'e.g. Acme Agency Ltd.')} className={inputCls} />
+                  </FormField>
+                )}
+                {schema.isVisible('dunsNumber') && (
+                  <FormField label={schema.getLabel('dunsNumber', 'D-U-N-S® Number')} required={schema.isRequired('dunsNumber', false)}>
+                    <Input value={dunsNumber} onChange={e => setDunsNumber(e.target.value)} placeholder={schema.getPlaceholder('dunsNumber', '9-digit number')} className={inputCls} />
+                  </FormField>
+                )}
+                {schema.isVisible('vatNumber') && (
+                  <FormField label={schema.getLabel('vatNumber', 'VAT Registration Number')} required={schema.isRequired('vatNumber', false)}>
+                    <Input value={vatNumber} onChange={e => setVatNumber(e.target.value)} placeholder={schema.getPlaceholder('vatNumber', 'e.g. GB123456789')} className={inputCls} />
+                  </FormField>
+                )}
+                {schema.isVisible('legalForm') && (
+                  <FormField label={schema.getLabel('legalForm', 'Legal Form')} required={schema.isRequired('legalForm', false)}>
+                    <Input value={legalForm} onChange={e => setLegalForm(e.target.value)} placeholder={schema.getPlaceholder('legalForm', 'e.g. Ltd, GmbH, S.A.S.')} className={inputCls} />
+                  </FormField>
+                )}
+                {schema.isVisible('companyRegNumber') && (
+                  <FormField label={schema.getLabel('companyRegNumber', 'Company Registration Number')} required={schema.isRequired('companyRegNumber', false)}>
+                    <Input value={companyRegNumber} onChange={e => setCompanyRegNumber(e.target.value)} placeholder={schema.getPlaceholder('companyRegNumber', 'Companies House number')} className={inputCls} />
+                  </FormField>
+                )}
+                {schema.isVisible('yearEstablished') && (
+                  <FormField label={schema.getLabel('yearEstablished', 'Year Established')} required={schema.isRequired('yearEstablished', false)}>
+                    <Input type="number" value={yearEstablished} onChange={e => setYearEstablished(e.target.value)} placeholder={schema.getPlaceholder('yearEstablished', 'e.g. 2005')} className={inputCls} />
+                  </FormField>
+                )}
               </div>
             </div>
             <div className="border-t border-white/[0.08] my-8" />
@@ -455,35 +467,47 @@ export function AgencyRfiForm({ mode, editId, onDone }: AgencyRfiFormProps) {
                 <span className="w-1 h-4 bg-[#0763d8] rounded-full" />Organisation & Structure
               </h3>
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-5">
-                <FormField label="# of Employees" required>
-                  <select value={employees} onChange={e => setEmployees(e.target.value)} className={selectCls}>
-                    <option value="">Select range</option>
-                    {EMPLOYEE_SIZES.map(r => <option key={r}>{r}</option>)}
-                  </select>
-                </FormField>
-                <FormField label="Company Level">
-                  <select value={companyLevel} onChange={e => setCompanyLevel(e.target.value)} className={selectCls}>
-                    <option value="">Select level</option>
-                    {COMPANY_LEVELS.map(l => <option key={l}>{l}</option>)}
-                  </select>
-                </FormField>
-                <FormField label="Parent Company Name">
-                  <Input value={parentCompany} onChange={e => setParentCompany(e.target.value)} placeholder="If part of a group" className={inputCls} />
-                </FormField>
-                <FormField label="Category" required>
-                  <select value={category} onChange={e => setCategory(e.target.value)} className={selectCls}>
-                    <option value="">Select category</option>
-                    {AGENCY_CATEGORIES.map(c => <option key={c}>{c}</option>)}
-                  </select>
-                </FormField>
-                <FormField label="Agency Currency">
-                  <select value={currency} onChange={e => setCurrency(e.target.value)} className={selectCls}>
-                    {TOP_CURRENCIES.map(c => <option key={c}>{c}</option>)}
-                  </select>
-                </FormField>
-                <FormField label="Trade Organizations">
-                  <Input value={tradeOrganizations} onChange={e => setTradeOrganizations(e.target.value)} placeholder="e.g. IPA, ISBA, EACA" className={inputCls} />
-                </FormField>
+                {schema.isVisible('employees') && (
+                  <FormField label={schema.getLabel('employees', '# of Employees')} required={schema.isRequired('employees', true)}>
+                    <select value={employees} onChange={e => setEmployees(e.target.value)} className={selectCls}>
+                      <option value="">Select range</option>
+                      {EMPLOYEE_SIZES.map(r => <option key={r}>{r}</option>)}
+                    </select>
+                  </FormField>
+                )}
+                {schema.isVisible('companyLevel') && (
+                  <FormField label={schema.getLabel('companyLevel', 'Company Level')} required={schema.isRequired('companyLevel', false)}>
+                    <select value={companyLevel} onChange={e => setCompanyLevel(e.target.value)} className={selectCls}>
+                      <option value="">Select level</option>
+                      {COMPANY_LEVELS.map(l => <option key={l}>{l}</option>)}
+                    </select>
+                  </FormField>
+                )}
+                {schema.isVisible('parentCompany') && (
+                  <FormField label={schema.getLabel('parentCompany', 'Parent Company Name')} required={schema.isRequired('parentCompany', false)}>
+                    <Input value={parentCompany} onChange={e => setParentCompany(e.target.value)} placeholder={schema.getPlaceholder('parentCompany', 'If part of a group')} className={inputCls} />
+                  </FormField>
+                )}
+                {schema.isVisible('category') && (
+                  <FormField label={schema.getLabel('category', 'Category')} required={schema.isRequired('category', true)}>
+                    <select value={category} onChange={e => setCategory(e.target.value)} className={selectCls}>
+                      <option value="">Select category</option>
+                      {AGENCY_CATEGORIES.map(c => <option key={c}>{c}</option>)}
+                    </select>
+                  </FormField>
+                )}
+                {schema.isVisible('currency') && (
+                  <FormField label={schema.getLabel('currency', 'Agency Currency')} required={schema.isRequired('currency', false)}>
+                    <select value={currency} onChange={e => setCurrency(e.target.value)} className={selectCls}>
+                      {TOP_CURRENCIES.map(c => <option key={c}>{c}</option>)}
+                    </select>
+                  </FormField>
+                )}
+                {schema.isVisible('tradeOrganizations') && (
+                  <FormField label={schema.getLabel('tradeOrganizations', 'Trade Organizations')} required={schema.isRequired('tradeOrganizations', false)}>
+                    <Input value={tradeOrganizations} onChange={e => setTradeOrganizations(e.target.value)} placeholder={schema.getPlaceholder('tradeOrganizations', 'e.g. IPA, ISBA, EACA')} className={inputCls} />
+                  </FormField>
+                )}
               </div>
             </div>
           </div>
@@ -917,9 +941,11 @@ export function AgencyRfiForm({ mode, editId, onDone }: AgencyRfiFormProps) {
               <span className="w-1 h-4 bg-[#0763d8] rounded-full" />Strategic Development
             </h3>
             <div className="space-y-5 mb-8">
-              <FormField label="1.1 Could you please present your strategic development">
-                <textarea value={strategicDev} onChange={e => setStrategicDev(e.target.value)} rows={3} className={textareaCls} />
-              </FormField>
+              {schema.isVisible('strategicDevelopment') && (
+                <FormField label={schema.getLabel('strategicDevelopment', '1.1 Could you please present your strategic development')} required={schema.isRequired('strategicDevelopment', false)}>
+                  <textarea value={strategicDev} onChange={e => setStrategicDev(e.target.value)} rows={3} placeholder={schema.getPlaceholder('strategicDevelopment', '')} className={textareaCls} />
+                </FormField>
+              )}
               <FormField label="1.2 Do you have any activity out of your Country / City?">
                 <textarea value={activityOutside} onChange={e => setActivityOutside(e.target.value)} rows={2} className={textareaCls} />
               </FormField>
