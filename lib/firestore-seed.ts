@@ -7,6 +7,7 @@
 import { getDoc, setDoc, doc } from 'firebase/firestore'
 import { db } from './firebase'
 import { REGISTRATION_STEPS } from './rfi-data'
+import { RFI_SCHEMA_SEEDS } from './rfi-schema-seed'
 
 const PRODUCTION_STEPS = [
   { key: 'general-info',        label: 'General Info',        shortLabel: 'General'     },
@@ -27,16 +28,31 @@ const PRODUCTION_STEPS = [
 export async function ensureFirestoreSeedFS(): Promise<void> {
   try {
     const flagSnap = await getDoc(doc(db, 'config', 'seeded'))
-    if (flagSnap.exists() && flagSnap.data()?.stepLabels === true) return
+    const flag = flagSnap.exists() ? flagSnap.data() : {}
 
-    // Write agency step labels
-    await setDoc(doc(db, 'config', 'rfiStepLabels'), {
-      'cat-agency': REGISTRATION_STEPS.map(s => ({ ...s })),
-      'cat-production': PRODUCTION_STEPS,
-    }, { merge: true })
+    // ── Step labels ──
+    if (flag?.stepLabels !== true) {
+      await setDoc(doc(db, 'config', 'rfiStepLabels'), {
+        'cat-agency': REGISTRATION_STEPS.map(s => ({ ...s })),
+        'cat-production': PRODUCTION_STEPS,
+      }, { merge: true })
+    }
+
+    // ── Field schemas (only seed missing categories so admin edits aren't overwritten) ──
+    if (flag?.rfiFields !== true) {
+      const fieldsSnap = await getDoc(doc(db, 'config', 'rfiFields'))
+      const existing = fieldsSnap.exists() ? fieldsSnap.data() ?? {} : {}
+      const merged: Record<string, unknown> = { ...existing }
+      for (const [catId, seed] of Object.entries(RFI_SCHEMA_SEEDS)) {
+        if (!Array.isArray(existing[catId]) || (existing[catId] as unknown[]).length === 0) {
+          merged[catId] = seed
+        }
+      }
+      await setDoc(doc(db, 'config', 'rfiFields'), merged, { merge: true })
+    }
 
     // Mark as seeded
-    await setDoc(doc(db, 'config', 'seeded'), { stepLabels: true }, { merge: true })
+    await setDoc(doc(db, 'config', 'seeded'), { stepLabels: true, rfiFields: true }, { merge: true })
   } catch {
     // Non-fatal — silently ignore (e.g. offline or permission error)
   }

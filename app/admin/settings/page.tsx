@@ -30,6 +30,11 @@ export default function SettingsPage() {
       getRfiStepLabelsFS(activeRfiCategoryId).then(labels => {
         if (labels && labels.length > 0) setStepLabels(labels)
       })
+      // Also load fields for built-ins so admin can edit them per step
+      getRfiFieldsFS(activeRfiCategoryId).then(remote => {
+        if (Array.isArray(remote) && remote.length > 0) setRfiFields(remote)
+        else setRfiFields([])
+      })
     } else {
       getRfiFieldsFS(activeRfiCategoryId).then(setRfiFields)
     }
@@ -145,6 +150,51 @@ export default function SettingsPage() {
     updated[idx] = updated[newIdx]
     updated[newIdx] = temp
     setRfiFields(updated)
+  }
+
+  // ── Built-in: add a field that targets a specific step (and optionally sub-section) ──
+  const addFieldToStep = (stepKey: string, subSectionKey?: string) => {
+    const newField: RfiField = {
+      id: `field-${Date.now()}`,
+      label: 'New Field',
+      type: 'text',
+      required: false,
+      visible: true,
+      stepKey,
+      subSectionKey,
+      order: 1000 + rfiFields.filter(f => f.stepKey === stepKey).length,
+      isSystem: false,
+    }
+    setRfiFields(prev => [...prev, newField])
+  }
+
+  const updateFieldProp = <K extends keyof RfiField>(id: string, key: K, value: RfiField[K]) => {
+    setRfiFields(prev => prev.map(f => f.id === id ? { ...f, [key]: value } : f))
+  }
+
+  const deleteCustomField = (id: string) => {
+    const f = rfiFields.find(x => x.id === id)
+    if (f?.isSystem) return // never delete system fields
+    if (!confirm(`Delete field "${f?.label}"? Existing data for this field will remain in records but will no longer be editable.`)) return
+    setRfiFields(prev => prev.filter(x => x.id !== id))
+  }
+
+  const moveFieldWithinStep = (id: string, dir: -1 | 1) => {
+    const f = rfiFields.find(x => x.id === id)
+    if (!f?.stepKey) return
+    const stepFields = rfiFields
+      .filter(x => x.stepKey === f.stepKey)
+      .sort((a, b) => (a.order ?? 0) - (b.order ?? 0))
+    const idx = stepFields.findIndex(x => x.id === id)
+    const newIdx = idx + dir
+    if (newIdx < 0 || newIdx >= stepFields.length) return
+    const a = stepFields[idx]
+    const b = stepFields[newIdx]
+    setRfiFields(prev => prev.map(x => {
+      if (x.id === a.id) return { ...x, order: b.order ?? 0 }
+      if (x.id === b.id) return { ...x, order: a.order ?? 0 }
+      return x
+    }))
   }
 
   return (
@@ -400,6 +450,143 @@ export default function SettingsPage() {
                       <p>No step labels loaded. Labels will be seeded automatically.</p>
                     </div>
                   )}
+                </div>
+
+                {/* ── Fields per step ── */}
+                <div className="mt-10 border-t border-white/[0.06] pt-8">
+                  <div className="flex items-center justify-between mb-4">
+                    <div>
+                      <p className="text-xs font-bold text-white/50 uppercase tracking-widest">Fields Per Step</p>
+                      <p className="text-[11px] text-white/30 mt-0.5">Add, edit, hide, or delete the fields shown to users inside each step. System fields (🔒) cannot be deleted but can be hidden or relabelled.</p>
+                    </div>
+                    <button
+                      onClick={handleSaveRfi}
+                      className={`text-sm px-4 py-1.5 rounded-lg flex items-center gap-2 font-medium transition-all ${
+                        rfiSaved
+                          ? 'bg-emerald-500/20 text-emerald-400 border border-emerald-500/30'
+                          : 'bg-purple-500/10 text-purple-400 border border-purple-500/20 hover:bg-purple-500/20'
+                      }`}
+                    >
+                      {rfiSaved ? <Check className="w-3.5 h-3.5" /> : <Save className="w-3.5 h-3.5" />}
+                      {rfiSaved ? 'Saved!' : 'Save Fields'}
+                    </button>
+                  </div>
+
+                  <div className="space-y-3">
+                    {stepLabels.map((step) => {
+                      const stepFields = rfiFields
+                        .filter(f => f.stepKey === step.key)
+                        .sort((a, b) => (a.order ?? 0) - (b.order ?? 0))
+                      return (
+                        <details key={step.key} className="group/fstep bg-white/[0.02] border border-white/[0.06] rounded-xl overflow-hidden">
+                          <summary className="flex items-center gap-3 p-3 cursor-pointer list-none hover:bg-white/[0.03] transition-colors">
+                            <span className="text-xs text-white/40 w-32 shrink-0 font-mono hidden sm:block">{step.key}</span>
+                            <span className="flex-1 text-sm text-white font-medium truncate">{step.label}</span>
+                            <span className="text-[10px] text-white/30">{stepFields.length} field{stepFields.length !== 1 ? 's' : ''}</span>
+                            <span className="text-[10px] text-white/20 group-open/fstep:hidden">▼</span>
+                            <span className="text-[10px] text-white/20 hidden group-open/fstep:inline">▲</span>
+                          </summary>
+
+                          <div className="px-4 pb-4 pt-2 border-t border-white/[0.04] space-y-2">
+                            {stepFields.length === 0 && (
+                              <p className="text-xs text-white/30 italic py-2">No fields configured for this step yet.</p>
+                            )}
+                            {stepFields.map((f) => (
+                              <div key={f.id} className="flex flex-wrap items-start gap-2 bg-white/[0.02] border border-white/[0.05] rounded-lg p-2.5">
+                                {/* Reorder */}
+                                <div className="flex flex-col shrink-0">
+                                  <button onClick={() => moveFieldWithinStep(f.id, -1)} className="text-white/30 hover:text-white text-xs leading-none">▲</button>
+                                  <button onClick={() => moveFieldWithinStep(f.id, 1)} className="text-white/30 hover:text-white text-xs leading-none">▼</button>
+                                </div>
+
+                                {/* Lock indicator */}
+                                <div className="shrink-0 pt-1.5 w-5 text-center" title={f.isSystem ? 'System field — cannot be deleted' : 'Custom field'}>
+                                  {f.isSystem
+                                    ? <span className="text-amber-400/60 text-xs">🔒</span>
+                                    : <span className="text-purple-400/60 text-xs">●</span>}
+                                </div>
+
+                                {/* Label */}
+                                <div className="flex-1 min-w-[180px]">
+                                  <label className="text-[9px] uppercase tracking-wider text-white/30 block">Label</label>
+                                  <input
+                                    value={f.label}
+                                    onChange={e => updateFieldProp(f.id, 'label', e.target.value)}
+                                    className="w-full bg-black/20 border border-white/10 rounded-md px-2 py-1 text-white text-xs"
+                                  />
+                                </div>
+
+                                {/* Type — read-only for system fields */}
+                                <div className="w-[120px] shrink-0">
+                                  <label className="text-[9px] uppercase tracking-wider text-white/30 block">Type</label>
+                                  <select
+                                    value={f.type}
+                                    onChange={e => updateFieldProp(f.id, 'type', e.target.value as RfiField['type'])}
+                                    disabled={f.isSystem}
+                                    className="w-full bg-[#02030E] border border-white/10 rounded-md px-2 py-1 text-white text-xs disabled:opacity-50"
+                                  >
+                                    {FIELD_TYPES.map(t => <option key={t} value={t}>{t}</option>)}
+                                  </select>
+                                </div>
+
+                                {/* Sub-section */}
+                                <div className="w-[140px] shrink-0">
+                                  <label className="text-[9px] uppercase tracking-wider text-white/30 block">Sub-section</label>
+                                  <select
+                                    value={f.subSectionKey ?? ''}
+                                    onChange={e => updateFieldProp(f.id, 'subSectionKey', e.target.value || undefined)}
+                                    className="w-full bg-[#02030E] border border-white/10 rounded-md px-2 py-1 text-white/70 text-xs"
+                                  >
+                                    <option value="">— none —</option>
+                                    {(step.subSections ?? []).map(s => (
+                                      <option key={s.key} value={s.key}>{s.label}</option>
+                                    ))}
+                                  </select>
+                                </div>
+
+                                {/* Placeholder */}
+                                <div className="w-[160px] shrink-0">
+                                  <label className="text-[9px] uppercase tracking-wider text-white/30 block">Placeholder</label>
+                                  <input
+                                    value={f.placeholder ?? ''}
+                                    onChange={e => updateFieldProp(f.id, 'placeholder', e.target.value)}
+                                    className="w-full bg-black/20 border border-white/10 rounded-md px-2 py-1 text-white/70 text-xs"
+                                  />
+                                </div>
+
+                                {/* Visible / Required / Delete */}
+                                <div className="flex items-center gap-3 shrink-0 pt-4">
+                                  <label className="flex items-center gap-1 cursor-pointer select-none" title="Visible to users">
+                                    <input type="checkbox" checked={f.visible !== false} onChange={e => updateFieldProp(f.id, 'visible', e.target.checked)} className="w-3.5 h-3.5 accent-emerald-500" />
+                                    <span className="text-[10px] text-white/40">Vis</span>
+                                  </label>
+                                  <label className="flex items-center gap-1 cursor-pointer select-none" title="Required">
+                                    <input type="checkbox" checked={f.required} onChange={e => updateFieldProp(f.id, 'required', e.target.checked)} className="w-3.5 h-3.5 accent-purple-500" />
+                                    <span className="text-[10px] text-white/40">Req</span>
+                                  </label>
+                                  <button
+                                    onClick={() => deleteCustomField(f.id)}
+                                    disabled={f.isSystem}
+                                    className="p-1 text-white/30 hover:text-red-400 hover:bg-red-400/10 rounded disabled:opacity-25 disabled:hover:bg-transparent disabled:hover:text-white/20"
+                                    title={f.isSystem ? 'System fields cannot be deleted' : 'Delete'}
+                                  >
+                                    <Trash2 className="w-3.5 h-3.5" />
+                                  </button>
+                                </div>
+                              </div>
+                            ))}
+
+                            <button
+                              onClick={() => addFieldToStep(step.key)}
+                              className="text-xs border border-dashed border-purple-500/30 text-purple-400/80 hover:bg-purple-500/10 px-3 py-2 w-full rounded-lg flex items-center justify-center gap-2 transition-colors mt-2"
+                            >
+                              <Plus className="w-3 h-3" /> Add Field to {step.label}
+                            </button>
+                          </div>
+                        </details>
+                      )
+                    })}
+                  </div>
                 </div>
               </div>
             ) : (

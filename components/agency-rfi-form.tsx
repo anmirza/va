@@ -31,6 +31,8 @@ import {
 } from '@/lib/rfi-data'
 import { getTurnoverYears, REVENUE_REGIONS } from '@/lib/turnover-utils'
 import type { RfiStep } from '@/lib/admin-store'
+import { useRfiSchema } from '@/lib/use-rfi-schema'
+import { CustomFieldsSection } from '@/components/rfi/field-renderer'
 
 // ── Types ─────────────────────────────────────────────────────────────────────
 
@@ -79,6 +81,7 @@ function FormField({ label, required, children, className }: {
 
 export function AgencyRfiForm({ mode, editId, onDone }: AgencyRfiFormProps) {
   const { user } = useAuth()
+  const schema = useRfiSchema('cat-agency')
   const [stepLabels, setStepLabels] = useState<RfiStep[]>([...REGISTRATION_STEPS])
   const [isEditMode, setIsEditMode] = useState(false)
   const [step, setStep] = useState(1)
@@ -88,6 +91,8 @@ export function AgencyRfiForm({ mode, editId, onDone }: AgencyRfiFormProps) {
   const [inviteEmail, setInviteEmail] = useState('')
   const [inviteLink, setInviteLink] = useState('')
   const [copied, setCopied] = useState(false)
+  /** Stores values for admin-added custom fields keyed by field id. */
+  const [customFieldsData, setCustomFieldsData] = useState<Record<string, unknown>>({})
 
   // ── Load dynamic step labels from Firestore ───────────────────────────────
   useEffect(() => {
@@ -221,6 +226,9 @@ export function AgencyRfiForm({ mode, editId, onDone }: AgencyRfiFormProps) {
       if (p.investments) setInvestments(p.investments)
       setStrategicDev(p.strategicDev || '')
       setActivityOutside(p.activityOutside || '')
+      if (p.customFields && typeof p.customFields === 'object') {
+        setCustomFieldsData(p.customFields as Record<string, unknown>)
+      }
     })
   }, [editId])
 
@@ -263,6 +271,7 @@ export function AgencyRfiForm({ mode, editId, onDone }: AgencyRfiFormProps) {
       peopleCounts: finalPeopleCounts, talentEntries,
       awards, aiAnswers, srAnswers,
       investments, strategicDev, activityOutside,
+      customFields: customFieldsData,
       submittedAt: new Date().toISOString(),
     }
 
@@ -968,6 +977,21 @@ export function AgencyRfiForm({ mode, editId, onDone }: AgencyRfiFormProps) {
             </div>
           </div>
         )}
+
+        {/* ── Admin-added custom fields for the current step ── */}
+        {(() => {
+          const stepKeyForCurrent = stepLabels[step - 1]?.key
+          if (!stepKeyForCurrent) return null
+          const customFields = schema.customFieldsForStep(stepKeyForCurrent)
+          if (customFields.length === 0) return null
+          return (
+            <CustomFieldsSection
+              fields={customFields}
+              values={customFieldsData}
+              onChange={(id, val) => setCustomFieldsData(prev => ({ ...prev, [id]: val }))}
+            />
+          )
+        })()}
 
       </div>
 

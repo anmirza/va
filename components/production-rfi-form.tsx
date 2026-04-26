@@ -23,6 +23,8 @@ import {
 import { SOCIAL_RESPONSIBILITY_QUESTIONS, CSR_IMPACT_AREAS, ATTACHMENTS_REQUESTED, AI_QUESTIONS } from '@/lib/rfi-data'
 import { getTurnoverYears } from '@/lib/turnover-utils'
 import type { RfiStep } from '@/lib/admin-store'
+import { useRfiSchema } from '@/lib/use-rfi-schema'
+import { CustomFieldsSection } from '@/components/rfi/field-renderer'
 
 // ── Default step labels (fallback) ────────────────────────────────────────────
 const DEFAULT_STEPS: RfiStep[] = [
@@ -110,6 +112,7 @@ interface ProductionRfiFormProps {
 // ── Main Component ────────────────────────────────────────────────────────────
 export function ProductionRfiForm({ mode, editId, onDone }: ProductionRfiFormProps) {
   const { user } = useAuth()
+  const schema = useRfiSchema('cat-production')
   const [stepLabels, setStepLabels] = useState<RfiStep[]>([...DEFAULT_STEPS])
   const [isEditMode, setIsEditMode] = useState(false)
   const [step, setStep] = useState(1)
@@ -119,6 +122,8 @@ export function ProductionRfiForm({ mode, editId, onDone }: ProductionRfiFormPro
   const [inviteEmail, setInviteEmail] = useState('')
   const [inviteLink, setInviteLink] = useState('')
   const [copied, setCopied] = useState(false)
+  /** Stores values for admin-added custom fields keyed by field id. */
+  const [customFieldsData, setCustomFieldsData] = useState<Record<string, unknown>>({})
 
   const turnoverYears = getTurnoverYears()
 
@@ -270,6 +275,9 @@ export function ProductionRfiForm({ mode, editId, onDone }: ProductionRfiFormPro
       if (p.csr) setCsr(p.csr)
       if (p.governance) setGovernance(p.governance)
       if (p.aiAnswers) setAiAnswers(p.aiAnswers)
+      if (p.customFields && typeof p.customFields === 'object') {
+        setCustomFieldsData(p.customFields as Record<string, unknown>)
+      }
     })
   }, [editId])
 
@@ -298,6 +306,7 @@ export function ProductionRfiForm({ mode, editId, onDone }: ProductionRfiFormPro
       hasInHousePost, postServices, outsourcedPartners, subcontracts, outsourcedActivities,
       people, permanentEmployees, freelancers, directors, investments, strategicOrientation, activityOutOfCountry,
       awards, csr, governance, aiAnswers,
+      customFields: customFieldsData,
       submittedAt: new Date().toISOString(),
     }
 
@@ -1090,6 +1099,21 @@ export function ProductionRfiForm({ mode, editId, onDone }: ProductionRfiFormPro
             </div>
           </div>
         )}
+
+        {/* ── Admin-added custom fields for the current step ── */}
+        {(() => {
+          const stepKeyForCurrent = stepLabels[step - 1]?.key
+          if (!stepKeyForCurrent) return null
+          const customFields = schema.customFieldsForStep(stepKeyForCurrent)
+          if (customFields.length === 0) return null
+          return (
+            <CustomFieldsSection
+              fields={customFields}
+              values={customFieldsData}
+              onChange={(id, val) => setCustomFieldsData(prev => ({ ...prev, [id]: val }))}
+            />
+          )
+        })()}
 
       </div>
 
