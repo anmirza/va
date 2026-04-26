@@ -1,8 +1,9 @@
 'use client'
 
 import { useState, useEffect } from 'react'
-import { getVACategoriesFS, saveVACategoryFS, deleteVACategoryFS, getRfiFieldsFS, saveRfiFieldsFS } from '@/lib/admin-firestore'
-import type { VACategory, RfiField } from '@/lib/admin-store'
+import { getVACategoriesFS, saveVACategoryFS, deleteVACategoryFS, getRfiFieldsFS, saveRfiFieldsFS, getRfiStepLabelsFS, saveRfiStepLabelsFS } from '@/lib/admin-firestore'
+import type { VACategory, RfiField, RfiStep } from '@/lib/admin-store'
+import { ensureFirestoreSeedFS } from '@/lib/firestore-seed'
 import { toast } from 'sonner'
 import { Plus, Save, Settings2, Trash2, FileText, GripVertical, Check, AlertCircle } from 'lucide-react'
 
@@ -14,14 +15,25 @@ export default function SettingsPage() {
   const [rfiSaved, setRfiSaved] = useState(false)
   const [activeRfiCategoryId, setActiveRfiCategoryId] = useState('cat-agency')
   const [catDeleteConfirm, setCatDeleteConfirm] = useState<string | null>(null)
+  const [stepLabels, setStepLabels] = useState<RfiStep[]>([])
+  const [stepLabelsSaved, setStepLabelsSaved] = useState(false)
+
+  const isBuiltIn = activeRfiCategoryId === 'cat-agency' || activeRfiCategoryId === 'cat-production'
 
   useEffect(() => {
+    ensureFirestoreSeedFS().catch(console.error)
     getVACategoriesFS().then(setCategories)
   }, [])
 
   useEffect(() => {
-    getRfiFieldsFS(activeRfiCategoryId).then(setRfiFields)
-  }, [activeRfiCategoryId])
+    if (isBuiltIn) {
+      getRfiStepLabelsFS(activeRfiCategoryId).then(labels => {
+        if (labels && labels.length > 0) setStepLabels(labels)
+      })
+    } else {
+      getRfiFieldsFS(activeRfiCategoryId).then(setRfiFields)
+    }
+  }, [activeRfiCategoryId, isBuiltIn])
 
   // ── Categories ──────────────────────────────────────────────────────────────
 
@@ -87,6 +99,17 @@ export default function SettingsPage() {
     await saveRfiFieldsFS(activeRfiCategoryId, rfiFields)
     setRfiSaved(true)
     setTimeout(() => setRfiSaved(false), 2500)
+  }
+
+  const handleSaveStepLabels = async () => {
+    await saveRfiStepLabelsFS(activeRfiCategoryId, stepLabels)
+    setStepLabelsSaved(true)
+    setTimeout(() => setStepLabelsSaved(false), 2500)
+    toast.success('Step labels saved')
+  }
+
+  const updateStepLabel = (idx: number, field: 'label' | 'shortLabel', value: string) => {
+    setStepLabels(prev => prev.map((s, i) => i === idx ? { ...s, [field]: value } : s))
   }
 
   const moveRfiField = (idx: number, dir: -1 | 1) => {
@@ -172,37 +195,60 @@ export default function SettingsPage() {
               <FileText className="w-4 h-4 text-purple-500" /> RFI Structure Modeler
             </h2>
             <div className="flex items-center gap-2">
-              <span className="text-xs text-white/30">{rfiFields.length} fields</span>
-              <button
-                onClick={async () => {
-                  if (confirm('Reset this RFI to empty? All custom changes will be lost.')) {
-                    await saveRfiFieldsFS(activeRfiCategoryId, [])
-                    setRfiFields([])
-                  }
-                }}
-                className="text-xs text-white/40 hover:text-white/60 px-3 py-1.5 border border-white/10 rounded-lg mr-2"
-              >
-                Clear All Fields
-              </button>
-              <button
-                onClick={handleSaveRfi}
-                className={`text-sm px-4 py-1.5 rounded-lg flex items-center gap-2 font-medium transition-all ${
-                  rfiSaved
-                    ? 'bg-emerald-500/20 text-emerald-400 border border-emerald-500/30'
-                    : 'bg-purple-500/10 text-purple-400 border border-purple-500/20 hover:bg-purple-500/20'
-                }`}
-              >
-                {rfiSaved ? <Check className="w-3.5 h-3.5" /> : <Save className="w-3.5 h-3.5" />}
-                {rfiSaved ? 'Saved!' : 'Save RFI'}
-              </button>
+              {!isBuiltIn && (
+                <>
+                  <span className="text-xs text-white/30">{rfiFields.length} fields</span>
+                  <button
+                    onClick={async () => {
+                      if (confirm('Reset this RFI to empty? All custom changes will be lost.')) {
+                        await saveRfiFieldsFS(activeRfiCategoryId, [])
+                        setRfiFields([])
+                      }
+                    }}
+                    className="text-xs text-white/40 hover:text-white/60 px-3 py-1.5 border border-white/10 rounded-lg mr-2"
+                  >
+                    Clear All Fields
+                  </button>
+                  <button
+                    onClick={handleSaveRfi}
+                    className={`text-sm px-4 py-1.5 rounded-lg flex items-center gap-2 font-medium transition-all ${
+                      rfiSaved
+                        ? 'bg-emerald-500/20 text-emerald-400 border border-emerald-500/30'
+                        : 'bg-purple-500/10 text-purple-400 border border-purple-500/20 hover:bg-purple-500/20'
+                    }`}
+                  >
+                    {rfiSaved ? <Check className="w-3.5 h-3.5" /> : <Save className="w-3.5 h-3.5" />}
+                    {rfiSaved ? 'Saved!' : 'Save RFI'}
+                  </button>
+                </>
+              )}
             </div>
           </div>
           <div className="p-6">
-            <p className="text-sm text-white/50 mb-4">Define the specific RFI fields requested from organizations based on their category.</p>
+            <p className="text-sm text-white/50 mb-4">
+              {isBuiltIn
+                ? 'Edit the step labels displayed in the RFI multi-step form for this category.'
+                : 'Define the specific RFI fields requested from organizations based on their category.'}
+            </p>
             
             {/* Category Selector for RFI */}
             <div className="flex gap-2 overflow-x-auto pb-4 mb-2 scrollbar-hide">
-              {categories.map((cat) => (
+              {/* Built-in tabs */}
+              {[{ id: 'cat-agency', name: 'Agency (built-in)' }, { id: 'cat-production', name: 'Production (built-in)' }].map(cat => (
+                <button
+                  key={cat.id}
+                  onClick={() => setActiveRfiCategoryId(cat.id)}
+                  className={`px-4 py-2 rounded-xl text-xs font-bold whitespace-nowrap transition-all border ${
+                    activeRfiCategoryId === cat.id
+                      ? 'bg-[#0763d8] border-[#0763d8] text-white'
+                      : 'bg-white/5 border-white/10 text-white/40 hover:bg-white/10'
+                  }`}
+                >
+                  {cat.name}
+                </button>
+              ))}
+              {/* Custom categories */}
+              {categories.filter(c => c.id !== 'cat-agency' && c.id !== 'cat-production').map((cat) => (
                 <button
                   key={cat.id}
                   onClick={() => setActiveRfiCategoryId(cat.id)}
@@ -217,7 +263,60 @@ export default function SettingsPage() {
               ))}
             </div>
 
-            <div className="space-y-3 mb-4">
+            {/* ── Step Label Editor (for built-in categories) ── */}
+            {isBuiltIn ? (
+              <div>
+                <div className="flex items-center justify-between mb-4">
+                  <p className="text-xs font-bold text-white/50 uppercase tracking-widest">
+                    {activeRfiCategoryId === 'cat-agency' ? '8 Steps' : '13 Steps'} — Edit Labels
+                  </p>
+                  <button
+                    onClick={handleSaveStepLabels}
+                    className={`text-sm px-4 py-1.5 rounded-lg flex items-center gap-2 font-medium transition-all ${
+                      stepLabelsSaved
+                        ? 'bg-emerald-500/20 text-emerald-400 border border-emerald-500/30'
+                        : 'bg-[#0763d8]/10 text-[#0763d8] border border-[#0763d8]/20 hover:bg-[#0763d8]/20'
+                    }`}
+                  >
+                    {stepLabelsSaved ? <Check className="w-3.5 h-3.5" /> : <Save className="w-3.5 h-3.5" />}
+                    {stepLabelsSaved ? 'Saved!' : 'Save Labels'}
+                  </button>
+                </div>
+                <div className="space-y-2">
+                  {stepLabels.map((step, idx) => (
+                    <div key={step.key} className="flex items-center gap-4 bg-white/[0.02] border border-white/[0.06] p-3 rounded-xl">
+                      <span className="w-6 h-6 rounded-full bg-[#0763d8]/20 text-[#0763d8] text-xs font-bold flex items-center justify-center shrink-0">{idx + 1}</span>
+                      <span className="text-xs text-white/30 w-32 shrink-0 font-mono">{step.key}</span>
+                      <div className="flex-1 grid grid-cols-1 sm:grid-cols-2 gap-3">
+                        <div>
+                          <label className="text-[10px] text-white/30 uppercase tracking-wider mb-1 block">Full Label</label>
+                          <input
+                            value={step.label}
+                            onChange={e => updateStepLabel(idx, 'label', e.target.value)}
+                            className="w-full bg-black/20 border border-white/10 rounded-lg px-3 py-1.5 text-white text-sm focus:border-[#0763d8]/40 outline-none"
+                          />
+                        </div>
+                        <div>
+                          <label className="text-[10px] text-white/30 uppercase tracking-wider mb-1 block">Short Label</label>
+                          <input
+                            value={step.shortLabel}
+                            onChange={e => updateStepLabel(idx, 'shortLabel', e.target.value)}
+                            className="w-full bg-black/20 border border-white/10 rounded-lg px-3 py-1.5 text-white text-sm focus:border-[#0763d8]/40 outline-none"
+                          />
+                        </div>
+                      </div>
+                    </div>
+                  ))}
+                  {stepLabels.length === 0 && (
+                    <div className="text-center py-8 text-white/30 text-sm">
+                      <p>No step labels loaded. Labels will be seeded automatically.</p>
+                    </div>
+                  )}
+                </div>
+              </div>
+            ) : (
+              /* ── RFI Field Modeler (for custom categories) ── */
+              <div>
               {rfiFields.map((f, idx) => (
                 <div key={f.id} className="flex gap-3 items-start bg-white/[0.02] border border-white/[0.06] p-4 rounded-xl group hover:border-white/[0.12] transition-colors">
                    {/* Reorder handle */}
@@ -305,14 +404,14 @@ export default function SettingsPage() {
                   <p className="text-xs text-white/20 mt-1">Add fields below to build your RFI template.</p>
                 </div>
               )}
+              <button
+                onClick={handleAddRfiField}
+                className="text-sm border border-white/10 border-dashed hover:bg-white/5 text-white/60 px-4 py-2.5 w-full rounded-xl flex items-center justify-center gap-2 transition-colors hover:border-purple-500/30 hover:text-purple-400 mt-4"
+              >
+                <Plus className="w-4 h-4" /> Add RFI Field
+              </button>
             </div>
-            
-            <button
-              onClick={handleAddRfiField}
-              className="text-sm border border-white/10 border-dashed hover:bg-white/5 text-white/60 px-4 py-2.5 w-full rounded-xl flex items-center justify-center gap-2 transition-colors hover:border-purple-500/30 hover:text-purple-400"
-            >
-              <Plus className="w-4 h-4" /> Add RFI Field
-            </button>
+            )}
           </div>
         </div>
       </div>

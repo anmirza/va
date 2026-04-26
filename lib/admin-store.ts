@@ -49,6 +49,12 @@ export interface VACategory {
   iconSvg: string
 }
 
+export interface RfiStep {
+  key: string
+  label: string
+  shortLabel: string
+}
+
 export interface RfiField {
   id: string
   label: string

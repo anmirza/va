@@ -76,7 +76,7 @@ function PendingCard({ reg }: { reg: PendingRegistration }) {
         )}
 
         {reg.status === 'rejected' && (
-          <Link href={`/signup/register/${reg.type}`}>
+          <Link href={reg.type === 'agency' ? '/signup/agency' : reg.type === 'production' ? '/signup/production' : `/signup/register/${reg.type}`}>
             <Button size="sm" className="w-full bg-red-500 hover:bg-red-600 text-white gap-1.5 text-xs">
               <RefreshCw className="w-3.5 h-3.5" /> Resubmit Application
             </Button>
@@ -245,7 +245,7 @@ function VendorDashboardContent() {
             
             <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
               {categories.map(cat => (
-                <Link key={cat.id} href={`/signup/register/${cat.id}`}>
+                <Link key={cat.id} href={cat.id.includes('agency') ? '/signup/agency' : cat.id.includes('production') ? '/signup/production' : `/signup/register/${cat.id}`}>
                   <div className="group glass-card rounded-2xl p-5 flex items-center gap-4 hover:border-[#0763d8]/40 hover:shadow-lg hover:shadow-[#0763d8]/10 transition-all cursor-pointer h-full">
                     <div className="w-11 h-11 rounded-xl bg-white/[0.05] border border-white/10 flex items-center justify-center shrink-0 group-hover:bg-[#0763d8]/10 group-hover:border-[#0763d8]/30 transition-colors">
                       <CategoryIcon categoryName={cat.name} className="w-5 h-5 text-white/40 group-hover:text-[#0763d8]" />

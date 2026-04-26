@@ -204,6 +204,11 @@ export function Header() {
                     <Link href="/dashboard" className="flex items-center gap-2 px-4 py-2.5 text-sm text-white/70 hover:bg-white/[0.06] hover:text-[#0763d8] mx-1 rounded-lg" onClick={() => setUserMenuOpen(false)}>
                       <LayoutDashboard className="w-4 h-4 text-white/40" /> Dashboard
                     </Link>
+                    {(user.role === 'admin' || user.role === 'super_admin') && (
+                      <Link href="/admin" className="flex items-center gap-2 px-4 py-2.5 text-sm text-white/70 hover:bg-white/[0.06] hover:text-[#0763d8] mx-1 rounded-lg" onClick={() => setUserMenuOpen(false)}>
+                        <Zap className="w-4 h-4 text-white/40" /> Admin Panel
+                      </Link>
+                    )}
                     {user.role === 'agency_owner' && (
                       <Link href="/dashboard/agency" className="flex items-center gap-2 px-4 py-2.5 text-sm text-white/70 hover:bg-white/[0.06] hover:text-[#0763d8] mx-1 rounded-lg" onClick={() => setUserMenuOpen(false)}>
                         <Building2 className="w-4 h-4 text-white/40" /> Manage Agency

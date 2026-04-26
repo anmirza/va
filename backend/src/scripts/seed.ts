@@ -86,6 +86,8 @@ async function seed() {
 
   // ── Client Companies ────────────────────────────────────────────────────────
   console.log('  → Client companies...')
+  // Must delete clientUsers first — it has a FK constraint on clientCompanies
+  await db.delete(clientUsers)
   await db.delete(clientCompanies)
   await db.insert(clientCompanies).values([
     {

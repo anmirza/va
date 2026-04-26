@@ -13,7 +13,7 @@ import { db } from './firebase'
 import type {
   OrgRecord, OrgType, PendingRegistration, RegistrationStatus,
   Invitation, OrgMember, ClientCompany, ClientUser,
-  VACategory, RfiField, VAInternalUser, DisclaimerContent, ActivityLogEntry,
+  VACategory, RfiField, RfiStep, VAInternalUser, DisclaimerContent, ActivityLogEntry,
 } from './admin-store'
 
 // ── Helpers ───────────────────────────────────────────────────────────────────
@@ -524,4 +524,21 @@ export async function getRfiFieldsFS(categoryId: string): Promise<RfiField[]> {
 
 export async function saveRfiFieldsFS(categoryId: string, fields: RfiField[]): Promise<void> {
   await setDoc(doc(db, 'config', 'rfiFields'), { [categoryId]: fields }, { merge: true })
+}
+
+// ── RFI Step Labels ───────────────────────────────────────────────────────────
+
+export async function getRfiStepLabelsFS(categoryId: string): Promise<RfiStep[] | null> {
+  try {
+    const snap = await getDoc(doc(db, 'config', 'rfiStepLabels'))
+    if (snap.exists()) {
+      const map = snap.data() as Record<string, RfiStep[]>
+      return map[categoryId] ?? null
+    }
+  } catch { /* ignore */ }
+  return null
+}
+
+export async function saveRfiStepLabelsFS(categoryId: string, steps: RfiStep[]): Promise<void> {
+  await setDoc(doc(db, 'config', 'rfiStepLabels'), { [categoryId]: steps }, { merge: true })
 }
