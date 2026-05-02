@@ -93,7 +93,7 @@ export default function ClientCompanyDetailPage() {
     return (
       <div className="flex flex-col items-center justify-center h-64 gap-4">
         <p className="text-white/50">Company not found.</p>
-        <Link href="/admin/clients" className="text-[#0763d8] text-sm hover:underline">← Back to Client Companies</Link>
+        <Link href="/admin/clients" className="text-[#0763d8] text-sm hover:underline">← Back to Client Management</Link>
       </div>
     )
   }
@@ -108,7 +108,7 @@ export default function ClientCompanyDetailPage() {
       {/* Header */}
       <div className="mb-6">
         <Link href="/admin/clients" className="inline-flex items-center gap-2 text-sm text-white/40 hover:text-white mb-5 transition-colors">
-          <ArrowLeft className="w-4 h-4" /> Back to Client Companies
+          <ArrowLeft className="w-4 h-4" /> Back to Client Management
         </Link>
         <div className="flex items-start justify-between flex-wrap gap-4">
           <div>
@@ -289,15 +289,17 @@ export default function ClientCompanyDetailPage() {
             <div className="space-y-2.5 text-xs">
               {[
                 { label: 'Holding', value: company.holdingCompany || company.holding },
+                { label: 'Operate As', value: company.operateAs ? company.operateAs.replace('_', ' ').replace(/\b\w/g, c => c.toUpperCase()) : undefined },
                 { label: 'Regional Hub', value: company.regionalHub },
                 { label: 'Region', value: company.region },
                 { label: 'Local Company', value: company.localCompany },
                 { label: 'Country', value: company.country },
+                { label: 'Address', value: company.address },
                 { label: 'Created', value: new Date(company.createdAt).toLocaleDateString('en-GB', { day: '2-digit', month: 'short', year: 'numeric' }) },
               ].map(d => d.value ? (
                 <div key={d.label} className="flex items-center justify-between">
                   <span className="text-white/30">{d.label}</span>
-                  <span className="text-white/70">{d.value}</span>
+                  <span className="text-white/70 text-right max-w-[160px] truncate">{d.value}</span>
                 </div>
               ) : null)}
             </div>
