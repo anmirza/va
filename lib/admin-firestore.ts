@@ -13,7 +13,7 @@ import { db } from './firebase'
 import type {
   OrgRecord, OrgType, PendingRegistration, RegistrationStatus,
   Invitation, OrgMember, ClientCompany, ClientUser,
-  VACategory, RfiField, VAInternalUser, DisclaimerContent, ActivityLogEntry,
+  VACategory, RfiField, RfiStep, VAInternalUser, DisclaimerContent, ActivityLogEntry,
 } from './admin-store'
 
 // ── Helpers ───────────────────────────────────────────────────────────────────
@@ -221,6 +221,19 @@ export async function updateOrgFS(
 export async function removeOrgFS(id: string, adminId: string): Promise<void> {
   await updateDoc(doc(db, 'organisations', id), { status: 'removed' })
   await addActivity({ type: 'org_remove', description: `Removed org ${id}` })
+}
+
+export async function deleteOrgFS(id: string, adminId: string): Promise<void> {
+  await deleteDoc(doc(db, 'organisations', id))
+  await addActivity({ type: 'org_remove', description: `Permanently deleted org ${id}` })
+}
+
+// ── Users — status management ─────────────────────────────────────────────────
+
+export async function updateUserStatusFS(userId: string, status: 'active' | 'suspended'): Promise<void> {
+  await updateDoc(doc(db, 'users', userId), { status })
+  // Also update clientUsers if present
+  try { await updateDoc(doc(db, 'clientUsers', userId), { status }) } catch { /* ignore */ }
 }
 
 // ── Invitations ───────────────────────────────────────────────────────────────
@@ -524,4 +537,21 @@ export async function getRfiFieldsFS(categoryId: string): Promise<RfiField[]> {
 
 export async function saveRfiFieldsFS(categoryId: string, fields: RfiField[]): Promise<void> {
   await setDoc(doc(db, 'config', 'rfiFields'), { [categoryId]: fields }, { merge: true })
+}
+
+// ── RFI Step Labels ───────────────────────────────────────────────────────────
+
+export async function getRfiStepLabelsFS(categoryId: string): Promise<RfiStep[] | null> {
+  try {
+    const snap = await getDoc(doc(db, 'config', 'rfiStepLabels'))
+    if (snap.exists()) {
+      const map = snap.data() as Record<string, RfiStep[]>
+      return map[categoryId] ?? null
+    }
+  } catch { /* ignore */ }
+  return null
+}
+
+export async function saveRfiStepLabelsFS(categoryId: string, steps: RfiStep[]): Promise<void> {
+  await setDoc(doc(db, 'config', 'rfiStepLabels'), { [categoryId]: steps }, { merge: true })
 }

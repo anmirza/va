@@ -49,14 +49,67 @@ export interface VACategory {
   iconSvg: string
 }
 
+export interface RfiStep {
+  key: string
+  label: string
+  shortLabel: string
+  /** Subtitle shown below the step header title */
+  subtitle?: string
+  /** Emoji / icon shown beside the step title */
+  icon?: string
+  /** Editable sub-section headings within a step */
+  subSections?: { key: string; label: string }[]
+}
+
 export interface RfiField {
   id: string
   label: string
-  type: 'text' | 'number' | 'date' | 'textarea' | 'checkbox' | 'select' | 'table' | 'file'
+  type: 'text' | 'number' | 'date' | 'textarea' | 'checkbox' | 'select' | 'table' | 'file' | 'email' | 'url' | 'tel'
   required: boolean
+  /** @deprecated legacy free-form section name; kept for backwards compatibility with older custom-category data */
   section?: string
   order?: number
   visible?: boolean
+
+  // ── Placement (used by built-in agency / production schemas) ────────────
+  /** Step this field belongs to (e.g. 'general-info', 'contacts'). */
+  stepKey?: string
+  /** Sub-section within the step (e.g. 'legal-identity'). */
+  subSectionKey?: string
+
+  // ── UX ─────────────────────────────────────────────────────────────────
+  placeholder?: string
+  helpText?: string
+  defaultValue?: string
+
+  // ── For select / checkbox-group ────────────────────────────────────────
+  options?: { value: string; label: string }[]
+
+  // ── Composite / system blocks (turnover, social media, attachments, …) ──
+  /**
+   * If set, the field renders a specialised composite UI block instead of a
+   * scalar input. System blocks cannot be deleted by admins, only hidden /
+   * relabelled.
+   */
+  systemBlock?:
+    | 'turnover'
+    | 'social-media'
+    | 'awards'
+    | 'attachments'
+    | 'capabilities'
+    | 'governance-qa'
+    | 'csr-qa'
+    | 'ai-qa'
+    | 'investments'
+    | 'contacts'
+    | 'communication-areas'
+    | 'service-groups'
+    | 'employee-headcount'
+    | 'top-clients'
+    | 'directors'
+    | 'post-production'
+  /** True when seeded by the system; hides delete / id-rename in the editor. */
+  isSystem?: boolean
 }
 
 export interface VAInternalUser {

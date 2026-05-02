@@ -1,9 +1,11 @@
 'use client'
 
 import { useEffect, useState } from 'react'
-import { getAllUsersFS } from '@/lib/admin-firestore'
+import { getAllUsersFS, updateUserStatusFS } from '@/lib/admin-firestore'
+import { useAuth } from '@/lib/auth-context'
 import type { User } from '@/lib/mock-data'
-import { Shield, Users, Crown, User as UserIcon, Search, Filter } from 'lucide-react'
+import { Shield, Users, Crown, User as UserIcon, Search, Filter, UserX, UserCheck } from 'lucide-react'
+import { toast } from 'sonner'
 
 const ROLE_LABELS: Record<string, string> = {
   super_admin: 'Super Admin',
@@ -41,24 +43,24 @@ const ROLE_ICONS: Record<string, React.ElementType> = {
   user: UserIcon,
 }
 
-function formatDate(iso?: string) {
-  if (!iso) return '—'
-  return new Date(iso).toLocaleDateString('en-GB', { day: '2-digit', month: 'short', year: 'numeric' })
-}
-
 export default function UsersPage() {
+  const { user: currentUser } = useAuth()
+  const isSuperAdmin = currentUser?.role === 'super_admin'
+
   const [allUsers, setAllUsers] = useState<User[]>([])
   const [query, setQuery] = useState('')
   const [roleFilter, setRoleFilter] = useState('all')
   const [accountTypeFilter, setAccountTypeFilter] = useState('all')
   const [isLoading, setIsLoading] = useState(true)
 
-  useEffect(() => {
+  const load = () => {
     getAllUsersFS().then(data => {
       setAllUsers(data as User[])
       setIsLoading(false)
     })
-  }, [])
+  }
+
+  useEffect(() => { load() }, [])
 
   const filteredUsers = allUsers.filter(u => {
     if (query && !u.name?.toLowerCase().includes(query.toLowerCase()) && !u.email?.toLowerCase().includes(query.toLowerCase())) return false
@@ -66,6 +68,13 @@ export default function UsersPage() {
     if (accountTypeFilter !== 'all' && u.accountType !== accountTypeFilter) return false
     return true
   })
+
+  const handleToggleStatus = async (u: User) => {
+    const newStatus = (u.status === 'suspended') ? 'active' : 'suspended'
+    await updateUserStatusFS(u.id, newStatus)
+    toast.success(`${u.name} ${newStatus === 'suspended' ? 'suspended' : 'restored'}.`)
+    load()
+  }
 
   return (
     <div className="max-w-5xl">
@@ -80,7 +89,7 @@ export default function UsersPage() {
         <div className="flex flex-wrap items-center gap-4 px-5 py-4 border-b border-white/[0.06] bg-white/[0.01]">
           <div className="relative flex-1 min-w-[200px]">
             <Search className="w-4 h-4 absolute left-3 top-1/2 -translate-y-1/2 text-white/30" />
-            <input 
+            <input
               type="text"
               placeholder="Search by name or email..."
               value={query}
@@ -89,43 +98,49 @@ export default function UsersPage() {
             />
           </div>
           <div className="flex items-center gap-2">
-             <Filter className="w-4 h-4 text-white/30" />
-             <select 
-               value={accountTypeFilter}
-               onChange={e => setAccountTypeFilter(e.target.value)}
-               className="bg-black/20 border border-white/10 rounded-lg px-3 py-2 text-sm text-white outline-none cursor-pointer"
-             >
-               <option value="all">All Account Types</option>
-               <option value="vendor">Vendor</option>
-               <option value="client">Client</option>
-             </select>
-             <select 
-               value={roleFilter}
-               onChange={e => setRoleFilter(e.target.value)}
-               className="bg-black/20 border border-white/10 rounded-lg px-3 py-2 text-sm text-white outline-none cursor-pointer"
-             >
-               <option value="all">All Roles</option>
-               {Object.entries(ROLE_LABELS).map(([key, label]) => (
-                 <option key={key} value={key}>{label}</option>
-               ))}
-             </select>
+            <Filter className="w-4 h-4 text-white/30" />
+            <select
+              value={accountTypeFilter}
+              onChange={e => setAccountTypeFilter(e.target.value)}
+              className="bg-black/20 border border-white/10 rounded-lg px-3 py-2 text-sm text-white outline-none cursor-pointer"
+            >
+              <option value="all">All Account Types</option>
+              <option value="vendor">Vendor</option>
+              <option value="client">Client</option>
+            </select>
+            <select
+              value={roleFilter}
+              onChange={e => setRoleFilter(e.target.value)}
+              className="bg-black/20 border border-white/10 rounded-lg px-3 py-2 text-sm text-white outline-none cursor-pointer"
+            >
+              <option value="all">All Roles</option>
+              {Object.entries(ROLE_LABELS).map(([key, label]) => (
+                <option key={key} value={key}>{label}</option>
+              ))}
+            </select>
           </div>
         </div>
 
         {/* Table header */}
-        <div className="hidden md:grid grid-cols-[1fr_160px_100px_120px] gap-4 px-5 py-3 border-b border-white/[0.06] text-xs font-medium text-white/30 uppercase tracking-widest bg-white/[0.01]">
+        <div className={`hidden md:grid gap-4 px-5 py-3 border-b border-white/[0.06] text-xs font-medium text-white/30 uppercase tracking-widest bg-white/[0.01] ${isSuperAdmin ? 'grid-cols-[1fr_160px_100px_120px_80px]' : 'grid-cols-[1fr_160px_100px_120px]'}`}>
           <span>User</span>
           <span>Account Type</span>
           <span>Status</span>
           <span>Role</span>
+          {isSuperAdmin && <span>Actions</span>}
         </div>
 
         <div className="divide-y divide-white/[0.04]">
           {filteredUsers.map(u => {
             const Icon = ROLE_ICONS[u.role] ?? UserIcon
+            const isSuspended = u.status === 'suspended'
+            const isSelf = u.id === currentUser?.id
             return (
-              <div key={u.id} className="flex items-center gap-4 px-5 py-4 hover:bg-white/[0.02] transition-colors">
-                <div className="md:grid md:grid-cols-[1fr_160px_100px_120px] md:gap-4 md:items-center flex-1 min-w-0">
+              <div
+                key={u.id}
+                className={`flex items-center gap-4 px-5 py-4 hover:bg-white/[0.02] transition-colors ${isSuspended ? 'opacity-60' : ''}`}
+              >
+                <div className={`md:grid md:gap-4 md:items-center flex-1 min-w-0 ${isSuperAdmin ? 'md:grid-cols-[1fr_160px_100px_120px_80px]' : 'md:grid-cols-[1fr_160px_100px_120px]'}`}>
                   {/* Name + email */}
                   <div className="flex items-center gap-3 min-w-0">
                     {u.avatar ? (
@@ -149,11 +164,11 @@ export default function UsersPage() {
                   {/* Status */}
                   <div className="hidden md:block">
                     <span className={`inline-flex items-center px-2 py-0.5 rounded-full text-xs border ${
-                      u.status === 'active'
-                        ? 'bg-emerald-500/10 border-emerald-500/20 text-emerald-400'
-                        : 'bg-amber-500/10 border-amber-500/20 text-amber-400'
+                      isSuspended
+                        ? 'bg-red-500/10 border-red-500/20 text-red-400'
+                        : 'bg-emerald-500/10 border-emerald-500/20 text-emerald-400'
                     }`}>
-                      {u.status ?? 'active'}
+                      {isSuspended ? 'Suspended' : 'Active'}
                     </span>
                   </div>
 
@@ -164,20 +179,42 @@ export default function UsersPage() {
                       {ROLE_LABELS[u.role] ?? u.role}
                     </span>
                   </div>
+
+                  {/* Actions — super admin only, cannot act on self */}
+                  {isSuperAdmin && (
+                    <div className="hidden md:flex items-center">
+                      {!isSelf && (
+                        <button
+                          onClick={() => handleToggleStatus(u)}
+                          title={isSuspended ? 'Restore access' : 'Revoke access'}
+                          className={`p-2 rounded-lg transition-colors ${
+                            isSuspended
+                              ? 'text-emerald-400/60 hover:text-emerald-400 hover:bg-emerald-400/10'
+                              : 'text-white/30 hover:text-red-400 hover:bg-red-400/10'
+                          }`}
+                        >
+                          {isSuspended
+                            ? <UserCheck className="w-4 h-4" />
+                            : <UserX className="w-4 h-4" />}
+                        </button>
+                      )}
+                    </div>
+                  )}
                 </div>
               </div>
             )
           })}
           {filteredUsers.length === 0 && (
-             <div className="px-5 py-8 text-center text-white/40 text-sm">
-                No users found matching your filters.
-             </div>
+            <div className="px-5 py-8 text-center text-white/40 text-sm">
+              No users found matching your filters.
+            </div>
           )}
         </div>
       </div>
 
       <p className="text-xs text-white/20 mt-4">
-        Showing {allUsers.length} registered users.
+        Showing {filteredUsers.length} of {allUsers.length} registered users.
+        {isSuperAdmin && <span className="ml-2 text-amber-400/50">Super admin: click the icon to revoke or restore access.</span>}
       </p>
     </div>
   )

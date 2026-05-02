@@ -45,14 +45,18 @@ async function loadUserProfile(uid: string): Promise<User | null> {
   try {
     const snap = await getDoc(doc(db, 'users', uid))
     if (snap.exists()) return snap.data() as User
-  } catch { /* ignore */ }
+  } catch (e) {
+    console.warn('[Auth] loadUserProfile failed:', (e as Error).message)
+  }
   return null
 }
 
 async function saveUserProfile(uid: string, profile: User) {
   try {
     await setDoc(doc(db, 'users', uid), { ...profile, updatedAt: serverTimestamp() }, { merge: true })
-  } catch { /* ignore */ }
+  } catch (e) {
+    console.warn('[Auth] saveUserProfile failed:', (e as Error).message)
+  }
 }
 
 interface AuthContextType {
@@ -86,6 +90,17 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
   useEffect(() => {
     const unsub = onAuthStateChanged(auth, async (firebaseUser) => {
       if (firebaseUser) {
+        const emailLower = (firebaseUser.email ?? '').toLowerCase()
+        // Test accounts: never depend on Firestore — use hardcoded profile immediately
+        if (TEST_ACCOUNTS[emailLower]) {
+          const profile: User = { id: firebaseUser.uid, email: emailLower, ...TEST_ACCOUNTS[emailLower].profile } as User
+          saveUserProfile(firebaseUser.uid, profile) // best-effort, non-blocking
+          setUser(profile)
+          setCookies(profile)
+          setIsLoading(false)
+          return
+        }
+        // Real accounts: load from Firestore
         const profile = await loadUserProfile(firebaseUser.uid)
         if (profile) {
           setUser(profile)
@@ -112,6 +127,15 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     const emailLower = email.toLowerCase()
     try {
       const cred = await signInWithEmailAndPassword(auth, emailLower, password)
+      // Test accounts: never depend on Firestore
+      if (TEST_ACCOUNTS[emailLower]) {
+        const profile: User = { id: cred.user.uid, email: emailLower, ...TEST_ACCOUNTS[emailLower].profile } as User
+        setUser(profile)
+        setCookies(profile)
+        saveUserProfile(cred.user.uid, profile) // best-effort, non-blocking
+        return { success: true, mustChangePassword: false, role: profile.role }
+      }
+      // Real accounts: load from Firestore
       const profile = await loadUserProfile(cred.user.uid)
       if (!profile) {
         await signOut(auth)
@@ -122,7 +146,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
       return { success: true, mustChangePassword: profile.mustChangePassword, role: profile.role }
     } catch (err) {
       const fbErr = err as AuthError
-      // Auto-create test accounts on first use
+      // Auto-create test accounts in Firebase Auth on first use
       if (
         (fbErr.code === 'auth/user-not-found' || fbErr.code === 'auth/invalid-credential') &&
         TEST_ACCOUNTS[emailLower] &&
@@ -131,9 +155,9 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
         try {
           const cred = await createUserWithEmailAndPassword(auth, emailLower, password)
           const profile: User = { id: cred.user.uid, email: emailLower, ...TEST_ACCOUNTS[emailLower].profile } as User
-          await saveUserProfile(cred.user.uid, profile)
           setUser(profile)
           setCookies(profile)
+          saveUserProfile(cred.user.uid, profile) // best-effort, non-blocking
           return { success: true, mustChangePassword: false, role: profile.role }
         } catch (createErr) {
           return { success: false, error: (createErr as AuthError).message }
