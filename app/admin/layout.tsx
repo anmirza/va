@@ -23,7 +23,7 @@ const BASE_NAV = [
 
 // Shown to both admin and super admin
 const SHARED_NAV = [
-  { href: '/admin/clients', label: 'Client Companies', icon: Briefcase },
+  { href: '/admin/clients', label: 'Client Management', icon: Briefcase },
   { href: '/admin/users', label: 'Users', icon: Users },
   { href: '/admin/disclaimer', label: 'Disclaimer Editor', icon: FileText },
 ]

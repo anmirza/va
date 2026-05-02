@@ -39,9 +39,9 @@ function ProductionContent() {
             <div className="flex items-center gap-2 mb-4 text-sm">
               <Link href="/" className="text-muted-foreground hover:text-foreground">Home</Link>
               <span className="text-muted-foreground">/</span>
-              <span className="text-foreground font-medium">Production Companies</span>
+              <span className="text-foreground font-medium">Find Your Production Company</span>
             </div>
-            <h1 className="text-4xl font-bold text-foreground mb-2">Production Companies</h1>
+            <h1 className="text-4xl font-bold text-foreground mb-2">Find Your Production Company</h1>
             <p className="text-foreground/70 mb-8">Discover world-class production companies for your next project</p>
             <div className="flex gap-3 max-w-xl">
               <div className="flex-1 relative">

@@ -6,12 +6,23 @@ import Link from 'next/link'
 import { useAuth } from '@/lib/auth-context'
 import { createClientCompanyFS } from '@/lib/admin-firestore'
 import { toast } from 'sonner'
-import { ArrowLeft, Building2, Globe, Coins, Info, Save } from 'lucide-react'
+import { ArrowLeft, Building2, Globe, Coins, Info, Save, MapPin } from 'lucide-react'
 
-const REGIONS = [
-  'Africa', 'Asia Pacific', 'Central America', 'Eastern Europe', 'Middle East',
-  'North America', 'Northern Europe', 'Oceania', 'South America', 'Southern Europe',
-  'Western Europe',
+const REGIONAL_HUBS = [
+  'Global', 'EMEA', 'Europe', 'Western Europe', 'Eastern Europe', 'Central Europe',
+  'Northern Europe', 'Southern Europe', 'Nordics', 'DACH', 'Benelux', 'Iberia',
+  'UK & Ireland', 'Mediterranean', 'Middle East', 'MENA', 'Africa', 'North Africa',
+  'Sub-Saharan Africa', 'Americas', 'North America', 'Latin America', 'LATAM',
+  'Central America', 'South America', 'Caribbean', 'APAC', 'Asia Pacific', 'East Asia',
+  'South Asia', 'Southeast Asia', 'Greater China', 'Japan & Korea', 'India Subcontinent',
+  'ANZ', 'Oceania', 'Emerging Markets', 'Developed Markets', 'International Markets',
+  'Export Markets', 'Global Travel Retail', 'Other',
+]
+
+const OPERATE_AS_OPTIONS = [
+  { value: 'regional_hub', label: 'Regional Hub' },
+  { value: 'multi_country', label: 'Multi Country' },
+  { value: 'country_company', label: 'Country Company' },
 ]
 
 export default function CreateClientCompanyPage() {
@@ -24,6 +35,8 @@ export default function CreateClientCompanyPage() {
   const [region, setRegion] = useState('')
   const [localCompany, setLocalCompany] = useState('')
   const [country, setCountry] = useState('')
+  const [address, setAddress] = useState('')
+  const [operateAs, setOperateAs] = useState('')
   const [notes, setNotes] = useState('')
   const [tokens, setTokens] = useState(1)
   const [packageSize, setPackageSize] = useState<6 | 12>(6)
@@ -43,6 +56,8 @@ export default function CreateClientCompanyPage() {
         region: region.trim() || undefined,
         localCompany: localCompany.trim() || undefined,
         country: country.trim() || undefined,
+        address: address.trim() || undefined,
+        operateAs: (operateAs || undefined) as any,
         tokens,
         tokensUsed: 0,
         packageSize,
@@ -107,25 +122,32 @@ export default function CreateClientCompanyPage() {
           </p>
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
             <div>
+              <label className="block text-xs font-medium text-white/50 mb-1.5 uppercase tracking-wider">Operate As</label>
+              <select value={operateAs} onChange={e => setOperateAs(e.target.value)} className="w-full h-10 bg-white/[0.04] border border-white/[0.08] rounded-lg px-3 text-sm text-white focus:outline-none focus:border-[#0763d8]/60">
+                <option value="">Select type…</option>
+                {OPERATE_AS_OPTIONS.map(o => <option key={o.value} value={o.value} className="bg-[#0a0b1a]">{o.label}</option>)}
+              </select>
+            </div>
+            <div>
               <label className="block text-xs font-medium text-white/50 mb-1.5 uppercase tracking-wider">Holding Company</label>
               <input type="text" value={holdingCompany} onChange={e => setHoldingCompany(e.target.value)} placeholder="e.g. The Coca-Cola Company" className={inputCls} />
             </div>
             <div>
               <label className="block text-xs font-medium text-white/50 mb-1.5 uppercase tracking-wider">Regional Hub</label>
-              <input type="text" value={regionalHub} onChange={e => setRegionalHub(e.target.value)} placeholder="e.g. Coca-Cola EMEA" className={inputCls} />
+              <select value={regionalHub} onChange={e => setRegionalHub(e.target.value)} className="w-full h-10 bg-white/[0.04] border border-white/[0.08] rounded-lg px-3 text-sm text-white focus:outline-none focus:border-[#0763d8]/60">
+                <option value="">Select regional hub…</option>
+                {REGIONAL_HUBS.map(r => <option key={r} value={r} className="bg-[#0a0b1a]">{r}</option>)}
+              </select>
             </div>
             <div>
               <label className="block text-xs font-medium text-white/50 mb-1.5 uppercase tracking-wider">Region</label>
-              <select value={region} onChange={e => setRegion(e.target.value)} className="w-full h-10 bg-white/[0.04] border border-white/[0.08] rounded-lg px-3 text-sm text-white focus:outline-none focus:border-[#0763d8]/60">
-                <option value="">Select region…</option>
-                {REGIONS.map(r => <option key={r} value={r} className="bg-[#0a0b1a]">{r}</option>)}
-              </select>
+              <input type="text" value={region} onChange={e => setRegion(e.target.value)} placeholder="e.g. Southern Europe" className={inputCls} />
             </div>
             <div>
               <label className="block text-xs font-medium text-white/50 mb-1.5 uppercase tracking-wider">Local Company</label>
               <input type="text" value={localCompany} onChange={e => setLocalCompany(e.target.value)} placeholder="e.g. Coca-Cola HBC Italia" className={inputCls} />
             </div>
-            <div className="sm:col-span-2">
+            <div>
               <label className="block text-xs font-medium text-white/50 mb-1.5 uppercase tracking-wider">Country</label>
               <input type="text" value={country} onChange={e => setCountry(e.target.value)} placeholder="e.g. Italy" className={inputCls} />
             </div>
@@ -152,6 +174,30 @@ export default function CreateClientCompanyPage() {
               </div>
             </div>
           )}
+        </div>
+
+        {/* Address */}
+        <div className="glass-card rounded-2xl p-6">
+          <div className="flex items-center gap-3 mb-5">
+            <div className="w-8 h-8 rounded-lg bg-teal-500/10 border border-teal-500/20 flex items-center justify-center">
+              <MapPin className="w-4 h-4 text-teal-400" />
+            </div>
+            <div>
+              <h2 className="text-sm font-semibold text-white">Address</h2>
+              <p className="text-[10px] text-white/30 mt-0.5">Company registered office address</p>
+            </div>
+          </div>
+          <div>
+            <label className="block text-xs font-medium text-white/50 mb-1.5 uppercase tracking-wider">Address</label>
+            <input
+              type="text"
+              value={address}
+              onChange={e => setAddress(e.target.value)}
+              placeholder="Start typing an address…"
+              className={inputCls}
+            />
+            <p className="text-[10px] text-white/20 mt-1.5">💡 Google Maps autocomplete integration available with API key</p>
+          </div>
         </div>
 
         {/* Subscription / Credits */}

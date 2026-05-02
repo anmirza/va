@@ -8,8 +8,8 @@ import { useRouter } from 'next/navigation'
 import { VaLogo } from '@/components/va-logo'
 
 const directoryItems = [
-  { label: 'Agencies', href: '/directory', icon: Building2 },
-  { label: 'Production Companies', href: '/production', icon: Users },
+  { label: 'Find Your Agencies', href: '/directory', icon: Building2 },
+  { label: 'Find Your Production Company', href: '/production', icon: Users },
 ]
 
 const whatWeDoItems = [
@@ -26,10 +26,11 @@ const auraItems = [
 
 const navItems = [
   { label: 'Directory', href: '/directory', dropdown: directoryItems },
-  { label: 'Creative Library', href: '/creative-library' },
+  { label: 'Get Inspired', href: '/creative-library' },
   { label: 'What We Do', href: '#', dropdown: whatWeDoItems },
   { label: 'AURA', href: '#', dropdown: auraItems, isAura: true },
 ]
+
 
 export function Header() {
   const { user, logout } = useAuth()

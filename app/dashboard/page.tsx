@@ -131,15 +131,15 @@ function DashboardContent() {
                       <div className="absolute inset-0 bg-[#02030E]/30 backdrop-blur-[1px] flex items-center justify-center">
                         <div className="flex items-center gap-2 bg-[#02030E]/80 border border-white/[0.1] rounded-xl px-4 py-2">
                           <Lock className="w-3.5 h-3.5 text-[#0763d8]" />
-                          <Link href="/pricing" className="text-xs text-[#0763d8] font-medium hover:underline">Upgrade to Pro</Link>
+                          <span className="text-xs text-[#0763d8] font-medium">Coming Soon</span>
                         </div>
                       </div>
                       <div className="w-10 h-10 bg-white/[0.04] rounded-lg flex items-center justify-center shrink-0">
                         <LayoutDashboard className="w-5 h-5 text-white/20" />
                       </div>
                       <div className="flex-1 min-w-0">
-                        <p className="font-medium text-white/50">Intelligence Reports</p>
-                        <p className="text-xs text-white/20 mt-0.5">Deep-dive analytics & market data</p>
+                        <p className="font-medium text-white/50">Insights</p>
+                        <p className="text-xs text-white/20 mt-0.5">Market insights & analytics</p>
                       </div>
                     </div>
                   ) : (
@@ -148,8 +148,8 @@ function DashboardContent() {
                         <LayoutDashboard className="w-5 h-5 text-[#0763d8]" />
                       </div>
                       <div className="flex-1 min-w-0">
-                        <p className="font-medium text-white group-hover:text-[#0763d8] transition-colors">Intelligence Reports</p>
-                        <p className="text-xs text-white/30 mt-0.5">Deep-dive analytics & market data</p>
+                        <p className="font-medium text-white group-hover:text-[#0763d8] transition-colors">Insights</p>
+                        <p className="text-xs text-white/30 mt-0.5">Market insights & analytics</p>
                       </div>
                       <ChevronRight className="w-4 h-4 text-white/10 shrink-0 self-center group-hover:text-[#0763d8] transition-colors" />
                     </Link>

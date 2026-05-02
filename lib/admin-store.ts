@@ -9,7 +9,7 @@
 // ── Types ─────────────────────────────────────────────────────────────────────
 
 export type OrgType = 'agency' | 'production' | string // Allow dynamic string for categories
-export type RegistrationStatus = 'pending' | 'approved' | 'rejected'
+export type RegistrationStatus = 'pending' | 'approved' | 'rejected' | 'amendment_requested'
 
 export interface ClientCompany {
   id: string
@@ -20,6 +20,10 @@ export interface ClientCompany {
   region?: string
   localCompany?: string
   country?: string
+  // New fields from Feedback Round 2
+  address?: string
+  operateAs?: 'regional_hub' | 'multi_country' | 'country_company'
+  companyLevel?: string
   // Legacy field (kept for compatibility)
   holding?: string
   // Subscription
@@ -133,6 +137,10 @@ export interface PendingRegistration {
   rejectionReason?: string
   approvedAt?: string
   approvedByAdminId?: string
+  // Amendment fields
+  amendmentNote?: string
+  amendmentRequestedAt?: string
+  amendmentRequestedByAdminId?: string
 }
 
 export interface OrgRecord {
@@ -246,7 +254,7 @@ If you have any questions, please contact our team before proceeding.`
 
 export interface ActivityLogEntry {
   id: string
-  type: 'approval' | 'rejection' | 'signup' | 'org_create' | 'org_remove' | 'invite'
+  type: 'approval' | 'rejection' | 'signup' | 'org_create' | 'org_remove' | 'invite' | 'amendment'
   description: string
   timestamp: string
 }

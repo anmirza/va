@@ -160,6 +160,24 @@ export async function rejectRegistrationFS(id: string, adminId: string, reason?:
   await addActivity({ type: 'rejection', description: `Rejected ${reg.type}: ${reg.companyName}` })
 }
 
+export async function requestAmendmentFS(id: string, adminId: string, note: string): Promise<void> {
+  const regDoc = await getDoc(doc(db, 'pendingRegistrations', id))
+  if (!regDoc.exists()) return
+  const reg = regDoc.data() as PendingRegistration
+
+  await updateDoc(doc(db, 'pendingRegistrations', id), {
+    status: 'amendment_requested',
+    amendmentNote: note,
+    amendmentRequestedAt: new Date().toISOString(),
+    amendmentRequestedByAdminId: adminId,
+  })
+  await addActivity({ type: 'amendment', description: `Amendment requested for ${reg.type}: ${reg.companyName}` })
+
+  // TODO: Send email notification to registrant
+  // For now, log the notification to console
+  console.log(`[EMAIL NOTIFICATION] Amendment requested for ${reg.companyName}. Email would be sent to ${reg.submittedByEmail}: "${note}"`)
+}
+
 // ── Organisations ─────────────────────────────────────────────────────────────
 
 export async function getAllOrgsFS(): Promise<OrgRecord[]> {

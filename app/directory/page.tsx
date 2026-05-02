@@ -111,7 +111,7 @@ function DirectoryContent() {
               <span className="text-muted-foreground">/</span>
               <span className="text-foreground font-medium">Directory</span>
             </div>
-            <h1 className="text-4xl font-serif font-bold mb-2">Agency Directory</h1>
+            <h1 className="text-4xl font-serif font-bold mb-2">Find Your Agencies</h1>
             <p className="text-muted-foreground">Browse {filteredCompanies.length} agencies from around the world</p>
 
             {/* Active filter pills from URL */}
@@ -154,13 +154,10 @@ function DirectoryContent() {
           </div>
         </section>
 
-        <div className="px-4 sm:px-6 lg:px-8 py-12">
-          <div className="max-w-7xl mx-auto w-full flex gap-8">
-            {/* Sidebar */}
-            <aside className="w-64 flex-shrink-0 hidden lg:block">
-              <div className="mb-8">
-                <h3 className="font-serif font-bold mb-3 text-sm uppercase tracking-wide">Search</h3>
-                <div className="relative">
+            {/* Horizontal Filters — below search */}
+            <div className="mt-8">
+              <div className="flex items-center gap-3 mb-4">
+                <div className="relative flex-1 max-w-xl">
                   <Search className="absolute left-3 top-3 w-4 h-4 text-muted-foreground" />
                   <Input
                     placeholder="Search agencies..."
@@ -170,72 +167,53 @@ function DirectoryContent() {
                   />
                 </div>
               </div>
-
-              {activeFilters > 0 && (
-                <div className="mb-8">
+              <div className="flex flex-wrap gap-3">
+                <div className="flex items-center gap-2 bg-card border border-border rounded-lg px-3 py-2">
+                  <span className="text-xs text-muted-foreground font-medium">City:</span>
+                  <select
+                    value={selectedCities[0] || ''}
+                    onChange={(e) => { setSelectedCities(e.target.value ? [e.target.value] : []); setCurrentPage(1) }}
+                    className="text-sm bg-transparent focus:outline-none"
+                  >
+                    <option value="">All Cities</option>
+                    {CITIES.map(city => <option key={city}>{city}</option>)}
+                  </select>
+                </div>
+                <div className="flex items-center gap-2 bg-card border border-border rounded-lg px-3 py-2">
+                  <span className="text-xs text-muted-foreground font-medium">Service:</span>
+                  <select
+                    value={selectedServices[0] || ''}
+                    onChange={(e) => { setSelectedServices(e.target.value ? [e.target.value] : []); setCurrentPage(1) }}
+                    className="text-sm bg-transparent focus:outline-none"
+                  >
+                    <option value="">All Services</option>
+                    {SERVICES.map(s => <option key={s}>{s}</option>)}
+                  </select>
+                </div>
+                <div className="flex items-center gap-2 bg-card border border-border rounded-lg px-3 py-2">
+                  <span className="text-xs text-muted-foreground font-medium">Sector:</span>
+                  <select
+                    value={selectedSectors[0] || ''}
+                    onChange={(e) => { setSelectedSectors(e.target.value ? [e.target.value] : []); setCurrentPage(1) }}
+                    className="text-sm bg-transparent focus:outline-none"
+                  >
+                    <option value="">All Sectors</option>
+                    {SECTORS.map(s => <option key={s}>{s}</option>)}
+                  </select>
+                </div>
+                {activeFilters > 0 && (
                   <button
                     onClick={() => { setSelectedServices([]); setSelectedSectors([]); setSelectedCities([]); setCurrentPage(1) }}
-                    className="text-xs font-medium text-accent hover:underline flex items-center gap-1"
+                    className="flex items-center gap-1 text-xs font-medium text-accent hover:underline px-3 py-2"
                   >
-                    <X className="w-3 h-3" /> Clear all filters ({activeFilters})
+                    <X className="w-3 h-3" /> Clear filters ({activeFilters})
                   </button>
-                </div>
-              )}
-
-              <div className="mb-8">
-                <h3 className="font-serif font-bold mb-3 text-sm uppercase tracking-wide">Cities</h3>
-                <div className="space-y-2">
-                  {CITIES.map((city) => (
-                    <label key={city} className="flex items-center gap-2 cursor-pointer group">
-                      <input
-                        type="checkbox"
-                        checked={selectedCities.includes(city)}
-                        onChange={() => toggleFilter(city, setSelectedCities, selectedCities)}
-                        className="w-4 h-4 rounded border-border"
-                      />
-                      <span className="text-sm text-muted-foreground group-hover:text-foreground">{city}</span>
-                    </label>
-                  ))}
-                </div>
+                )}
               </div>
+            </div>
 
-              <div className="mb-8">
-                <h3 className="font-serif font-bold mb-3 text-sm uppercase tracking-wide">Services</h3>
-                <div className="space-y-2">
-                  {SERVICES.map((service) => (
-                    <label key={service} className="flex items-center gap-2 cursor-pointer group">
-                      <input
-                        type="checkbox"
-                        checked={selectedServices.includes(service)}
-                        onChange={() => toggleFilter(service, setSelectedServices, selectedServices)}
-                        className="w-4 h-4 rounded border-border"
-                      />
-                      <span className="text-sm text-muted-foreground group-hover:text-foreground">{service}</span>
-                    </label>
-                  ))}
-                </div>
-              </div>
-
-              <div className="mb-8">
-                <h3 className="font-serif font-bold mb-3 text-sm uppercase tracking-wide">Sectors</h3>
-                <div className="space-y-2">
-                  {SECTORS.map((sector) => (
-                    <label key={sector} className="flex items-center gap-2 cursor-pointer group">
-                      <input
-                        type="checkbox"
-                        checked={selectedSectors.includes(sector)}
-                        onChange={() => toggleFilter(sector, setSelectedSectors, selectedSectors)}
-                        className="w-4 h-4 rounded border-border"
-                      />
-                      <span className="text-sm text-muted-foreground group-hover:text-foreground">{sector}</span>
-                    </label>
-                  ))}
-                </div>
-              </div>
-            </aside>
-
-            {/* Main */}
-            <div className="flex-1 min-w-0">
+        <div className="px-4 sm:px-6 lg:px-8 py-12">
+          <div className="max-w-7xl mx-auto w-full">
               <div className="flex items-center justify-between mb-6">
                 <div className="text-sm text-muted-foreground">
                   Showing {Math.min(startIdx + 1, filteredCompanies.length)} – {Math.min(startIdx + itemsPerPage, filteredCompanies.length)} of {filteredCompanies.length}
@@ -331,7 +309,6 @@ function DirectoryContent() {
                   </Button>
                 </div>
               )}
-            </div>
           </div>
         </div>
       </main>

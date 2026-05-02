@@ -5,14 +5,14 @@ import { useParams, useRouter } from 'next/navigation'
 import Link from 'next/link'
 import { useAuth } from '@/lib/auth-context'
 import type { PendingRegistration } from '@/lib/admin-store'
-import { getRegistrationByIdFS, approveRegistrationFS, rejectRegistrationFS } from '@/lib/admin-firestore'
+import { getRegistrationByIdFS, approveRegistrationFS, rejectRegistrationFS, requestAmendmentFS } from '@/lib/admin-firestore'
 import { REGISTRATION_STEPS } from '@/lib/rfi-data'
 import { Button } from '@/components/ui/button'
 import {
   ArrowLeft, Check, X, Clock, CheckCircle2, XCircle,
   Building2, Film, ChevronLeft, ChevronRight, User, Mail, Phone, Globe,
   MapPin, Calendar, Briefcase, BarChart2, Shield, Users, Star, Zap,
-  AlertTriangle, FileText,
+  AlertTriangle, FileText, FileEdit,
 } from 'lucide-react'
 
 // ── Helpers ───────────────────────────────────────────────────────────────────
@@ -52,6 +52,7 @@ function StatusBadge({ status }: { status: PendingRegistration['status'] }) {
     pending: { cls: 'bg-amber-500/10 border-amber-500/20 text-amber-400', icon: Clock, label: 'Under Review' },
     approved: { cls: 'bg-emerald-500/10 border-emerald-500/20 text-emerald-400', icon: CheckCircle2, label: 'Approved' },
     rejected: { cls: 'bg-red-500/10 border-red-500/20 text-red-400', icon: XCircle, label: 'Rejected' },
+    amendment_requested: { cls: 'bg-orange-500/10 border-orange-500/20 text-orange-400', icon: AlertTriangle, label: 'Amendment Requested' },
   }
   const { cls, icon: Icon, label } = map[status]
   return (
@@ -411,6 +412,9 @@ export default function RegistrationDetailPage() {
   const [step, setStep] = useState(1)
   const [showRejectDialog, setShowRejectDialog] = useState(false)
   const [rejectReason, setRejectReason] = useState('')
+  const [showAmendmentDialog, setShowAmendmentDialog] = useState(false)
+  const [amendmentNote, setAmendmentNote] = useState('')
+  const [isSubmitting, setIsSubmitting] = useState(false)
 
   useEffect(() => {
     if (id) {
@@ -443,6 +447,19 @@ export default function RegistrationDetailPage() {
     await rejectRegistrationFS(reg.id, user?.id ?? 'admin', rejectReason)
     setReg(r => r ? { ...r, status: 'rejected', rejectionReason: rejectReason } : r)
     setShowRejectDialog(false)
+  }
+
+  const handleRequestAmendment = async () => {
+    if (!amendmentNote.trim()) return
+    setIsSubmitting(true)
+    try {
+      await requestAmendmentFS(reg.id, user?.id ?? 'admin', amendmentNote.trim())
+      setReg(r => r ? { ...r, status: 'amendment_requested' as const, amendmentNote: amendmentNote.trim() } : r)
+      setShowAmendmentDialog(false)
+      setAmendmentNote('')
+    } finally {
+      setIsSubmitting(false)
+    }
   }
 
   const typeColor = reg.type === 'agency' ? '[#0763d8]' : '[#7c3aed]'
@@ -523,6 +540,13 @@ export default function RegistrationDetailPage() {
               <Check className="w-4 h-4" /> Approve
             </Button>
             <Button
+              onClick={() => setShowAmendmentDialog(true)}
+              className="h-10 px-5 bg-orange-500/15 hover:bg-orange-500/25 text-orange-400 border border-orange-500/25 rounded-xl gap-2"
+              variant="outline"
+            >
+              <FileEdit className="w-4 h-4" /> Request Amendment
+            </Button>
+            <Button
               onClick={() => setShowRejectDialog(true)}
               className="h-10 px-5 bg-red-500/15 hover:bg-red-500/25 text-red-400 border border-red-500/25 rounded-xl gap-2"
               variant="outline"
@@ -552,6 +576,60 @@ export default function RegistrationDetailPage() {
         <div className="mb-6 p-4 bg-red-500/5 border border-red-500/20 rounded-xl">
           <p className="text-xs font-bold text-red-400 uppercase tracking-widest mb-1">Rejection Reason</p>
           <p className="text-sm text-red-300/80">{reg.rejectionReason}</p>
+        </div>
+      )}
+
+      {/* Amendment requested banner */}
+      {reg.status === 'amendment_requested' && reg.amendmentNote && (
+        <div className="mb-6 p-4 bg-orange-500/5 border border-orange-500/20 rounded-xl">
+          <p className="text-xs font-bold text-orange-400 uppercase tracking-widest mb-1">Amendment Requested</p>
+          <p className="text-sm text-orange-300/80">{reg.amendmentNote}</p>
+          {reg.amendmentRequestedAt && (
+            <p className="text-xs text-orange-400/50 mt-2">Requested on {new Date(reg.amendmentRequestedAt).toLocaleDateString('en-GB', { day: '2-digit', month: 'short', year: 'numeric' })}</p>
+          )}
+        </div>
+      )}
+
+      {/* Amendment Request Dialog */}
+      {showAmendmentDialog && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center p-4">
+          <div className="absolute inset-0 bg-black/70 backdrop-blur-sm" onClick={() => setShowAmendmentDialog(false)} />
+          <div className="relative w-full max-w-md bg-[#0d1117] border border-white/[0.1] rounded-2xl p-6 shadow-2xl">
+            <div className="flex items-center gap-3 mb-4">
+              <div className="w-10 h-10 rounded-xl bg-orange-500/10 border border-orange-500/20 flex items-center justify-center">
+                <FileEdit className="w-5 h-5 text-orange-400" />
+              </div>
+              <div>
+                <h3 className="font-bold text-white">Request Amendment</h3>
+                <p className="text-xs text-white/40">{reg.companyName}</p>
+              </div>
+            </div>
+            <p className="text-sm text-white/60 mb-4">Describe what needs to be fixed. The registrant will receive an email notification.</p>
+            <textarea
+              value={amendmentNote}
+              onChange={e => setAmendmentNote(e.target.value)}
+              rows={4}
+              placeholder="e.g., Please provide a valid VAT number and update your company address..."
+              className="w-full bg-white/[0.04] border border-white/[0.1] rounded-xl px-4 py-3 text-sm text-white placeholder:text-white/25 focus:outline-none focus:border-orange-400/50 resize-none mb-4"
+              autoFocus
+            />
+            <div className="flex gap-3">
+              <Button
+                onClick={handleRequestAmendment}
+                disabled={!amendmentNote.trim() || isSubmitting}
+                className="flex-1 h-10 bg-orange-500 hover:bg-orange-600 disabled:opacity-40 text-white rounded-xl gap-2"
+              >
+                <FileEdit className="w-4 h-4" /> {isSubmitting ? 'Sending...' : 'Send Request'}
+              </Button>
+              <Button
+                variant="outline"
+                onClick={() => setShowAmendmentDialog(false)}
+                className="flex-1 h-10 border-white/[0.1] text-white/60 hover:text-white rounded-xl"
+              >
+                Cancel
+              </Button>
+            </div>
+          </div>
         </div>
       )}
 
