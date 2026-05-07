@@ -7,13 +7,13 @@ import { AuthGuard } from '@/components/auth-guard'
 import { Header } from '@/components/header'
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
-import { User, Lock, Bell, CreditCard, LogOut } from 'lucide-react'
+import { User, Lock, Bell, LogOut } from 'lucide-react'
 import { useRouter } from 'next/navigation'
 
 function SettingsContent() {
   const { user, logout } = useAuth()
   const router = useRouter()
-  const [activeTab, setActiveTab] = useState<'account' | 'password' | 'notifications' | 'billing'>('account')
+  const [activeTab, setActiveTab] = useState<'account' | 'password' | 'notifications'>('account')
   const [saved, setSaved] = useState(false)
 
   const handleSave = () => {
@@ -30,7 +30,6 @@ function SettingsContent() {
     { id: 'account', label: 'Account', icon: User },
     { id: 'password', label: 'Password', icon: Lock },
     { id: 'notifications', label: 'Notifications', icon: Bell },
-    { id: 'billing', label: 'Billing', icon: CreditCard },
   ] as const
 
   /* Theme-aware card/sidebar styling uses CSS variables
@@ -127,20 +126,7 @@ function SettingsContent() {
                 </div>
               )}
 
-              {activeTab === 'billing' && (
-                <div className={cardCls}>
-                  <h2 className="font-bold text-foreground mb-6">Billing & Plan</h2>
-                  <div className="bg-muted rounded-lg p-5 mb-6 border border-border">
-                    <div className="flex items-center justify-between mb-2">
-                      <p className="font-bold text-foreground">Free Plan</p>
-                      <span className="px-3 py-1 bg-secondary text-muted-foreground text-xs rounded-full font-medium">Current</span>
-                    </div>
-                    <p className="text-sm text-muted-foreground mb-3">Basic directory listing and search access</p>
-                    <Link href="/pricing"><Button className="bg-[#f5d742] hover:bg-[#e6c93c] text-[#1a1a1a] font-medium">Upgrade Plan</Button></Link>
-                  </div>
-                  <p className="text-sm text-muted-foreground">No payment method on file. Upgrade to add a payment method.</p>
-                </div>
-              )}
+
             </div>
           </div>
         </div>

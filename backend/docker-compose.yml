@@ -1,0 +1,16 @@
+services:
+  postgres:
+    image: postgres:16-alpine
+    container_name: requisti_db
+    restart: unless-stopped
+    environment:
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: requisti123
+      POSTGRES_DB: requisti
+    ports:
+      - "5432:5432"
+    volumes:
+      - requisti_pgdata:/var/lib/postgresql/data
+
+volumes:
+  requisti_pgdata:

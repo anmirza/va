@@ -9,19 +9,31 @@
 // ── Types ─────────────────────────────────────────────────────────────────────
 
 export type OrgType = 'agency' | 'production' | string // Allow dynamic string for categories
-export type RegistrationStatus = 'pending' | 'approved' | 'rejected'
+export type RegistrationStatus = 'pending' | 'approved' | 'rejected' | 'amendment_requested'
 
 export interface ClientCompany {
   id: string
   name: string
-  holding?: string
+  // Corporate hierarchy
+  holdingCompany?: string
   regionalHub?: string
   region?: string
   localCompany?: string
   country?: string
+  // New fields from Feedback Round 2
+  address?: string
+  operateAs?: 'regional_hub' | 'multi_country' | 'country_company'
+  companyLevel?: string
+  // Legacy field (kept for compatibility)
+  holding?: string
+  // Subscription
   createdAt: string
-  tokens: number
+  tokens: number            // total Agency Search & Selection credits purchased
+  tokensUsed: number        // credits consumed
+  packageSize: number       // agencies per package (6 or 12)
   status: 'active' | 'suspended'
+  createdByAdminId?: string
+  notes?: string
 }
 
 export interface ClientUser {
@@ -41,14 +53,67 @@ export interface VACategory {
   iconSvg: string
 }
 
+export interface RfiStep {
+  key: string
+  label: string
+  shortLabel: string
+  /** Subtitle shown below the step header title */
+  subtitle?: string
+  /** Emoji / icon shown beside the step title */
+  icon?: string
+  /** Editable sub-section headings within a step */
+  subSections?: { key: string; label: string }[]
+}
+
 export interface RfiField {
   id: string
   label: string
-  type: 'text' | 'number' | 'date' | 'textarea' | 'checkbox' | 'select' | 'table' | 'file'
+  type: 'text' | 'number' | 'date' | 'textarea' | 'checkbox' | 'select' | 'table' | 'file' | 'email' | 'url' | 'tel'
   required: boolean
+  /** @deprecated legacy free-form section name; kept for backwards compatibility with older custom-category data */
   section?: string
   order?: number
   visible?: boolean
+
+  // ── Placement (used by built-in agency / production schemas) ────────────
+  /** Step this field belongs to (e.g. 'general-info', 'contacts'). */
+  stepKey?: string
+  /** Sub-section within the step (e.g. 'legal-identity'). */
+  subSectionKey?: string
+
+  // ── UX ─────────────────────────────────────────────────────────────────
+  placeholder?: string
+  helpText?: string
+  defaultValue?: string
+
+  // ── For select / checkbox-group ────────────────────────────────────────
+  options?: { value: string; label: string }[]
+
+  // ── Composite / system blocks (turnover, social media, attachments, …) ──
+  /**
+   * If set, the field renders a specialised composite UI block instead of a
+   * scalar input. System blocks cannot be deleted by admins, only hidden /
+   * relabelled.
+   */
+  systemBlock?:
+    | 'turnover'
+    | 'social-media'
+    | 'awards'
+    | 'attachments'
+    | 'capabilities'
+    | 'governance-qa'
+    | 'csr-qa'
+    | 'ai-qa'
+    | 'investments'
+    | 'contacts'
+    | 'communication-areas'
+    | 'service-groups'
+    | 'employee-headcount'
+    | 'top-clients'
+    | 'directors'
+    | 'post-production'
+  /** True when seeded by the system; hides delete / id-rename in the editor. */
+  isSystem?: boolean
 }
 
 export interface VAInternalUser {
@@ -72,6 +137,10 @@ export interface PendingRegistration {
   rejectionReason?: string
   approvedAt?: string
   approvedByAdminId?: string
+  // Amendment fields
+  amendmentNote?: string
+  amendmentRequestedAt?: string
+  amendmentRequestedByAdminId?: string
 }
 
 export interface OrgRecord {
@@ -185,7 +254,7 @@ If you have any questions, please contact our team before proceeding.`
 
 export interface ActivityLogEntry {
   id: string
-  type: 'approval' | 'rejection' | 'signup' | 'org_create' | 'org_remove' | 'invite'
+  type: 'approval' | 'rejection' | 'signup' | 'org_create' | 'org_remove' | 'invite' | 'amendment'
   description: string
   timestamp: string
 }
@@ -841,8 +910,8 @@ export function seedDummyData() {
   
   // Seed client companies
   const dummyClients: ClientCompany[] = [
-    { id: 'ccmp-1', name: 'Coca-Cola', holding: 'The Coca-Cola Company', tokens: 0, status: 'active', createdAt: new Date().toISOString() },
-    { id: 'ccmp-2', name: 'Coca-Cola Italy', holding: 'The Coca-Cola Company', region: 'Europe', country: 'Italy', tokens: 12, status: 'active', createdAt: new Date().toISOString() }
+    { id: 'ccmp-1', name: 'Coca-Cola', holding: 'The Coca-Cola Company', tokens: 0, tokensUsed: 0, packageSize: 6, status: 'active', createdAt: new Date().toISOString() },
+    { id: 'ccmp-2', name: 'Coca-Cola Italy', holding: 'The Coca-Cola Company', region: 'Europe', country: 'Italy', tokens: 12, tokensUsed: 3, packageSize: 6, status: 'active', createdAt: new Date().toISOString() }
   ]
   saveClientCompanies(dummyClients)
 

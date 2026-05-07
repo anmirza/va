@@ -11,7 +11,7 @@ import { Button } from '@/components/ui/button'
 import { companies, campaigns, news } from '@/lib/mock-data'
 import HeroSearch from '@/components/hero-search'
 import { VaLogo } from '@/components/va-logo'
-import { ArrowRight } from 'lucide-react'
+import { ArrowRight, Building2, Film, Sparkles } from 'lucide-react'
 
 const disciplines = [
   'Brand Content', 'Advertising / 360', 'Brand Strategy', 'Social Media', 'Digital',
@@ -78,6 +78,22 @@ export default function Home() {
 
             {/* HeroSearch */}
             <HeroSearch />
+
+            {/* Dual CTAs */}
+            <div className="flex flex-col sm:flex-row gap-3 mt-8">
+              <Button className="bg-[#0763d8] hover:bg-[#0655b3] text-white px-8 py-3 rounded-full font-semibold text-base gap-2" asChild>
+                <Link href="/directory">
+                  <Building2 className="w-4 h-4" />
+                  Find your Agency
+                </Link>
+              </Button>
+              <Button variant="outline" className="border-white/20 text-white hover:bg-white/10 px-8 py-3 rounded-full font-semibold text-base gap-2" asChild>
+                <Link href="/production">
+                  <Film className="w-4 h-4" />
+                  Find your Production Company
+                </Link>
+              </Button>
+            </div>
           </div>
         </section>
 
@@ -126,6 +142,47 @@ export default function Home() {
               <CampaignCard key={campaign.id} campaign={campaign} />
             ))}
           </div>
+        </section>
+
+        {/* Latest Creative Update */}
+        <section className="px-4 sm:px-6 lg:px-8 py-16 lg:py-24 max-w-7xl mx-auto">
+          <div className="flex items-end justify-between mb-10">
+            <h2 className="text-2xl sm:text-3xl font-bold text-white">
+              <span className="relative inline-block">
+                Latest Creative Update
+                <span className="absolute bottom-1 left-0 right-0 h-3 -z-10 opacity-20 bg-[#f5d742]" />
+              </span>
+            </h2>
+          </div>
+          {campaigns[0] && (
+            <Link
+              href={`/campaigns/${campaigns[0].id}`}
+              className="group relative flex flex-col md:flex-row gap-0 overflow-hidden rounded-2xl border border-white/[0.08] bg-white/[0.04] hover:border-[#0763d8]/30 transition-all"
+            >
+              <div className="md:w-1/2 h-64 md:h-80 overflow-hidden">
+                <img src={campaigns[0].thumbnail} alt="" className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500" />
+              </div>
+              <div className="md:w-1/2 p-8 flex flex-col justify-center">
+                <span className="inline-flex items-center gap-1.5 px-3 py-1 bg-[#f5d742]/20 text-[#f5d742] text-xs font-semibold rounded-full mb-4 w-fit">
+                  <Sparkles className="w-3 h-3" /> Creative Update
+                </span>
+                <h3 className="text-2xl font-bold text-white mb-2 group-hover:text-[#0763d8] transition-colors">
+                  {campaigns[0].title}
+                </h3>
+                <p className="text-white/60 mb-4">
+                  Brand: <span className="font-medium text-white/90">{campaigns[0].brand}</span> · Agency: <span className="font-medium text-white/90">{campaigns[0].agency}</span>
+                </p>
+                <p className="text-sm text-white/40 line-clamp-3">
+                  {campaigns[0].description || `Discover how ${campaigns[0].agency} created an impactful campaign for ${campaigns[0].brand} using ${campaigns[0].format.join(' & ')}.`}
+                </p>
+                <div className="mt-auto pt-4">
+                  <span className="inline-flex items-center gap-1 text-sm font-medium text-[#0763d8]">
+                    Read more <ArrowRight className="w-3.5 h-3.5" />
+                  </span>
+                </div>
+              </div>
+            </Link>
+          )}
         </section>
 
         {/* Spotlight Reports / Research-style cards */}
@@ -224,21 +281,7 @@ export default function Home() {
 
         )}
 
-        {/* Join the Network CTA */}
-        <section className="px-4 sm:px-6 lg:px-8 py-16 lg:py-24 max-w-3xl mx-auto text-center">
-          <h2 className="text-3xl sm:text-4xl font-bold text-white mb-4">Join the Network</h2>
-          <p className="text-lg text-white/40 mb-8">
-            Join as a Client or as a Vendor. Showcase your agency and grow your business on the creative intelligence platform.
-          </p>
-          <div className="flex flex-col sm:flex-row gap-3 justify-center">
-            <Button className="bg-[#0763d8] hover:bg-[#0655b3] text-white px-8 rounded-full" asChild>
-              <Link href="/signup">Sign Up</Link>
-            </Button>
-            <Button variant="outline" className="border-white/20 text-white hover:bg-white/10 px-8 rounded-full" asChild>
-              <Link href="/directory">Browse Agencies</Link>
-            </Button>
-          </div>
-        </section>
+
 
       </main>
       <Footer />

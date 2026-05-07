@@ -2,7 +2,8 @@
 
 import { useEffect, useState } from 'react'
 import Link from 'next/link'
-import { getAdminStats, getRecentActivity, ActivityLogEntry, seedDummyData } from '@/lib/admin-store'
+import { ActivityLogEntry } from '@/lib/admin-store'
+import { getAdminStatsFS, getRecentActivityFS } from '@/lib/admin-firestore'
 import { Building2, Film, Clock, Users, CheckCircle2, XCircle, TrendingUp, ArrowRight } from 'lucide-react'
 
 function StatCard({
@@ -58,13 +59,8 @@ export default function AdminDashboardPage() {
   const [activity, setActivity] = useState<ActivityLogEntry[]>([])
 
   useEffect(() => {
-    let currentStats = getAdminStats()
-    if (currentStats.totalAgencies === 0 && currentStats.totalProduction === 0 && currentStats.pendingApprovals === 0) {
-      seedDummyData()
-      currentStats = getAdminStats()
-    }
-    setStats(currentStats)
-    setActivity(getRecentActivity(10))
+    getAdminStatsFS().then(data => setStats(prev => ({ ...prev, ...data })))
+    getRecentActivityFS(10).then(setActivity)
   }, [])
 
   return (

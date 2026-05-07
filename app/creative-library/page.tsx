@@ -61,9 +61,9 @@ function CreativeLibraryContent() {
             <div className="flex items-center gap-2 mb-4 text-sm justify-start">
               <Link href="/" className="text-white/60 hover:text-white">Home</Link>
               <span className="text-white/40">/</span>
-              <span className="text-white font-medium">Creative Library</span>
+              <span className="text-white font-medium">Get Inspired</span>
             </div>
-            <h1 className="text-4xl sm:text-5xl font-bold text-white mb-3">Creative Library</h1>
+            <h1 className="text-4xl sm:text-5xl font-bold text-white mb-3">Get Inspired</h1>
             <p className="text-white/70 text-lg mb-8">Ad campaigns &amp; case studies from around the world</p>
             <div className="flex gap-3 max-w-2xl mx-auto">
               <div className="flex-1 relative">
@@ -103,6 +103,33 @@ function CreativeLibraryContent() {
                 )}
               </div>
             )}
+
+            {/* Filters — directly below search */}
+            <div className="flex flex-wrap gap-3 mt-6 justify-center">
+              <div className="flex items-center gap-2 bg-white/[0.06] border border-white/[0.08] rounded-lg px-3 py-2">
+                <Filter className="w-4 h-4 text-white/50" />
+                <select value={mediaType} onChange={e => setMediaType(e.target.value)} className="text-sm bg-transparent focus:outline-none text-white">
+                  {MEDIA_TYPES.map(m => <option key={m} className="bg-[#0c0e1a] text-white">{m}</option>)}
+                </select>
+              </div>
+              <div className="flex items-center gap-2 bg-white/[0.06] border border-white/[0.08] rounded-lg px-3 py-2">
+                <select value={sector} onChange={e => setSector(e.target.value)} className="text-sm bg-transparent focus:outline-none text-white">
+                  {SECTORS.map(s => <option key={s} className="bg-[#0c0e1a] text-white">{s}</option>)}
+                </select>
+              </div>
+              <div className="flex items-center gap-2 bg-white/[0.06] border border-white/[0.08] rounded-lg px-3 py-2">
+                <select value={country} onChange={e => setCountry(e.target.value)} className="text-sm bg-transparent focus:outline-none text-white">
+                  {COUNTRIES.map(c => <option key={c} className="bg-[#0c0e1a] text-white">{c}</option>)}
+                </select>
+              </div>
+              <button
+                onClick={() => setAwardOnly(!awardOnly)}
+                className={`flex items-center gap-2 px-3 py-2 rounded-lg text-sm font-medium border transition-colors ${awardOnly ? 'bg-[#f5d742]/20 border-[#f5d742]/50 text-[#f5d742]' : 'bg-white/[0.06] border-white/[0.08] text-white/70 hover:border-white/20'}`}
+              >
+                <Award className="w-4 h-4" /> Award Winners Only
+              </button>
+              <span className="ml-auto text-sm text-white/50 self-center">{filtered.length} campaigns</span>
+            </div>
           </div>
         </div>
 
@@ -134,31 +161,7 @@ function CreativeLibraryContent() {
             </div>
           )}
 
-          <div className="flex flex-wrap gap-3 mb-6">
-            <div className="flex items-center gap-2 bg-white/[0.06] border border-white/[0.08] rounded-lg px-3 py-2">
-              <Filter className="w-4 h-4 text-white/50" />
-              <select value={mediaType} onChange={e => setMediaType(e.target.value)} className="text-sm bg-transparent focus:outline-none text-white">
-                {MEDIA_TYPES.map(m => <option key={m} className="bg-[#0c0e1a] text-white">{m}</option>)}
-              </select>
-            </div>
-            <div className="flex items-center gap-2 bg-white/[0.06] border border-white/[0.08] rounded-lg px-3 py-2">
-              <select value={sector} onChange={e => setSector(e.target.value)} className="text-sm bg-transparent focus:outline-none text-white">
-                {SECTORS.map(s => <option key={s} className="bg-[#0c0e1a] text-white">{s}</option>)}
-              </select>
-            </div>
-            <div className="flex items-center gap-2 bg-white/[0.06] border border-white/[0.08] rounded-lg px-3 py-2">
-              <select value={country} onChange={e => setCountry(e.target.value)} className="text-sm bg-transparent focus:outline-none text-white">
-                {COUNTRIES.map(c => <option key={c} className="bg-[#0c0e1a] text-white">{c}</option>)}
-              </select>
-            </div>
-            <button
-              onClick={() => setAwardOnly(!awardOnly)}
-              className={`flex items-center gap-2 px-3 py-2 rounded-lg text-sm font-medium border transition-colors ${awardOnly ? 'bg-[#f5d742]/20 border-[#f5d742]/50 text-[#f5d742]' : 'bg-white/[0.06] border-white/[0.08] text-white/70 hover:border-white/20'}`}
-            >
-              <Award className="w-4 h-4" /> Award Winners Only
-            </button>
-            <span className="ml-auto text-sm text-white/50 self-center">{filtered.length} campaigns</span>
-          </div>
+
 
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
             {filtered.map(campaign => {

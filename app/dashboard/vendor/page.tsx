@@ -8,20 +8,22 @@ import { AuthGuard } from '@/components/auth-guard'
 import { Header } from '@/components/header'
 import { Button } from '@/components/ui/button'
 import { companies } from '@/lib/mock-data'
-import { getRegistrationsByUser, PendingRegistration, getVACategories, VACategory } from '@/lib/admin-store'
+import type { PendingRegistration, VACategory } from '@/lib/admin-store'
+import { getRegistrationsByUserFS, getVACategoriesFS } from '@/lib/admin-firestore'
 import { CategoryIcon } from '@/components/category-icon'
 import {
   Building2, Film, Plus, Settings, ExternalLink,
-  ChevronRight, Clock, CheckCircle2, AlertCircle, XCircle, Users, RefreshCw, Layers
+  ChevronRight, Clock, CheckCircle2, AlertCircle, XCircle, Users, RefreshCw, Layers, AlertTriangle, FileEdit
 } from 'lucide-react'
 
 // ── Status helpers ────────────────────────────────────────────────────────────
 
 function RegistrationStatusBadge({ status }: { status: PendingRegistration['status'] }) {
-  const map = {
+  const map: Record<string, { cls: string; icon: any; label: string }> = {
     pending: { cls: 'bg-amber-500/10 border-amber-500/20 text-amber-400', icon: Clock, label: 'Under Review' },
     approved: { cls: 'bg-emerald-500/10 border-emerald-500/20 text-emerald-400', icon: CheckCircle2, label: 'Active' },
     rejected: { cls: 'bg-red-500/10 border-red-500/20 text-red-400', icon: XCircle, label: 'Rejected' },
+    amendment_requested: { cls: 'bg-orange-500/10 border-orange-500/20 text-orange-400', icon: AlertTriangle, label: 'Amendment Required' },
   }
   const m = map[status]
   const Icon = m.icon
@@ -68,6 +70,16 @@ function PendingCard({ reg }: { reg: PendingRegistration }) {
           </div>
         )}
 
+        {reg.status === 'amendment_requested' && (
+          <div className="bg-orange-500/5 border border-orange-500/20 rounded-lg p-3 mb-3">
+            <div className="flex items-center gap-1.5 mb-1">
+              <FileEdit className="w-3.5 h-3.5 text-orange-400" />
+              <p className="text-xs text-orange-400 font-medium">Amendment Required</p>
+            </div>
+            <p className="text-xs text-orange-300/70">{reg.amendmentNote || 'Your registration requires updates. Please review and resubmit.'}</p>
+          </div>
+        )}
+
         {reg.status === 'approved' && (
           <p className="text-xs text-emerald-400 mb-3">
             ✓ Your application was approved. Your profile is now active on the platform.
@@ -75,9 +87,17 @@ function PendingCard({ reg }: { reg: PendingRegistration }) {
         )}
 
         {reg.status === 'rejected' && (
-          <Link href={`/signup/register/${reg.type}`}>
+          <Link href={reg.type === 'agency' ? '/signup/agency' : reg.type === 'production' ? '/signup/production' : `/signup/register/${reg.type}`}>
             <Button size="sm" className="w-full bg-red-500 hover:bg-red-600 text-white gap-1.5 text-xs">
               <RefreshCw className="w-3.5 h-3.5" /> Resubmit Application
+            </Button>
+          </Link>
+        )}
+
+        {reg.status === 'amendment_requested' && (
+          <Link href={reg.type === 'agency' ? '/signup/agency' : reg.type === 'production' ? '/signup/production' : `/signup/register/${reg.type}`}>
+            <Button size="sm" className="w-full bg-orange-500 hover:bg-orange-600 text-white gap-1.5 text-xs">
+              <FileEdit className="w-3.5 h-3.5" /> Fix & Resubmit
             </Button>
           </Link>
         )}
@@ -110,9 +130,9 @@ function VendorDashboardContent() {
 
   useEffect(() => {
     if (user?.id) {
-      setPendingRegs(getRegistrationsByUser(user.id))
+      getRegistrationsByUserFS(user.id).then(setPendingRegs)
     }
-    setCategories(getVACategories())
+    getVACategoriesFS().then(setCategories)
   }, [user?.id])
 
   const myCompanies = companies.filter(c =>
@@ -244,10 +264,10 @@ function VendorDashboardContent() {
             
             <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
               {categories.map(cat => (
-                <Link key={cat.id} href={`/signup/register/${cat.id}`}>
+                <Link key={cat.id} href={cat.id.includes('agency') ? '/signup/agency' : cat.id.includes('production') ? '/signup/production' : `/signup/register/${cat.id}`}>
                   <div className="group glass-card rounded-2xl p-5 flex items-center gap-4 hover:border-[#0763d8]/40 hover:shadow-lg hover:shadow-[#0763d8]/10 transition-all cursor-pointer h-full">
                     <div className="w-11 h-11 rounded-xl bg-white/[0.05] border border-white/10 flex items-center justify-center shrink-0 group-hover:bg-[#0763d8]/10 group-hover:border-[#0763d8]/30 transition-colors">
-                      <CategoryIcon iconSvg={cat.iconSvg} className="w-5 h-5 text-white/40 group-hover:text-[#0763d8]" />
+                      <CategoryIcon categoryName={cat.name} className="w-5 h-5 text-white/40 group-hover:text-[#0763d8]" />
                     </div>
                     <div className="flex-1 min-w-0">
                       <p className="font-semibold text-white group-hover:text-white transition-colors">Add {cat.name}</p>
@@ -266,7 +286,7 @@ function VendorDashboardContent() {
             <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
               {[
                 { label: 'Browse Directory', desc: 'Explore other companies', href: '/directory', icon: Building2 },
-                { label: 'Creative Library', desc: 'View award-winning campaigns', href: '/creative-library', icon: Film },
+                { label: 'Get Inspired', desc: 'View award-winning campaigns', href: '/creative-library', icon: Film },
                 { label: 'Account Settings', desc: 'Manage your profile', href: '/dashboard/settings', icon: Settings },
               ].map(item => {
                 const Icon = item.icon

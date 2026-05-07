@@ -3,7 +3,7 @@
 import { useState, useEffect } from 'react'
 import Link from 'next/link'
 import { useRouter } from 'next/navigation'
-import { getDisclaimerContent } from '@/lib/admin-store'
+import { getDisclaimerContentFS } from '@/lib/admin-firestore'
 import { VaLogo } from '@/components/va-logo'
 import { Button } from '@/components/ui/button'
 import { AlertTriangle, CheckSquare, Square, Film, ChevronRight, FileText } from 'lucide-react'
@@ -14,8 +14,7 @@ export default function ProductionDisclaimerPage() {
   const [disclaimerText, setDisclaimerText] = useState('')
 
   useEffect(() => {
-    const content = getDisclaimerContent()
-    setDisclaimerText(content.production)
+    getDisclaimerContentFS().then(content => setDisclaimerText(content.production))
   }, [])
 
   const handleContinue = () => {

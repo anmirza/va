@@ -2,9 +2,9 @@
 
 import { useEffect, useState } from 'react'
 import { useAuth } from '@/lib/auth-context'
-import { getDisclaimerContent, saveDisclaimerContent } from '@/lib/admin-store'
+import { getDisclaimerContentFS, saveDisclaimerContentFS } from '@/lib/admin-firestore'
 import { Button } from '@/components/ui/button'
-import { FileText, Save, Check, Building2, Film, Eye, Edit2, Bold, Italic, List, Link as LinkIcon, Heading } from 'lucide-react'
+import { FileText, Save, Check, Building2, Film, Eye, Edit2, Bold, Italic, List, Link as LinkIcon, Heading, Info } from 'lucide-react'
 
 type Tab = 'agency' | 'production'
 
@@ -18,17 +18,18 @@ export default function DisclaimerPage() {
   const [lastUpdated, setLastUpdated] = useState('')
 
   useEffect(() => {
-    const content = getDisclaimerContent()
-    setAgencyText(content.agency)
-    setProductionText(content.production)
-    setLastUpdated(content.lastUpdatedAt)
+    getDisclaimerContentFS().then(content => {
+      setAgencyText(content.agency)
+      setProductionText(content.production)
+      setLastUpdated(content.lastUpdatedAt)
+    })
   }, [])
 
   const currentText = tab === 'agency' ? agencyText : productionText
   const setter = tab === 'agency' ? setAgencyText : setProductionText
 
-  const handleSave = () => {
-    saveDisclaimerContent(tab, currentText, user?.id ?? 'admin')
+  const handleSave = async () => {
+    await saveDisclaimerContentFS(tab, currentText, user?.id ?? 'admin')
     setSaved(true)
     setLastUpdated(new Date().toISOString())
     setTimeout(() => setSaved(false), 2500)
@@ -42,10 +43,19 @@ export default function DisclaimerPage() {
       {/* Header */}
       <div className="mb-6">
         <h1 className="text-2xl font-bold text-white mb-1">Disclaimer Editor</h1>
-        <p className="text-white/40 text-sm">
-          Edit the legal disclaimer shown to users before they start agency or production company registration.
-          Changes are saved instantly and shown on the next page visit.
+        <p className="text-white/40 text-sm mb-3">
+          Manage the legal disclaimer text shown to agencies and production companies during the registration process — before they submit their RFI profile for review.
         </p>
+        <div className="flex flex-wrap gap-3 text-xs">
+          <div className="flex items-center gap-2 px-3 py-2 bg-[#0763d8]/5 border border-[#0763d8]/15 rounded-lg">
+            <Building2 className="w-3.5 h-3.5 text-[#0763d8]" />
+            <span className="text-white/60"><strong className="text-white/80">Agency disclaimer</strong> — shown on <code className="text-[#0763d8]/80">/signup/agency</code> registration form</span>
+          </div>
+          <div className="flex items-center gap-2 px-3 py-2 bg-[#7c3aed]/5 border border-[#7c3aed]/15 rounded-lg">
+            <Film className="w-3.5 h-3.5 text-[#7c3aed]" />
+            <span className="text-white/60"><strong className="text-white/80">Production disclaimer</strong> — shown on <code className="text-[#7c3aed]/80">/signup/production</code> registration form</span>
+          </div>
+        </div>
       </div>
 
       {/* Tabs */}

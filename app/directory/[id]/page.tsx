@@ -1,6 +1,6 @@
 'use client'
 
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
 import Link from 'next/link'
 import { Header } from '@/components/header'
 import { Footer } from '@/components/footer'
@@ -31,7 +31,7 @@ import {
 } from '@/lib/cover-logo-spec'
 import { useCompanyListing } from '@/hooks/use-company-listing'
 import { CompanyClientAvatar } from '@/components/company-client-avatar'
-import { getClientCompanyById, deductClientToken } from '@/lib/admin-store'
+import { getClientCompanyByIdFS, deductClientTokenFS } from '@/lib/admin-firestore'
 
 /* ──────────── mock data generators ──────────── */
 function seededData(seed: string, len: number, min: number, max: number): number[] {
@@ -159,11 +159,11 @@ export default function CompanyProfilePage() {
 
   useEffect(() => {
     if (user?.accountType === 'client' && user?.companyId) {
-      const comp = getClientCompanyById(user.companyId)
-      if (comp) {
-        setClientTokens(comp.tokens)
-      }
-      
+      getClientCompanyByIdFS(user.companyId).then(comp => {
+        if (comp) {
+          setClientTokens((comp.tokens ?? 0) - (comp.tokensUsed ?? 0))
+        }
+      })
       // Check local storage if previously unlocked
       const unlockedList = JSON.parse(localStorage.getItem(`unlocked_agencies_${user.id}`) || '[]')
       if (unlockedList.includes(id)) {
@@ -172,9 +172,9 @@ export default function CompanyProfilePage() {
     }
   }, [user, id])
 
-  const handleUnlockProfile = () => {
+  const handleUnlockProfile = async () => {
     if (user?.companyId && clientTokens !== null && clientTokens > 0) {
-      const success = deductClientToken(user.companyId)
+      const success = await deductClientTokenFS(user.companyId)
       if (success) {
         const unlockedList = JSON.parse(localStorage.getItem(`unlocked_agencies_${user.id}`) || '[]')
         unlockedList.push(id)

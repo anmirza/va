@@ -1,7 +1,8 @@
 'use client'
 
 import { useState, useEffect } from 'react'
-import { getVAInternalUsers, createVAInternalUser, VAInternalUser } from '@/lib/admin-store'
+import { getVAInternalUsersFS, createVAInternalUserFS } from '@/lib/admin-firestore'
+import type { VAInternalUser } from '@/lib/admin-store'
 import { Plus, Shield, Search, User } from 'lucide-react'
 
 export default function InternalUsersPage() {
@@ -11,15 +12,15 @@ export default function InternalUsersPage() {
   const [newUser, setNewUser] = useState({ name: '', email: '', role: 'admin' as 'super_admin'|'admin'|'analyst' })
 
   useEffect(() => {
-    setUsers(getVAInternalUsers())
+    getVAInternalUsersFS().then(setUsers)
   }, [])
 
   const filtered = users.filter(u => u.name.toLowerCase().includes(query.toLowerCase()) || u.email.toLowerCase().includes(query.toLowerCase()))
 
-  const handleAdd = (e: React.FormEvent) => {
+  const handleAdd = async (e: React.FormEvent) => {
     e.preventDefault()
     if (!newUser.name || !newUser.email) return
-    const user = createVAInternalUser(newUser)
+    const user = await createVAInternalUserFS(newUser)
     setUsers([user, ...users])
     setShowNew(false)
     setNewUser({ name: '', email: '', role: 'admin' })

@@ -2,25 +2,38 @@
 
 import { useState, useEffect, useMemo } from 'react'
 import Link from 'next/link'
-import { getAllClientCompanies, ClientCompany } from '@/lib/admin-store'
-import { Building, Plus, Search, ChevronRight, Users, Coins, Filter } from 'lucide-react'
+import { getAllClientCompaniesFS } from '@/lib/admin-firestore'
+import type { ClientCompany } from '@/lib/admin-store'
+import { Building, Plus, Search, ChevronRight, Users, Coins, RefreshCw } from 'lucide-react'
 
 export default function ClientsPage() {
   const [companies, setCompanies] = useState<ClientCompany[]>([])
   const [query, setQuery] = useState('')
   const [viewMode, setViewMode] = useState<'table' | 'hierarchy'>('table')
+  const [isLoading, setIsLoading] = useState(true)
 
-  useEffect(() => {
-    setCompanies(getAllClientCompanies())
-  }, [])
+  const load = async () => {
+    setIsLoading(true)
+    const data = await getAllClientCompaniesFS()
+    setCompanies(data)
+    setIsLoading(false)
+  }
 
-  const filtered = companies.filter(c => c.name.toLowerCase().includes(query.toLowerCase()) || (c.holding || '').toLowerCase().includes(query.toLowerCase()) || (c.country || '').toLowerCase().includes(query.toLowerCase()))
+  useEffect(() => { load() }, [])
+
+  const filtered = companies.filter(c =>
+    !query ||
+    c.name.toLowerCase().includes(query.toLowerCase()) ||
+    (c.holdingCompany || c.holding || '').toLowerCase().includes(query.toLowerCase()) ||
+    (c.country || '').toLowerCase().includes(query.toLowerCase()) ||
+    (c.region || '').toLowerCase().includes(query.toLowerCase())
+  )
 
   // Group by holding company for hierarchy view
   const holdingGroups = useMemo(() => {
     const groups: Record<string, ClientCompany[]> = {}
     filtered.forEach(c => {
-      const key = c.holding || c.name
+      const key = c.holdingCompany || c.holding || c.name
       if (!groups[key]) groups[key] = []
       groups[key].push(c)
     })
@@ -31,7 +44,7 @@ export default function ClientsPage() {
     <div className="max-w-5xl">
       <div className="flex items-center justify-between mb-8">
         <div>
-          <h1 className="text-2xl font-bold text-white mb-2">Client Companies</h1>
+          <h1 className="text-2xl font-bold text-white mb-2">Client Management</h1>
           <p className="text-white/50 text-sm">Manage directory buyers, corporate hierarchy, regions, and token allocations.</p>
         </div>
         <Link href="/admin/clients/create" className="px-4 py-2.5 bg-white text-black font-semibold rounded-xl text-sm hover:bg-white/90 transition-colors flex items-center gap-2">

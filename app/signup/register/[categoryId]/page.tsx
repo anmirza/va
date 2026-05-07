@@ -2,7 +2,7 @@
 
 import { useState, useEffect } from 'react'
 import { useParams, useRouter } from 'next/navigation'
-import { getRfiFields, submitForApproval, getVACategories } from '@/lib/admin-store'
+import { getRfiFieldsFS, submitForApprovalFS, getVACategoriesFS } from '@/lib/admin-firestore'
 import { DynamicRfiForm } from '@/components/dynamic-rfi-form'
 import { VaLogo } from '@/components/va-logo'
 import { useAuth } from '@/lib/auth-context'
@@ -18,28 +18,25 @@ export default function DynamicRegistrationPage() {
   const [success, setSuccess] = useState(false)
 
   useEffect(() => {
-    const rfi = getRfiFields(categoryId)
-    setFields(rfi)
-    
-    const cats = getVACategories()
-    const cat = cats.find(c => c.id === categoryId)
-    setCategoryName(cat?.name || 'Organization')
+    async function load() {
+      const [rfi, cats] = await Promise.all([getRfiFieldsFS(categoryId), getVACategoriesFS()])
+      setFields(rfi)
+      const cat = cats.find(c => c.id === categoryId)
+      setCategoryName(cat?.name || 'Organization')
+    }
+    load()
   }, [categoryId])
 
   const handleSubmit = async (data: Record<string, any>) => {
     setIsSubmitting(true)
-    // Simulate API delay
-    await new Promise(r => setTimeout(r, 2000))
-    
-    const reg = submitForApproval({
-      type: categoryId.includes('agency') ? 'agency' : categoryId.includes('production') ? 'production' : categoryId,
+    await submitForApprovalFS({
+      type: (categoryId.includes('agency') ? 'agency' : categoryId.includes('production') ? 'production' : categoryId) as any,
       companyName: data['rag-1'] || data['rpr-1'] || 'New Organization',
       submittedByUserId: user?.id || 'guest',
       submittedByName: user?.name || 'Guest User',
       submittedByEmail: user?.email || 'guest@example.com',
       profileData: { ...data, categoryId }
     })
-    
     setIsSubmitting(false)
     setSuccess(true)
   }

@@ -4,7 +4,7 @@ import { useState, useEffect } from 'react'
 import Link from 'next/link'
 import { useRouter } from 'next/navigation'
 import { useAuth } from '@/lib/auth-context'
-import { getDisclaimerContent } from '@/lib/admin-store'
+import { getDisclaimerContentFS } from '@/lib/admin-firestore'
 import { VaLogo } from '@/components/va-logo'
 import { Button } from '@/components/ui/button'
 import { AlertTriangle, CheckSquare, Square, Building2, ChevronRight, FileText } from 'lucide-react'
@@ -16,8 +16,7 @@ export default function AgencyDisclaimerPage() {
   const [disclaimerText, setDisclaimerText] = useState('')
 
   useEffect(() => {
-    const content = getDisclaimerContent()
-    setDisclaimerText(content.agency)
+    getDisclaimerContentFS().then(content => setDisclaimerText(content.agency))
   }, [])
 
   const handleContinue = () => {
