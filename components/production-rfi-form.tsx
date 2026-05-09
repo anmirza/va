@@ -8,7 +8,7 @@
  *   - /app/signup/production         (mode="signup")
  *
  * Step labels are loaded from Firestore (config/rfiStepLabels › cat-production)
- * and fall back to the static PRODUCTION_STEPS constants if not found.
+ * and fall back to the static DEFAULT_STEPS constants if not found.
  */
 
 import React, { useState, useEffect } from 'react'
@@ -28,19 +28,19 @@ import { CustomFieldsSection } from '@/components/rfi/field-renderer'
 
 // ── Default step labels (fallback) ────────────────────────────────────────────
 const DEFAULT_STEPS: RfiStep[] = [
-  { key: 'general-info',     label: 'General Info',       shortLabel: 'General'    },
-  { key: 'organisation',     label: 'Organisation',       shortLabel: 'Org'        },
-  { key: 'address',          label: 'Address',            shortLabel: 'Address'    },
-  { key: 'about',            label: 'About',              shortLabel: 'About'      },
-  { key: 'contacts',         label: 'Contacts',           shortLabel: 'Contacts'   },
-  { key: 'social-media',     label: 'Social Media',       shortLabel: 'Social'     },
-  { key: 'turnover-clients', label: 'Turnover & Clients', shortLabel: 'Turnover'   },
-  { key: 'competencies',     label: 'Competencies',       shortLabel: 'Skills'     },
-  { key: 'post-production',  label: 'Post-Production',    shortLabel: 'Post'       },
-  { key: 'people-directors', label: 'People & Directors', shortLabel: 'People'     },
-  { key: 'awards-csr',       label: 'Awards & CSR',       shortLabel: 'Awards'     },
-  { key: 'governance-ai',    label: 'Governance & AI',    shortLabel: 'Governance' },
-  { key: 'attachments',      label: 'Attachments',        shortLabel: 'Attach'     },
+  { key: 'general-info',        label: 'General Info',          shortLabel: 'General'     },
+  { key: 'organisation',        label: 'Organisation',           shortLabel: 'Structure'   },
+  { key: 'address',             label: 'Address',                shortLabel: 'Address'     },
+  { key: 'about',               label: 'About',                  shortLabel: 'About'       },
+  { key: 'contacts',            label: 'Contacts',               shortLabel: 'Contacts'    },
+  { key: 'social-media',        label: 'Social Media',           shortLabel: 'Social'      },
+  { key: 'turnover-clients',    label: 'Turnover & Clients',     shortLabel: 'Turnover'    },
+  { key: 'competencies',        label: 'Competencies',           shortLabel: 'Skills'      },
+  { key: 'post-production',     label: 'Post-Production',        shortLabel: 'Post-Prod'   },
+  { key: 'people-directors',    label: 'People & Directors',     shortLabel: 'People'      },
+  { key: 'awards-csr',          label: 'Awards & CSR',           shortLabel: 'Awards'      },
+  { key: 'governance-ai',       label: 'Governance & AI',        shortLabel: 'Governance'  },
+  { key: 'attachments',         label: 'Attachments',            shortLabel: 'Attachments' },
 ]
 
 // ── Static data ───────────────────────────────────────────────────────────────
@@ -77,14 +77,11 @@ const selectCls   = 'w-full h-10 bg-white/[0.06] border border-white/[0.12] text
 const textareaCls = 'w-full bg-white/[0.06] border border-white/[0.12] text-white text-sm rounded-xl px-3 py-2.5 focus:outline-none focus:ring-2 focus:ring-[#7c3aed] resize-none placeholder:text-white/20'
 
 // ── Sub-components ────────────────────────────────────────────────────────────
-function StepHeader({ icon, title, subtitle }: { icon: string; title: string; subtitle: string }) {
+function StepHeader({ title, subtitle }: { icon?: string; title: string; subtitle: string }) {
   return (
     <div className="mb-8 pb-6 border-b border-white/[0.06]">
-      <div className="flex items-center gap-3 mb-2">
-        <span className="text-2xl">{icon}</span>
-        <h2 className="text-2xl font-bold text-white">{title}</h2>
-      </div>
-      <p className="text-white/40 text-sm ml-9">{subtitle}</p>
+      <h2 className="text-2xl font-bold text-white mb-2">{title}</h2>
+      <p className="text-white/40 text-sm">{subtitle}</p>
     </div>
   )
 }
@@ -457,7 +454,7 @@ export function ProductionRfiForm({ mode, editId, onDone }: ProductionRfiFormPro
         {/* STEP 1 — General Info */}
         {step === 1 && (
           <div>
-            <StepHeader icon="🎬" title={stepLabels[0]?.label ?? 'General Info'} subtitle="Legal identity of your production house" />
+            <StepHeader icon={stepLabels[0]?.icon} title={stepLabels[0]?.label ?? 'General Info'} subtitle={stepLabels[0]?.subtitle ?? 'Legal identity of your production house'} />
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-5">
               {schema.isVisible('businessName') && (
                 <FormField label={schema.getLabel('businessName', 'Registered Business Name')} required={schema.isRequired('businessName', true)}>

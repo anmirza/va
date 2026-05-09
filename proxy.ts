@@ -12,7 +12,7 @@ function isPublicPath(pathname: string): boolean {
   )
 }
 
-export function middleware(request: NextRequest) {
+export function proxy(request: NextRequest) {
   const { pathname } = request.nextUrl
   const authCookie = request.cookies.get('requisti_auth')?.value
   const roleCookie = request.cookies.get('requisti_role')?.value
