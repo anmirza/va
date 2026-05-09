@@ -27,6 +27,7 @@ const auraItems = [
 const navItems = [
   { label: 'Directory', href: '/directory', dropdown: directoryItems },
   { label: 'Get Inspired', href: '/creative-library' },
+  { label: 'Awards', href: '/awards' },
   { label: 'What We Do', href: '#', dropdown: whatWeDoItems },
   { label: 'AURA', href: '#', dropdown: auraItems, isAura: true },
 ]
@@ -239,7 +240,7 @@ export function Header() {
                   href="/signup"
                   className="text-sm font-medium bg-[#0763d8] hover:bg-[#0655b3] text-white px-5 py-1.5 rounded-full transition-colors"
                 >
-                  Sign Up
+                  Join the Network
                 </Link>
               </div>
             )}
@@ -304,7 +305,7 @@ export function Header() {
                       Sign In
                     </Link>
                     <Link href="/signup" className="block w-full text-center py-2.5 text-sm bg-[#0763d8] text-white rounded-full" onClick={() => setIsMenuOpen(false)}>
-                      Sign Up
+                      Join the Network
                     </Link>
                   </>
                 )}

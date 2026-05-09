@@ -329,8 +329,8 @@ function AgencyDashContent() {
                       </SectionCard>
                     )}
 
-                    {/* Quick Stats */}
-                    <SectionCard title="Quick Stats" icon={TrendingUp}>
+                    {/* Quick Stats — hidden in phase 1 per client feedback (Slide 15) */}
+                    {/* <SectionCard title="Quick Stats" icon={TrendingUp}>
                       <div className="space-y-2.5">
                         {profile.employees && (
                           <div className="flex items-center justify-between text-sm">
@@ -353,7 +353,7 @@ function AgencyDashContent() {
                           </div>
                         )}
                       </div>
-                    </SectionCard>
+                    </SectionCard> */}
 
                     {/* AI Readiness */}
                     {profile.aiCurrentTools && (
