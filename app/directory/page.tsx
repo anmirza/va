@@ -218,96 +218,98 @@ function DirectoryContent() {
                   </div>
                 </div>
               )}
-            </div>
 
-            {/* Horizontal Filters — below search */}
-            <div className="mt-8">
-              <div className="flex items-center gap-3 mb-4">
-                <div className="relative flex-1 max-w-xl">
-                  <Search className="absolute left-3 top-3 w-4 h-4 text-muted-foreground" />
-                  <Input
-                    placeholder="Search agencies..."
-                    value={searchQuery}
-                    onChange={(e) => {
-                      setSearchQuery(e.target.value);
-                      setCurrentPage(1);
-                    }}
-                    className="pl-9"
-                  />
+              {/* Horizontal Filters — below search */}
+              <div className="mt-8">
+                <div className="flex items-center gap-3 mb-4">
+                  <div className="relative flex-1 max-w-xl">
+                    <Search className="absolute left-3 top-3 w-4 h-4 text-muted-foreground" />
+                    <Input
+                      placeholder="Search agencies..."
+                      value={searchQuery}
+                      onChange={(e) => {
+                        setSearchQuery(e.target.value);
+                        setCurrentPage(1);
+                      }}
+                      className="pl-9"
+                    />
+                  </div>
                 </div>
-              </div>
-              <div className="flex flex-wrap gap-3">
-                <div className="flex items-center gap-2 bg-card border border-border rounded-lg px-3 py-2">
-                  <span className="text-xs text-muted-foreground font-medium">
-                    City:
-                  </span>
-                  <select
-                    value={selectedCities[0] || ""}
-                    onChange={(e) => {
-                      setSelectedCities(e.target.value ? [e.target.value] : []);
-                      setCurrentPage(1);
-                    }}
-                    className="text-sm bg-transparent focus:outline-none"
-                  >
-                    <option value="">All Cities</option>
-                    {CITIES.map((city) => (
-                      <option key={city}>{city}</option>
-                    ))}
-                  </select>
+                <div className="flex flex-wrap gap-3">
+                  <div className="flex items-center gap-2 bg-card border border-border rounded-lg px-3 py-2">
+                    <span className="text-xs text-muted-foreground font-medium">
+                      City:
+                    </span>
+                    <select
+                      value={selectedCities[0] || ""}
+                      onChange={(e) => {
+                        setSelectedCities(
+                          e.target.value ? [e.target.value] : [],
+                        );
+                        setCurrentPage(1);
+                      }}
+                      className="text-sm bg-transparent focus:outline-none"
+                    >
+                      <option value="">All Cities</option>
+                      {CITIES.map((city) => (
+                        <option key={city}>{city}</option>
+                      ))}
+                    </select>
+                  </div>
+                  <div className="flex items-center gap-2 bg-card border border-border rounded-lg px-3 py-2">
+                    <span className="text-xs text-muted-foreground font-medium">
+                      Service:
+                    </span>
+                    <select
+                      value={selectedServices[0] || ""}
+                      onChange={(e) => {
+                        setSelectedServices(
+                          e.target.value ? [e.target.value] : [],
+                        );
+                        setCurrentPage(1);
+                      }}
+                      className="text-sm bg-transparent focus:outline-none"
+                    >
+                      <option value="">All Services</option>
+                      {SERVICES.map((s) => (
+                        <option key={s}>{s}</option>
+                      ))}
+                    </select>
+                  </div>
+                  <div className="flex items-center gap-2 bg-card border border-border rounded-lg px-3 py-2">
+                    <span className="text-xs text-muted-foreground font-medium">
+                      Sector:
+                    </span>
+                    <select
+                      value={selectedSectors[0] || ""}
+                      onChange={(e) => {
+                        setSelectedSectors(
+                          e.target.value ? [e.target.value] : [],
+                        );
+                        setCurrentPage(1);
+                      }}
+                      className="text-sm bg-transparent focus:outline-none"
+                    >
+                      <option value="">All Sectors</option>
+                      {SECTORS.map((s) => (
+                        <option key={s}>{s}</option>
+                      ))}
+                    </select>
+                  </div>
+                  {activeFilters > 0 && (
+                    <button
+                      onClick={() => {
+                        setSelectedServices([]);
+                        setSelectedSectors([]);
+                        setSelectedCities([]);
+                        setCurrentPage(1);
+                      }}
+                      className="flex items-center gap-1 text-xs font-medium text-accent hover:underline px-3 py-2"
+                    >
+                      <X className="w-3 h-3" /> Clear filters ({activeFilters})
+                    </button>
+                  )}
                 </div>
-                <div className="flex items-center gap-2 bg-card border border-border rounded-lg px-3 py-2">
-                  <span className="text-xs text-muted-foreground font-medium">
-                    Service:
-                  </span>
-                  <select
-                    value={selectedServices[0] || ""}
-                    onChange={(e) => {
-                      setSelectedServices(
-                        e.target.value ? [e.target.value] : [],
-                      );
-                      setCurrentPage(1);
-                    }}
-                    className="text-sm bg-transparent focus:outline-none"
-                  >
-                    <option value="">All Services</option>
-                    {SERVICES.map((s) => (
-                      <option key={s}>{s}</option>
-                    ))}
-                  </select>
-                </div>
-                <div className="flex items-center gap-2 bg-card border border-border rounded-lg px-3 py-2">
-                  <span className="text-xs text-muted-foreground font-medium">
-                    Sector:
-                  </span>
-                  <select
-                    value={selectedSectors[0] || ""}
-                    onChange={(e) => {
-                      setSelectedSectors(
-                        e.target.value ? [e.target.value] : [],
-                      );
-                      setCurrentPage(1);
-                    }}
-                    className="text-sm bg-transparent focus:outline-none"
-                  >
-                    <option value="">All Sectors</option>
-                    {SECTORS.map((s) => (
-                      <option key={s}>{s}</option>
-                    ))}
-                  </select>
-                </div>
-                {activeFilters > 0 && (
-                  <button
-                    onClick={() => {
-                      setSelectedServices([]);
-                      setSelectedSectors([]);
-                      setSelectedCities([]);
-                      setCurrentPage(1);
-                    }}
-                    className="flex items-center gap-1 text-xs font-medium text-accent hover:underline px-3 py-2"
-                  >
-                    <X className="w-3 h-3" /> Clear filters ({activeFilters})
-                  </button>
-                )}
               </div>
             </div>
           </div>

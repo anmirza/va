@@ -84,15 +84,21 @@ function DashboardContent() {
                   <p className="text-[#0763d8] text-sm capitalize">
                     Client Account
                   </p>
-                  {isFreeTier && (
-                    <span className="text-xs bg-white/[0.06] text-white/40 border border-white/[0.08] rounded-full px-2 py-0.5">
-                      Free Plan
-                    </span>
-                  )}
-                  {isPaidTier && (
-                    <span className="text-xs bg-[#0763d8]/20 text-[#0763d8] border border-[#0763d8]/30 rounded-full px-2 py-0.5">
-                      Pro Plan
-                    </span>
+                  {user?.role === "client" || user?.accountType === "client" ? (
+                    <></>
+                  ) : (
+                    <>
+                      {isFreeTier && (
+                        <span className="text-xs bg-white/[0.06] text-white/40 border border-white/[0.08] rounded-full px-2 py-0.5">
+                          Free Plan
+                        </span>
+                      )}
+                      {isPaidTier && (
+                        <span className="text-xs bg-[#0763d8]/20 text-[#0763d8] border border-[#0763d8]/30 rounded-full px-2 py-0.5">
+                          Pro Plan
+                        </span>
+                      )}
+                    </>
                   )}
                 </div>
               </div>
@@ -119,10 +125,10 @@ function DashboardContent() {
                     </div>
                     <div className="flex-1 min-w-0">
                       <p className="font-medium text-white group-hover:text-[#0763d8] transition-colors">
-                        Browse Directory
+                        Find Your Agency
                       </p>
                       <p className="text-xs text-white/30 mt-0.5">
-                        Discover agencies and production houses
+                        Discover Your agencies and production houses
                       </p>
                     </div>
                     <ChevronRight className="w-4 h-4 text-white/10 shrink-0 self-center group-hover:text-[#0763d8] transition-colors" />
@@ -137,7 +143,7 @@ function DashboardContent() {
                     </div>
                     <div className="flex-1 min-w-0">
                       <p className="font-medium text-white group-hover:text-[#0763d8] transition-colors">
-                        Creative Library
+                        Latest Creative Updates
                       </p>
                       <p className="text-xs text-white/30 mt-0.5">
                         Explore award-winning campaigns
@@ -195,7 +201,7 @@ function DashboardContent() {
                       </div>
                       <div className="flex-1 min-w-0">
                         <p className="font-medium text-white group-hover:text-[#0763d8] transition-colors">
-                          Insights
+                          AI Agent
                         </p>
                         <p className="text-xs text-white/30 mt-0.5">
                           Market insights & analytics
@@ -303,21 +309,20 @@ function DashboardContent() {
               <div className="glass-card p-6 rounded-xl">
                 <div className="flex items-center gap-3 mb-3">
                   <LayoutDashboard className="w-5 h-5 text-[#0763d8]" />
-                  <h3 className="font-bold text-white">Your Plan</h3>
+                  <h3 className="font-bold text-white">Extend Your Scouting</h3>
                 </div>
                 {isFreeTier ? (
                   <>
                     <p className="text-white/50 text-sm mb-1">
-                      You are on the{" "}
-                      <span className="text-white font-medium">Free</span> plan.
+                      You have not expanded the{" "}
+                      <span className="text-white font-medium">Scouting</span>.
                     </p>
                     <p className="text-white/30 text-xs mb-4">
-                      Upgrade to access full company profiles, governance data,
-                      financials, and more.
+                      Expand Your Scouting By
                     </p>
                     <Link href="/pricing">
                       <Button className="w-full bg-[#0763d8] hover:bg-[#0655b3] text-white font-medium text-sm rounded-full gap-2">
-                        Upgrade to Pro <ArrowRight className="w-3.5 h-3.5" />
+                        Contact Us <ArrowRight className="w-3.5 h-3.5" />
                       </Button>
                     </Link>
                   </>
