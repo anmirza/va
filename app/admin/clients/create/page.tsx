@@ -158,7 +158,7 @@ export default function CreateClientCompanyPage() {
               <Building2 className="w-4 h-4 text-[#0763d8]" />
             </div>
             <h2 className="text-sm font-semibold text-white">
-              Company Identity
+              Global / Holding Company
             </h2>
           </div>
 

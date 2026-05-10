@@ -128,6 +128,7 @@ export default function UsersPage() {
               <option value="all">All Account Types</option>
               <option value="vendor">Vendor</option>
               <option value="client">Client</option>
+              <option value="va-consulting">VA Consulting</option>
             </select>
             <select
               value={roleFilter}
