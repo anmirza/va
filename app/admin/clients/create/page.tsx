@@ -179,20 +179,6 @@ export default function CreateClientCompanyPage() {
             </div>
 
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-              {/* Global / Holding Company — "this is the first" per Slide 12 */}
-              <div>
-                <label className="block text-xs font-medium text-white/50 mb-1.5 uppercase tracking-wider">
-                  Global / Holding Company
-                </label>
-                <input
-                  type="text"
-                  value={holdingCompany}
-                  onChange={(e) => setHoldingCompany(e.target.value)}
-                  placeholder="e.g. The Coca-Cola Company"
-                  className={inputCls}
-                />
-              </div>
-
               {/* 2) Operate As */}
               <div>
                 <label className="block text-xs font-medium text-white/50 mb-1.5 uppercase tracking-wider">
@@ -215,20 +201,6 @@ export default function CreateClientCompanyPage() {
                   ))}
                 </select>
               </div>
-            </div>
-
-            {/* 4) Country */}
-            <div>
-              <label className="block text-xs font-medium text-white/50 mb-1.5 uppercase tracking-wider">
-                Country
-              </label>
-              <input
-                type="text"
-                value={country}
-                onChange={(e) => setCountry(e.target.value)}
-                placeholder="e.g. Italy"
-                className={inputCls}
-              />
             </div>
           </div>
         </div>
@@ -269,27 +241,26 @@ export default function CreateClientCompanyPage() {
             {/* Region */}
             <div>
               <label className="block text-xs font-medium text-white/50 mb-1.5 uppercase tracking-wider">
-                Region
+                Country
               </label>
               <input
                 type="text"
-                value={region}
-                onChange={(e) => setRegion(e.target.value)}
+                value={country}
+                onChange={(e) => setCountry(e.target.value)}
                 placeholder="e.g. Southern Europe"
                 className={inputCls}
               />
             </div>
 
-            {/* Local Company Name */}
-            <div className="sm:col-span-2">
+            <div>
               <label className="block text-xs font-medium text-white/50 mb-1.5 uppercase tracking-wider">
-                Local Company Name
+                Address (powered by google)
               </label>
               <input
                 type="text"
-                value={localCompany}
-                onChange={(e) => setLocalCompany(e.target.value)}
-                placeholder="e.g. Coca-Cola Italia S.r.l."
+                value={country}
+                onChange={(e) => setCountry(e.target.value)}
+                placeholder="e.g. Southern Europe"
                 className={inputCls}
               />
             </div>
