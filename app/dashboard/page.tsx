@@ -36,7 +36,7 @@ function DashboardContent() {
   // Clients get their own dedicated dashboard
   useEffect(() => {
     if (user?.role === "client" || user?.accountType === "client") {
-      router.replace("/dashboard/client");
+      // router.replace("/dashboard/client");
     }
   }, [user, router]);
 
