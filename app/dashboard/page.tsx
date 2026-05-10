@@ -185,7 +185,7 @@ function DashboardContent() {
                         <LayoutDashboard className="w-5 h-5 text-white/20" />
                       </div>
                       <div className="flex-1 min-w-0">
-                        <p className="font-medium text-white/50">Insights</p>
+                        <p className="font-medium text-white/50">AI Agent</p>
                         <p className="text-xs text-white/20 mt-0.5">
                           Market insights & analytics
                         </p>
