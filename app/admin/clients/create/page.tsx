@@ -251,19 +251,6 @@ export default function CreateClientCompanyPage() {
                 className={inputCls}
               />
             </div>
-
-            <div>
-              <label className="block text-xs font-medium text-white/50 mb-1.5 uppercase tracking-wider">
-                Address (powered by google)
-              </label>
-              <input
-                type="text"
-                value={country}
-                onChange={(e) => setCountry(e.target.value)}
-                placeholder="e.g. Southern Europe"
-                className={inputCls}
-              />
-            </div>
           </div>
 
           {/* Hierarchy Preview */}
