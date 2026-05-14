@@ -326,13 +326,28 @@ export async function getVAInternalUsersFS(): Promise<VAInternalUser[]> {
 export async function createVAInternalUserFS(data: { name: string; email: string; role: VAInternalUser['role']; department?: string; notes?: string }): Promise<VAInternalUser> {
   const id = uid()
   const user: VAInternalUser = { id, ...data, status: 'active' }
-  await setDoc(doc(db, 'users', id), {
-    ...user,
+  const docData: Record<string, unknown> = {
+    id,
+    name: data.name,
+    email: data.email,
+    role: data.role,
+    status: 'active',
     accountType: 'internal',
     mustChangePassword: true,
     createdAt: new Date().toISOString(),
-  })
+  }
+  if (data.department) docData.department = data.department
+  if (data.notes) docData.notes = data.notes
+  await setDoc(doc(db, 'users', id), docData)
   return user
+}
+
+export async function updateVAInternalUserStatusFS(id: string, status: 'active' | 'inactive'): Promise<void> {
+  await updateDoc(doc(db, 'users', id), { status })
+}
+
+export async function deleteVAInternalUserFS(id: string): Promise<void> {
+  await deleteDoc(doc(db, 'users', id))
 }
 
 // ── Client Companies ──────────────────────────────────────────────────────────

@@ -25,12 +25,12 @@ const BASE_NAV = [
 const SHARED_NAV = [
   { href: '/admin/clients', label: 'Client Management', icon: Briefcase },
   { href: '/admin/users', label: 'Users', icon: Users },
+  { href: '/admin/internal-users', label: 'Internal Staff', icon: Shield },
   { href: '/admin/disclaimer', label: 'Disclaimer Editor', icon: FileText },
 ]
 
 // Super admin only
 const SUPER_ADMIN_NAV = [
-  { href: '/admin/internal-users', label: 'Internal Staff', icon: Shield },
   { href: '/admin/settings', label: 'Settings & RFI', icon: Settings },
 ]
 

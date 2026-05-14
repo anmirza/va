@@ -1,15 +1,12 @@
 ﻿'use client'
 
 import { useState, useEffect } from 'react'
-import { getVAInternalUsersFS, createVAInternalUserFS } from '@/lib/admin-firestore'
+import { getVAInternalUsersFS, createVAInternalUserFS, updateVAInternalUserStatusFS, deleteVAInternalUserFS } from '@/lib/admin-firestore'
 import type { VAInternalUser } from '@/lib/admin-store'
-import { Plus, Shield, Search, User, X } from 'lucide-react'
-import {
-  Dialog,
-  DialogContent,
-  DialogHeader,
-  DialogTitle,
-} from '@/components/ui/dialog'
+import { useAuth } from '@/lib/auth-context'
+import { Plus, Search, User, ShieldOff, MoreHorizontal, PowerOff, Power, Trash2 } from 'lucide-react'
+import { Dialog, DialogContent, DialogHeader, DialogTitle } from '@/components/ui/dialog'
+import toast from 'react-hot-toast'
 
 const ROLE_OPTIONS = [
   { value: 'super_admin', label: 'Super Admin' },
@@ -49,14 +46,23 @@ type NewUser = {
 const DEFAULT_USER: NewUser = { name: '', email: '', role: 'admin', department: '', notes: '' }
 
 export default function InternalStaffPage() {
+  const { user: currentUser, isAdmin, isSuperAdmin } = useAuth()
   const [users, setUsers] = useState<VAInternalUser[]>([])
   const [query, setQuery] = useState('')
   const [showModal, setShowModal] = useState(false)
   const [newUser, setNewUser] = useState<NewUser>(DEFAULT_USER)
   const [isSubmitting, setIsSubmitting] = useState(false)
+  const [menuOpen, setMenuOpen] = useState<string | null>(null)
+  const [confirmDelete, setConfirmDelete] = useState<VAInternalUser | null>(null)
 
   useEffect(() => {
-    getVAInternalUsersFS().then(setUsers)
+    if (isAdmin) getVAInternalUsersFS().then(setUsers)
+  }, [isAdmin])
+
+  useEffect(() => {
+    const close = () => setMenuOpen(null)
+    document.addEventListener('click', close)
+    return () => document.removeEventListener('click', close)
   }, [])
 
   const filtered = users.filter(u =>
@@ -79,21 +85,68 @@ export default function InternalStaffPage() {
       setUsers([user, ...users])
       setShowModal(false)
       setNewUser(DEFAULT_USER)
+      toast.success(`${newUser.name} added successfully.`)
+    } catch {
+      toast.error('Failed to add staff member.')
     } finally {
       setIsSubmitting(false)
     }
+  }
+
+  const handleToggleStatus = async (u: VAInternalUser) => {
+    const next = u.status === 'active' ? 'inactive' : 'active'
+    try {
+      await updateVAInternalUserStatusFS(u.id, next)
+      setUsers(prev => prev.map(x => x.id === u.id ? { ...x, status: next } : x))
+      toast.success(`${u.name} ${next === 'active' ? 'activated' : 'deactivated'}.`)
+    } catch {
+      toast.error('Failed to update status.')
+    }
+  }
+
+  const handleDelete = async () => {
+    if (!confirmDelete) return
+    try {
+      await deleteVAInternalUserFS(confirmDelete.id)
+      setUsers(prev => prev.filter(x => x.id !== confirmDelete.id))
+      toast.success(`${confirmDelete.name} removed.`)
+    } catch {
+      toast.error('Failed to delete staff member.')
+    } finally {
+      setConfirmDelete(null)
+    }
+  }
+
+  const canAct = (target: VAInternalUser) => {
+    if (target.id === currentUser?.id) return false
+    if (target.role === 'super_admin' && !isSuperAdmin) return false
+    return true
   }
 
   const inputCls = "w-full bg-white/[0.04] border border-white/[0.08] rounded-lg px-3 py-2 text-sm text-white placeholder:text-white/20 focus:outline-none focus:border-[#0763d8]/60 transition-colors"
   const selectCls = "w-full bg-white/[0.04] border border-white/[0.08] rounded-lg px-3 py-2 text-sm text-white focus:outline-none focus:border-[#0763d8]/60 transition-colors"
   const labelCls = "block text-xs font-medium text-white/50 mb-1.5"
 
+  if (!isAdmin) {
+    return (
+      <div className="max-w-5xl flex flex-col items-center justify-center py-24 text-center gap-4">
+        <div className="w-14 h-14 rounded-2xl bg-red-500/10 border border-red-500/20 flex items-center justify-center">
+          <ShieldOff className="w-7 h-7 text-red-400" />
+        </div>
+        <div>
+          <h2 className="text-xl font-bold text-white mb-1">Access Restricted</h2>
+          <p className="text-white/40 text-sm">This page is only accessible to Admin and Super Admin roles.</p>
+        </div>
+      </div>
+    )
+  }
+
   return (
     <div className="max-w-5xl">
       <div className="flex items-center justify-between mb-6">
         <div>
           <h1 className="text-2xl font-bold text-white mb-1">Internal Staff</h1>
-          <p className="text-white/40 text-sm">Super Admin Only: Manage VA Consulting staff accounts and roles.</p>
+          <p className="text-white/40 text-sm">Admin &amp; Super Admin: Manage VA Consulting staff accounts and roles.</p>
         </div>
         <button
           onClick={() => setShowModal(true)}
@@ -125,6 +178,7 @@ export default function InternalStaffPage() {
               <th className="px-6 py-4 font-medium">Role</th>
               <th className="px-6 py-4 font-medium">Department</th>
               <th className="px-6 py-4 font-medium">Status</th>
+              <th className="px-6 py-4 font-medium w-12"></th>
             </tr>
           </thead>
           <tbody className="divide-y divide-white/[0.04]">
@@ -148,15 +202,51 @@ export default function InternalStaffPage() {
                 </td>
                 <td className="px-6 py-4 text-white/40 text-xs">{(u as any).department || '—'}</td>
                 <td className="px-6 py-4">
-                  <span className="px-2.5 py-1 rounded-full text-xs font-medium border bg-emerald-500/10 border-emerald-500/20 text-emerald-400">
-                    Active
+                  <span className={`px-2.5 py-1 rounded-full text-xs font-medium border ${
+                    u.status === 'active'
+                      ? 'bg-emerald-500/10 border-emerald-500/20 text-emerald-400'
+                      : 'bg-white/[0.04] border-white/[0.08] text-white/30'
+                  }`}>
+                    {u.status === 'active' ? 'Active' : 'Inactive'}
                   </span>
+                </td>
+                <td className="px-6 py-4">
+                  {canAct(u) && (
+                    <div className="relative" onMouseDown={e => e.nativeEvent.stopImmediatePropagation()}>
+                      <button
+                        onClick={() => setMenuOpen(menuOpen === u.id ? null : u.id)}
+                        className="p-1.5 rounded-lg text-white/30 hover:text-white hover:bg-white/[0.06] transition-colors"
+                      >
+                        <MoreHorizontal className="w-4 h-4" />
+                      </button>
+                      {menuOpen === u.id && (
+                        <div className="absolute right-0 top-8 z-20 w-44 bg-[#0d0e1f] border border-white/[0.08] rounded-xl shadow-xl overflow-hidden">
+                          <button
+                            onClick={() => { handleToggleStatus(u); setMenuOpen(null) }}
+                            className="w-full flex items-center gap-2.5 px-4 py-2.5 text-sm text-white/70 hover:bg-white/[0.04] hover:text-white transition-colors"
+                          >
+                            {u.status === 'active'
+                              ? <><PowerOff className="w-4 h-4 text-amber-400" /> Deactivate</>
+                              : <><Power className="w-4 h-4 text-emerald-400" /> Activate</>
+                            }
+                          </button>
+                          <div className="border-t border-white/[0.06]" />
+                          <button
+                            onClick={() => { setConfirmDelete(u); setMenuOpen(null) }}
+                            className="w-full flex items-center gap-2.5 px-4 py-2.5 text-sm text-red-400 hover:bg-red-500/[0.06] transition-colors"
+                          >
+                            <Trash2 className="w-4 h-4" /> Delete
+                          </button>
+                        </div>
+                      )}
+                    </div>
+                  )}
                 </td>
               </tr>
             ))}
             {filtered.length === 0 && (
               <tr>
-                <td colSpan={4} className="px-6 py-12 text-center text-white/30 text-sm">
+                <td colSpan={5} className="px-6 py-12 text-center text-white/30 text-sm">
                   {query ? 'No staff members match your search.' : 'No internal staff added yet.'}
                 </td>
               </tr>
@@ -202,7 +292,7 @@ export default function InternalStaffPage() {
             <div>
               <label className={labelCls}>Internal Notes (optional)</label>
               <textarea value={newUser.notes} onChange={e => setNewUser({...newUser, notes: e.target.value})}
-                rows={3} placeholder="Any notes about this staff member…"
+                rows={3} placeholder="Any notes about this staff member..."
                 className="w-full bg-white/[0.04] border border-white/[0.08] rounded-lg px-3 py-2 text-sm text-white placeholder:text-white/20 focus:outline-none focus:border-[#0763d8]/60 resize-none" />
             </div>
             <div className="flex justify-end gap-3 pt-2">
@@ -210,10 +300,36 @@ export default function InternalStaffPage() {
                 className="px-4 py-2 rounded-lg text-sm text-white/50 hover:text-white transition-colors">Cancel</button>
               <button type="submit" disabled={isSubmitting}
                 className="px-5 py-2 bg-white text-black font-semibold rounded-lg text-sm hover:bg-white/90 transition-colors disabled:opacity-60 flex items-center gap-2">
-                {isSubmitting ? <><span className="w-3.5 h-3.5 border-2 border-black/30 border-t-black rounded-full animate-spin" /> Adding…</> : 'Add Staff Member'}
+                {isSubmitting ? <><span className="w-3.5 h-3.5 border-2 border-black/30 border-t-black rounded-full animate-spin" /> Adding...</> : 'Add Staff Member'}
               </button>
             </div>
           </form>
+        </DialogContent>
+      </Dialog>
+
+      {/* Delete Confirmation Modal */}
+      <Dialog open={!!confirmDelete} onOpenChange={() => setConfirmDelete(null)}>
+        <DialogContent className="bg-[#0a0b1a] border border-white/[0.08] text-white max-w-sm">
+          <DialogHeader>
+            <DialogTitle className="text-white text-lg font-bold">Delete Staff Member</DialogTitle>
+          </DialogHeader>
+          <div className="mt-2 space-y-4">
+            <p className="text-sm text-white/60">
+              Are you sure you want to permanently delete{' '}
+              <span className="text-white font-medium">{confirmDelete?.name}</span>?
+              This action cannot be undone.
+            </p>
+            <div className="flex justify-end gap-3">
+              <button onClick={() => setConfirmDelete(null)}
+                className="px-4 py-2 rounded-lg text-sm text-white/50 hover:text-white transition-colors">
+                Cancel
+              </button>
+              <button onClick={handleDelete}
+                className="px-5 py-2 bg-red-500 text-white font-semibold rounded-lg text-sm hover:bg-red-600 transition-colors flex items-center gap-2">
+                <Trash2 className="w-4 h-4" /> Delete
+              </button>
+            </div>
+          </div>
         </DialogContent>
       </Dialog>
     </div>
