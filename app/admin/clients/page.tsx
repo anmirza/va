@@ -48,7 +48,7 @@ export default function ClientsPage() {
           <p className="text-white/50 text-sm">Manage directory buyers, corporate hierarchy, regions, and token allocations.</p>
         </div>
         <Link href="/admin/clients/create" className="px-4 py-2.5 bg-white text-black font-semibold rounded-xl text-sm hover:bg-white/90 transition-colors flex items-center gap-2">
-          <Plus className="w-4 h-4" /> Add Company
+          <Plus className="w-4 h-4" /> Add Client Company
         </Link>
       </div>
 

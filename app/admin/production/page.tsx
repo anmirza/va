@@ -154,12 +154,12 @@ export default function ProductionAdminPage() {
             Production Companies
           </h1>
           <p className="text-white/40 text-sm">
-            Manage all registered production houses.
+            Manage and monitor all registered production companies.
           </p>
         </div>
         <Link href="/admin/production/create">
           <Button className="h-10 bg-[#7c3aed] hover:bg-[#6d28d9] text-white rounded-xl gap-2">
-            <Plus className="w-4 h-4" /> Create Production Co.
+            <Plus className="w-4 h-4" /> Add Production Company
           </Button>
         </Link>
       </div>
@@ -190,7 +190,7 @@ export default function ProductionAdminPage() {
               size="sm"
               className="bg-[#7c3aed] hover:bg-[#6d28d9] text-white rounded-xl"
             >
-              <Plus className="w-3.5 h-3.5 mr-1.5" /> Create Production Co.
+              <Plus className="w-3.5 h-3.5 mr-1.5" /> Add Production Company
             </Button>
           </Link>
         </div>

@@ -22,6 +22,7 @@ const ROLE_LABELS: Record<string, string> = {
   moderator: "Moderator",
   vendor: "Vendor",
   client: "Client",
+  internal: "Internal",
   talent: "Talent",
   agency_owner: "Agency Owner",
   production: "Production",
@@ -34,6 +35,7 @@ const ROLE_COLORS: Record<string, string> = {
   moderator: "bg-emerald-500/10 border-emerald-500/20 text-emerald-400",
   vendor: "bg-white/[0.06] border-white/[0.1] text-white/60",
   client: "bg-purple-500/10 border-purple-500/20 text-purple-400",
+  internal: "bg-teal-500/10 border-teal-500/20 text-teal-400",
   talent: "bg-pink-500/10 border-pink-500/20 text-pink-400",
   agency_owner: "bg-blue-500/10 border-blue-500/20 text-blue-400",
   production: "bg-indigo-500/10 border-indigo-500/20 text-indigo-400",
@@ -128,6 +130,7 @@ export default function UsersPage() {
               <option value="all">All Account Types</option>
               <option value="vendor">Vendor</option>
               <option value="client">Client</option>
+              <option value="internal">Internal</option>
               <option value="va-consulting">VA Consulting</option>
             </select>
             <select

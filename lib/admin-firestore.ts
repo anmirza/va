@@ -36,23 +36,25 @@ async function addActivity(entry: Omit<ActivityLogEntry, 'id' | 'timestamp'>) {
 // ── Stats ─────────────────────────────────────────────────────────────────────
 
 export async function getAdminStatsFS(): Promise<{
-  totalAgencies: number; totalProduction: number; pendingApprovals: number; totalUsers: number
+  totalAgencies: number; totalProduction: number; pendingApprovals: number; totalUsers: number; totalClients: number
 }> {
   try {
-    const [agenciesSnap, prodSnap, pendingSnap, usersSnap] = await Promise.all([
+    const [agenciesSnap, prodSnap, pendingSnap, usersSnap, clientsSnap] = await Promise.all([
       getDocs(query(collection(db, 'organisations'), where('type', '==', 'agency'), where('status', '==', 'active'))),
       getDocs(query(collection(db, 'organisations'), where('type', '==', 'production'), where('status', '==', 'active'))),
       getDocs(query(collection(db, 'pendingRegistrations'), where('status', '==', 'pending'))),
       getDocs(collection(db, 'users')),
+      getDocs(query(collection(db, 'clientCompanies'), where('status', '==', 'active'))),
     ])
     return {
       totalAgencies: agenciesSnap.size,
       totalProduction: prodSnap.size,
       pendingApprovals: pendingSnap.size,
       totalUsers: usersSnap.size,
+      totalClients: clientsSnap.size,
     }
   } catch {
-    return { totalAgencies: 0, totalProduction: 0, pendingApprovals: 0, totalUsers: 0 }
+    return { totalAgencies: 0, totalProduction: 0, pendingApprovals: 0, totalUsers: 0, totalClients: 0 }
   }
 }
 
@@ -304,7 +306,7 @@ export async function getAllUsersFS(): Promise<any[]> {
 export async function getVAInternalUsersFS(): Promise<VAInternalUser[]> {
   try {
     const snap = await getDocs(
-      query(collection(db, 'users'), where('role', 'in', ['super_admin', 'admin', 'analyst']))
+      query(collection(db, 'users'), where('role', 'in', ['super_admin', 'admin', 'analyst', 'reviewer', 'editor', 'viewer']))
     )
     return snap.docs.map(d => {
       const data = d.data()
@@ -321,10 +323,15 @@ export async function getVAInternalUsersFS(): Promise<VAInternalUser[]> {
   }
 }
 
-export async function createVAInternalUserFS(data: { name: string; email: string; role: VAInternalUser['role'] }): Promise<VAInternalUser> {
+export async function createVAInternalUserFS(data: { name: string; email: string; role: VAInternalUser['role']; department?: string; notes?: string }): Promise<VAInternalUser> {
   const id = uid()
   const user: VAInternalUser = { id, ...data, status: 'active' }
-  await setDoc(doc(db, 'users', id), { ...user, accountType: 'vendor', mustChangePassword: true })
+  await setDoc(doc(db, 'users', id), {
+    ...user,
+    accountType: 'internal',
+    mustChangePassword: true,
+    createdAt: new Date().toISOString(),
+  })
   return user
 }
 

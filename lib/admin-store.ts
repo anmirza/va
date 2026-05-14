@@ -14,25 +14,32 @@ export type RegistrationStatus = 'pending' | 'approved' | 'rejected' | 'amendmen
 export interface ClientCompany {
   id: string
   name: string
+  legalEntityName?: string
   // Corporate hierarchy
   holdingCompany?: string
   regionalHub?: string
   region?: string
+  coveredRegions?: string[]
+  coveredCountries?: string[]
   localCompany?: string
   country?: string
   // New fields from Feedback Round 2
   address?: string
+  addressType?: string
   operateAs?: 'regional_hub' | 'multi_country' | 'country_company'
   companyLevel?: string
   // Legacy field (kept for compatibility)
   holding?: string
   // Subscription
   createdAt: string
+  createdByAdminId?: string
+  createdBy?: string
+  updatedBy?: string
+  updatedAt?: string
   tokens: number            // total Agency Search & Selection credits purchased
   tokensUsed: number        // credits consumed
   packageSize: number       // agencies per package (6 or 12)
   status: 'active' | 'suspended'
-  createdByAdminId?: string
   notes?: string
 }
 
@@ -120,8 +127,10 @@ export interface VAInternalUser {
   id: string
   name: string
   email: string
-  role: 'super_admin' | 'admin' | 'analyst'
+  role: 'super_admin' | 'admin' | 'analyst' | 'reviewer' | 'editor' | 'viewer'
   status: 'active' | 'suspended'
+  department?: string
+  notes?: string
 }
 
 export interface PendingRegistration {
