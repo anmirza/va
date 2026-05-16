@@ -40,6 +40,24 @@ function clearCookies() {
   document.cookie = 'requisti_setup=; path=/; max-age=0'
 }
 
+// ── Profile cache helpers (localStorage fallback) ────────────────────────────
+// Used so that transient Firestore errors never wipe out the React user state.
+// A successful profile load always writes to cache; sign-out clears it.
+const PROFILE_CACHE_KEY = (uid: string) => `requisti_profile_${uid}`
+
+function cacheProfile(uid: string, profile: User) {
+  try { localStorage.setItem(PROFILE_CACHE_KEY(uid), JSON.stringify(profile)) } catch {}
+}
+function getCachedProfile(uid: string): User | null {
+  try {
+    const raw = localStorage.getItem(PROFILE_CACHE_KEY(uid))
+    return raw ? (JSON.parse(raw) as User) : null
+  } catch { return null }
+}
+function clearCachedProfile(uid: string) {
+  try { localStorage.removeItem(PROFILE_CACHE_KEY(uid)) } catch {}
+}
+
 // ── Firestore profile helpers ─────────────────────────────────────────────────
 // Returns { profile, found } — distinguished from { profile: null } due to error vs missing doc.
 // Retries up to 3 times on transient Firestore errors (network blip, quota, cold start)
@@ -61,6 +79,7 @@ async function loadUserProfile(uid: string): Promise<{ profile: User | null; fou
 }
 
 async function saveUserProfile(uid: string, profile: User) {
+  cacheProfile(uid, profile) // keep localStorage cache up-to-date immediately
   try {
     await setDoc(doc(db, 'users', uid), { ...profile, updatedAt: serverTimestamp() }, { merge: true })
   } catch (e) {
@@ -112,15 +131,27 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
         // Real accounts: load from Firestore
         const { profile, found } = await loadUserProfile(firebaseUser.uid)
         if (profile) {
+          // Success — update cache and React state
+          cacheProfile(firebaseUser.uid, profile)
           setUser(profile)
           setCookies(profile)
         } else if (!found) {
           // Document confirmed missing — this account has no profile; sign out
+          clearCachedProfile(firebaseUser.uid)
           await signOut(auth)
           clearCookies()
           setUser(null)
+        } else {
+          // Transient Firestore error — fall back to cached profile so user isn't kicked out
+          const cached = getCachedProfile(firebaseUser.uid)
+          if (cached) {
+            console.warn('[Auth] Firestore unavailable — using cached profile for', firebaseUser.uid)
+            setUser(cached)
+            setCookies(cached)
+          }
+          // If no cache either (very first ever load with Firestore down), user stays null.
+          // isLoading will become false below, but we won't sign them out.
         }
-        // If found=true but profile=null it was a transient Firestore error — keep user logged in
       } else {
         clearCookies()
         setUser(null)
@@ -292,10 +323,11 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
   }, [])
 
   const logout = useCallback(() => {
+    if (user) clearCachedProfile(user.id)
     signOut(auth).catch(() => {})
     setUser(null)
     clearCookies()
-  }, [])
+  }, [user])
 
   return (
     <AuthContext.Provider value={{
