@@ -310,13 +310,16 @@ export async function getVAInternalUsersFS(): Promise<VAInternalUser[]> {
     )
     return snap.docs.map(d => {
       const data = d.data()
-      return {
+      const user: VAInternalUser = {
         id: d.id,
         name: data.name ?? '',
         email: data.email ?? '',
         role: data.role ?? 'admin',
         status: data.status ?? 'active',
-      } as VAInternalUser
+      }
+      if (data.department) user.department = data.department
+      if (data.notes) user.notes = data.notes
+      return user
     })
   } catch {
     return []
@@ -342,8 +345,10 @@ export async function createVAInternalUserFS(data: { name: string; email: string
   return user
 }
 
-export async function updateVAInternalUserStatusFS(id: string, status: 'active' | 'inactive'): Promise<void> {
-  await updateDoc(doc(db, 'users', id), { status })
+export async function updateVAInternalUserStatusFS(id: string, status: 'active' | 'inactive', updatedById?: string): Promise<void> {
+  const update: Record<string, unknown> = { status, updatedAt: new Date().toISOString() }
+  if (updatedById) update.updatedByAdminId = updatedById
+  await updateDoc(doc(db, 'users', id), update)
 }
 
 export async function deleteVAInternalUserFS(id: string): Promise<void> {
@@ -528,6 +533,32 @@ export async function saveDisclaimerContentFS(tab: 'agency' | 'production', text
     lastUpdatedAt: new Date().toISOString(),
     lastUpdatedBy: adminId,
   }, { merge: true })
+  // Write version history entry
+  await addDoc(collection(db, 'disclaimerVersions'), {
+    type: tab,
+    content: text,
+    savedBy: adminId,
+    savedAt: new Date().toISOString(),
+  })
+}
+
+export interface DisclaimerVersion {
+  id: string
+  type: 'agency' | 'production'
+  content: string
+  savedBy: string
+  savedAt: string
+}
+
+export async function getDisclaimerVersionsFS(type: 'agency' | 'production'): Promise<DisclaimerVersion[]> {
+  const q = query(
+    collection(db, 'disclaimerVersions'),
+    where('type', '==', type),
+    orderBy('savedAt', 'desc'),
+    limit(5)
+  )
+  const snap = await getDocs(q)
+  return snap.docs.map(d => ({ id: d.id, ...(d.data() as Omit<DisclaimerVersion, 'id'>) }))
 }
 
 // ── Categories ────────────────────────────────────────────────────────────────

@@ -507,6 +507,55 @@ export function AgencyRfiForm({ mode, editId, onDone }: AgencyRfiFormProps) {
                 )}
               </div>
             </div>
+
+            {/* ── Registered Office Address (moved into Step 1 per client feedback) ── */}
+            <div className="border-t border-white/[0.08] my-8" />
+            <h3 className="text-sm font-semibold text-white/80 mb-4 flex items-center gap-2">
+              <span className="w-1 h-4 bg-[#0763d8] rounded-full" />Registered Office Address
+            </h3>
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-5">
+              <FormField label="Country Coverage" className="sm:col-span-2">
+                <select value={countryCoverage} onChange={e => setCountryCoverage(e.target.value)} className={selectCls}>
+                  <option value="">Select coverage</option>
+                  {COUNTRY_COVERAGE.map(c => <option key={c}>{c}</option>)}
+                </select>
+              </FormField>
+              <FormField label="Street Address" className="sm:col-span-2">
+                <Input value={address} onChange={e => setAddress(e.target.value)} placeholder="Street address" className={inputCls} />
+              </FormField>
+              <FormField label="City" required>
+                <Input value={city} onChange={e => setCity(e.target.value)} placeholder="City" className={inputCls} />
+              </FormField>
+              <FormField label="Postcode">
+                <Input value={postcode} onChange={e => setPostcode(e.target.value)} placeholder="Postcode / ZIP" className={inputCls} />
+              </FormField>
+              <FormField label="Country" required>
+                <select value={country} onChange={e => setCountry(e.target.value)} className={selectCls}>
+                  <option value="">Select country</option>
+                  {COUNTRIES.map(c => <option key={c}>{c}</option>)}
+                </select>
+              </FormField>
+            </div>
+
+            {/* ── About (moved into Step 1 per client feedback) ── */}
+            <div className="border-t border-white/[0.08] my-8" />
+            <h3 className="text-sm font-semibold text-white/80 mb-4 flex items-center gap-2">
+              <span className="w-1 h-4 bg-[#0763d8] rounded-full" />About Your Agency
+            </h3>
+            <div className="space-y-5">
+              <FormField label="Agency Overview">
+                <textarea value={about} onChange={e => setAbout(e.target.value)} rows={3} className={textareaCls} placeholder="Brief overview of your agency..." />
+              </FormField>
+              <FormField label="Philosophy & Competitive Advantages">
+                <textarea value={philosophy} onChange={e => setPhilosophy(e.target.value)} rows={3} className={textareaCls} placeholder="What makes you different?" />
+              </FormField>
+              <FormField label="Network Description">
+                <textarea value={networkDescription} onChange={e => setNetworkDescription(e.target.value)} rows={2} className={textareaCls} placeholder="Your agency network..." />
+              </FormField>
+              <FormField label="Local Representation">
+                <textarea value={localRepresentation} onChange={e => setLocalRepresentation(e.target.value)} rows={2} className={textareaCls} placeholder="Local offices and representations..." />
+              </FormField>
+            </div>
           </div>
         )}
 
@@ -564,60 +613,15 @@ export function AgencyRfiForm({ mode, editId, onDone }: AgencyRfiFormProps) {
           </div>
         )}
 
-        {/* ── STEP 3 — Location, About & Turnover ── */}
+        {/* ── STEP 3 — Turnover & Clients ── */}
         {step === 3 && (
           <div>
-            <StepHeader icon={stepLabels[2]?.icon} title={stepLabels[2]?.label ?? 'Location & Profile'} subtitle={stepLabels[2]?.subtitle ?? 'Registered address, agency overview, and financial information'} />
-            <h3 className="text-sm font-semibold text-white/80 mb-4 flex items-center gap-2">
-              <span className="w-1 h-4 bg-[#0763d8] rounded-full" />Registered Office Address
-            </h3>
-            <div className="grid grid-cols-1 sm:grid-cols-2 gap-5 mb-2">
-              <FormField label="Country Coverage" className="sm:col-span-2">
-                <select value={countryCoverage} onChange={e => setCountryCoverage(e.target.value)} className={selectCls}>
-                  <option value="">Select coverage</option>
-                  {COUNTRY_COVERAGE.map(c => <option key={c}>{c}</option>)}
-                </select>
-              </FormField>
-              <FormField label="Street Address" className="sm:col-span-2">
-                <Input value={address} onChange={e => setAddress(e.target.value)} placeholder="Street address" className={inputCls} />
-              </FormField>
-              <FormField label="City" required>
-                <Input value={city} onChange={e => setCity(e.target.value)} placeholder="City" className={inputCls} />
-              </FormField>
-              <FormField label="Postcode">
-                <Input value={postcode} onChange={e => setPostcode(e.target.value)} placeholder="Postcode / ZIP" className={inputCls} />
-              </FormField>
-              <FormField label="Country" required>
-                <select value={country} onChange={e => setCountry(e.target.value)} className={selectCls}>
-                  <option value="">Select country</option>
-                  {COUNTRIES.map(c => <option key={c}>{c}</option>)}
-                </select>
-              </FormField>
-            </div>
-            <div className="border-t border-white/[0.08] my-8" />
-            <h3 className="text-sm font-semibold text-white/80 mb-4 flex items-center gap-2">
-              <span className="w-1 h-4 bg-[#0763d8] rounded-full" />About Your Agency
-            </h3>
-            <div className="space-y-5 mb-8">
-              <FormField label="Agency Overview">
-                <textarea value={about} onChange={e => setAbout(e.target.value)} rows={3} className={textareaCls} placeholder="Brief overview..." />
-              </FormField>
-              <FormField label="Philosophy & Competitive Advantages">
-                <textarea value={philosophy} onChange={e => setPhilosophy(e.target.value)} rows={3} className={textareaCls} placeholder="What makes you different?" />
-              </FormField>
-              <FormField label="Network Description">
-                <textarea value={networkDescription} onChange={e => setNetworkDescription(e.target.value)} rows={2} className={textareaCls} placeholder="Your agency network..." />
-              </FormField>
-              <FormField label="Local Representation">
-                <textarea value={localRepresentation} onChange={e => setLocalRepresentation(e.target.value)} rows={2} className={textareaCls} placeholder="Local offices..." />
-              </FormField>
-            </div>
-            <div className="border-t border-white/[0.08] my-8" />
+            <StepHeader icon={stepLabels[2]?.icon} title={stepLabels[2]?.label ?? 'Turnover & Clients'} subtitle={stepLabels[2]?.subtitle ?? 'Annual revenue by region and main client relationships'} />
             <div className="flex items-center justify-between mb-5">
               <h3 className="text-sm font-semibold text-white/80 flex items-center gap-2">
-                <span className="w-1 h-4 bg-[#0763d8] rounded-full" />Turnover &amp; Clients
+                <span className="w-1 h-4 bg-[#0763d8] rounded-full" />Annual Revenue
               </h3>
-              <p className="text-xs text-white/30">Revenue in EUR</p>
+              <p className="text-xs text-white/30">Revenue in {currency ? (currency.split(' - ')[1] || currency) : 'EUR'}</p>
             </div>
             <div className="overflow-x-auto mb-8">
               <table className="w-full text-xs">
@@ -882,7 +886,7 @@ export function AgencyRfiForm({ mode, editId, onDone }: AgencyRfiFormProps) {
         {/* ── STEP 7 — Awards & Infos ── */}
         {step === 7 && (
           <div>
-            <StepHeader icon={stepLabels[6]?.icon} title={stepLabels[6]?.label ?? 'Awards & Infos'} subtitle={stepLabels[6]?.subtitle ?? 'Awards & AI Usage'} />
+            <StepHeader icon={stepLabels[6]?.icon} title={stepLabels[6]?.label ?? 'Awards & Infos'} subtitle={stepLabels[6]?.subtitle ?? 'Awards and distinctions achieved by the agency'} />
             <div className="space-y-4 mb-4">
               {awards.map((award, i) => (
                 <div key={i} className="grid grid-cols-1 sm:grid-cols-[1.5fr_1fr_1fr_80px_1fr_1fr_auto] gap-2 items-center bg-white/[0.02] p-3 rounded-xl border border-white/[0.04]">
@@ -901,24 +905,27 @@ export function AgencyRfiForm({ mode, editId, onDone }: AgencyRfiFormProps) {
               ))}
             </div>
             <button onClick={() => setAwards(prev => [...prev, { name: '', distinction: '', category: '', year: '', ad: '', brand: '' }])} className="text-xs text-[#0763d8] hover:bg-[#0763d8]/10 px-3 py-1.5 rounded-lg border border-[#0763d8]/30 transition-colors inline-block">+ Add Award</button>
-            <div className="border-t border-white/[0.08] my-8" />
-            <div className="space-y-4">
-              <h3 className="text-sm font-semibold text-white/80 mb-4 flex items-center gap-2">
-                <span className="w-1 h-4 bg-[#0763d8] rounded-full" />AI Usage
-              </h3>
-              {AI_QUESTIONS.map((q, i) => (
-                <FormField key={i} label={q}>
-                  <textarea value={aiAnswers[`ai-${i}`] || ''} onChange={e => setAiAnswers(prev => ({ ...prev, [`ai-${i}`]: e.target.value }))} rows={2} className={textareaCls} />
-                </FormField>
-              ))}
-            </div>
           </div>
         )}
 
         {/* ── STEP 8 — Add-On ── */}
         {step === 8 && (
           <div>
-            <StepHeader icon={stepLabels[7]?.icon} title={stepLabels[7]?.label ?? 'Add-On'} subtitle={stepLabels[7]?.subtitle ?? 'Investments, strategic development, social responsibility, and attachments'} />
+            <StepHeader icon={stepLabels[7]?.icon} title={stepLabels[7]?.label ?? 'Add-On'} subtitle={stepLabels[7]?.subtitle ?? 'Other information, investments, social responsibility, and attachments'} />
+
+            {/* ── Other Information (AI) — moved from Step 7 per client feedback ── */}
+            <h3 className="text-sm font-semibold text-white/80 mb-4 flex items-center gap-2">
+              <span className="w-1 h-4 bg-[#0763d8] rounded-full" />Other Information — AI Usage
+            </h3>
+            <div className="space-y-4 mb-8">
+              {AI_QUESTIONS.map((q, i) => (
+                <FormField key={i} label={q}>
+                  <textarea value={aiAnswers[`ai-${i}`] || ''} onChange={e => setAiAnswers(prev => ({ ...prev, [`ai-${i}`]: e.target.value }))} rows={2} className={textareaCls} />
+                </FormField>
+              ))}
+            </div>
+
+            <div className="border-t border-white/[0.08] my-8" />
             <h3 className="text-sm font-semibold text-white/80 mb-4 flex items-center gap-2">
               <span className="w-1 h-4 bg-[#0763d8] rounded-full" />% of Turnover Invested
             </h3>

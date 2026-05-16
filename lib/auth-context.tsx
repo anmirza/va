@@ -16,10 +16,10 @@ import { acceptInvitation, getInvitationByToken, addMember } from './admin-store
 
 // ── Test accounts auto-created on first login ─────────────────────────────────
 const TEST_ACCOUNTS: Record<string, { password: string; profile: Partial<User> }> = {
-  'superadmin@va-consulting.com': { password: 'password', profile: { name: 'Super Admin', role: 'super_admin', accountType: 'vendor', status: 'active' } },
-  'admin@va-consulting.com':      { password: 'password', profile: { name: 'Admin User',  role: 'admin',       accountType: 'vendor', status: 'active' } },
-  'demo@requisti.com':            { password: 'password', profile: { name: 'Demo Vendor', role: 'vendor',      accountType: 'vendor', status: 'active' } },
-  'client@requisti.com':          { password: 'password', profile: { name: 'Demo Client', role: 'client',      accountType: 'client', tier: 'free', status: 'active' } },
+  'superadmin@va-consulting.com': { password: 'password', profile: { name: 'Super Admin', role: 'super_admin', accountType: 'internal', status: 'active' } },
+  'admin@va-consulting.com':      { password: 'password', profile: { name: 'Admin User',  role: 'admin',       accountType: 'internal', status: 'active' } },
+  'demo@requisti.com':            { password: 'password', profile: { name: 'Demo Vendor', role: 'vendor',      accountType: 'vendor',   status: 'active' } },
+  'client@requisti.com':          { password: 'password', profile: { name: 'Demo Client', role: 'client',      accountType: 'client',   tier: 'free', status: 'active' } },
 }
 
 // ── Cookie helpers ────────────────────────────────────────────────────────────

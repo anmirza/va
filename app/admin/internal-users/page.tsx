@@ -59,11 +59,7 @@ export default function InternalStaffPage() {
     if (isAdmin) getVAInternalUsersFS().then(setUsers)
   }, [isAdmin])
 
-  useEffect(() => {
-    const close = () => setMenuOpen(null)
-    document.addEventListener('click', close)
-    return () => document.removeEventListener('click', close)
-  }, [])
+
 
   const filtered = users.filter(u =>
     u.name.toLowerCase().includes(query.toLowerCase()) ||
@@ -212,7 +208,7 @@ export default function InternalStaffPage() {
                 </td>
                 <td className="px-6 py-4">
                   {canAct(u) && (
-                    <div className="relative" onMouseDown={e => e.nativeEvent.stopImmediatePropagation()}>
+                    <div className="relative">
                       <button
                         onClick={() => setMenuOpen(menuOpen === u.id ? null : u.id)}
                         className="p-1.5 rounded-lg text-white/30 hover:text-white hover:bg-white/[0.06] transition-colors"
@@ -220,24 +216,28 @@ export default function InternalStaffPage() {
                         <MoreHorizontal className="w-4 h-4" />
                       </button>
                       {menuOpen === u.id && (
-                        <div className="absolute right-0 top-8 z-20 w-44 bg-[#0d0e1f] border border-white/[0.08] rounded-xl shadow-xl overflow-hidden">
-                          <button
-                            onClick={() => { handleToggleStatus(u); setMenuOpen(null) }}
-                            className="w-full flex items-center gap-2.5 px-4 py-2.5 text-sm text-white/70 hover:bg-white/[0.04] hover:text-white transition-colors"
-                          >
-                            {u.status === 'active'
-                              ? <><PowerOff className="w-4 h-4 text-amber-400" /> Deactivate</>
-                              : <><Power className="w-4 h-4 text-emerald-400" /> Activate</>
-                            }
-                          </button>
-                          <div className="border-t border-white/[0.06]" />
-                          <button
-                            onClick={() => { setConfirmDelete(u); setMenuOpen(null) }}
-                            className="w-full flex items-center gap-2.5 px-4 py-2.5 text-sm text-red-400 hover:bg-red-500/[0.06] transition-colors"
-                          >
-                            <Trash2 className="w-4 h-4" /> Delete
-                          </button>
-                        </div>
+                        <>
+                          {/* Backdrop — clicking outside closes the menu */}
+                          <div className="fixed inset-0 z-10" onClick={() => setMenuOpen(null)} />
+                          <div className="absolute right-0 top-8 z-20 w-44 bg-[#0d0e1f] border border-white/[0.08] rounded-xl shadow-xl overflow-hidden">
+                            <button
+                              onClick={() => { setMenuOpen(null); handleToggleStatus(u) }}
+                              className="w-full flex items-center gap-2.5 px-4 py-2.5 text-sm text-white/70 hover:bg-white/[0.04] hover:text-white transition-colors"
+                            >
+                              {u.status === 'active'
+                                ? <><PowerOff className="w-4 h-4 text-amber-400" /> Deactivate</>
+                                : <><Power className="w-4 h-4 text-emerald-400" /> Activate</>
+                              }
+                            </button>
+                            <div className="border-t border-white/[0.06]" />
+                            <button
+                              onClick={() => { setMenuOpen(null); setConfirmDelete(u) }}
+                              className="w-full flex items-center gap-2.5 px-4 py-2.5 text-sm text-red-400 hover:bg-red-500/[0.06] transition-colors"
+                            >
+                              <Trash2 className="w-4 h-4" /> Delete
+                            </button>
+                          </div>
+                        </>
                       )}
                     </div>
                   )}

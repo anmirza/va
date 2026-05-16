@@ -3,12 +3,22 @@
 /**
  * production-rfi-form.tsx
  * ─────────────────────────────────────────────────────────────────────────────
- * Shared 13-step Production House RFI form used by:
+ * Shared 8-step Production House RFI form used by:
  *   - /app/admin/production/create (mode="admin")
  *   - /app/signup/production         (mode="signup")
  *
  * Step labels are loaded from Firestore (config/rfiStepLabels › cat-production)
  * and fall back to the static DEFAULT_STEPS constants if not found.
+ *
+ * Restructured from 13 → 8 steps to match Agency RFI structure:
+ * 1. General Information (legal + org + address + about)
+ * 2. Contacts (contacts + social media)
+ * 3. Turnover & Clients
+ * 4. Knowledge & Competencies
+ * 5. Governance & SOW
+ * 6. People & Directors (people + post-production)
+ * 7. Awards & Infos (awards + CSR)
+ * 8. Add-On (AI questions + attachments)
  */
 
 import React, { useState, useEffect } from 'react'
@@ -28,19 +38,14 @@ import { CustomFieldsSection } from '@/components/rfi/field-renderer'
 
 // ── Default step labels (fallback) ────────────────────────────────────────────
 const DEFAULT_STEPS: RfiStep[] = [
-  { key: 'general-info',        label: 'General Info',          shortLabel: 'General'     },
-  { key: 'organisation',        label: 'Organisation',           shortLabel: 'Structure'   },
-  { key: 'address',             label: 'Address',                shortLabel: 'Address'     },
-  { key: 'about',               label: 'About',                  shortLabel: 'About'       },
-  { key: 'contacts',            label: 'Contacts',               shortLabel: 'Contacts'    },
-  { key: 'social-media',        label: 'Social Media',           shortLabel: 'Social'      },
-  { key: 'turnover-clients',    label: 'Turnover & Clients',     shortLabel: 'Turnover'    },
-  { key: 'competencies',        label: 'Competencies',           shortLabel: 'Skills'      },
-  { key: 'post-production',     label: 'Post-Production',        shortLabel: 'Post-Prod'   },
-  { key: 'people-directors',    label: 'People & Directors',     shortLabel: 'People'      },
-  { key: 'awards-csr',          label: 'Awards & CSR',           shortLabel: 'Awards'      },
-  { key: 'governance-ai',       label: 'Governance & AI',        shortLabel: 'Governance'  },
-  { key: 'attachments',         label: 'Attachments',            shortLabel: 'Attachments' },
+  { key: 'general-info',     label: 'General Information',      shortLabel: 'General'    },
+  { key: 'contacts',         label: 'Contacts',                 shortLabel: 'Contacts'   },
+  { key: 'turnover-clients', label: 'Turnover & Clients',       shortLabel: 'Turnover'   },
+  { key: 'competencies',     label: 'Knowledge & Competencies', shortLabel: 'Skills'     },
+  { key: 'governance',       label: 'Governance & SOW',         shortLabel: 'Governance' },
+  { key: 'people-directors', label: 'People & Directors',       shortLabel: 'People'     },
+  { key: 'awards-infos',     label: 'Awards & Infos',           shortLabel: 'Awards'     },
+  { key: 'add-on',           label: 'Add-On',                   shortLabel: 'Add-On'     },
 ]
 
 // ── Static data ───────────────────────────────────────────────────────────────
@@ -283,8 +288,6 @@ export function ProductionRfiForm({ mode, editId, onDone }: ProductionRfiFormPro
 
   const canProceed = () => {
     if (step === 1) return businessName.trim().length > 0
-    if (step === 2) return employees !== '' && companyLevel !== ''
-    if (step === 3) return city.trim().length > 0 && country.trim().length > 0
     return true
   }
 
@@ -328,7 +331,7 @@ export function ProductionRfiForm({ mode, editId, onDone }: ProductionRfiFormPro
     setOrgId(org.id)
     setOrgCreated(true)
     setIsSubmitting(false)
-    setStep(14)
+    setStep(9)
   }
 
   const handleGenerateInvite = async () => {
@@ -366,7 +369,7 @@ export function ProductionRfiForm({ mode, editId, onDone }: ProductionRfiFormPro
   }
 
   // ── Step 14: Invite link (admin mode) ────────────────────────────────────
-  if (step === 14 && mode === 'admin') {
+  if (step === 9 && mode === 'admin') {
     return (
       <div className="max-w-xl mx-auto mt-10">
         <div className="bg-emerald-500/5 border border-emerald-500/20 rounded-2xl p-5 flex items-center gap-3 mb-6">
@@ -451,11 +454,16 @@ export function ProductionRfiForm({ mode, editId, onDone }: ProductionRfiFormPro
 
       <div className="glass-card p-8">
 
-        {/* STEP 1 — General Info */}
+        {/* ── STEP 1 — General Information (Legal Identity + Organisation + Address + About) ── */}
         {step === 1 && (
           <div>
-            <StepHeader icon={stepLabels[0]?.icon} title={stepLabels[0]?.label ?? 'General Info'} subtitle={stepLabels[0]?.subtitle ?? 'Legal identity of your production house'} />
-            <div className="grid grid-cols-1 sm:grid-cols-2 gap-5">
+            <StepHeader icon={stepLabels[0]?.icon} title={stepLabels[0]?.label ?? 'General Information'} subtitle={stepLabels[0]?.subtitle ?? 'Legal identity, structure, registered address, and about your company'} />
+
+            {/* Legal Identity */}
+            <h3 className="text-sm font-semibold text-white/80 mb-4 flex items-center gap-2">
+              <span className="w-1 h-4 bg-[#7c3aed] rounded-full" />Legal Identity
+            </h3>
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-5 mb-8">
               {schema.isVisible('businessName') && (
                 <FormField label={schema.getLabel('businessName', 'Registered Business Name')} required={schema.isRequired('businessName', true)}>
                   <Input value={businessName} onChange={e => setBusinessName(e.target.value)} placeholder={schema.getPlaceholder('businessName', 'e.g. Acme Productions Ltd.')} className={inputCls} />
@@ -487,16 +495,16 @@ export function ProductionRfiForm({ mode, editId, onDone }: ProductionRfiFormPro
                 </FormField>
               )}
             </div>
-          </div>
-        )}
 
-        {/* STEP 2 — Organisation */}
-        {step === 2 && (
-          <div>
-            <StepHeader icon={stepLabels[1]?.icon ?? '🏗️'} title={stepLabels[1]?.label ?? 'Organisation'} subtitle={stepLabels[1]?.subtitle ?? 'Your company\'s size and corporate position'} />
-            <div className="grid grid-cols-1 sm:grid-cols-2 gap-5">
+            <div className="border-t border-white/[0.08] my-6" />
+
+            {/* Organisation & Structure */}
+            <h3 className="text-sm font-semibold text-white/80 mb-4 flex items-center gap-2">
+              <span className="w-1 h-4 bg-[#7c3aed] rounded-full" />Organisation &amp; Structure
+            </h3>
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-5 mb-8">
               {schema.isVisible('employees') && (
-                <FormField label={schema.getLabel('employees', '# of Employees')} required={schema.isRequired('employees', true)}>
+                <FormField label={schema.getLabel('employees', '# of Employees')} required={schema.isRequired('employees', false)}>
                   <select value={employees} onChange={e => setEmployees(e.target.value)} className={selectCls}>
                     <option value="">Select range</option>
                     {EMPLOYEE_RANGES.map(r => <option key={r}>{r}</option>)}
@@ -504,7 +512,7 @@ export function ProductionRfiForm({ mode, editId, onDone }: ProductionRfiFormPro
                 </FormField>
               )}
               {schema.isVisible('companyLevel') && (
-                <FormField label={schema.getLabel('companyLevel', 'Company Level')} required={schema.isRequired('companyLevel', true)}>
+                <FormField label={schema.getLabel('companyLevel', 'Company Level')} required={schema.isRequired('companyLevel', false)}>
                   <select value={companyLevel} onChange={e => setCompanyLevel(e.target.value)} className={selectCls}>
                     <option value="">Select level</option>
                     {COMPANY_LEVELS.map(l => <option key={l}>{l}</option>)}
@@ -530,14 +538,14 @@ export function ProductionRfiForm({ mode, editId, onDone }: ProductionRfiFormPro
                 <Input value={tradeOrganizations} onChange={e => setTradeOrganizations(e.target.value)} placeholder="e.g. APA, AICP, TPN" className={inputCls} />
               </FormField>
             </div>
-          </div>
-        )}
 
-        {/* STEP 3 — Address */}
-        {step === 3 && (
-          <div>
-            <StepHeader icon={stepLabels[2]?.icon ?? '📍'} title={stepLabels[2]?.label ?? 'Address'} subtitle={stepLabels[2]?.subtitle ?? 'Official address and geographic coverage'} />
-            <div className="grid grid-cols-1 sm:grid-cols-2 gap-5">
+            <div className="border-t border-white/[0.08] my-6" />
+
+            {/* Registered Office Address */}
+            <h3 className="text-sm font-semibold text-white/80 mb-4 flex items-center gap-2">
+              <span className="w-1 h-4 bg-[#7c3aed] rounded-full" />Registered Office Address
+            </h3>
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-5 mb-8">
               {schema.isVisible('geographicCoverage') && (
                 <FormField label={schema.getLabel('geographicCoverage', 'Country Coverage')} required={schema.isRequired('geographicCoverage', false)} className="sm:col-span-2">
                   <select value={countryCoverage} onChange={e => setCountryCoverage(e.target.value)} className={selectCls}>
@@ -552,7 +560,7 @@ export function ProductionRfiForm({ mode, editId, onDone }: ProductionRfiFormPro
                 </FormField>
               )}
               {schema.isVisible('city') && (
-                <FormField label={schema.getLabel('city', 'City')} required={schema.isRequired('city', true)}>
+                <FormField label={schema.getLabel('city', 'City')} required={schema.isRequired('city', false)}>
                   <Input value={city} onChange={e => setCity(e.target.value)} placeholder={schema.getPlaceholder('city', 'City')} className={inputCls} />
                 </FormField>
               )}
@@ -562,25 +570,25 @@ export function ProductionRfiForm({ mode, editId, onDone }: ProductionRfiFormPro
                 </FormField>
               )}
               {schema.isVisible('country') && (
-                <FormField label={schema.getLabel('country', 'Country')} required={schema.isRequired('country', true)} className="sm:col-span-2">
+                <FormField label={schema.getLabel('country', 'Country')} required={schema.isRequired('country', false)} className="sm:col-span-2">
                   <Input value={country} onChange={e => setCountry(e.target.value)} placeholder={schema.getPlaceholder('country', 'Country')} className={inputCls} />
                 </FormField>
               )}
             </div>
-          </div>
-        )}
 
-        {/* STEP 4 — About */}
-        {step === 4 && (
-          <div>
-            <StepHeader icon={stepLabels[3]?.icon ?? '✍️'} title={stepLabels[3]?.label ?? 'About'} subtitle={stepLabels[3]?.subtitle ?? 'Describe your company and network'} />
-            <div className="space-y-6">
+            <div className="border-t border-white/[0.08] my-6" />
+
+            {/* About Your Production House */}
+            <h3 className="text-sm font-semibold text-white/80 mb-4 flex items-center gap-2">
+              <span className="w-1 h-4 bg-[#7c3aed] rounded-full" />About Your Production House
+            </h3>
+            <div className="space-y-5">
               {schema.isVisible('companyDescription') && (
                 <FormField label={schema.getLabel('companyDescription', 'About Your Production House')} required={schema.isRequired('companyDescription', false)}>
-                  <textarea value={about} onChange={e => setAbout(e.target.value)} rows={4} className={textareaCls} placeholder={schema.getPlaceholder('companyDescription', 'A brief overview...')} />
+                  <textarea value={about} onChange={e => setAbout(e.target.value)} rows={4} className={textareaCls} placeholder={schema.getPlaceholder('companyDescription', 'A brief overview of your company...')} />
                 </FormField>
               )}
-              <FormField label="Philosophy & Competitive Advantages">
+              <FormField label="Philosophy &amp; Competitive Advantages">
                 <textarea value={philosophy} onChange={e => setPhilosophy(e.target.value)} rows={3} className={textareaCls} placeholder="What makes you different?" />
               </FormField>
               {schema.isVisible('networkDescription') && (
@@ -595,17 +603,17 @@ export function ProductionRfiForm({ mode, editId, onDone }: ProductionRfiFormPro
           </div>
         )}
 
-        {/* STEP 5 — Contacts */}
-        {step === 5 && (
+        {/* ── STEP 2 — Contacts (Contacts + Social Media) ── */}
+        {step === 2 && (
           <div>
-            <StepHeader icon={stepLabels[4]?.icon ?? '👤'} title={stepLabels[4]?.label ?? 'Contacts'} subtitle={stepLabels[4]?.subtitle ?? 'Key people at your production house'} />
+            <StepHeader icon={stepLabels[1]?.icon} title={stepLabels[1]?.label ?? 'Contacts'} subtitle={stepLabels[1]?.subtitle ?? 'Key contacts and official social media profiles'} />
             <div className="flex items-center justify-between mb-4">
               <p className="text-xs font-bold text-white/60 uppercase tracking-widest">Key Contacts</p>
               <Button type="button" variant="outline" onClick={() => setContacts(p => [...p, { role: 'Additional Contact', firstName: '', lastName: '', email: '', linkedin: '', telephone: '', mobile: '' }])} className="text-xs h-8 px-3">
                 <Plus className="w-3 h-3 mr-1" /> Add Contact
               </Button>
             </div>
-            <div className="space-y-8">
+            <div className="space-y-8 mb-8">
               {contacts.map((contact, idx) => (
                 <div key={idx} className="border border-white/[0.1] rounded-xl p-5">
                   <div className="flex items-center justify-between mb-4">
@@ -631,13 +639,13 @@ export function ProductionRfiForm({ mode, editId, onDone }: ProductionRfiFormPro
                 </div>
               ))}
             </div>
-          </div>
-        )}
 
-        {/* STEP 6 — Social Media */}
-        {step === 6 && (
-          <div>
-            <StepHeader icon={stepLabels[5]?.icon ?? '🔗'} title={stepLabels[5]?.label ?? 'Social Media'} subtitle={stepLabels[5]?.subtitle ?? 'Add your official profiles and website'} />
+            <div className="border-t border-white/[0.08] my-6" />
+
+            {/* Social Media */}
+            <h3 className="text-sm font-semibold text-white/80 mb-4 flex items-center gap-2">
+              <span className="w-1 h-4 bg-[#7c3aed] rounded-full" />Social Media &amp; Website
+            </h3>
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-5">
               {[
                 { label: 'Official Website', val: website, set: setWebsite, ph: 'https://production.com' },
@@ -659,10 +667,10 @@ export function ProductionRfiForm({ mode, editId, onDone }: ProductionRfiFormPro
           </div>
         )}
 
-        {/* STEP 7 — Turnover & Clients */}
-        {step === 7 && (
+        {/* ── STEP 3 — Turnover & Clients ── */}
+        {step === 3 && (
           <div>
-            <StepHeader icon={stepLabels[6]?.icon ?? '💰'} title={stepLabels[6]?.label ?? 'Turnover & Clients'} subtitle={stepLabels[6]?.subtitle ?? 'Financial data in EUR — Annual Revenue and EBITDA per region and year'} />
+            <StepHeader icon={stepLabels[2]?.icon} title={stepLabels[2]?.label ?? 'Turnover & Clients'} subtitle={stepLabels[2]?.subtitle ?? 'Annual revenue and main client relationships'} />
             <div className="overflow-x-auto mb-10">
               <table className="w-full text-sm border-collapse min-w-[700px]">
                 <thead>
@@ -771,10 +779,10 @@ export function ProductionRfiForm({ mode, editId, onDone }: ProductionRfiFormPro
           </div>
         )}
 
-        {/* STEP 8 — Competencies */}
-        {step === 8 && (
+        {/* ── STEP 4 — Knowledge & Competencies ── */}
+        {step === 4 && (
           <div>
-            <StepHeader icon={stepLabels[7]?.icon ?? '🎯'} title={stepLabels[7]?.label ?? 'Competencies'} subtitle={stepLabels[7]?.subtitle ?? 'Select your communication areas and production capabilities by percentage'} />
+            <StepHeader icon={stepLabels[3]?.icon} title={stepLabels[3]?.label ?? 'Knowledge & Competencies'} subtitle={stepLabels[3]?.subtitle ?? 'Communication sectors and production capabilities by percentage'} />
             <div className="mb-8">
               <p className="text-xs font-bold text-white/50 uppercase tracking-widest mb-3">Communication Areas / Sectors</p>
               <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-2">
@@ -810,10 +818,31 @@ export function ProductionRfiForm({ mode, editId, onDone }: ProductionRfiFormPro
           </div>
         )}
 
-        {/* STEP 9 — Post-Production */}
-        {step === 9 && (
+        {/* ── STEP 5 — Governance & SOW ── */}
+        {step === 5 && (
           <div>
-            <StepHeader icon={stepLabels[8]?.icon ?? '🎞️'} title={stepLabels[8]?.label ?? 'Post-Production'} subtitle={stepLabels[8]?.subtitle ?? 'In-house post-production department and outsourced collaborators'} />
+            <StepHeader icon={stepLabels[4]?.icon} title={stepLabels[4]?.label ?? 'Governance & SOW'} subtitle={stepLabels[4]?.subtitle ?? 'Governance model, scope of work, and post-production approach'} />
+            <div className="space-y-6 mb-8">
+              <FormField label="Kindly detail the control and quality assurance systems established within your designated Creative Network for the purpose of monitoring and managing performance and SLAs.">
+                <textarea value={governance.quality} onChange={e => setGovernance(p => ({ ...p, quality: e.target.value }))} rows={3} className={textareaCls} placeholder="Describe your QA and SLA systems..." />
+              </FormField>
+              <FormField label="Please outline the protocols in place for managing client data within your selected Creative Network.">
+                <textarea value={governance.clientData} onChange={e => setGovernance(p => ({ ...p, clientData: e.target.value }))} rows={3} className={textareaCls} placeholder="How you handle client data, DMP usage..." />
+              </FormField>
+              <FormField label="With regard to global brand governance, please clarify the distinction between global and local strategies.">
+                <textarea value={governance.globalLocal} onChange={e => setGovernance(p => ({ ...p, globalLocal: e.target.value }))} rows={3} className={textareaCls} placeholder="Describe global vs local governance..." />
+              </FormField>
+              <FormField label="Please include any additional information that you deem pertinent.">
+                <textarea value={governance.additional} onChange={e => setGovernance(p => ({ ...p, additional: e.target.value }))} rows={3} className={textareaCls} placeholder="Any additional relevant information..." />
+              </FormField>
+            </div>
+
+            <div className="border-t border-white/[0.08] my-6" />
+
+            {/* Post-Production */}
+            <h3 className="text-sm font-semibold text-white/80 mb-4 flex items-center gap-2">
+              <span className="w-1 h-4 bg-[#7c3aed] rounded-full" />Post-Production
+            </h3>
             <div className="mb-8 border border-white/[0.1] rounded-xl p-6">
               <p className="text-sm font-bold text-white/80 mb-3">Do you have an in-house post-production department?</p>
               <div className="flex gap-6 mb-4">
@@ -881,10 +910,10 @@ export function ProductionRfiForm({ mode, editId, onDone }: ProductionRfiFormPro
           </div>
         )}
 
-        {/* STEP 10 — People & Directors */}
-        {step === 10 && (
+        {/* ── STEP 6 — People & Directors ── */}
+        {step === 6 && (
           <div>
-            <StepHeader icon={stepLabels[9]?.icon ?? '👥'} title={stepLabels[9]?.label ?? 'People & Directors'} subtitle={stepLabels[9]?.subtitle ?? 'Your team structure, key directors, and investment allocations'} />
+            <StepHeader icon={stepLabels[5]?.icon} title={stepLabels[5]?.label ?? 'People & Directors'} subtitle={stepLabels[5]?.subtitle ?? 'Your team structure, key directors, and investment allocations'} />
             <div className="mb-8">
               <p className="text-sm font-bold text-white/80 mb-4">Team Structure</p>
               <div className="flex gap-5 mb-5">
@@ -993,10 +1022,10 @@ export function ProductionRfiForm({ mode, editId, onDone }: ProductionRfiFormPro
           </div>
         )}
 
-        {/* STEP 11 — Awards & CSR */}
-        {step === 11 && (
+        {/* ── STEP 7 — Awards & Infos ── */}
+        {step === 7 && (
           <div>
-            <StepHeader icon={stepLabels[10]?.icon ?? '🏆'} title={stepLabels[10]?.label ?? 'Awards & CSR'} subtitle={stepLabels[10]?.subtitle ?? 'List your award wins and answer CSR questions'} />
+            <StepHeader icon={stepLabels[6]?.icon} title={stepLabels[6]?.label ?? 'Awards & Infos'} subtitle={stepLabels[6]?.subtitle ?? 'Award wins and social responsibility'} />
             <div className="mb-10">
               <p className="text-sm font-bold text-white/80 mb-4">Award Wins</p>
               <div className="overflow-x-auto">
@@ -1059,74 +1088,72 @@ export function ProductionRfiForm({ mode, editId, onDone }: ProductionRfiFormPro
           </div>
         )}
 
-        {/* STEP 12 — Governance & AI */}
-        {step === 12 && (
+        {/* ── STEP 8 — Add-On (AI Questions + Attachments) ── */}
+        {step === 8 && (
           <div>
-            <StepHeader icon={stepLabels[11]?.icon ?? '🏛️'} title={stepLabels[11]?.label ?? 'Governance & AI'} subtitle={stepLabels[11]?.subtitle ?? 'Describe your governance model and AI approach'} />
-            <div className="space-y-6">
-              <div>
-                <p className="text-sm font-bold text-white/80 mb-4">Governance & Scope of Work</p>
-                <div className="space-y-4">
-                  <FormField label="Kindly detail the control and quality assurance systems established within your designated Creative Network for the purpose of monitoring and managing performance and SLAs.">
-                    <textarea value={governance.quality} onChange={e => setGovernance(p => ({ ...p, quality: e.target.value }))} rows={3} className={textareaCls} placeholder="Describe your QA and SLA systems..." />
-                  </FormField>
-                  <FormField label="Please outline the protocols in place for managing client data within your selected Creative Network.">
-                    <textarea value={governance.clientData} onChange={e => setGovernance(p => ({ ...p, clientData: e.target.value }))} rows={3} className={textareaCls} placeholder="How you handle client data, DMP usage..." />
-                  </FormField>
-                  <FormField label="With regard to global brand governance, please clarify the distinction between global and local strategies.">
-                    <textarea value={governance.globalLocal} onChange={e => setGovernance(p => ({ ...p, globalLocal: e.target.value }))} rows={3} className={textareaCls} placeholder="Describe global vs local governance..." />
-                  </FormField>
-                  <FormField label="Please include any additional information that you deem pertinent.">
-                    <textarea value={governance.additional} onChange={e => setGovernance(p => ({ ...p, additional: e.target.value }))} rows={3} className={textareaCls} placeholder="Any additional relevant information..." />
-                  </FormField>
-                </div>
-              </div>
-              <div className="border-t border-white/[0.08] pt-6">
-                <h3 className="text-sm font-semibold text-white/80 mb-5 flex items-center gap-2">
-                  <span className="w-1 h-4 bg-[#7c3aed] rounded-full" />AI Usage
-                </h3>
-                <div className="space-y-4">
-                  {AI_QUESTIONS.map((q, i) => (
-                    <FormField key={i} label={q}>
-                      <textarea value={aiAnswers[`ai-${i}`] || ''} onChange={e => setAiAnswers(prev => ({ ...prev, [`ai-${i}`]: e.target.value }))} rows={2} className={textareaCls} />
-                    </FormField>
-                  ))}
-                </div>
-              </div>
-            </div>
-          </div>
-        )}
+            <StepHeader icon={stepLabels[7]?.icon} title={stepLabels[7]?.label ?? 'Add-On'} subtitle={stepLabels[7]?.subtitle ?? 'AI usage, strategic orientation, and attachments'} />
 
-        {/* STEP 13 — Attachments */}
-        {step === 13 && (
-          <div>
-            <StepHeader icon={stepLabels[12]?.icon ?? '📎'} title={stepLabels[12]?.label ?? 'Attachments'} subtitle={stepLabels[12]?.subtitle ?? 'Upload required documents and presentation'} />
-            <div className="space-y-6">
-              <div>
-                <p className="text-sm font-bold text-white/80 mb-4">Attachments Requested</p>
-                <div className="space-y-3">
-                  {ATTACHMENTS_REQUESTED.map(att => (
-                    <div key={att.id} className="flex items-center gap-4 bg-white/[0.03] rounded-xl px-4 py-3">
-                      <span className="text-xs font-bold text-white/30 w-8">{att.id}</span>
-                      <p className="text-sm text-white/60 flex-1">{att.label}</p>
-                      <label className="flex items-center gap-2 px-3 py-1.5 bg-white/[0.04] border border-white/[0.08] rounded-lg cursor-pointer hover:bg-white/[0.08] transition">
-                        <Upload className="w-3.5 h-3.5 text-white/40" />
-                        <span className="text-xs text-white/50">Upload</span>
-                        <input type="file" accept=".pdf" className="hidden" />
-                      </label>
-                    </div>
+            {/* AI Questions */}
+            <h3 className="text-sm font-semibold text-white/80 mb-4 flex items-center gap-2">
+              <span className="w-1 h-4 bg-[#7c3aed] rounded-full" />Other Information — AI Usage
+            </h3>
+            <div className="space-y-4 mb-8">
+              {AI_QUESTIONS.map((q, i) => (
+                <FormField key={i} label={q}>
+                  <textarea value={aiAnswers[`ai-${i}`] || ''} onChange={e => setAiAnswers(prev => ({ ...prev, [`ai-${i}`]: e.target.value }))} rows={2} className={textareaCls} />
+                </FormField>
+              ))}
+            </div>
+
+            <div className="border-t border-white/[0.08] my-6" />
+
+            {/* Strategic Orientation */}
+            <h3 className="text-sm font-semibold text-white/80 mb-4 flex items-center gap-2">
+              <span className="w-1 h-4 bg-[#7c3aed] rounded-full" />RIF. / Requests
+            </h3>
+            <div className="space-y-4 mb-8">
+              <FormField label="1.1 Could you please present your strategic development">
+                <textarea value={strategicOrientation} onChange={e => setStrategicOrientation(e.target.value)} rows={3} className={textareaCls} placeholder="Write your answer for request 1.1 here..." />
+              </FormField>
+              <FormField label="1.2 Do you have any activity out of your Country / City?">
+                <div className="flex gap-6">
+                  {[true, false].map(v => (
+                    <label key={String(v)} className="flex items-center gap-2 cursor-pointer">
+                      <input type="radio" checked={activityOutOfCountry === v} onChange={() => setActivityOutOfCountry(v)} className="w-4 h-4 accent-[#7c3aed]" />
+                      <span className="text-sm text-white/70">{v ? 'Yes' : 'No'}</span>
+                    </label>
                   ))}
                 </div>
-              </div>
-              <div className="border-t border-white/[0.06] pt-6">
-                <p className="text-sm font-bold text-white/80 mb-2">Presentation Request</p>
-                <p className="text-xs text-white/40 mb-3">Please provide a presentation (.pdf file) summarizing the following items and questions.</p>
-                <label className="flex items-center gap-3 px-4 py-3 bg-white/[0.04] border border-dashed border-white/[0.12] rounded-xl cursor-pointer hover:bg-white/[0.06] transition">
-                  <Upload className="w-5 h-5 text-[#7c3aed]" />
-                  <span className="text-sm text-white/50">Upload Presentation (.pdf)</span>
-                  <input type="file" accept=".pdf" className="hidden" />
-                </label>
-              </div>
+              </FormField>
+            </div>
+
+            <div className="border-t border-white/[0.08] my-6" />
+
+            {/* Attachments */}
+            <h3 className="text-sm font-semibold text-white/80 mb-4 flex items-center gap-2">
+              <span className="w-1 h-4 bg-[#7c3aed] rounded-full" />Attachments Requested
+            </h3>
+            <div className="space-y-3 mb-6">
+              {ATTACHMENTS_REQUESTED.map(att => (
+                <div key={att.id} className="flex items-center gap-4 bg-white/[0.03] rounded-xl px-4 py-3">
+                  <span className="text-xs font-bold text-white/30 w-8">{att.id}</span>
+                  <p className="text-sm text-white/60 flex-1">{att.label}</p>
+                  <label className="flex items-center gap-2 px-3 py-1.5 bg-white/[0.04] border border-white/[0.08] rounded-lg cursor-pointer hover:bg-white/[0.08] transition">
+                    <Upload className="w-3.5 h-3.5 text-white/40" />
+                    <span className="text-xs text-white/50">Upload</span>
+                    <input type="file" accept=".pdf" className="hidden" />
+                  </label>
+                </div>
+              ))}
+            </div>
+            <div className="border-t border-white/[0.06] pt-6">
+              <p className="text-sm font-bold text-white/80 mb-2">Presentation Request</p>
+              <p className="text-xs text-white/40 mb-3">Please provide a presentation (.pdf file) summarizing the following items and questions.</p>
+              <label className="flex items-center gap-3 px-4 py-3 bg-white/[0.04] border border-dashed border-white/[0.12] rounded-xl cursor-pointer hover:bg-white/[0.06] transition">
+                <Upload className="w-5 h-5 text-[#7c3aed]" />
+                <span className="text-sm text-white/50">Upload Presentation (.pdf)</span>
+                <input type="file" accept=".pdf" className="hidden" />
+              </label>
             </div>
           </div>
         )}

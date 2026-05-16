@@ -233,7 +233,11 @@ export default function AgenciesPage() {
                       {org.country}
                     </span>
                   )}
-                  {org.category && <span>{org.category}</span>}
+                  {org.category && (
+                    <span className="inline-flex items-center px-2 py-0.5 rounded-md bg-[#0763d8]/10 text-[#0763d8] text-xs font-medium border border-[#0763d8]/20">
+                      {org.category}
+                    </span>
+                  )}
                   <span className="flex items-center gap-1">
                     <Users className="w-3 h-3" />
                     {org.memberCount} member{org.memberCount !== 1 ? "s" : ""}
