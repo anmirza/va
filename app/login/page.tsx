@@ -66,19 +66,21 @@ function LoginContent() {
                 <Shield className="w-6 h-6 text-[#0763d8]" />
               </div>
               <h1 className="text-2xl font-bold text-white mb-1">Welcome back</h1>
-              <p className="text-white/40 text-sm">Sign in to your Requisti account</p>
+              <p className="text-white/40 text-sm">Sign in to your Aura account</p>
             </div>
 
-            {/* Demo credentials hint */}
-            <div className="bg-white/[0.03] border border-white/[0.08] rounded-xl p-4 mb-6 text-sm">
-              <p className="font-semibold text-white/70 mb-2 text-xs uppercase tracking-wider">Demo Credentials</p>
-              <div className="space-y-1 text-xs text-white/40">
-                <p>Vendor: <span className="font-mono text-white/60">demo@requisti.com</span> / <span className="font-mono text-white/60">password</span></p>
-                <p>Client: <span className="font-mono text-white/60">client@requisti.com</span> / <span className="font-mono text-white/60">password</span></p>
-                <p className="text-[#0763d8]/80">Admin: <span className="font-mono text-white/60">admin@va-consulting.com</span> / <span className="font-mono text-white/60">password</span></p>
-                <p className="text-amber-400/80">Super Admin: <span className="font-mono text-white/60">superadmin@va-consulting.com</span> / <span className="font-mono text-white/60">password</span></p>
+            {/* Demo credentials — only shown in development / when env flag is set */}
+            {process.env.NEXT_PUBLIC_SHOW_DEMO_CREDENTIALS === 'true' && (
+              <div className="bg-white/[0.03] border border-white/[0.08] rounded-xl p-4 mb-6 text-sm">
+                <p className="font-semibold text-white/70 mb-2 text-xs uppercase tracking-wider">Demo Credentials</p>
+                <div className="space-y-1 text-xs text-white/40">
+                  <p>Vendor: <span className="font-mono text-white/60">demo@requisti.com</span> / <span className="font-mono text-white/60">password</span></p>
+                  <p>Client: <span className="font-mono text-white/60">client@requisti.com</span> / <span className="font-mono text-white/60">password</span></p>
+                  <p className="text-[#0763d8]/80">Admin: <span className="font-mono text-white/60">admin@va-consulting.com</span> / <span className="font-mono text-white/60">password</span></p>
+                  <p className="text-amber-400/80">Super Admin: <span className="font-mono text-white/60">superadmin@va-consulting.com</span> / <span className="font-mono text-white/60">password</span></p>
+                </div>
               </div>
-            </div>
+            )}
 
             <form onSubmit={handleSubmit} className="space-y-4">
               <div>

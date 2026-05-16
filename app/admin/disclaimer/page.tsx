@@ -2,9 +2,9 @@
 
 import { useEffect, useState } from 'react'
 import { useAuth } from '@/lib/auth-context'
-import { getDisclaimerContentFS, saveDisclaimerContentFS } from '@/lib/admin-firestore'
+import { getDisclaimerContentFS, saveDisclaimerContentFS, getDisclaimerVersionsFS, type DisclaimerVersion } from '@/lib/admin-firestore'
 import { Button } from '@/components/ui/button'
-import { FileText, Save, Check, Building2, Film, Eye, Edit2, Bold, Italic, List, Link as LinkIcon, Heading, Info } from 'lucide-react'
+import { FileText, Save, Check, Building2, Film, Eye, Edit2, Bold, Italic, List, Link as LinkIcon, Heading, Info, History, ChevronDown, ChevronUp, RotateCcw } from 'lucide-react'
 
 type Tab = 'agency' | 'production'
 
@@ -16,6 +16,9 @@ export default function DisclaimerPage() {
   const [saved, setSaved] = useState(false)
   const [preview, setPreview] = useState(false)
   const [lastUpdated, setLastUpdated] = useState('')
+  const [versions, setVersions] = useState<DisclaimerVersion[]>([])
+  const [showHistory, setShowHistory] = useState(false)
+  const [loadingHistory, setLoadingHistory] = useState(false)
 
   useEffect(() => {
     getDisclaimerContentFS().then(content => {
@@ -32,7 +35,27 @@ export default function DisclaimerPage() {
     await saveDisclaimerContentFS(tab, currentText, user?.id ?? 'admin')
     setSaved(true)
     setLastUpdated(new Date().toISOString())
+    // Refresh history if open
+    if (showHistory) {
+      const vers = await getDisclaimerVersionsFS(tab)
+      setVersions(vers)
+    }
     setTimeout(() => setSaved(false), 2500)
+  }
+
+  const handleToggleHistory = async () => {
+    if (!showHistory) {
+      setLoadingHistory(true)
+      const vers = await getDisclaimerVersionsFS(tab)
+      setVersions(vers)
+      setLoadingHistory(false)
+    }
+    setShowHistory(v => !v)
+  }
+
+  const handleRestore = (content: string) => {
+    setter(content)
+    setShowHistory(false)
   }
 
   const charCount = currentText.length
@@ -68,7 +91,7 @@ export default function DisclaimerPage() {
           return (
             <button
               key={t.id}
-              onClick={() => { setTab(t.id); setPreview(false) }}
+              onClick={() => { setTab(t.id); setPreview(false); setShowHistory(false); setVersions([]) }}
               className={`flex items-center gap-2 px-4 py-2 rounded-lg text-sm font-medium transition-colors ${
                 tab === t.id ? 'bg-[#0763d8] text-white' : 'text-white/50 hover:text-white'
               }`}
@@ -152,6 +175,52 @@ export default function DisclaimerPage() {
           <strong className="text-white/60">Formatting tip:</strong> Use double line breaks (press Enter twice) to separate paragraphs. The first paragraph will appear as the headline/title on the disclaimer page.
           Changes are saved to localStorage and shown immediately on the next page load.
         </p>
+      </div>
+
+      {/* Version History */}
+      <div className="mt-4 border border-white/[0.06] rounded-xl overflow-hidden">
+        <button
+          onClick={handleToggleHistory}
+          className="w-full flex items-center gap-2 px-5 py-3 bg-white/[0.02] hover:bg-white/[0.04] transition-colors text-left"
+        >
+          <History className="w-4 h-4 text-white/40" />
+          <span className="text-sm font-medium text-white/60 flex-1">Version History</span>
+          <span className="text-xs text-white/30 mr-2">Last 5 saves</span>
+          {showHistory ? <ChevronUp className="w-4 h-4 text-white/30" /> : <ChevronDown className="w-4 h-4 text-white/30" />}
+        </button>
+        {showHistory && (
+          <div className="border-t border-white/[0.06]">
+            {loadingHistory ? (
+              <p className="text-xs text-white/30 px-5 py-4">Loading history...</p>
+            ) : versions.length === 0 ? (
+              <p className="text-xs text-white/30 px-5 py-4">No saved versions yet for this disclaimer type.</p>
+            ) : (
+              <div className="divide-y divide-white/[0.04]">
+                {versions.map((v, i) => (
+                  <div key={v.id} className="flex items-start gap-4 px-5 py-3 hover:bg-white/[0.02] transition-colors">
+                    <div className="flex-1 min-w-0">
+                      <div className="flex items-center gap-2 mb-1">
+                        <span className="text-xs font-medium text-white/60">
+                          {new Date(v.savedAt).toLocaleString('en-GB', { day: '2-digit', month: 'short', year: 'numeric', hour: '2-digit', minute: '2-digit' })}
+                        </span>
+                        {i === 0 && (
+                          <span className="text-[10px] px-1.5 py-0.5 bg-emerald-500/10 text-emerald-400 rounded border border-emerald-500/20">Latest</span>
+                        )}
+                      </div>
+                      <p className="text-xs text-white/30 truncate">{v.content.substring(0, 120)}...</p>
+                    </div>
+                    <button
+                      onClick={() => handleRestore(v.content)}
+                      className="shrink-0 flex items-center gap-1.5 px-3 py-1.5 text-xs text-white/50 hover:text-white bg-white/[0.04] hover:bg-white/[0.08] border border-white/[0.08] rounded-lg transition-colors"
+                    >
+                      <RotateCcw className="w-3 h-3" /> Restore
+                    </button>
+                  </div>
+                ))}
+              </div>
+            )}
+          </div>
+        )}
       </div>
     </div>
   )

@@ -135,6 +135,24 @@ function DashboardContent() {
                   </Link>
 
                   <Link
+                    href="/production"
+                    className="group glass-card p-5 flex items-start gap-4 hover:border-[#7c3aed]/30 transition-all rounded-xl"
+                  >
+                    <div className="w-10 h-10 bg-[#7c3aed]/10 rounded-lg flex items-center justify-center shrink-0">
+                      <Film className="w-5 h-5 text-[#7c3aed]" />
+                    </div>
+                    <div className="flex-1 min-w-0">
+                      <p className="font-medium text-white group-hover:text-[#7c3aed] transition-colors">
+                        Find Your Production Company
+                      </p>
+                      <p className="text-xs text-white/30 mt-0.5">
+                        Discover production houses for your next project
+                      </p>
+                    </div>
+                    <ChevronRight className="w-4 h-4 text-white/10 shrink-0 self-center group-hover:text-[#7c3aed] transition-colors" />
+                  </Link>
+
+                  <Link
                     href="/creative-library"
                     className="group glass-card p-5 flex items-start gap-4 hover:border-[#0763d8]/30 transition-all rounded-xl"
                   >

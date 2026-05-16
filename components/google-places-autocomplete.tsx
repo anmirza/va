@@ -2,7 +2,7 @@
 
 import { useRef, useEffect, useState, useCallback } from 'react'
 import { Autocomplete, useJsApiLoader } from '@react-google-maps/api'
-import { MapPin, Loader2, AlertCircle } from 'lucide-react'
+import { MapPin, Loader2 } from 'lucide-react'
 
 const LIBRARIES: ('places')[] = ['places']
 
@@ -66,26 +66,18 @@ export function GooglePlacesAutocomplete({
 
   const inputCls = `w-full h-10 bg-white/[0.04] border border-white/[0.08] rounded-lg pl-9 pr-3 text-sm text-white placeholder:text-white/20 focus:outline-none focus:border-[#0763d8]/60 transition-colors ${className}`
 
-  // API key not configured — fallback to plain text input
+  // API key not configured — silently degrade to plain text input (no visible warning)
   if (!apiKey) {
     return (
       <div className="relative">
-        <div className="relative">
-          <MapPin className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-white/20" />
-          <input
-            type="text"
-            value={inputValue}
-            onChange={e => { setInputValue(e.target.value); onChange(e.target.value) }}
-            placeholder={placeholder}
-            className={inputCls}
-          />
-        </div>
-        <div className="flex items-center gap-1.5 mt-1.5">
-          <AlertCircle className="w-3 h-3 text-amber-400/60" />
-          <p className="text-[10px] text-amber-400/60">
-            Set <code className="bg-white/[0.04] px-1 py-0.5 rounded text-[9px]">NEXT_PUBLIC_GOOGLE_MAPS_API_KEY</code> in <code className="bg-white/[0.04] px-1 py-0.5 rounded text-[9px]">.env.local</code> for autocomplete
-          </p>
-        </div>
+        <MapPin className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-white/20" />
+        <input
+          type="text"
+          value={inputValue}
+          onChange={e => { setInputValue(e.target.value); onChange(e.target.value) }}
+          placeholder={placeholder}
+          className={inputCls}
+        />
       </div>
     )
   }

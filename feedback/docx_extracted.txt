@@ -1,0 +1,321 @@
+Aura Admin Panel — Review Notes
+v2 — integrated after live walkthrough
+Prepared for the development team. Pragmatic, synthetic, action-oriented. Tags: [MUST] blocking before go-live · [SHOULD] strongly recommended · [NICE] beneficial later · [ON-SCREEN] confirmed live on staging · [NEW] not in v1 · [BUG] defect to fix.
+Executive summary
+The UI is moving in the right direction and the navigation is coherent. Before scaling the panel we need to (a) close four blocking items that affect security and brand credibility, (b) consolidate the client data model around a clear hierarchy with dynamic form behaviour, (c) align account types, naming conventions and role/permissions logic, and (d) declare global standards on audit, soft-delete and notifications. v2 integrates the on-screen findings and adds a prioritised action list.
+0. Critical pre-go-live items
+[NEW] Four items must be resolved before any client-facing demo on the current staging URL (va-eight-psi.vercel.app).
+[BUG] Brand inconsistency. Login page says "Sign in to your Requisti account"; admin header says "VA Consulting"; public site uses "AURA". Three brands on one product. Decide the final brand and align login, header, copy and dummy emails.
+[BUG] Account Type bug. Super Admin and Admin users are flagged as "Vendor" in the Users table. Must be "Internal".
+1. Dashboard & Quick Actions
+[ON-SCREEN] Dashboard shows 4 metric cards (Active Agencies, Production Companies, Pending Approvals, Team Members), Recent Activity (10 events), Quick Actions (Review Pending Requests, Create Agency, Create Production Co., Edit Disclaimer Text), Approval Stats card.
+Keep current Quick Actions essential. Avoid duplicating "Create Client Company" here — Client Management remains the single source of truth.
+[NEW] Add a "Client Companies" metric card. Today only Agencies and Production Companies have a count card. Adding Client Companies maintains symmetry and is the natural KPI for the panel.
+Recent Activity currently lists only placeholder names ("New Organization", "New Agencies"). Will resolve once dummy data is cleaned up — see §5.
+2. Navigation, Users and Internal Staff
+[ON-SCREEN] Sidebar groups: top section (Dashboard, Pending Approvals, Agencies, Production), Management (Client Management, Users, Disclaimer Editor), Super Admin (Internal Staff, Settings & RFI). Logical.
+Confirm separation. Users = all platform users (client, agency, production, internal). Internal Staff = VA Consulting accounts only. Aligned with what is on screen.
+[BUG] Account Type bug confirmed visually. Super Admin and Admin show as "Vendor" — must be "Internal".
+[NEW] Orphan user. User "test@va.com" has Account Type "—" while Role is "Client". Either delete the test record or set Account Type = "Client". Add a validation: a user without Account Type cannot exist.
+[NEW] Page title vs nav label mismatch. The Internal Staff page header reads "Internal Users". Pick one term and use it consistently (recommended: Internal Staff).
+Move Add User to a modal, drawer or dedicated page. Today the form opens inline inside the table — visually noisy and inconsistent with the rest of the panel.
+3. Internal Staff — fields and roles
+[ON-SCREEN] Current Add User form fields: Full Name, Email (Corporate), System Role (Super Admin / Admin / Analyst), Cancel / Create User. Form is inline.
+Minimum required fields:
+Full Name
+Corporate Email
+System Role
+Status
+Department / Function
+Internal Notes
+[NEW] System Role list is incomplete. Current options: Super Admin, Admin, Analyst. Proposed full set: Super Admin, Admin, Reviewer, Editor, Viewer. Decide the canonical list — Analyst can stay if defined, but Reviewer/Editor/Viewer are needed to support the roles matrix in §10.
+Custom fields — governed, not free-form. Allow the Super Admin to add custom fields, but from a predefined library (type, label, validation) — not a free schema. Reasons: validation consistency, reporting, search, migration safety.
+Examples of custom fields to enable: Business Unit, Office Location, Approval Authority, Seniority Level, Project Responsibility, Notes / Tags.
+4. Client Management / Add Client Company
+[ON-SCREEN] Client Management list page: Table / Hierarchy toggle (good), columns Company / Hierarchy / Country / Tokens / Actions, CTA "Add Company", 0 companies (empty state). Add Client form: section "Global / Holding Company", fields Company Name, Operate As, Company (with hint text), Regional Hub, Country, Address (Google Maps), Token Allocation (On Hold), Internal Notes.
+4.1 Naming and structure
+Rename CTA "Add Company" → "Add Client Company". Single source of truth principle and naming consistency.
+Rename form section "Global / Holding Company" → "Geographic & Operating Structure". Reflects what the section actually drives.
+4.2 Operate As as dynamic driver
+Make Operate As the form's decision driver. Required fields below must change based on the selected value. Today the dropdown is "mute" — it does not change anything.
+Operate As → required fields:
+Operate As
+Required fields (driven by selection)
+Regional Hub
+Parent Company, Regional Hub, Covered Regions, Covered Countries (multi-select).
+Multi Country
+Parent Company, Regional Hub, Region, Covered Countries (multi-select).
+Country Company
+Parent Company, Regional Hub, Region, Country (single), Local Legal Entity Name, Address.
+4.3 Geographical model — separation of concerns
+[NEW] "Regional Hub" dropdown is mixed. Today it lists regions (Southern Europe), country clusters (DACH, Benelux), continents (Africa, Americas), operational hubs (EMEA, APAC, LATAM), and commercial categories (Emerging Markets, Global Travel Retail). Split into two distinct fields:
+• Regional Hub (operational scope, e.g. EMEA, APAC, Americas, Global)
+• Region (geographical sub-scope, e.g. Southern Europe, MENA, ANZ)
+[BUG] Country field placeholder. Today the Country textbox shows placeholder "e.g. Southern Europe" — a region, not a country. Replace with a controlled country list (ISO 3166-1) and a sensible placeholder ("e.g. Italy").
+4.4 Legal entity and address
+Separate fields. Company Name, Legal Entity Name, Regional Hub, Region, Country, Address.
+Address Type selector. Headquarters / Legal Office / Local Office / Billing / Operational Office. Multiple addresses per entity should be supported.
+4.5 Hierarchy alignment
+[NEW] The hint text in the current form differs from the model in this document.
+Form today: Holding Company → Regional Hub → Region → Local Company → Country → Client.
+Proposed: Parent Company → Regional Hub → Region → Country → Local Legal Entity. Define what "Client" means in the form's current hint (sub-brand? business unit?) and align terminology before the dev cements the data model.
+4.6 Token Allocation
+[NEW] "Token Allocation" section exists but is marked "On Hold". "This section will be enabled in a future update once the commercial model is finalised." Decide owner and timeline; otherwise it stays a dead block. Confirm whether token logic is part of v1 data model or a v2 feature.
+Principle. Aura must not only have a cleaner UI, but a reliable structure to cluster clients by geography, operating model and legal entity. Client Management remains the single source of truth for client companies and entities.
+5. Agencies
+[ON-SCREEN] Current state: 7 active agencies, all with placeholder titles ("New Organization", "New Agencies"). CTA in plural ("Add Agencies"). Cards show: agency name, Active status, members count, date added, actions (Follow-up, Edit, delete, status).
+Rename CTA: "Add Agencies" → "Add Agency".
+Normalise placeholder names. "New Organization", "New Agencies" must not appear in any demo or client-facing test.
+[NEW] Extend card content. Minimum: agency name, category/type, country/city, members, date added, status, actions. Today category, country and city are missing.
+Keep Show Removed toggle and Follow-up actions — both confirmed useful.
+6. Production
+[ON-SCREEN] All four occurrences need renaming.
+Section title: "Production" → "Production Companies".
+Subtitle: "Manage and monitor all registered production." → "Manage and monitor all registered production companies." (current sentence is incomplete).
+CTA: "Add Production" → "Add Production Company".
+Empty state: "No production registered yet." → "No production companies registered yet.")
+Rationale: "Production" alone is ambiguous (company, function, project).
+7. Pending Approvals
+[ON-SCREEN] Tabs: Pending (0) / Amendments (0) / Approved / Rejected / All. Subtitle: "Review and approve agency and production company registrations". Search by company, name or email.
+[NEW] Scope decision needed before adding filters. Today scope is agency + production only. Decide whether Client onboarding, Access Requests and Amendments also flow through this section. The note's "type filter" request only makes sense after this decision.
+Once scope is defined, add a Type filter: Agency / Production Company / Client / Amendment / Access Request.
+[NICE] Assignment, SLA and escalation. Add: who is assigned, deadline, escalation rule if approval is stale for N days.
+8. Disclaimer Editor
+Not re-visited on-screen during the live walk-through (session expired). The note from v1 stands.
+Keep current structure: Agency / Production tabs, preview, editor, save action.
+Replace placeholder legal copy with proper version covering: data processing, review rights, approval/rejection logic, user responsibility, use of submitted data.
+Add version history: last edited by, last edited at, published status, version diff.
+9. Cross-cutting requirements
+[NEW] Not in v1. These apply globally and should be declared as standards, not implemented per-section.
+9.1 Data architecture
+Audit fields on every entity: created_by, created_at, updated_by, updated_at.
+Soft delete vs hard delete: "Removed" status implies soft delete — declare the policy explicitly. Hard delete restricted to Super Admin and gated behind confirmation.
+Naming convention: "Add [Singular Entity]" across all CTAs.
+Status taxonomy (applied consistently across all entities):
+Status
+Meaning / when it applies
+Active
+Operational record, fully visible and usable.
+Pending
+Submitted for approval, not yet approved/rejected.
+Invited
+Account created/invited but not yet activated by the user.
+Suspended
+Temporarily disabled. Reversible.
+Removed
+Soft-deleted. Hidden by default, recoverable via "Show Removed".
+Rejected
+Approval explicitly denied. Visible in Rejected tab.
+9.2 Relationships
+Agency ↔ Client. An agency typically serves multiple clients across geographies. Define and document the association model: junction table, scoping by country, start/end of engagement, status.
+User ↔ Entity. Each user (Agency Admin, Client User, etc.) must be linked to a parent entity; declare cardinality (1 or many?).
+9.3 Search, filter and bulk operations
+Search and advanced filters on every list view (geography, status, hierarchy level, type).
+Bulk import (CSV / Excel) and bulk export — at minimum for Client Companies and Agencies.
+9.4 Notifications
+Pending Approvals: notify assigned reviewer on new submission, escalate if stale.
+Email / in-app notification preferences manageable per user.
+9.5 Security and access
+MFA, session timeout, password policy for internal accounts.
+No demo credentials on production-facing environments.
+Audit log for security-sensitive events (login, role changes, hard deletes, disclaimer publish).
+9.6 Compliance
+Data residency. Document where data is stored per legal entity. Material once Aura hosts multiple legal entities across geographies.
+Retention policy. Define retention for soft-deleted records and audit logs.
+10. Roles and permissions matrix
+Proposed baseline. C = Create, R = Read, U = Update, D = Delete. Use as starting point for the dev workshop; refine per entity if needed.
+Entity
+Super Admin
+Admin
+Reviewer
+Editor
+Viewer
+Notes
+Internal Staff
+C / R / U / D
+R / U
+R
+R
+R
+Super Admin only can create/delete internal accounts.
+Client Companies
+C / R / U / D
+C / R / U
+R
+R / U
+R
+Hard delete restricted to Super Admin; others soft delete.
+Agencies
+C / R / U / D
+C / R / U
+R / Approve
+R / U
+R
+"Approve" = approve/reject pending registrations.
+Production Co.
+C / R / U / D
+C / R / U
+R / Approve
+R / U
+R
+Same as Agencies.
+Pending Approvals
+R / Approve / Reject
+R / Approve / Reject
+R / Approve / Reject
+—
+R
+Editor cannot approve.
+Disclaimer
+C / R / U / D / Publish
+R / U
+R
+R / U
+R
+Publish = make visible on the site.
+Users
+C / R / U / D
+R / U
+R
+R
+R
+Suspend / restore restricted to Super Admin & Admin.
+Settings & RFI
+C / R / U / D
+R
+—
+—
+—
+Reserved to Super Admin in production.
+User-side roles per organisation type (linked to their entity):
+Client: Client Admin, Client User
+Agency: Agency Admin, Agency User
+Production: Production Admin, Production User
+11. Prioritised action list
+Tagged Must / Should / Nice-to-have. Numbering reflects suggested execution order — clean naming first, then data model, then governance, then enhancements.
+#
+Tag
+Action
+Area
+1
+MUST
+Fix Account Type for Super Admin & Admin: must be "Internal", not "Vendor".
+Users
+2
+MUST
+Remove demo credentials from login page in any environment exposed publicly. Gate behind ENV flag.
+Security
+3
+MUST
+Decide and apply final brand: Requisti vs Aura vs VA Consulting. Single brand across login, header, copy.
+Brand
+4
+MUST
+Replace dev message "Set NEXT_PUBLIC_GOOGLE_MAPS_API_KEY in .env.local for autocomplete" with silent fallback.
+Client form
+5
+MUST
+Rename "Add Agencies" → "Add Agency".
+Agencies
+6
+MUST
+Rename "Production" → "Production Companies" (section, subtitle, CTA, empty state).
+Production
+7
+MUST
+Normalise placeholder names ("New Organization", "New Agencies") before any demo.
+Agencies
+8
+MUST
+Rename "Add Company" → "Add Client Company" in Client Management.
+Clients
+9
+MUST
+Restructure Add Client form (see §4): "Geographic & Operating Structure" section, Operate As as dynamic driver, separate Region, Country with country list only, Legal Entity Name, Address Type selector.
+Clients
+10
+MUST
+Clean up "Regional Hub" dropdown: split into Regional Hub (operational) vs Region (geographical). Today it mixes both.
+Clients
+11
+MUST
+Decide and document final hierarchy: Parent Company → Regional Hub → Region → Country → Local Legal Entity. Align in-form hint text.
+Clients
+12
+MUST
+Define role/permission matrix and apply (see §10).
+Architecture
+13
+SHOULD
+Move Add User form (Internal Staff) from inline to modal/drawer/dedicated page.
+Internal Staff
+14
+SHOULD
+Add audit fields globally: created_by, created_at, updated_by, updated_at. Declare soft-delete vs hard-delete policy.
+Architecture
+15
+SHOULD
+Add "Client Companies" metric card to Dashboard for symmetry with Agencies/Production.
+Dashboard
+16
+SHOULD
+Decide if Pending Approvals must include Client / Access Request flows. Today scope is agency + production only.
+Approvals
+17
+SHOULD
+Add type filter to Pending Approvals (Agency / Production / Client / Amendment / Access Request) once scope is decided.
+Approvals
+18
+SHOULD
+Decide on "Token Allocation" data model and timeline; today it shows as "On Hold" in the form.
+Clients
+19
+SHOULD
+Align page title with sidebar label: "Internal Users" page vs "Internal Staff" nav item.
+Internal Staff
+20
+SHOULD
+Extend System Role options in Internal Staff: Super Admin, Admin, Reviewer, Editor, Viewer. Currently: Super Admin, Admin, Analyst.
+Internal Staff
+21
+SHOULD
+Extend agency cards: add Category/Type, Country, City.
+Agencies
+22
+SHOULD
+Prepare proper legal disclaimer copy before go-live. Add version history (last edited by, last edited at, published status).
+Disclaimer
+23
+SHOULD
+Add MFA, session timeout and password policy for internal accounts.
+Security
+24
+SHOULD
+Apply naming convention: "Add [Singular Entity]" across all CTAs.
+UX
+25
+SHOULD
+Fix orphan user record "test@va.com" (Account Type "—") and prevent future orphans via validation.
+Users
+26
+NICE
+Allow Super Admin to add dynamic custom fields to Internal Staff via a pre-defined library (type, label, validation), not free schema.
+Internal Staff
+27
+NICE
+Bulk import (CSV/Excel) for Client Companies and Agencies. Bulk export.
+Architecture
+28
+NICE
+Search and advanced filters on all list views (geography, status, hierarchy level).
+Architecture
+29
+NICE
+Notifications and SLA on Pending Approvals (assignee, deadline, escalation).
+Approvals
+30
+NICE
+Document data residency (where data is stored per legal entity, GDPR posture).
+Compliance
+12. Final view
+The platform is credible at UI level. The risk now is committing to a data model that mixes regions, hubs and country clusters, and to account-type conventions that are still wrong on screen. Closing items 1–12 of the priority list before any client demo is the right next milestone. Sections 13–25 should follow immediately after, since they cement governance and protect scale. Items 26–30 are useful enhancements once the foundation is stable.

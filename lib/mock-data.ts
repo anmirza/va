@@ -8,7 +8,7 @@ export interface User {
   id: string
   email: string
   name: string
-  accountType?: 'vendor' | 'client'
+  accountType?: 'vendor' | 'client' | 'internal'
   role: 'agency_owner' | 'talent' | 'marketer' | 'admin' | 'super_admin' | 'client' | 'production' | 'vendor' | 'moderator' | 'user'
   tier?: 'free' | 'paid'
   status?: 'pending_review' | 'active' | 'pending_approval' | 'invited' | 'suspended'

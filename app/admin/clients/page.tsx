@@ -2,15 +2,26 @@
 
 import { useState, useEffect, useMemo } from 'react'
 import Link from 'next/link'
-import { getAllClientCompaniesFS } from '@/lib/admin-firestore'
+import { useRouter } from 'next/navigation'
+import { useAuth } from '@/lib/auth-context'
+import { getAllClientCompaniesFS, updateClientCompanyFS, deleteClientCompanyFS } from '@/lib/admin-firestore'
 import type { ClientCompany } from '@/lib/admin-store'
-import { Building, Plus, Search, ChevronRight, Users, Coins, RefreshCw } from 'lucide-react'
+import { Dialog, DialogContent, DialogHeader, DialogTitle } from '@/components/ui/dialog'
+import toast from 'react-hot-toast'
+import {
+  Building, Plus, Search, Coins,
+  MoreHorizontal, Pencil, Power, PowerOff, Trash2,
+} from 'lucide-react'
 
 export default function ClientsPage() {
+  const router = useRouter()
+  const { isSuperAdmin, isAdmin } = useAuth()
   const [companies, setCompanies] = useState<ClientCompany[]>([])
   const [query, setQuery] = useState('')
   const [viewMode, setViewMode] = useState<'table' | 'hierarchy'>('table')
   const [isLoading, setIsLoading] = useState(true)
+  const [menuOpen, setMenuOpen] = useState<string | null>(null)
+  const [confirmDelete, setConfirmDelete] = useState<ClientCompany | null>(null)
 
   const load = async () => {
     setIsLoading(true)
@@ -28,6 +39,30 @@ export default function ClientsPage() {
     (c.country || '').toLowerCase().includes(query.toLowerCase()) ||
     (c.region || '').toLowerCase().includes(query.toLowerCase())
   )
+
+  const handleToggleStatus = async (comp: ClientCompany) => {
+    const next: 'active' | 'suspended' = comp.status === 'active' ? 'suspended' : 'active'
+    try {
+      await updateClientCompanyFS(comp.id, { status: next })
+      setCompanies(prev => prev.map(c => c.id === comp.id ? { ...c, status: next } : c))
+      toast.success(`${comp.name} ${next === 'active' ? 'activated' : 'suspended'}.`)
+    } catch {
+      toast.error('Failed to update status.')
+    }
+  }
+
+  const handleDelete = async () => {
+    if (!confirmDelete) return
+    try {
+      await deleteClientCompanyFS(confirmDelete.id)
+      setCompanies(prev => prev.filter(c => c.id !== confirmDelete.id))
+      toast.success(`"${confirmDelete.name}" deleted.`)
+    } catch {
+      toast.error('Failed to delete company.')
+    } finally {
+      setConfirmDelete(null)
+    }
+  }
 
   // Group by holding company for hierarchy view
   const holdingGroups = useMemo(() => {
@@ -48,11 +83,11 @@ export default function ClientsPage() {
           <p className="text-white/50 text-sm">Manage directory buyers, corporate hierarchy, regions, and token allocations.</p>
         </div>
         <Link href="/admin/clients/create" className="px-4 py-2.5 bg-white text-black font-semibold rounded-xl text-sm hover:bg-white/90 transition-colors flex items-center gap-2">
-          <Plus className="w-4 h-4" /> Add Company
+          <Plus className="w-4 h-4" /> Add Client Company
         </Link>
       </div>
 
-      <div className="glass-card rounded-2xl overflow-hidden">
+      <div className="glass-card rounded-2xl">
         <div className="px-6 py-4 border-b border-white/[0.06] flex flex-wrap items-center justify-between gap-3">
           <div className="relative">
             <Search className="w-4 h-4 absolute left-3 top-1/2 -translate-y-1/2 text-white/30" />
@@ -81,14 +116,16 @@ export default function ClientsPage() {
 
         {viewMode === 'table' ? (
           /* ── Table View ── */
+          <div className="overflow-x-auto">
           <table className="w-full text-left text-sm text-white/70">
             <thead className="bg-white/[0.02] border-b border-white/[0.06] text-xs uppercase text-white/40 font-semibold tracking-wider">
               <tr>
                 <th className="px-6 py-4 font-medium">Company</th>
                 <th className="px-6 py-4 font-medium">Hierarchy</th>
                 <th className="px-6 py-4 font-medium">Country</th>
+                <th className="px-6 py-4 font-medium">Status</th>
                 <th className="px-6 py-4 font-medium">Tokens</th>
-                <th className="px-6 py-4 font-medium text-right">Actions</th>
+                <th className="px-6 py-4 font-medium w-12"></th>
               </tr>
             </thead>
             <tbody className="divide-y divide-white/[0.04]">
@@ -129,14 +166,66 @@ export default function ClientsPage() {
                     <span className="text-white/60">{comp.country || '—'}</span>
                   </td>
                   <td className="px-6 py-4">
+                    <span className={`px-2.5 py-1 rounded-full text-xs font-medium border ${
+                      comp.status === 'active'
+                        ? 'bg-emerald-500/10 border-emerald-500/20 text-emerald-400'
+                        : 'bg-red-500/10 border-red-500/20 text-red-400'
+                    }`}>
+                      {comp.status === 'active' ? 'Active' : 'Suspended'}
+                    </span>
+                  </td>
+                  <td className="px-6 py-4">
                     <span className={`px-2 py-1 rounded text-xs font-semibold ${comp.tokens > 0 ? 'bg-emerald-500/10 text-emerald-400' : 'bg-red-500/10 text-red-400'}`}>
                       {comp.tokens} {comp.tokens === 1 ? 'Token' : 'Tokens'}
                     </span>
                   </td>
-                  <td className="px-6 py-4 text-right">
-                    <Link href={`/admin/clients/${comp.id}`} className="text-white hover:text-[#0763d8] font-medium text-sm transition-colors">
-                      Manage →
-                    </Link>
+                  <td className="px-6 py-4">
+                    <div className="relative">
+                      <button
+                        onClick={() => setMenuOpen(menuOpen === comp.id ? null : comp.id)}
+                        className="p-1.5 rounded-lg text-white/30 hover:text-white hover:bg-white/[0.06] transition-colors"
+                      >
+                        <MoreHorizontal className="w-4 h-4" />
+                      </button>
+                      {menuOpen === comp.id && (
+                        <>
+                          <div className="fixed inset-0 z-10" onClick={() => setMenuOpen(null)} />
+                          <div className="absolute right-0 top-8 z-20 w-48 bg-[#0d0e1f] border border-white/[0.08] rounded-xl shadow-xl overflow-hidden">
+                            <Link
+                              href={`/admin/clients/${comp.id}`}
+                              onClick={() => setMenuOpen(null)}
+                              className="w-full flex items-center gap-2.5 px-4 py-2.5 text-sm text-white/70 hover:bg-white/[0.04] hover:text-white transition-colors"
+                            >
+                              <Building className="w-4 h-4 text-[#0763d8]" /> Manage
+                            </Link>
+                            <Link
+                              href={`/admin/clients/create?editId=${comp.id}`}
+                              onClick={() => setMenuOpen(null)}
+                              className="w-full flex items-center gap-2.5 px-4 py-2.5 text-sm text-white/70 hover:bg-white/[0.04] hover:text-white transition-colors"
+                            >
+                              <Pencil className="w-4 h-4 text-white/40" /> Edit
+                            </Link>
+                            <div className="border-t border-white/[0.06]" />
+                            <button
+                              onClick={() => { setMenuOpen(null); handleToggleStatus(comp) }}
+                              className="w-full flex items-center gap-2.5 px-4 py-2.5 text-sm text-white/70 hover:bg-white/[0.04] hover:text-white transition-colors"
+                            >
+                              {comp.status === 'active'
+                                ? <><PowerOff className="w-4 h-4 text-amber-400" /> Suspend</>
+                                : <><Power className="w-4 h-4 text-emerald-400" /> Activate</>
+                              }
+                            </button>
+                            <div className="border-t border-white/[0.06]" />
+                            <button
+                              onClick={() => { setMenuOpen(null); setConfirmDelete(comp) }}
+                              className="w-full flex items-center gap-2.5 px-4 py-2.5 text-sm text-red-400 hover:bg-red-500/[0.06] transition-colors"
+                            >
+                              <Trash2 className="w-4 h-4" /> Delete
+                            </button>
+                          </div>
+                        </>
+                      )}
+                    </div>
                   </td>
                 </tr>
               ))}
@@ -149,6 +238,7 @@ export default function ClientsPage() {
               )}
             </tbody>
           </table>
+          </div>
         ) : (
           /* ── Hierarchy View ── */
           <div className="p-6 space-y-4">
@@ -211,6 +301,32 @@ export default function ClientsPage() {
           </div>
         )}
       </div>
+
+      {/* Delete Confirmation Modal */}
+      <Dialog open={!!confirmDelete} onOpenChange={() => setConfirmDelete(null)}>
+        <DialogContent className="bg-[#0a0b1a] border border-white/[0.08] text-white max-w-sm">
+          <DialogHeader>
+            <DialogTitle className="text-white text-lg font-bold">Delete Client Company</DialogTitle>
+          </DialogHeader>
+          <div className="mt-2 space-y-4">
+            <p className="text-sm text-white/60">
+              Are you sure you want to permanently delete{' '}
+              <span className="text-white font-medium">{confirmDelete?.name}</span>?
+              This action cannot be undone.
+            </p>
+            <div className="flex justify-end gap-3">
+              <button onClick={() => setConfirmDelete(null)}
+                className="px-4 py-2 rounded-lg text-sm text-white/50 hover:text-white transition-colors">
+                Cancel
+              </button>
+              <button onClick={handleDelete}
+                className="px-5 py-2 bg-red-500 text-white font-semibold rounded-lg text-sm hover:bg-red-600 transition-colors flex items-center gap-2">
+                <Trash2 className="w-4 h-4" /> Delete
+              </button>
+            </div>
+          </div>
+        </DialogContent>
+      </Dialog>
     </div>
   )
 }

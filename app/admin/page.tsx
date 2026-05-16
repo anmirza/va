@@ -4,7 +4,7 @@ import { useEffect, useState } from 'react'
 import Link from 'next/link'
 import { ActivityLogEntry } from '@/lib/admin-store'
 import { getAdminStatsFS, getRecentActivityFS } from '@/lib/admin-firestore'
-import { Building2, Film, Clock, Users, CheckCircle2, XCircle, TrendingUp, ArrowRight } from 'lucide-react'
+import { Building2, Film, Clock, Users, CheckCircle2, XCircle, TrendingUp, ArrowRight, Briefcase } from 'lucide-react'
 
 function StatCard({
   label, value, icon: Icon, color, href,
@@ -55,7 +55,7 @@ function timeAgo(iso: string): string {
 }
 
 export default function AdminDashboardPage() {
-  const [stats, setStats] = useState({ totalAgencies: 0, totalProduction: 0, pendingApprovals: 0, totalUsers: 0, recentApprovals: 0, recentRejections: 0 })
+  const [stats, setStats] = useState({ totalAgencies: 0, totalProduction: 0, pendingApprovals: 0, totalUsers: 0, totalClients: 0, recentApprovals: 0, recentRejections: 0 })
   const [activity, setActivity] = useState<ActivityLogEntry[]>([])
 
   useEffect(() => {
@@ -72,11 +72,12 @@ export default function AdminDashboardPage() {
       </div>
 
       {/* Stats grid */}
-      <div className="grid grid-cols-2 lg:grid-cols-4 gap-4 mb-8">
+      <div className="grid grid-cols-2 lg:grid-cols-3 xl:grid-cols-5 gap-4 mb-8">
         <StatCard label="Active Agencies" value={stats.totalAgencies} icon={Building2} color="bg-[#0763d8]/10 text-[#0763d8]" href="/admin/agencies" />
         <StatCard label="Production Companies" value={stats.totalProduction} icon={Film} color="bg-[#7c3aed]/10 text-[#7c3aed]" href="/admin/production" />
+        <StatCard label="Client Companies" value={stats.totalClients} icon={Briefcase} color="bg-emerald-500/10 text-emerald-400" href="/admin/clients" />
         <StatCard label="Pending Approvals" value={stats.pendingApprovals} icon={Clock} color="bg-amber-500/10 text-amber-400" href="/admin/pending" />
-        <StatCard label="Team Members" value={stats.totalUsers} icon={Users} color="bg-emerald-500/10 text-emerald-400" href="/admin/users" />
+        <StatCard label="Team Members" value={stats.totalUsers} icon={Users} color="bg-white/[0.08] text-white/60" href="/admin/users" />
       </div>
 
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
@@ -119,8 +120,8 @@ export default function AdminDashboardPage() {
             <div className="space-y-2">
               {[
                 { label: 'Review Pending Requests', href: '/admin/pending', color: 'bg-amber-500/10 border-amber-500/20 text-amber-400', count: stats.pendingApprovals },
-                { label: 'Create Agency', href: '/admin/agencies/create', color: 'bg-[#0763d8]/10 border-[#0763d8]/20 text-[#0763d8]' },
-                { label: 'Create Production Co.', href: '/admin/production/create', color: 'bg-[#7c3aed]/10 border-[#7c3aed]/20 text-[#7c3aed]' },
+                { label: 'Add Agency', href: '/admin/agencies/create', color: 'bg-[#0763d8]/10 border-[#0763d8]/20 text-[#0763d8]' },
+                { label: 'Add Production Company', href: '/admin/production/create', color: 'bg-[#7c3aed]/10 border-[#7c3aed]/20 text-[#7c3aed]' },
                 { label: 'Edit Disclaimer Text', href: '/admin/disclaimer', color: 'bg-white/[0.04] border-white/[0.1] text-white/60' },
               ].map(action => (
                 <Link

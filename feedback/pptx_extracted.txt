@@ -1,0 +1,40 @@
+=== SLIDE 1 ===
+CLIENT VIEW
+=== SLIDE 2 ===
+1) Duplicate this CTA on the right “Find your Production Company
+This page should have 5 CTA1) find your agency -> ok
+2) Find your production company -> missed3) Latest creative updates4) AI Agent
+5) Account settingsok for the rest
+=== SLIDE 3 ===
+This filter should include sub-filters. The first one should be Region; once the Region is selected, the user can choose the Country; once the Country is selected, the user can choose the City.
+If we provide the filter directly at City level, we would end up with an endless list of cities.
+Industry and all Industries. non sector
+Do not forget that you can select multiple industries, cities or services 
+=== SLIDE 4 ===
+Ok for these filters, but please follow the same guidelines of the previous chart.In parallel we have never discussed about metadata related to articles or video. We should discuss a bit about this topic
+=== SLIDE 5 ===
+Admin VIEW
+=== SLIDE 6 ===
+add
+Ok your amend work but i can amend
+Admin users to set up it as va consulting member
+=== SLIDE 7 ===
+Super admin & Admin VIEW
+=== SLIDE 8 ===
+Please update the form as follows:
+Rename the “Company” section to “Geographic & Operating Structure”.
+Keep “Operate as” as the main driver of the form. Based on the selected value, the required fields should change dynamically:
+Regional Hub: parent company + regional hub + covered regions/countries.
+Multi Country: parent company + regional hub + region + covered countries.
+Country Company: parent company + regional hub + region + country + local legal entity.
+Add a separate “Region” field between Regional Hub and Country.
+Fix the Country field: it should contain actual countries only. The current placeholder “Southern Europe” is a region, not a country.
+Separate clearly:
+Company Name
+Legal Entity Name
+Regional Hub
+Region
+Country
+Address
+For the address field, please add an Address Type selector: Headquarters / Legal Office / Local Office / Billing / Operational Office.
+The key point is that Aura should not only have a cleaner UI, but a reliable structure to cluster clients by geography, operating model and legal entity.

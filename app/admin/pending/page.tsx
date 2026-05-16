@@ -4,14 +4,15 @@ import { useEffect, useState, useCallback } from 'react'
 import Link from 'next/link'
 import { useAuth } from '@/lib/auth-context'
 import type { PendingRegistration } from '@/lib/admin-store'
-import { getAllRegistrationsFS, approveRegistrationFS, requestAmendmentFS } from '@/lib/admin-firestore'
+import { getAllRegistrationsFS, approveRegistrationFS, rejectRegistrationFS, requestAmendmentFS } from '@/lib/admin-firestore'
 import { Input } from '@/components/ui/input'
 import {
   Building2, Film, Clock, CheckCircle2, XCircle, AlertTriangle,
-  Search, ChevronRight, Check, FileEdit, X
+  Search, ChevronRight, Check, FileEdit, X, Ban
 } from 'lucide-react'
 
 type FilterTab = 'all' | 'pending' | 'approved' | 'rejected' | 'amendment_requested'
+type TypeFilter = 'all' | 'agency' | 'production'
 
 function StatusBadge({ status }: { status: PendingRegistration['status'] }) {
   const map = {
@@ -51,9 +52,12 @@ export default function PendingPage() {
   const { user } = useAuth()
   const [registrations, setRegistrations] = useState<PendingRegistration[]>([])
   const [filter, setFilter] = useState<FilterTab>('pending')
+  const [typeFilter, setTypeFilter] = useState<TypeFilter>('all')
   const [search, setSearch] = useState('')
   const [amendmentTarget, setAmendmentTarget] = useState<string | null>(null)
   const [amendmentNote, setAmendmentNote] = useState('')
+  const [rejectTarget, setRejectTarget] = useState<{ id: string; name: string } | null>(null)
+  const [rejectReason, setRejectReason] = useState('')
   const [isSubmitting, setIsSubmitting] = useState(false)
 
   const load = useCallback(async () => {
@@ -65,6 +69,7 @@ export default function PendingPage() {
 
   const filtered = registrations.filter(r => {
     if (filter !== 'all' && r.status !== filter) return false
+    if (typeFilter !== 'all' && r.type !== typeFilter) return false
     if (search) {
       const q = search.toLowerCase()
       return r.companyName.toLowerCase().includes(q) || r.submittedByEmail.toLowerCase().includes(q) || r.submittedByName.toLowerCase().includes(q)
@@ -75,6 +80,19 @@ export default function PendingPage() {
   const handleApprove = async (id: string) => {
     await approveRegistrationFS(id, user?.id ?? 'admin')
     load()
+  }
+
+  const handleReject = async () => {
+    if (!rejectTarget) return
+    setIsSubmitting(true)
+    try {
+      await rejectRegistrationFS(rejectTarget.id, user?.id ?? 'admin', rejectReason.trim() || undefined)
+      setRejectTarget(null)
+      setRejectReason('')
+      load()
+    } finally {
+      setIsSubmitting(false)
+    }
   }
 
   const handleRequestAmendment = async (id: string) => {
@@ -110,17 +128,42 @@ export default function PendingPage() {
       </div>
 
       {/* Controls */}
-      <div className="flex flex-col sm:flex-row gap-3 mb-6">
-        <div className="relative flex-1">
-          <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-white/30" />
-          <Input
-            value={search}
-            onChange={e => setSearch(e.target.value)}
-            placeholder="Search by company, name or email..."
-            className="pl-9 h-10 bg-white/[0.04] border-white/[0.1] text-white placeholder:text-white/30 rounded-xl"
-          />
+      <div className="flex flex-col gap-3 mb-6">
+        <div className="flex flex-col sm:flex-row gap-3">
+          <div className="relative flex-1">
+            <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-white/30" />
+            <Input
+              value={search}
+              onChange={e => setSearch(e.target.value)}
+              placeholder="Search by company, name or email..."
+              className="pl-9 h-10 bg-white/[0.04] border-white/[0.1] text-white placeholder:text-white/30 rounded-xl"
+            />
+          </div>
+          {/* Type filter */}
+          <div className="flex gap-1 bg-white/[0.04] border border-white/[0.08] rounded-xl p-1 shrink-0">
+            {([
+              { id: 'all', label: 'All Types' },
+              { id: 'agency', label: 'Agency', icon: Building2, color: 'text-[#0763d8]' },
+              { id: 'production', label: 'Production', icon: Film, color: 'text-[#7c3aed]' },
+            ] as const).map(t => {
+              const Icon = 'icon' in t ? t.icon : null
+              return (
+                <button
+                  key={t.id}
+                  onClick={() => setTypeFilter(t.id as TypeFilter)}
+                  className={`flex items-center gap-1.5 px-3 py-1.5 text-xs font-medium rounded-lg transition-colors whitespace-nowrap ${
+                    typeFilter === t.id ? 'bg-white/10 text-white' : 'text-white/50 hover:text-white'
+                  }`}
+                >
+                  {Icon && <Icon className={`w-3 h-3 ${'color' in t ? t.color : ''}`} />}
+                  {t.label}
+                </button>
+              )
+            })}
+          </div>
         </div>
-        <div className="flex gap-1 bg-white/[0.04] border border-white/[0.08] rounded-xl p-1">
+        {/* Status filter tabs */}
+        <div className="flex gap-1 bg-white/[0.04] border border-white/[0.08] rounded-xl p-1 w-fit">
           {TABS.map(tab => (
             <button
               key={tab.id}
@@ -134,6 +177,49 @@ export default function PendingPage() {
           ))}
         </div>
       </div>
+
+      {/* Reject Modal */}
+      {rejectTarget && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/60 backdrop-blur-sm">
+          <div className="bg-[#0c0e1a] border border-white/[0.1] rounded-2xl shadow-2xl w-full max-w-lg p-6 mx-4">
+            <div className="flex items-center justify-between mb-4">
+              <div className="flex items-center gap-2">
+                <Ban className="w-5 h-5 text-red-400" />
+                <h3 className="text-lg font-bold text-white">Reject Registration</h3>
+              </div>
+              <button onClick={() => { setRejectTarget(null); setRejectReason('') }} className="text-white/40 hover:text-white p-1">
+                <X className="w-5 h-5" />
+              </button>
+            </div>
+            <p className="text-sm text-white/50 mb-1">
+              Rejecting <strong className="text-white/80">{rejectTarget.name}</strong>. You may optionally provide a reason.
+            </p>
+            <textarea
+              value={rejectReason}
+              onChange={e => setRejectReason(e.target.value)}
+              placeholder="Optional: reason for rejection (will be visible to the registrant)..."
+              className="w-full h-28 mt-3 bg-white/[0.04] border border-white/[0.1] rounded-xl p-3 text-sm text-white placeholder:text-white/30 focus:outline-none focus:border-red-400/50 resize-none"
+              autoFocus
+            />
+            <div className="flex items-center justify-end gap-3 mt-4">
+              <button
+                onClick={() => { setRejectTarget(null); setRejectReason('') }}
+                className="px-4 py-2 text-sm text-white/50 hover:text-white transition-colors"
+              >
+                Cancel
+              </button>
+              <button
+                onClick={handleReject}
+                disabled={isSubmitting}
+                className="px-5 py-2 bg-red-500 hover:bg-red-600 disabled:opacity-50 disabled:cursor-not-allowed text-white text-sm font-medium rounded-xl transition-colors flex items-center gap-2"
+              >
+                <Ban className="w-3.5 h-3.5" />
+                {isSubmitting ? 'Rejecting...' : 'Confirm Reject'}
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
 
       {/* Amendment Modal */}
       {amendmentTarget && (
@@ -242,6 +328,13 @@ export default function PendingPage() {
                       title="Request amendment"
                     >
                       <FileEdit className="w-3.5 h-3.5" />
+                    </button>
+                    <button
+                      onClick={e => { e.preventDefault(); e.stopPropagation(); setRejectTarget({ id: reg.id, name: reg.companyName }) }}
+                      className="p-1.5 rounded-lg bg-red-500/10 text-red-400 hover:bg-red-500/20 transition-colors"
+                      title="Reject registration"
+                    >
+                      <Ban className="w-3.5 h-3.5" />
                     </button>
                   </div>
                 )}

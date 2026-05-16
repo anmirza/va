@@ -36,23 +36,25 @@ async function addActivity(entry: Omit<ActivityLogEntry, 'id' | 'timestamp'>) {
 // ── Stats ─────────────────────────────────────────────────────────────────────
 
 export async function getAdminStatsFS(): Promise<{
-  totalAgencies: number; totalProduction: number; pendingApprovals: number; totalUsers: number
+  totalAgencies: number; totalProduction: number; pendingApprovals: number; totalUsers: number; totalClients: number
 }> {
   try {
-    const [agenciesSnap, prodSnap, pendingSnap, usersSnap] = await Promise.all([
+    const [agenciesSnap, prodSnap, pendingSnap, usersSnap, clientsSnap] = await Promise.all([
       getDocs(query(collection(db, 'organisations'), where('type', '==', 'agency'), where('status', '==', 'active'))),
       getDocs(query(collection(db, 'organisations'), where('type', '==', 'production'), where('status', '==', 'active'))),
       getDocs(query(collection(db, 'pendingRegistrations'), where('status', '==', 'pending'))),
       getDocs(collection(db, 'users')),
+      getDocs(query(collection(db, 'clientCompanies'), where('status', '==', 'active'))),
     ])
     return {
       totalAgencies: agenciesSnap.size,
       totalProduction: prodSnap.size,
       pendingApprovals: pendingSnap.size,
       totalUsers: usersSnap.size,
+      totalClients: clientsSnap.size,
     }
   } catch {
-    return { totalAgencies: 0, totalProduction: 0, pendingApprovals: 0, totalUsers: 0 }
+    return { totalAgencies: 0, totalProduction: 0, pendingApprovals: 0, totalUsers: 0, totalClients: 0 }
   }
 }
 
@@ -304,28 +306,53 @@ export async function getAllUsersFS(): Promise<any[]> {
 export async function getVAInternalUsersFS(): Promise<VAInternalUser[]> {
   try {
     const snap = await getDocs(
-      query(collection(db, 'users'), where('role', 'in', ['super_admin', 'admin', 'analyst']))
+      query(collection(db, 'users'), where('role', 'in', ['super_admin', 'admin', 'analyst', 'reviewer', 'editor', 'viewer']))
     )
     return snap.docs.map(d => {
       const data = d.data()
-      return {
+      const user: VAInternalUser = {
         id: d.id,
         name: data.name ?? '',
         email: data.email ?? '',
         role: data.role ?? 'admin',
         status: data.status ?? 'active',
-      } as VAInternalUser
+      }
+      if (data.department) user.department = data.department
+      if (data.notes) user.notes = data.notes
+      return user
     })
   } catch {
     return []
   }
 }
 
-export async function createVAInternalUserFS(data: { name: string; email: string; role: VAInternalUser['role'] }): Promise<VAInternalUser> {
+export async function createVAInternalUserFS(data: { name: string; email: string; role: VAInternalUser['role']; department?: string; notes?: string }): Promise<VAInternalUser> {
   const id = uid()
   const user: VAInternalUser = { id, ...data, status: 'active' }
-  await setDoc(doc(db, 'users', id), { ...user, accountType: 'vendor', mustChangePassword: true })
+  const docData: Record<string, unknown> = {
+    id,
+    name: data.name,
+    email: data.email,
+    role: data.role,
+    status: 'active',
+    accountType: 'internal',
+    mustChangePassword: true,
+    createdAt: new Date().toISOString(),
+  }
+  if (data.department) docData.department = data.department
+  if (data.notes) docData.notes = data.notes
+  await setDoc(doc(db, 'users', id), docData)
   return user
+}
+
+export async function updateVAInternalUserStatusFS(id: string, status: 'active' | 'inactive', updatedById?: string): Promise<void> {
+  const update: Record<string, unknown> = { status, updatedAt: new Date().toISOString() }
+  if (updatedById) update.updatedByAdminId = updatedById
+  await updateDoc(doc(db, 'users', id), update as any)
+}
+
+export async function deleteVAInternalUserFS(id: string): Promise<void> {
+  await deleteDoc(doc(db, 'users', id))
 }
 
 // ── Client Companies ──────────────────────────────────────────────────────────
@@ -357,13 +384,22 @@ export async function createClientCompanyFS(data: Omit<ClientCompany, 'id' | 'cr
     tokensUsed: data.tokensUsed ?? 0,
     packageSize: data.packageSize ?? 6,
   }
-  await setDoc(doc(db, 'clientCompanies', id), company)
+  // Firestore does not accept undefined values — strip them before writing
+  const payload = Object.fromEntries(
+    Object.entries(company).filter(([, v]) => v !== undefined)
+  ) as ClientCompany
+  await setDoc(doc(db, 'clientCompanies', id), payload)
   await addActivity({ type: 'org_create', description: `Created client company: ${data.name}` })
   return company
 }
 
 export async function updateClientCompanyFS(id: string, updates: Partial<ClientCompany>): Promise<void> {
   await updateDoc(doc(db, 'clientCompanies', id), { ...updates, updatedAt: new Date().toISOString() })
+}
+
+export async function deleteClientCompanyFS(id: string): Promise<void> {
+  await deleteDoc(doc(db, 'clientCompanies', id))
+  await addActivity({ type: 'org_remove', description: `Deleted client company: ${id}` })
 }
 
 export async function addClientCompanyTokensFS(companyId: string, tokensToAdd: number): Promise<void> {
@@ -506,6 +542,32 @@ export async function saveDisclaimerContentFS(tab: 'agency' | 'production', text
     lastUpdatedAt: new Date().toISOString(),
     lastUpdatedBy: adminId,
   }, { merge: true })
+  // Write version history entry
+  await addDoc(collection(db, 'disclaimerVersions'), {
+    type: tab,
+    content: text,
+    savedBy: adminId,
+    savedAt: new Date().toISOString(),
+  })
+}
+
+export interface DisclaimerVersion {
+  id: string
+  type: 'agency' | 'production'
+  content: string
+  savedBy: string
+  savedAt: string
+}
+
+export async function getDisclaimerVersionsFS(type: 'agency' | 'production'): Promise<DisclaimerVersion[]> {
+  const q = query(
+    collection(db, 'disclaimerVersions'),
+    where('type', '==', type),
+    orderBy('savedAt', 'desc'),
+    limit(5)
+  )
+  const snap = await getDocs(q)
+  return snap.docs.map(d => ({ id: d.id, ...(d.data() as Omit<DisclaimerVersion, 'id'>) }))
 }
 
 // ── Categories ────────────────────────────────────────────────────────────────

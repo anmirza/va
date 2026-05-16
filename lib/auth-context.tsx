@@ -16,10 +16,10 @@ import { acceptInvitation, getInvitationByToken, addMember } from './admin-store
 
 // ── Test accounts auto-created on first login ─────────────────────────────────
 const TEST_ACCOUNTS: Record<string, { password: string; profile: Partial<User> }> = {
-  'superadmin@va-consulting.com': { password: 'password', profile: { name: 'Super Admin', role: 'super_admin', accountType: 'vendor', status: 'active' } },
-  'admin@va-consulting.com':      { password: 'password', profile: { name: 'Admin User',  role: 'admin',       accountType: 'vendor', status: 'active' } },
-  'demo@requisti.com':            { password: 'password', profile: { name: 'Demo Vendor', role: 'vendor',      accountType: 'vendor', status: 'active' } },
-  'client@requisti.com':          { password: 'password', profile: { name: 'Demo Client', role: 'client',      accountType: 'client', tier: 'free', status: 'active' } },
+  'superadmin@va-consulting.com': { password: 'password', profile: { name: 'Super Admin', role: 'super_admin', accountType: 'internal', status: 'active' } },
+  'admin@va-consulting.com':      { password: 'password', profile: { name: 'Admin User',  role: 'admin',       accountType: 'internal', status: 'active' } },
+  'demo@requisti.com':            { password: 'password', profile: { name: 'Demo Vendor', role: 'vendor',      accountType: 'vendor',   status: 'active' } },
+  'client@requisti.com':          { password: 'password', profile: { name: 'Demo Client', role: 'client',      accountType: 'client',   tier: 'free', status: 'active' } },
 }
 
 // ── Cookie helpers ────────────────────────────────────────────────────────────
@@ -40,18 +40,46 @@ function clearCookies() {
   document.cookie = 'requisti_setup=; path=/; max-age=0'
 }
 
-// ── Firestore profile helpers ─────────────────────────────────────────────────
-async function loadUserProfile(uid: string): Promise<User | null> {
+// ── Profile cache helpers (localStorage fallback) ────────────────────────────
+// Used so that transient Firestore errors never wipe out the React user state.
+// A successful profile load always writes to cache; sign-out clears it.
+const PROFILE_CACHE_KEY = (uid: string) => `requisti_profile_${uid}`
+
+function cacheProfile(uid: string, profile: User) {
+  try { localStorage.setItem(PROFILE_CACHE_KEY(uid), JSON.stringify(profile)) } catch {}
+}
+function getCachedProfile(uid: string): User | null {
   try {
-    const snap = await getDoc(doc(db, 'users', uid))
-    if (snap.exists()) return snap.data() as User
-  } catch (e) {
-    console.warn('[Auth] loadUserProfile failed:', (e as Error).message)
+    const raw = localStorage.getItem(PROFILE_CACHE_KEY(uid))
+    return raw ? (JSON.parse(raw) as User) : null
+  } catch { return null }
+}
+function clearCachedProfile(uid: string) {
+  try { localStorage.removeItem(PROFILE_CACHE_KEY(uid)) } catch {}
+}
+
+// ── Firestore profile helpers ─────────────────────────────────────────────────
+// Returns { profile, found } — distinguished from { profile: null } due to error vs missing doc.
+// Retries up to 3 times on transient Firestore errors (network blip, quota, cold start)
+// to prevent false logouts during page refresh when Firebase restores a valid session.
+async function loadUserProfile(uid: string): Promise<{ profile: User | null; found: boolean }> {
+  for (let attempt = 0; attempt < 3; attempt++) {
+    try {
+      const snap = await getDoc(doc(db, 'users', uid))
+      if (snap.exists()) return { profile: snap.data() as User, found: true }
+      return { profile: null, found: false }
+    } catch (e) {
+      console.warn(`[Auth] loadUserProfile attempt ${attempt + 1} failed:`, (e as Error).message)
+      // Wait 1s, then 2s before the next retry — do NOT sign out on transient error
+      if (attempt < 2) await new Promise(r => setTimeout(r, 1000 * (attempt + 1)))
+    }
   }
-  return null
+  // All retries exhausted — assume transient error, keep session alive
+  return { profile: null, found: true }
 }
 
 async function saveUserProfile(uid: string, profile: User) {
+  cacheProfile(uid, profile) // keep localStorage cache up-to-date immediately
   try {
     await setDoc(doc(db, 'users', uid), { ...profile, updatedAt: serverTimestamp() }, { merge: true })
   } catch (e) {
@@ -88,7 +116,21 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
   const [isLoading, setIsLoading] = useState(true)
 
   useEffect(() => {
+    // Debounce timer for null callbacks — Firebase sometimes fires null briefly during
+    // token refresh (every ~1 hour) before firing again with the real user.
+    // We wait 1 second before treating a null as a genuine sign-out.
+    let signOutTimer: ReturnType<typeof setTimeout> | null = null
+
+    const handleSignedOut = () => {
+      clearCookies()
+      setUser(null)
+      setIsLoading(false)
+    }
+
     const unsub = onAuthStateChanged(auth, async (firebaseUser) => {
+      // Cancel any pending sign-out from a previous null callback
+      if (signOutTimer) { clearTimeout(signOutTimer); signOutTimer = null }
+
       if (firebaseUser) {
         const emailLower = (firebaseUser.email ?? '').toLowerCase()
         // Test accounts: never depend on Firestore — use hardcoded profile immediately
@@ -101,22 +143,41 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
           return
         }
         // Real accounts: load from Firestore
-        const profile = await loadUserProfile(firebaseUser.uid)
+        const { profile, found } = await loadUserProfile(firebaseUser.uid)
         if (profile) {
+          // Success — update cache and React state
+          cacheProfile(firebaseUser.uid, profile)
           setUser(profile)
           setCookies(profile)
-        } else {
+        } else if (!found) {
+          // Document confirmed missing — sign out for real
+          clearCachedProfile(firebaseUser.uid)
           await signOut(auth)
           clearCookies()
           setUser(null)
+        } else {
+          // Transient Firestore error — fall back to cached profile so user isn't kicked out
+          const cached = getCachedProfile(firebaseUser.uid)
+          if (cached) {
+            console.warn('[Auth] Firestore unavailable — using cached profile for', firebaseUser.uid)
+            setUser(cached)
+            setCookies(cached)
+          }
+          // No cache: first-ever load with Firestore down — user stays null but NOT signed out
         }
+        setIsLoading(false)
       } else {
-        clearCookies()
-        setUser(null)
+        // Null received — could be a transient null during token refresh.
+        // Delay 1s before acting: if a real user arrives in this window, we cancel the timeout.
+        // This prevents spurious logouts during Firebase's hourly token refresh cycle.
+        signOutTimer = setTimeout(handleSignedOut, 1000)
       }
-      setIsLoading(false)
     })
-    return unsub
+
+    return () => {
+      unsub()
+      if (signOutTimer) clearTimeout(signOutTimer)
+    }
   }, [])
 
   const isAdmin = user?.role === 'admin' || user?.role === 'super_admin'
@@ -136,7 +197,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
         return { success: true, mustChangePassword: false, role: profile.role }
       }
       // Real accounts: load from Firestore
-      const profile = await loadUserProfile(cred.user.uid)
+      const { profile } = await loadUserProfile(cred.user.uid)
       if (!profile) {
         await signOut(auth)
         return { success: false, error: 'User profile not found. Please contact support.' }
@@ -281,10 +342,11 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
   }, [])
 
   const logout = useCallback(() => {
+    if (user) clearCachedProfile(user.id)
     signOut(auth).catch(() => {})
     setUser(null)
     clearCookies()
-  }, [])
+  }, [user])
 
   return (
     <AuthContext.Provider value={{

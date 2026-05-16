@@ -159,7 +159,7 @@ export default function AgenciesPage() {
         </div>
         <Link href="/admin/agencies/create">
           <Button className="h-10 bg-[#0763d8] hover:bg-[#0655b3] text-white rounded-xl gap-2">
-            <Plus className="w-4 h-4" /> Create Agency
+            <Plus className="w-4 h-4" /> Add Agency
           </Button>
         </Link>
       </div>
@@ -192,7 +192,7 @@ export default function AgenciesPage() {
               size="sm"
               className="bg-[#0763d8] hover:bg-[#0655b3] text-white rounded-xl"
             >
-              <Plus className="w-3.5 h-3.5 mr-1.5" /> Create Agency
+              <Plus className="w-3.5 h-3.5 mr-1.5" /> Add Agency
             </Button>
           </Link>
         </div>
@@ -221,13 +221,23 @@ export default function AgenciesPage() {
                   <OrgStatusBadge status={org.status} />
                 </div>
                 <div className="flex items-center gap-4 text-xs text-white/40 flex-wrap">
-                  {org.country && (
+                  {org.city && (
+                    <span className="flex items-center gap-1">
+                      <MapPin className="w-3 h-3" />
+                      {org.city}{org.country ? `, ${org.country}` : ""}
+                    </span>
+                  )}
+                  {!org.city && org.country && (
                     <span className="flex items-center gap-1">
                       <MapPin className="w-3 h-3" />
                       {org.country}
                     </span>
                   )}
-                  {org.category && <span>{org.category}</span>}
+                  {org.category && (
+                    <span className="inline-flex items-center px-2 py-0.5 rounded-md bg-[#0763d8]/10 text-[#0763d8] text-xs font-medium border border-[#0763d8]/20">
+                      {org.category}
+                    </span>
+                  )}
                   <span className="flex items-center gap-1">
                     <Users className="w-3 h-3" />
                     {org.memberCount} member{org.memberCount !== 1 ? "s" : ""}
