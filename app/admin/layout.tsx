@@ -35,7 +35,7 @@ const SUPER_ADMIN_NAV = [
 ]
 
 export default function AdminLayout({ children }: { children: React.ReactNode }) {
-  const { user, isAdmin, logout } = useAuth()
+  const { user, isAdmin, isLoading, logout } = useAuth()
   const router = useRouter()
   const pathname = usePathname()
   const [pendingCount, setPendingCount] = useState(0)
@@ -56,8 +56,10 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
   }, [])
 
   useEffect(() => {
+    // Only redirect after auth state has been determined — avoids false logout on page refresh
+    if (isLoading) return
     if (!isAdmin) router.replace('/login')
-  }, [isAdmin, router])
+  }, [isAdmin, isLoading, router])
 
   useEffect(() => {
     const unsub = subscribePendingCount(setPendingCount)
@@ -68,6 +70,13 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
     if (item.exact) return pathname === item.href
     return pathname.startsWith(item.href)
   }
+
+  // Show spinner while auth state is being determined
+  if (isLoading) return (
+    <div className="min-h-screen bg-[#02030E] flex items-center justify-center">
+      <div className="w-8 h-8 border-4 border-[#0763d8] border-t-transparent rounded-full animate-spin" />
+    </div>
+  )
 
   if (!isAdmin) return null
 

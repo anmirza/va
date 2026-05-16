@@ -41,14 +41,17 @@ function clearCookies() {
 }
 
 // ── Firestore profile helpers ─────────────────────────────────────────────────
-async function loadUserProfile(uid: string): Promise<User | null> {
+// Returns { profile, found } — distinguished from { profile: null } due to error vs missing doc
+async function loadUserProfile(uid: string): Promise<{ profile: User | null; found: boolean }> {
   try {
     const snap = await getDoc(doc(db, 'users', uid))
-    if (snap.exists()) return snap.data() as User
+    if (snap.exists()) return { profile: snap.data() as User, found: true }
+    return { profile: null, found: false }
   } catch (e) {
     console.warn('[Auth] loadUserProfile failed:', (e as Error).message)
+    // Return ambiguous result — do NOT sign out on transient error
+    return { profile: null, found: true }
   }
-  return null
 }
 
 async function saveUserProfile(uid: string, profile: User) {
@@ -101,15 +104,17 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
           return
         }
         // Real accounts: load from Firestore
-        const profile = await loadUserProfile(firebaseUser.uid)
+        const { profile, found } = await loadUserProfile(firebaseUser.uid)
         if (profile) {
           setUser(profile)
           setCookies(profile)
-        } else {
+        } else if (!found) {
+          // Document confirmed missing — this account has no profile; sign out
           await signOut(auth)
           clearCookies()
           setUser(null)
         }
+        // If found=true but profile=null it was a transient Firestore error — keep user logged in
       } else {
         clearCookies()
         setUser(null)
@@ -136,7 +141,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
         return { success: true, mustChangePassword: false, role: profile.role }
       }
       // Real accounts: load from Firestore
-      const profile = await loadUserProfile(cred.user.uid)
+      const { profile } = await loadUserProfile(cred.user.uid)
       if (!profile) {
         await signOut(auth)
         return { success: false, error: 'User profile not found. Please contact support.' }
