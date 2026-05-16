@@ -116,7 +116,21 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
   const [isLoading, setIsLoading] = useState(true)
 
   useEffect(() => {
+    // Debounce timer for null callbacks — Firebase sometimes fires null briefly during
+    // token refresh (every ~1 hour) before firing again with the real user.
+    // We wait 1 second before treating a null as a genuine sign-out.
+    let signOutTimer: ReturnType<typeof setTimeout> | null = null
+
+    const handleSignedOut = () => {
+      clearCookies()
+      setUser(null)
+      setIsLoading(false)
+    }
+
     const unsub = onAuthStateChanged(auth, async (firebaseUser) => {
+      // Cancel any pending sign-out from a previous null callback
+      if (signOutTimer) { clearTimeout(signOutTimer); signOutTimer = null }
+
       if (firebaseUser) {
         const emailLower = (firebaseUser.email ?? '').toLowerCase()
         // Test accounts: never depend on Firestore — use hardcoded profile immediately
@@ -136,7 +150,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
           setUser(profile)
           setCookies(profile)
         } else if (!found) {
-          // Document confirmed missing — this account has no profile; sign out
+          // Document confirmed missing — sign out for real
           clearCachedProfile(firebaseUser.uid)
           await signOut(auth)
           clearCookies()
@@ -149,16 +163,21 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
             setUser(cached)
             setCookies(cached)
           }
-          // If no cache either (very first ever load with Firestore down), user stays null.
-          // isLoading will become false below, but we won't sign them out.
+          // No cache: first-ever load with Firestore down — user stays null but NOT signed out
         }
+        setIsLoading(false)
       } else {
-        clearCookies()
-        setUser(null)
+        // Null received — could be a transient null during token refresh.
+        // Delay 1s before acting: if a real user arrives in this window, we cancel the timeout.
+        // This prevents spurious logouts during Firebase's hourly token refresh cycle.
+        signOutTimer = setTimeout(handleSignedOut, 1000)
       }
-      setIsLoading(false)
     })
-    return unsub
+
+    return () => {
+      unsub()
+      if (signOutTimer) clearTimeout(signOutTimer)
+    }
   }, [])
 
   const isAdmin = user?.role === 'admin' || user?.role === 'super_admin'
