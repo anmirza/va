@@ -131,6 +131,9 @@ function DirectoryContent() {
       companies.filter((c) => c.country === selectedCountry).map((c) => c.city)
     )].sort();
   }, [selectedCountry]);
+
+  const totalPages = Math.ceil(filteredCompanies.length / itemsPerPage);
+  const startIdx = (currentPage - 1) * itemsPerPage;
   const paginatedCompanies = filteredCompanies.slice(
     startIdx,
     startIdx + itemsPerPage,
@@ -333,7 +336,8 @@ function DirectoryContent() {
                       onClick={() => {
                         setSelectedServices([]);
                         setSelectedSectors([]);
-                        setSelectedCities([]);
+                        setSelectedCountry("");
+                        setSelectedCity("");
                         setCurrentPage(1);
                       }}
                       className="flex items-center gap-1 text-xs font-medium text-accent hover:underline px-3 py-2"
@@ -491,7 +495,8 @@ function DirectoryContent() {
                     setSearchQuery("");
                     setSelectedServices([]);
                     setSelectedSectors([]);
-                    setSelectedCities([]);
+                    setSelectedCountry("");
+                    setSelectedCity("");
                     setCurrentPage(1);
                   }}
                 >
