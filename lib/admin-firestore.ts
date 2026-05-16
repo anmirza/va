@@ -384,7 +384,11 @@ export async function createClientCompanyFS(data: Omit<ClientCompany, 'id' | 'cr
     tokensUsed: data.tokensUsed ?? 0,
     packageSize: data.packageSize ?? 6,
   }
-  await setDoc(doc(db, 'clientCompanies', id), company)
+  // Firestore does not accept undefined values — strip them before writing
+  const payload = Object.fromEntries(
+    Object.entries(company).filter(([, v]) => v !== undefined)
+  ) as ClientCompany
+  await setDoc(doc(db, 'clientCompanies', id), payload)
   await addActivity({ type: 'org_create', description: `Created client company: ${data.name}` })
   return company
 }

@@ -92,9 +92,11 @@ export function AgencyRfiForm({ mode, editId, onDone }: AgencyRfiFormProps) {
   const [customFieldsData, setCustomFieldsData] = useState<Record<string, unknown>>({})
 
   // ── Load dynamic step labels from Firestore ───────────────────────────────
+  // Only use Firestore labels if they match the expected 8-step count.
+  // Stale old data is ignored so the form always renders correctly.
   useEffect(() => {
     getRfiStepLabelsFS('cat-agency').then(labels => {
-      if (labels && labels.length > 0) setStepLabels(labels)
+      if (labels && labels.length === REGISTRATION_STEPS.length) setStepLabels(labels)
     })
   }, [])
 

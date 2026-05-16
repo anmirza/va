@@ -130,9 +130,11 @@ export function ProductionRfiForm({ mode, editId, onDone }: ProductionRfiFormPro
   const turnoverYears = getTurnoverYears()
 
   // ── Load dynamic step labels ──────────────────────────────────────────────
+  // Only use Firestore labels if they match the expected 8-step count.
+  // Stale old data (13 steps, etc.) is ignored so the form always renders correctly.
   useEffect(() => {
     getRfiStepLabelsFS('cat-production').then(labels => {
-      if (labels && labels.length > 0) setStepLabels(labels)
+      if (labels && labels.length === DEFAULT_STEPS.length) setStepLabels(labels)
     })
   }, [])
 
@@ -999,24 +1001,6 @@ export function ProductionRfiForm({ mode, editId, onDone }: ProductionRfiFormPro
                     </div>
                   </div>
                 ))}
-              </div>
-              <div className="space-y-4">
-                <h3 className="text-sm font-semibold text-white/80 flex items-center gap-2">
-                  <span className="w-1 h-4 bg-[#7c3aed] rounded-full" />RIF. / Requests
-                </h3>
-                <FormField label="1.1 Could you please present your strategic development">
-                  <textarea value={strategicOrientation} onChange={e => setStrategicOrientation(e.target.value)} rows={3} className={textareaCls} placeholder="Write your answer for request 1.1 here..." />
-                </FormField>
-                <FormField label="1.2 Do you have any activity out of your Country / City?">
-                  <div className="flex gap-6">
-                    {[true, false].map(v => (
-                      <label key={String(v)} className="flex items-center gap-2 cursor-pointer">
-                        <input type="radio" checked={activityOutOfCountry === v} onChange={() => setActivityOutOfCountry(v)} className="w-4 h-4 accent-[#7c3aed]" />
-                        <span className="text-sm text-white/70">{v ? 'Yes' : 'No'}</span>
-                      </label>
-                    ))}
-                  </div>
-                </FormField>
               </div>
             </div>
           </div>
