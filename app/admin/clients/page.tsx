@@ -87,7 +87,7 @@ export default function ClientsPage() {
         </Link>
       </div>
 
-      <div className="glass-card rounded-2xl overflow-hidden">
+      <div className="glass-card rounded-2xl">
         <div className="px-6 py-4 border-b border-white/[0.06] flex flex-wrap items-center justify-between gap-3">
           <div className="relative">
             <Search className="w-4 h-4 absolute left-3 top-1/2 -translate-y-1/2 text-white/30" />
@@ -116,6 +116,7 @@ export default function ClientsPage() {
 
         {viewMode === 'table' ? (
           /* ── Table View ── */
+          <div className="overflow-x-auto">
           <table className="w-full text-left text-sm text-white/70">
             <thead className="bg-white/[0.02] border-b border-white/[0.06] text-xs uppercase text-white/40 font-semibold tracking-wider">
               <tr>
@@ -237,6 +238,7 @@ export default function ClientsPage() {
               )}
             </tbody>
           </table>
+          </div>
         ) : (
           /* ── Hierarchy View ── */
           <div className="p-6 space-y-4">
