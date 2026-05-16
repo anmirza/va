@@ -128,7 +128,7 @@ export interface VAInternalUser {
   name: string
   email: string
   role: 'super_admin' | 'admin' | 'analyst' | 'reviewer' | 'editor' | 'viewer'
-  status: 'active' | 'suspended'
+  status: 'active' | 'inactive' | 'suspended'
   department?: string
   notes?: string
 }
@@ -157,6 +157,7 @@ export interface OrgRecord {
   type: OrgType
   name: string
   country?: string
+  city?: string
   description?: string
   category?: string
   status: 'active' | 'pending' | 'rejected' | 'removed'

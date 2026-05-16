@@ -348,7 +348,7 @@ export async function createVAInternalUserFS(data: { name: string; email: string
 export async function updateVAInternalUserStatusFS(id: string, status: 'active' | 'inactive', updatedById?: string): Promise<void> {
   const update: Record<string, unknown> = { status, updatedAt: new Date().toISOString() }
   if (updatedById) update.updatedByAdminId = updatedById
-  await updateDoc(doc(db, 'users', id), update)
+  await updateDoc(doc(db, 'users', id), update as any)
 }
 
 export async function deleteVAInternalUserFS(id: string): Promise<void> {

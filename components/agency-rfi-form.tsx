@@ -113,7 +113,7 @@ export function AgencyRfiForm({ mode, editId, onDone }: AgencyRfiFormProps) {
   const [tradeOrganizations, setTradeOrganizations] = useState('')
 
   // ── Step 2 — Contacts ─────────────────────────────────────────────────────
-  const [contacts, setContacts] = useState(
+  const [contacts, setContacts] = useState<Array<{ role: string; firstName: string; lastName: string; linkedin: string; telephone: string; mobile: string; email: string }>>(
     AGENCY_CONTACT_ROLES.map(role => ({ role, firstName: '', lastName: '', linkedin: '', telephone: '', mobile: '', email: '' }))
   )
   const [socialMedia, setSocialMedia] = useState<Record<string, string>>({})
@@ -158,7 +158,7 @@ export function AgencyRfiForm({ mode, editId, onDone }: AgencyRfiFormProps) {
   const [talentEntries, setTalentEntries] = useState([{ role: '', name: '', linkedin: '' }])
 
   // ── Step 7 — Awards & Infos ───────────────────────────────────────────────
-  const [awards, setAwards] = useState(
+  const [awards, setAwards] = useState<Array<{ name: string; distinction: string; category: string; year: string; ad: string; brand: string }>>(
     AGENCY_AWARDS.map(name => ({ name, distinction: '', category: '', year: '', ad: '', brand: '' }))
   )
   const [aiAnswers, setAiAnswers]  = useState<Record<string, string>>({})
