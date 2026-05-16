@@ -1,10 +1,10 @@
 ﻿"use client";
 
-import { useState } from "react";
-import { useRouter } from "next/navigation";
+import { useState, useEffect } from "react";
+import { useRouter, useSearchParams } from "next/navigation";
 import Link from "next/link";
 import { useAuth } from "@/lib/auth-context";
-import { createClientCompanyFS } from "@/lib/admin-firestore";
+import { createClientCompanyFS, updateClientCompanyFS, getClientCompanyByIdFS } from "@/lib/admin-firestore";
 import { GooglePlacesAutocomplete } from "@/components/google-places-autocomplete";
 import toast from "react-hot-toast";
 import {
@@ -61,6 +61,9 @@ const ADDRESS_TYPES = [
 export default function CreateClientCompanyPage() {
   const { user } = useAuth();
   const router = useRouter();
+  const searchParams = useSearchParams();
+  const editId = searchParams.get("editId");
+  const isEditMode = !!editId;
 
   const [name, setName] = useState("");
   const [operateAs, setOperateAs] = useState("");
@@ -76,6 +79,27 @@ export default function CreateClientCompanyPage() {
   const [addressType, setAddressType] = useState("");
   const [notes, setNotes] = useState("");
   const [isSubmitting, setIsSubmitting] = useState(false);
+
+  // Pre-fill form when editing an existing company
+  useEffect(() => {
+    if (!editId) return;
+    getClientCompanyByIdFS(editId).then(comp => {
+      if (!comp) return;
+      setName(comp.name ?? "");
+      setOperateAs(comp.operateAs ?? "");
+      setHoldingCompany(comp.holdingCompany ?? "");
+      setRegionalHub(comp.regionalHub ?? "");
+      setRegion(comp.region ?? "");
+      setCoveredRegions(comp.coveredRegions ?? []);
+      setCoveredCountries(comp.coveredCountries ?? []);
+      setCountry(comp.country ?? "");
+      setLegalEntityName(comp.legalEntityName ?? "");
+      setLocalCompany(comp.localCompany ?? "");
+      setAddress(comp.address ?? "");
+      setAddressType(comp.addressType ?? "");
+      setNotes(comp.notes ?? "");
+    });
+  }, [editId]);
 
   const inputCls =
     "w-full h-10 bg-white/[0.04] border border-white/[0.08] rounded-lg px-3 text-sm text-white placeholder:text-white/20 focus:outline-none focus:border-[#0763d8]/60 transition-colors";
@@ -99,8 +123,8 @@ export default function CreateClientCompanyPage() {
     if (!name.trim()) { toast.error("Company name is required"); return; }
     setIsSubmitting(true);
     try {
-      await createClientCompanyFS(
-        {
+      if (isEditMode && editId) {
+        const updates = {
           name: name.trim(),
           legalEntityName: legalEntityName.trim() || undefined,
           holdingCompany: holdingCompany.trim() || undefined,
@@ -113,15 +137,37 @@ export default function CreateClientCompanyPage() {
           localCompany: localCompany.trim() || undefined,
           address: address.trim() || undefined,
           addressType: addressType || undefined,
-          tokens: 0, tokensUsed: 0, packageSize: 6, status: "active",
           notes: notes.trim() || undefined,
-        },
-        user?.id ?? "admin",
-      );
-      toast.success(`"${name.trim()}" created successfully.`);
+        };
+        // Strip undefined fields — Firestore rejects them in updateDoc
+        const payload = Object.fromEntries(Object.entries(updates).filter(([, v]) => v !== undefined));
+        await updateClientCompanyFS(editId, payload);
+        toast.success(`"${name.trim()}" updated successfully.`);
+      } else {
+        await createClientCompanyFS(
+          {
+            name: name.trim(),
+            legalEntityName: legalEntityName.trim() || undefined,
+            holdingCompany: holdingCompany.trim() || undefined,
+            operateAs: (operateAs || undefined) as any,
+            regionalHub: regionalHub || undefined,
+            region: region || undefined,
+            coveredRegions: coveredRegions.length > 0 ? coveredRegions : undefined,
+            coveredCountries: coveredCountries.length > 0 ? coveredCountries : undefined,
+            country: country || undefined,
+            localCompany: localCompany.trim() || undefined,
+            address: address.trim() || undefined,
+            addressType: addressType || undefined,
+            tokens: 0, tokensUsed: 0, packageSize: 6, status: "active",
+            notes: notes.trim() || undefined,
+          },
+          user?.id ?? "admin",
+        );
+        toast.success(`"${name.trim()}" created successfully.`);
+      }
       router.push("/admin/clients");
     } catch {
-      toast.error("Failed to create company.");
+      toast.error(isEditMode ? "Failed to update company." : "Failed to create company.");
     } finally {
       setIsSubmitting(false);
     }
@@ -137,9 +183,9 @@ export default function CreateClientCompanyPage() {
           <ArrowLeft className="w-5 h-5" />
         </Link>
         <div>
-          <h1 className="text-2xl font-bold text-white">Add Client Company</h1>
+          <h1 className="text-2xl font-bold text-white">{isEditMode ? "Edit Client Company" : "Add Client Company"}</h1>
           <p className="text-white/40 text-sm mt-0.5">
-            Register a new client company with geographic structure and hierarchy.
+            {isEditMode ? "Update company details, hierarchy, and operating structure." : "Register a new client company with geographic structure and hierarchy."}
           </p>
         </div>
       </div>
@@ -364,9 +410,9 @@ export default function CreateClientCompanyPage() {
           <button type="submit" disabled={isSubmitting}
             className="px-6 py-2.5 bg-white text-black font-semibold rounded-xl text-sm hover:bg-white/90 transition-colors disabled:opacity-60 flex items-center gap-2">
             {isSubmitting ? (
-              <><span className="w-3.5 h-3.5 border-2 border-black/30 border-t-black rounded-full animate-spin" /> Creating…</>
+              <><span className="w-3.5 h-3.5 border-2 border-black/30 border-t-black rounded-full animate-spin" /> {isEditMode ? "Saving…" : "Creating…"}</>
             ) : (
-              <><Save className="w-4 h-4" /> Create Client Company</>
+              <><Save className="w-4 h-4" /> {isEditMode ? "Save Changes" : "Create Client Company"}</>
             )}
           </button>
         </div>

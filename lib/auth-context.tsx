@@ -41,17 +41,23 @@ function clearCookies() {
 }
 
 // ── Firestore profile helpers ─────────────────────────────────────────────────
-// Returns { profile, found } — distinguished from { profile: null } due to error vs missing doc
+// Returns { profile, found } — distinguished from { profile: null } due to error vs missing doc.
+// Retries up to 3 times on transient Firestore errors (network blip, quota, cold start)
+// to prevent false logouts during page refresh when Firebase restores a valid session.
 async function loadUserProfile(uid: string): Promise<{ profile: User | null; found: boolean }> {
-  try {
-    const snap = await getDoc(doc(db, 'users', uid))
-    if (snap.exists()) return { profile: snap.data() as User, found: true }
-    return { profile: null, found: false }
-  } catch (e) {
-    console.warn('[Auth] loadUserProfile failed:', (e as Error).message)
-    // Return ambiguous result — do NOT sign out on transient error
-    return { profile: null, found: true }
+  for (let attempt = 0; attempt < 3; attempt++) {
+    try {
+      const snap = await getDoc(doc(db, 'users', uid))
+      if (snap.exists()) return { profile: snap.data() as User, found: true }
+      return { profile: null, found: false }
+    } catch (e) {
+      console.warn(`[Auth] loadUserProfile attempt ${attempt + 1} failed:`, (e as Error).message)
+      // Wait 1s, then 2s before the next retry — do NOT sign out on transient error
+      if (attempt < 2) await new Promise(r => setTimeout(r, 1000 * (attempt + 1)))
+    }
   }
+  // All retries exhausted — assume transient error, keep session alive
+  return { profile: null, found: true }
 }
 
 async function saveUserProfile(uid: string, profile: User) {

@@ -397,6 +397,11 @@ export async function updateClientCompanyFS(id: string, updates: Partial<ClientC
   await updateDoc(doc(db, 'clientCompanies', id), { ...updates, updatedAt: new Date().toISOString() })
 }
 
+export async function deleteClientCompanyFS(id: string): Promise<void> {
+  await deleteDoc(doc(db, 'clientCompanies', id))
+  await addActivity({ type: 'org_remove', description: `Deleted client company: ${id}` })
+}
+
 export async function addClientCompanyTokensFS(companyId: string, tokensToAdd: number): Promise<void> {
   await updateDoc(doc(db, 'clientCompanies', companyId), { tokens: increment(tokensToAdd) })
 }
