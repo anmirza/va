@@ -10,7 +10,7 @@ import { Dialog, DialogContent, DialogHeader, DialogTitle } from '@/components/u
 import toast from 'react-hot-toast'
 import {
   Building, Plus, Search, Coins,
-  MoreHorizontal, Pencil, Power, PowerOff, Trash2,
+  MoreHorizontal, Pencil, Power, PowerOff, Trash2, ChevronRight,
 } from 'lucide-react'
 
 export default function ClientsPage() {

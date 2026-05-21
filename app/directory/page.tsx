@@ -11,6 +11,10 @@ import { Input } from "@/components/ui/input";
 import { Badge } from "@/components/ui/badge";
 import { companies } from "@/lib/mock-data";
 import {
+  getRegionForCountry,
+  getAvailableRegionsFromCompanies,
+} from "@/lib/geo-data";
+import {
   Search,
   Grid3x3,
   List,
@@ -19,6 +23,7 @@ import {
   X,
   Lock,
 } from "lucide-react";
+import { MultiSelectFilter } from "@/components/multi-select-filter";
 import { useAuth } from "@/lib/auth-context";
 import { getClientCompanyByUserIdFS } from "@/lib/admin-firestore";
 
@@ -32,7 +37,7 @@ const SERVICES = [
   "Production",
   "Technology",
 ];
-const SECTORS = [
+const INDUSTRIES = [
   "Technology",
   "Sports",
   "Luxury",
@@ -42,20 +47,27 @@ const SECTORS = [
   "Retail",
   "Lifestyle",
 ];
-const CITIES = [...new Set(companies.map((c) => c.city))].sort();
-const COUNTRIES = [...new Set(companies.map((c) => c.country).filter(Boolean))].sort() as string[];
+
+// Derived at module level from mock data for performance
+const ALL_COMPANY_COUNTRIES = companies
+  .map((c) => c.country)
+  .filter(Boolean) as string[];
+const ALL_COMPANY_REGIONS = getAvailableRegionsFromCompanies(ALL_COMPANY_COUNTRIES);
 
 function DirectoryContent() {
   const params = useSearchParams();
   const [searchQuery, setSearchQuery] = useState(params.get("q") || "");
-  const [selectedServices, setSelectedServices] = useState<string[]>([]);
-  const [selectedSectors, setSelectedSectors] = useState<string[]>([]);
+  const [selectedRegion, setSelectedRegion] = useState<string>(
+    params.get("region") || "",
+  );
   const [selectedCountry, setSelectedCountry] = useState<string>(
     params.get("country") || "",
   );
-  const [selectedCity, setSelectedCity] = useState<string>(
-    params.get("city") || "",
+  const [selectedCities, setSelectedCities] = useState<string[]>(
+    params.get("city") ? [params.get("city") as string] : [],
   );
+  const [selectedServices, setSelectedServices] = useState<string[]>([]);
+  const [selectedIndustries, setSelectedIndustries] = useState<string[]>([]);
   const [viewMode, setViewMode] = useState<"grid" | "list">("grid");
   const [sortBy, setSortBy] = useState("name");
   const [currentPage, setCurrentPage] = useState(1);
@@ -84,6 +96,41 @@ function DirectoryContent() {
 
   const itemsPerPage = 30;
 
+  // Countries available for the Country dropdown (filtered by selected region)
+  const availableCountries = useMemo(() => {
+    const base = selectedRegion
+      ? companies
+          .filter((c) => c.country && getRegionForCountry(c.country) === selectedRegion)
+          .map((c) => c.country as string)
+      : ALL_COMPANY_COUNTRIES;
+    return [...new Set(base)].sort();
+  }, [selectedRegion]);
+
+  // Cities available for the City multi-select (filtered by country or region)
+  const availableCities = useMemo(() => {
+    if (selectedCountry) {
+      return [
+        ...new Set(
+          companies
+            .filter((c) => c.country === selectedCountry)
+            .map((c) => c.city),
+        ),
+      ].sort();
+    }
+    if (selectedRegion) {
+      return [
+        ...new Set(
+          companies
+            .filter(
+              (c) => c.country && getRegionForCountry(c.country) === selectedRegion,
+            )
+            .map((c) => c.city),
+        ),
+      ].sort();
+    }
+    return [...new Set(companies.map((c) => c.city))].sort();
+  }, [selectedRegion, selectedCountry]);
+
   const filteredCompanies = useMemo(() => {
     let results = companies;
 
@@ -101,16 +148,20 @@ function DirectoryContent() {
       );
     }
 
-    if (selectedSectors.length > 0) {
+    if (selectedIndustries.length > 0) {
       results = results.filter((c) =>
-        selectedSectors.some((s) => c.sectors.includes(s)),
+        selectedIndustries.some((s) => c.sectors.includes(s)),
       );
     }
 
-    if (selectedCity) {
-      results = results.filter((c) => c.city === selectedCity);
+    if (selectedCities.length > 0) {
+      results = results.filter((c) => selectedCities.includes(c.city));
     } else if (selectedCountry) {
       results = results.filter((c) => c.country === selectedCountry);
+    } else if (selectedRegion) {
+      results = results.filter(
+        (c) => c.country && getRegionForCountry(c.country) === selectedRegion,
+      );
     }
 
     if (sortBy === "name") {
@@ -122,15 +173,7 @@ function DirectoryContent() {
     }
 
     return results;
-  }, [searchQuery, selectedServices, selectedSectors, selectedCountry, selectedCity, sortBy]);
-
-  // Derive available cities based on selected country
-  const availableCities = useMemo(() => {
-    if (!selectedCountry) return CITIES;
-    return [...new Set(
-      companies.filter((c) => c.country === selectedCountry).map((c) => c.city)
-    )].sort();
-  }, [selectedCountry]);
+  }, [searchQuery, selectedServices, selectedIndustries, selectedRegion, selectedCountry, selectedCities, sortBy]);
 
   const totalPages = Math.ceil(filteredCompanies.length / itemsPerPage);
   const startIdx = (currentPage - 1) * itemsPerPage;
@@ -153,7 +196,20 @@ function DirectoryContent() {
   };
 
   const activeFilters =
-    selectedServices.length + selectedSectors.length + (selectedCountry ? 1 : 0) + (selectedCity ? 1 : 0);
+    selectedServices.length +
+    selectedIndustries.length +
+    (selectedRegion ? 1 : 0) +
+    (selectedCountry ? 1 : 0) +
+    selectedCities.length;
+
+  const clearAllFilters = () => {
+    setSelectedServices([]);
+    setSelectedIndustries([]);
+    setSelectedRegion("");
+    setSelectedCountry("");
+    setSelectedCities([]);
+    setCurrentPage(1);
+  };
 
   return (
     <div className="min-h-screen bg-background flex flex-col">
@@ -179,30 +235,57 @@ function DirectoryContent() {
                 Browse {filteredCompanies.length} agencies from around the world
               </p>
 
-              {/* Active filter pills from URL */}
-              {(activeFilterLabel || selectedCountry || selectedCity) && (
+              {/* Active filter pills */}
+              {(activeFilterLabel || selectedRegion || selectedCountry || selectedCities.length > 0 || selectedServices.length > 0 || selectedIndustries.length > 0) && (
                 <div className="flex flex-wrap gap-2 mt-4">
                   {activeFilterLabel && (
                     <span className="inline-flex items-center gap-1.5 px-3 py-1 bg-[#f5d742] text-[#1a1a1a] text-xs font-semibold rounded-full">
                       {activeFilterLabel}
                     </span>
                   )}
-                  {selectedCountry && !selectedCity && (
+                  {selectedRegion && (
                     <button
-                      onClick={() => { setSelectedCountry(""); setSelectedCity(""); setCurrentPage(1); }}
+                      onClick={() => { setSelectedRegion(""); setSelectedCountry(""); setSelectedCities([]); setCurrentPage(1); }}
+                      className="inline-flex items-center gap-1.5 px-3 py-1 bg-[#2e3843] text-white text-xs font-semibold rounded-full hover:bg-[#1a1a1a] transition-colors"
+                    >
+                      {selectedRegion} <X className="w-3 h-3" />
+                    </button>
+                  )}
+                  {selectedCountry && (
+                    <button
+                      onClick={() => { setSelectedCountry(""); setSelectedCities([]); setCurrentPage(1); }}
                       className="inline-flex items-center gap-1.5 px-3 py-1 bg-[#2e3843] text-white text-xs font-semibold rounded-full hover:bg-[#1a1a1a] transition-colors"
                     >
                       {selectedCountry} <X className="w-3 h-3" />
                     </button>
                   )}
-                  {selectedCity && (
+                  {selectedCities.map((city) => (
                     <button
-                      onClick={() => { setSelectedCity(""); setCurrentPage(1); }}
+                      key={city}
+                      onClick={() => { setSelectedCities((prev) => prev.filter((c) => c !== city)); setCurrentPage(1); }}
                       className="inline-flex items-center gap-1.5 px-3 py-1 bg-[#2e3843] text-white text-xs font-semibold rounded-full hover:bg-[#1a1a1a] transition-colors"
                     >
-                      {selectedCity} <X className="w-3 h-3" />
+                      {city} <X className="w-3 h-3" />
                     </button>
-                  )}
+                  ))}
+                  {selectedServices.map((svc) => (
+                    <button
+                      key={svc}
+                      onClick={() => { setSelectedServices((prev) => prev.filter((s) => s !== svc)); setCurrentPage(1); }}
+                      className="inline-flex items-center gap-1.5 px-3 py-1 bg-card border border-[#0763d8]/30 text-foreground text-xs font-semibold rounded-full hover:bg-muted transition-colors"
+                    >
+                      {svc} <X className="w-3 h-3" />
+                    </button>
+                  ))}
+                  {selectedIndustries.map((ind) => (
+                    <button
+                      key={ind}
+                      onClick={() => { setSelectedIndustries((prev) => prev.filter((i) => i !== ind)); setCurrentPage(1); }}
+                      className="inline-flex items-center gap-1.5 px-3 py-1 bg-card border border-[#0763d8]/30 text-foreground text-xs font-semibold rounded-full hover:bg-muted transition-colors"
+                    >
+                      {ind} <X className="w-3 h-3" />
+                    </button>
+                  ))}
                 </div>
               )}
 
@@ -236,8 +319,8 @@ function DirectoryContent() {
                 </div>
               )}
 
-              {/* Horizontal Filters — below search */}
-              <div className="mt-8">
+              {/* Filter bar */}
+              <div className="mt-8 w-full max-w-5xl">
                 <div className="flex items-center gap-3 mb-4">
                   <div className="relative flex-1 max-w-xl">
                     <Search className="absolute left-3 top-3 w-4 h-4 text-muted-foreground" />
@@ -253,93 +336,83 @@ function DirectoryContent() {
                   </div>
                 </div>
                 <div className="flex flex-wrap gap-3">
+                  {/* Region — cascading level 1, always visible */}
                   <div className="flex items-center gap-2 bg-card border border-border rounded-lg px-3 py-2">
                     <span className="text-xs text-muted-foreground font-medium">
-                      Country:
+                      Region:
                     </span>
                     <select
-                      value={selectedCountry}
+                      value={selectedRegion}
                       onChange={(e) => {
-                        setSelectedCountry(e.target.value);
-                        setSelectedCity("");
+                        setSelectedRegion(e.target.value);
+                        setSelectedCountry("");
+                        setSelectedCities([]);
                         setCurrentPage(1);
                       }}
                       className="text-sm bg-transparent focus:outline-none"
                     >
-                      <option value="">All Countries</option>
-                      {COUNTRIES.map((c) => (
-                        <option key={c}>{c}</option>
+                      <option value="">All Regions</option>
+                      {ALL_COMPANY_REGIONS.map((r) => (
+                        <option key={r}>{r}</option>
                       ))}
                     </select>
                   </div>
-                  <div className="flex items-center gap-2 bg-card border border-border rounded-lg px-3 py-2">
-                    <span className="text-xs text-muted-foreground font-medium">
-                      City:
-                    </span>
-                    <select
-                      value={selectedCity}
-                      onChange={(e) => {
-                        setSelectedCity(e.target.value);
-                        setCurrentPage(1);
-                      }}
-                      disabled={!selectedCountry}
-                      className="text-sm bg-transparent focus:outline-none disabled:opacity-40 disabled:cursor-not-allowed"
-                    >
-                      <option value="">{selectedCountry ? "All Cities" : "Select country first"}</option>
-                      {availableCities.map((city) => (
-                        <option key={city}>{city}</option>
-                      ))}
-                    </select>
-                  </div>
-                  <div className="flex items-center gap-2 bg-card border border-border rounded-lg px-3 py-2">
-                    <span className="text-xs text-muted-foreground font-medium">
-                      Service:
-                    </span>
-                    <select
-                      value={selectedServices[0] || ""}
-                      onChange={(e) => {
-                        setSelectedServices(
-                          e.target.value ? [e.target.value] : [],
-                        );
-                        setCurrentPage(1);
-                      }}
-                      className="text-sm bg-transparent focus:outline-none"
-                    >
-                      <option value="">All Services</option>
-                      {SERVICES.map((s) => (
-                        <option key={s}>{s}</option>
-                      ))}
-                    </select>
-                  </div>
-                  <div className="flex items-center gap-2 bg-card border border-border rounded-lg px-3 py-2">
-                    <span className="text-xs text-muted-foreground font-medium">
-                      Sector:
-                    </span>
-                    <select
-                      value={selectedSectors[0] || ""}
-                      onChange={(e) => {
-                        setSelectedSectors(
-                          e.target.value ? [e.target.value] : [],
-                        );
-                        setCurrentPage(1);
-                      }}
-                      className="text-sm bg-transparent focus:outline-none"
-                    >
-                      <option value="">All Sectors</option>
-                      {SECTORS.map((s) => (
-                        <option key={s}>{s}</option>
-                      ))}
-                    </select>
-                  </div>
+
+                  {/* Country — level 2, only shown once a Region is picked */}
+                  {selectedRegion && (
+                    <div className="flex items-center gap-2 bg-card border border-border rounded-lg px-3 py-2">
+                      <span className="text-xs text-muted-foreground font-medium">
+                        Country:
+                      </span>
+                      <select
+                        value={selectedCountry}
+                        onChange={(e) => {
+                          setSelectedCountry(e.target.value);
+                          setSelectedCities([]);
+                          setCurrentPage(1);
+                        }}
+                        className="text-sm bg-transparent focus:outline-none"
+                      >
+                        <option value="">All Countries</option>
+                        {availableCountries.map((c) => (
+                          <option key={c}>{c}</option>
+                        ))}
+                      </select>
+                    </div>
+                  )}
+
+                  {/* City — level 3, only shown once a Country is picked (prevents endless city list) */}
+                  {selectedCountry && (
+                    <MultiSelectFilter
+                      label="City"
+                      options={availableCities}
+                      selected={selectedCities}
+                      onChange={(v) => { setSelectedCities(v); setCurrentPage(1); }}
+                      placeholder="All Cities"
+                    />
+                  )}
+
+                  {/* Service — always visible, multi-select */}
+                  <MultiSelectFilter
+                    label="Service"
+                    options={SERVICES}
+                    selected={selectedServices}
+                    onChange={(v) => { setSelectedServices(v); setCurrentPage(1); }}
+                    placeholder="All Services"
+                  />
+
+                  {/* Industry — always visible, multi-select */}
+                  <MultiSelectFilter
+                    label="Industry"
+                    options={INDUSTRIES}
+                    selected={selectedIndustries}
+                    onChange={(v) => { setSelectedIndustries(v); setCurrentPage(1); }}
+                    placeholder="All Industries"
+                  />
+
                   {activeFilters > 0 && (
                     <button
-                      onClick={() => {
-                        setSelectedServices([]);
-                        setSelectedSectors([]);
-                        setSelectedCountry("");
-                        setSelectedCity("");
-                        setCurrentPage(1);
-                      }}
+                      onClick={clearAllFilters}
                       className="flex items-center gap-1 text-xs font-medium text-accent hover:underline px-3 py-2"
                     >
                       <X className="w-3 h-3" /> Clear filters ({activeFilters})
@@ -491,14 +564,7 @@ function DirectoryContent() {
                 </p>
                 <Button
                   variant="outline"
-                  onClick={() => {
-                    setSearchQuery("");
-                    setSelectedServices([]);
-                    setSelectedSectors([]);
-                    setSelectedCountry("");
-                    setSelectedCity("");
-                    setCurrentPage(1);
-                  }}
+                  onClick={clearAllFilters}
                 >
                   Clear filters
                 </Button>

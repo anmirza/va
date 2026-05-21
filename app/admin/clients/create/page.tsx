@@ -1,11 +1,17 @@
 ﻿"use client";
 
-import { useState, useEffect } from "react";
+import { useState, useEffect, useMemo } from "react";
 import { useRouter, useSearchParams } from "next/navigation";
 import Link from "next/link";
 import { useAuth } from "@/lib/auth-context";
 import { createClientCompanyFS, updateClientCompanyFS, getClientCompanyByIdFS } from "@/lib/admin-firestore";
 import { GooglePlacesAutocomplete } from "@/components/google-places-autocomplete";
+import {
+  ALL_HUBS,
+  getRegionsForHub,
+  getCountriesForRegion,
+  getCountriesForRegions,
+} from "@/lib/geo-data";
 import toast from "react-hot-toast";
 import {
   ArrowLeft,
@@ -21,37 +27,6 @@ const OPERATE_AS_OPTIONS = [
   { value: "regional_hub", label: "Regional Hub" },
   { value: "multi_country", label: "Multi Country" },
   { value: "country_company", label: "Country Company" },
-];
-
-const REGIONAL_HUB_OPTIONS = [
-  "Global","EMEA","Americas","APAC","LATAM","MEA","North America","Other",
-];
-
-const REGION_OPTIONS = [
-  "Western Europe","Eastern Europe","Central Europe","Northern Europe","Southern Europe",
-  "Nordics","DACH","Benelux","Iberia","UK & Ireland","Mediterranean","Middle East",
-  "North Africa","Sub-Saharan Africa","East Asia","South Asia","Southeast Asia",
-  "Greater China","Japan & Korea","India Subcontinent","ANZ","Oceania",
-  "Central America","South America","Caribbean","Other",
-];
-
-const COUNTRIES = [
-  "Afghanistan","Albania","Algeria","Angola","Argentina","Armenia","Australia",
-  "Austria","Azerbaijan","Bahrain","Bangladesh","Belarus","Belgium","Bolivia",
-  "Bosnia and Herzegovina","Brazil","Bulgaria","Cambodia","Cameroon","Canada",
-  "Chile","China","Colombia","Croatia","Czech Republic","Denmark","Ecuador",
-  "Egypt","El Salvador","Estonia","Ethiopia","Finland","France","Georgia",
-  "Germany","Ghana","Greece","Guatemala","Honduras","Hungary","India",
-  "Indonesia","Iran","Iraq","Ireland","Israel","Italy","Ivory Coast","Japan",
-  "Jordan","Kazakhstan","Kenya","Kuwait","Latvia","Lebanon","Libya","Lithuania",
-  "Luxembourg","Malaysia","Mexico","Moldova","Morocco","Myanmar","Netherlands",
-  "New Zealand","Nigeria","Norway","Oman","Pakistan","Panama","Paraguay","Peru",
-  "Philippines","Poland","Portugal","Qatar","Romania","Russia","Saudi Arabia",
-  "Senegal","Serbia","Singapore","Slovakia","Slovenia","South Africa",
-  "South Korea","Spain","Sri Lanka","Sweden","Switzerland","Taiwan","Tanzania",
-  "Thailand","Tunisia","Turkey","Uganda","Ukraine","United Arab Emirates",
-  "United Kingdom","United States","Uruguay","Uzbekistan","Venezuela","Vietnam",
-  "Yemen","Zambia","Zimbabwe",
 ];
 
 const ADDRESS_TYPES = [
@@ -80,6 +55,24 @@ export default function CreateClientCompanyPage() {
   const [notes, setNotes] = useState("");
   const [isSubmitting, setIsSubmitting] = useState(false);
 
+  // Dynamic options driven by selected hub/region
+  const regionOptions = useMemo(() => getRegionsForHub(regionalHub), [regionalHub]);
+
+  const coveredRegionOptions = useMemo(
+    () => getRegionsForHub(regionalHub),
+    [regionalHub],
+  );
+
+  const coveredCountryOptions = useMemo(
+    () => getCountriesForRegions(regionalHub, coveredRegions),
+    [regionalHub, coveredRegions],
+  );
+
+  const countryOptions = useMemo(
+    () => getCountriesForRegion(regionalHub, region),
+    [regionalHub, region],
+  );
+
   // Pre-fill form when editing an existing company
   useEffect(() => {
     if (!editId) return;
@@ -105,18 +98,7 @@ export default function CreateClientCompanyPage() {
     "w-full h-10 bg-white/[0.04] border border-white/[0.08] rounded-lg px-3 text-sm text-white placeholder:text-white/20 focus:outline-none focus:border-[#0763d8]/60 transition-colors";
   const selectCls =
     "w-full h-10 bg-white/[0.04] border border-white/[0.08] rounded-lg px-3 text-sm text-white focus:outline-none focus:border-[#0763d8]/60 transition-colors";
-
-  const toggleMulti = (
-    value: string,
-    current: string[],
-    setter: (v: string[]) => void,
-  ) => {
-    setter(
-      current.includes(value)
-        ? current.filter((v) => v !== value)
-        : [...current, value],
-    );
-  };
+  const listBoxCls = ""; // unused — replaced by checkbox lists
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -252,33 +234,77 @@ export default function CreateClientCompanyPage() {
               </div>
               <div>
                 <label className="block text-xs font-medium text-white/50 mb-1.5 uppercase tracking-wider">Regional Hub</label>
-                <select value={regionalHub} onChange={(e) => setRegionalHub(e.target.value)} className={selectCls}>
+                <select value={regionalHub} onChange={(e) => {
+                  setRegionalHub(e.target.value);
+                  setRegion(""); setCoveredRegions([]); setCoveredCountries([]); setCountry("");
+                }} className={selectCls}>
                   <option value="">Select operational hub… e.g. EMEA</option>
-                  {REGIONAL_HUB_OPTIONS.map((r) => (
+                  {ALL_HUBS.map((r) => (
                     <option key={r} value={r} className="bg-[#0a0b1a]">{r}</option>
                   ))}
                 </select>
               </div>
               {operateAs === "regional_hub" && (
                 <div>
-                  <label className="block text-xs font-medium text-white/50 mb-1.5 uppercase tracking-wider">Covered Regions</label>
-                  <div className="flex flex-wrap gap-2 p-3 bg-white/[0.03] border border-white/[0.08] rounded-lg">
-                    {REGION_OPTIONS.map((r) => (
-                      <button key={r} type="button"
-                        onClick={() => toggleMulti(r, coveredRegions, setCoveredRegions)}
-                        className={`px-2.5 py-1 rounded-full text-xs border transition-colors ${coveredRegions.includes(r) ? "bg-[#0763d8]/20 border-[#0763d8]/40 text-[#0763d8]" : "bg-white/[0.03] border-white/[0.08] text-white/40 hover:border-white/20"}`}>
-                        {r}
-                      </button>
-                    ))}
-                  </div>
+                  <label className="block text-xs font-medium text-white/50 mb-1.5 uppercase tracking-wider">
+                    Covered Regions
+                    {coveredRegions.length > 0 && (
+                      <span className="ml-2 text-[#0763d8] normal-case">{coveredRegions.length} selected</span>
+                    )}
+                  </label>
+                  {coveredRegionOptions.length > 0 ? (
+                    <div className="border border-white/[0.08] rounded-lg overflow-hidden">
+                      {/* Controls row */}
+                      <div className="flex items-center justify-between px-3 py-2 bg-white/[0.02] border-b border-white/[0.06]">
+                        <span className="text-xs text-white/40">
+                          {coveredRegions.length > 0
+                            ? <><span className="text-[#0763d8] font-medium">{coveredRegions.length}</span> of {coveredRegionOptions.length} selected</>
+                            : "Select one or more"}
+                        </span>
+                        <div className="flex gap-3">
+                          <button type="button" onClick={() => { setCoveredRegions([...coveredRegionOptions]); setCoveredCountries([]); }} className="text-xs text-white/40 hover:text-white transition-colors">All</button>
+                          <button type="button" onClick={() => { setCoveredRegions([]); setCoveredCountries([]); }} className="text-xs text-white/40 hover:text-white transition-colors">Clear</button>
+                        </div>
+                      </div>
+                      {/* Checkbox rows */}
+                      <div className="max-h-52 overflow-y-auto">
+                        {coveredRegionOptions.map((r) => {
+                          const checked = coveredRegions.includes(r);
+                          return (
+                            <div
+                              key={r}
+                              onClick={() => {
+                                const next = checked ? coveredRegions.filter((x) => x !== r) : [...coveredRegions, r];
+                                setCoveredRegions(next);
+                                setCoveredCountries([]);
+                              }}
+                              className={`flex items-center gap-3 px-3 py-2.5 cursor-pointer transition-colors border-b border-white/[0.03] hover:bg-white/[0.04] ${checked ? "bg-[#0763d8]/10" : ""}`}
+                            >
+                              <div className={`w-4 h-4 rounded border flex-shrink-0 flex items-center justify-center transition-colors ${checked ? "bg-[#0763d8] border-[#0763d8]" : "border-white/20"}`}>
+                                {checked && (
+                                  <svg viewBox="0 0 10 8" className="w-2.5 h-2.5" fill="none" stroke="white" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round">
+                                    <path d="M1 4l3 3 5-6" />
+                                  </svg>
+                                )}
+                              </div>
+                              <span className={`text-sm transition-colors ${checked ? "text-white" : "text-white/60"}`}>{r}</span>
+                            </div>
+                          );
+                        })}
+                      </div>
+                    </div>
+                  ) : (
+                    <p className="text-xs text-white/30 mt-1">Select a Regional Hub first to see available regions.</p>
+                  )}
                 </div>
               )}
               {(operateAs === "multi_country" || operateAs === "country_company") && (
                 <div>
                   <label className="block text-xs font-medium text-white/50 mb-1.5 uppercase tracking-wider">Region</label>
-                  <select value={region} onChange={(e) => setRegion(e.target.value)} className={selectCls}>
-                    <option value="">Select geographical region… e.g. Southern Europe</option>
-                    {REGION_OPTIONS.map((r) => (
+                  <select value={region} onChange={(e) => { setRegion(e.target.value); setCountry(""); setCoveredCountries([]); }} className={selectCls}
+                    disabled={!regionalHub}>
+                    <option value="">{regionalHub ? "Select region…" : "Select a hub first"}</option>
+                    {regionOptions.map((r) => (
                       <option key={r} value={r} className="bg-[#0a0b1a]">{r}</option>
                     ))}
                   </select>
@@ -286,18 +312,55 @@ export default function CreateClientCompanyPage() {
               )}
               {(operateAs === "regional_hub" || operateAs === "multi_country") && (
                 <div>
-                  <label className="block text-xs font-medium text-white/50 mb-1.5 uppercase tracking-wider">Covered Countries</label>
-                  <div className="max-h-44 overflow-y-auto flex flex-wrap gap-2 p-3 bg-white/[0.03] border border-white/[0.08] rounded-lg">
-                    {COUNTRIES.map((c) => (
-                      <button key={c} type="button"
-                        onClick={() => toggleMulti(c, coveredCountries, setCoveredCountries)}
-                        className={`px-2.5 py-1 rounded-full text-xs border transition-colors ${coveredCountries.includes(c) ? "bg-[#0763d8]/20 border-[#0763d8]/40 text-[#0763d8]" : "bg-white/[0.03] border-white/[0.08] text-white/40 hover:border-white/20"}`}>
-                        {c}
-                      </button>
-                    ))}
-                  </div>
-                  {coveredCountries.length > 0 && (
-                    <p className="text-xs text-white/30 mt-1">{coveredCountries.length} country/countries selected</p>
+                  <label className="block text-xs font-medium text-white/50 mb-1.5 uppercase tracking-wider">
+                    Covered Countries
+                    {coveredCountries.length > 0 && (
+                      <span className="ml-2 text-[#0763d8] normal-case">{coveredCountries.length} selected</span>
+                    )}
+                  </label>
+                  {coveredCountryOptions.length > 0 ? (
+                    <div className="border border-white/[0.08] rounded-lg overflow-hidden">
+                      {/* Controls row */}
+                      <div className="flex items-center justify-between px-3 py-2 bg-white/[0.02] border-b border-white/[0.06]">
+                        <span className="text-xs text-white/40">
+                          {coveredCountries.length > 0
+                            ? <><span className="text-[#0763d8] font-medium">{coveredCountries.length}</span> of {coveredCountryOptions.length} selected</>
+                            : "Select one or more"}
+                        </span>
+                        <div className="flex gap-3">
+                          <button type="button" onClick={() => setCoveredCountries([...coveredCountryOptions])} className="text-xs text-white/40 hover:text-white transition-colors">All</button>
+                          <button type="button" onClick={() => setCoveredCountries([])} className="text-xs text-white/40 hover:text-white transition-colors">Clear</button>
+                        </div>
+                      </div>
+                      {/* Checkbox rows */}
+                      <div className="max-h-64 overflow-y-auto">
+                        {coveredCountryOptions.map((c) => {
+                          const checked = coveredCountries.includes(c);
+                          return (
+                            <div
+                              key={c}
+                              onClick={() => setCoveredCountries(checked ? coveredCountries.filter((x) => x !== c) : [...coveredCountries, c])}
+                              className={`flex items-center gap-3 px-3 py-2.5 cursor-pointer transition-colors border-b border-white/[0.03] hover:bg-white/[0.04] ${checked ? "bg-[#0763d8]/10" : ""}`}
+                            >
+                              <div className={`w-4 h-4 rounded border flex-shrink-0 flex items-center justify-center transition-colors ${checked ? "bg-[#0763d8] border-[#0763d8]" : "border-white/20"}`}>
+                                {checked && (
+                                  <svg viewBox="0 0 10 8" className="w-2.5 h-2.5" fill="none" stroke="white" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round">
+                                    <path d="M1 4l3 3 5-6" />
+                                  </svg>
+                                )}
+                              </div>
+                              <span className={`text-sm transition-colors ${checked ? "text-white" : "text-white/60"}`}>{c}</span>
+                            </div>
+                          );
+                        })}
+                      </div>
+                    </div>
+                  ) : (
+                    <p className="text-xs text-white/30 mt-1">
+                      {operateAs === "regional_hub"
+                        ? "Select covered regions first to see available countries."
+                        : "Select a hub and region first."}
+                    </p>
                   )}
                 </div>
               )}
@@ -305,9 +368,10 @@ export default function CreateClientCompanyPage() {
                 <>
                   <div>
                     <label className="block text-xs font-medium text-white/50 mb-1.5 uppercase tracking-wider">Country</label>
-                    <select value={country} onChange={(e) => setCountry(e.target.value)} className={selectCls}>
-                      <option value="">Select country… e.g. Italy</option>
-                      {COUNTRIES.map((c) => (
+                    <select value={country} onChange={(e) => setCountry(e.target.value)} className={selectCls}
+                      disabled={!region}>
+                      <option value="">{region ? "Select country… e.g. Italy" : "Select a region first"}</option>
+                      {countryOptions.map((c) => (
                         <option key={c} value={c} className="bg-[#0a0b1a]">{c}</option>
                       ))}
                     </select>
