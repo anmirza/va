@@ -13,3 +13,8 @@ node_modules/
 *.xlsx
 *.xls
 *.csv
+
+# Feedback folders (large binary/office files)
+Latest-Feedback/
+feedback/
+scratch_pdf/

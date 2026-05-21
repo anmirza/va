@@ -1,17 +1,21 @@
 import type { Metadata } from "next";
-import { DM_Serif_Display, DM_Sans, IBM_Plex_Mono } from "next/font/google";
+import { Outfit, IBM_Plex_Sans, IBM_Plex_Mono } from "next/font/google";
 import { Analytics } from "@vercel/analytics/next";
 import { Toaster } from "@/components/ui/sonner";
 import { AuthProvider } from "@/lib/auth-context";
 import { FollowProvider } from "@/lib/follow-context";
 import "./globals.css";
 
-const dmSerif = DM_Serif_Display({
-  weight: ["400"],
+const outfit = Outfit({
+  weight: ["400", "500", "600", "700", "800"],
   subsets: ["latin"],
-  variable: "--font-dm-serif",
+  variable: "--font-outfit",
 });
-const dmSans = DM_Sans({ subsets: ["latin"], variable: "--font-dm-sans" });
+const ibmPlexSans = IBM_Plex_Sans({
+  weight: ["400", "500", "600", "700"],
+  subsets: ["latin"],
+  variable: "--font-ibm-plex-sans",
+});
 const ibmPlexMono = IBM_Plex_Mono({
   weight: ["400", "500", "600"],
   subsets: ["latin"],
@@ -41,7 +45,7 @@ export default function RootLayout({
   return (
     <html
       lang="en"
-      className={`${dmSerif.variable} ${dmSans.variable} ${ibmPlexMono.variable}`}
+      className={`${outfit.variable} ${ibmPlexSans.variable} ${ibmPlexMono.variable}`}
     >
       <body className="font-sans antialiased bg-background text-foreground">
         <AuthProvider>
